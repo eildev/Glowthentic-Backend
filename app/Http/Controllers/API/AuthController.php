@@ -132,27 +132,58 @@ class AuthController extends Controller
         // ]);
     }
     // POST [Auth: Token]
-    public function profile(Request $request){
+    public function profile(){
         $userData = Auth::user();
+        $id = Auth::user()->id;
         return response()->json([
                 "status" => 200,
                 "message" => "Profile Information",
                 "data" => $userData,
+                "id" => $id,
             ]);
     }
     // POST [Auth: Token]
-    public function logout(Request $request){
-        // $user = Auth::user();
-        // dd($user);
-        // Auth::user()->tokens->delete();
+    public function logout(){
 
-        $token = auth()->user()->token();
-        $token->revoke();
+        if (auth()->check()) {
+            auth()->user()->tokens()->delete(); // Delete all tokens for the user
+
+            return response()->json([
+                "status" => 200,
+                "message" => "User logged out successfully",
+                "data" => []
+            ]);
+        }
 
         return response()->json([
-            "status" => 200,
-            "message" => "User logged out successfully",
-            "data" => []
+            "status" => 401,
+            "message" => "User not authenticated",
+        ], 401);
+    }
+
+    // Admin Login (Blade View)
+    public function adminLoginPage()
+    {
+        return view('backend.login');
+    }
+
+    public function adminLogin(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
         ]);
+
+        if (Auth::attempt($credentials)) {
+            return redirect()->route('admin.dashboard');
+        }
+
+        return back()->withErrors(['email' => 'Invalid credentials']);
+    }
+
+    public function adminLogout()
+    {
+        Auth::logout();
+        return redirect()->route('admin.login');
     }
 }
