@@ -11,7 +11,9 @@ use App\Http\Controllers\API\AuthController;
 // Open Routes
 Route::post('/register', [AuthController::class, "register"]);
 Route::post('/login', [AuthController::class, "login"]);
-
+Route::get('/sanctum/csrf-cookie', function () {
+    return response()->noContent();
+});
 // Protected Routes
 Route::group([
     "middleware" => ["auth:sanctum"]
