@@ -82,33 +82,48 @@ class AuthController extends Controller
                 "errors" => $validator->errors(),
             ]);
         }
-        $user = User::where("email", $request->email)->first();
-        if (!empty($user)) {
-            //User exists
-            if(Hash::check($request->password, $user->password)){
-                // Password Matched
-                $token = $user->createToken("mytoken")->plainTextToken;
-                return response()->json([
-                    "status" => 200,
-                    "message" => "User Loged in successfully",
-                    "token" => $token,
-                    "data" => [],
-                ]);
-            }else{
-                return response()->json([
-                    "status" => 400,
-                    "message" => "Password does not match",
-                    "data" => [],
-                ]);
-            }
-        }else{
 
-            return response()->json([
-                "status" => 400,
-                "message" => "Email does not match with our records",
-                "data" => [],
-            ]);
-        }
+            // Sanctum-সহ লগিন চেক করুন
+    if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+        $user = Auth::user();
+        $token = $user->createToken("mytoken")->plainTextToken;
+
+        return response()->json([
+            "status" => 200,
+            "message" => "User Logged in successfully",
+            "token" => $token,
+            "data" => $user,
+        ]);
+    }
+
+
+        // $user = User::where("email", $request->email)->first();
+        // if (!empty($user)) {
+        //     //User exists
+        //     if(Hash::check($request->password, $user->password)){
+        //         // Password Matched
+        //         $token = $user->createToken("mytoken")->plainTextToken;
+        //         return response()->json([
+        //             "status" => 200,
+        //             "message" => "User Loged in successfully",
+        //             "token" => $token,
+        //             "data" => [],
+        //         ]);
+        //     }else{
+        //         return response()->json([
+        //             "status" => 400,
+        //             "message" => "Password does not match",
+        //             "data" => [],
+        //         ]);
+        //     }
+        // }else{
+
+        //     return response()->json([
+        //         "status" => 400,
+        //         "message" => "Email does not match with our records",
+        //         "data" => [],
+        //     ]);
+        // }
 
         // if (Auth::attempt(["email" => $request->email, "password" => $request->password])) {
         //     $user = Auth::user();
