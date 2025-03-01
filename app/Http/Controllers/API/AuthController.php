@@ -66,7 +66,75 @@ class AuthController extends Controller
         }
     }
     // POST [email, password]
-    public function login(Request $request){
+    // public function login(Request $request){
+    //     $validator = Validator::make($request->all(), [
+    //         // 'username' => 'required|string|unique:users,username',
+    //         // 'name' => 'required|string|max:255',
+    //         'email' => 'required|email|string',
+    //         'password' => 'required|min:6',
+    //         // 'confirm_password' => 'required|confirmed|same:password',
+    //     ]);
+
+    //     if ($validator->fails()) {
+    //         return response()->json([
+    //             "status" => 400,
+    //             "message" => "Validation errors",
+    //             "errors" => $validator->errors(),
+    //         ]);
+    //     }
+    //     $user = User::where("email", $request->email)->first();
+    //     if (!empty($user)) {
+    //         //User exists
+    //         if(Hash::check($request->password, $user->password)){
+    //             // Password Matched
+    //             $token = $user->createToken("mytoken")->plainTextToken;
+    //             return response()->json([
+    //                 "status" => 200,
+    //                 "message" => "User Loged in successfully",
+    //                 "token" => $token,
+    //                 "data" => $user,
+    //             ]);
+    //         }else{
+    //             return response()->json([
+    //                 "status" => 400,
+    //                 "message" => "Password does not match",
+    //                 "data" => [],
+    //             ]);
+    //         }
+    //     }else{
+
+    //         return response()->json([
+    //             "status" => 400,
+    //             "message" => "Email does not match with our records",
+    //             "data" => [],
+    //         ]);
+    //     }
+
+    //     // if (Auth::attempt(["email" => $request->email, "password" => $request->password])) {
+    //     //     $user = Auth::user();
+
+    //     //     $response = [];
+    //     //     // $response["token"] = $user->createToken("MyApp")->plainTextToken;
+    //     //     $response["name"] = $user->name;
+    //     //     $response["email"] = $user->email;
+    //     //     $response["id"] = $user->id;
+
+    //     //     return response()->json([
+    //     //         "status" => 200,
+    //     //         "message" => "User loged in successfully",
+    //     //         "data" => $response,
+    //     //     ]);
+    //     // }
+    //     // return response()->json([
+    //     //     "status" => 400,
+    //     //     "message" => "Authentication Error",
+    //     //     "data" => null,
+    //     // ]);
+    // }
+
+    public function login(Request $request)
+    {
+        // dd($request->all());
         $validator = Validator::make($request->all(), [
             // 'username' => 'required|string|unique:users,username',
             // 'name' => 'required|string|max:255',
@@ -82,54 +150,79 @@ class AuthController extends Controller
                 "errors" => $validator->errors(),
             ]);
         }
-        $user = User::where("email", $request->email)->first();
-        if (!empty($user)) {
-            //User exists
-            if(Hash::check($request->password, $user->password)){
-                // Password Matched
-                $token = $user->createToken("mytoken")->plainTextToken;
+
+        // Sanctum-সহ লগিন চেক করুন
+        // if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+        //     $user = Auth::user();
+        //     $token = $user->createToken("mytoken")->plainTextToken;
+        //     // dd($user);
+        //     return response()->json([
+        //         "status" => 200,
+        //         "message" => "User Logged in successfully",
+        //         "token" => $token,
+        //         "data" => $user,
+        //     ]);
+        // }
+
+
+        // $user = User::where("email", $request->email)->first();
+        // if (!empty($user)) {
+        //     //User exists
+        //     if(Hash::check($request->password, $user->password)){
+        //         // Password Matched
+        //         $token = $user->createToken("mytoken")->plainTextToken;
+        //         return response()->json([
+        //             "status" => 200,
+        //             "message" => "User Loged in successfully",
+        //             "token" => $token,
+        //             "data" => [],
+        //         ]);
+        //     }else{
+        //         return response()->json([
+        //             "status" => 400,
+        //             "message" => "Password does not match",
+        //             "data" => [],
+        //         ]);
+        //     }
+        // }else{
+
+        //     return response()->json([
+        //         "status" => 400,
+        //         "message" => "Email does not match with our records",
+        //         "data" => [],
+        //     ]);
+        // }
+
+        try {
+            if (Auth::attempt(["email" => $request->email, "password" => $request->password])) {
+                $user = Auth::user();
+
+                $response = [];
+                $response["token"] = $user->createToken("MyApp")->plainTextToken;
+                $response["name"] = $user->name;
+                $response["email"] = $user->email;
+                $response["id"] = $user->id;
+
                 return response()->json([
                     "status" => 200,
-                    "message" => "User Loged in successfully",
-                    "token" => $token,
-                    "data" => [],
+                    "message" => "User loged in successfully",
+                    "data" => $response,
                 ]);
-            }else{
+            } else {
                 return response()->json([
-                    "status" => 400,
-                    "message" => "Password does not match",
-                    "data" => [],
+                    "status" => 401,
+                    "message" => "Invalid credentials",
+                    "data" => null,
                 ]);
             }
-        }else{
-
+        } catch (Exception $e) {
             return response()->json([
                 "status" => 400,
-                "message" => "Email does not match with our records",
-                "data" => [],
+                "message" => "Authentication Error",
+                "data" => null,
             ]);
         }
 
-        // if (Auth::attempt(["email" => $request->email, "password" => $request->password])) {
-        //     $user = Auth::user();
-
-        //     $response = [];
-        //     // $response["token"] = $user->createToken("MyApp")->plainTextToken;
-        //     $response["name"] = $user->name;
-        //     $response["email"] = $user->email;
-        //     $response["id"] = $user->id;
-
-        //     return response()->json([
-        //         "status" => 200,
-        //         "message" => "User loged in successfully",
-        //         "data" => $response,
-        //     ]);
-        // }
-        // return response()->json([
-        //     "status" => 400,
-        //     "message" => "Authentication Error",
-        //     "data" => null,
-        // ]);
     }
     // POST [Auth: Token]
     public function profile(){
