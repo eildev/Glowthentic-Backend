@@ -236,10 +236,10 @@ class AuthController extends Controller
             ]);
     }
     // POST [Auth: Token]
-    public function logout(){
+    public function logout(Request $request){
 
         if (auth()->check()) {
-            auth()->user()->tokens()->delete(); // Delete all tokens for the user
+            $request->user()->tokens()->delete(); // Delete all tokens for the user
 
             return response()->json([
                 "status" => 200,
