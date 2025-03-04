@@ -259,24 +259,83 @@ class AuthController extends Controller
     {
         return view('backend.login');
     }
+    public function dashboardView()
+    {
+        return view('backend.admin.dashboard');
+    }
 
     public function adminLogin(Request $request)
-    {
-        $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
+{
+    $credentials = $request->validate([
+        'email' => 'required|email',
+        'password' => 'required',
+    ]);
 
-        if (Auth::attempt($credentials)) {
-            return redirect()->route('admin.dashboard');
+    if (Auth::guard('web')->attempt($credentials)) {
+        $user = Auth::user();
+        if (in_array($user->role, ['admin', 'superadmin'])) {
+            $request->session()->regenerate(); // Keep this for security
+            return redirect()->intended('/admin/dashboard');
         }
-
-        return back()->withErrors(['email' => 'Invalid credentials']);
-    }
-
-    public function adminLogout()
-    {
         Auth::logout();
-        return redirect()->route('admin.login');
+        return back()->withErrors(['email' => 'You do not have admin access.']);
     }
+
+    return back()->withErrors(['email' => 'Invalid credentials.']);
+}
+
+public function adminLogout(Request $request)
+{
+    Auth::guard('web')->logout();
+    $request->session()->invalidate(); // Clear session
+    $request->session()->regenerateToken(); // New CSRF token
+    return redirect('/admin/login');
+}
+    // public function adminLogin(Request $request)
+    // {
+    //     // $credentials = $request->validate([
+    //     //     'email' => 'required|email',
+    //     //     'password' => 'required',
+    //     // ]);
+
+    //     // if (Auth::attempt($credentials)) {
+    //     //     return redirect()->route('admin.dashboard');
+    //     // }
+
+    //     // return back()->withErrors(['email' => 'Invalid credentials']);
+
+    //     // Validate the request
+    //     // dd($request->all());
+    //     $credentials = $request->validate([
+    //         'email' => 'required|email',
+    //         'password' => 'required',
+    //     ]);
+
+    //     // Attempt to log in using the 'web' guard
+    //     if (Auth::guard('web')->attempt($credentials)) {
+    //         $user = Auth::user();
+
+    //         // Check if the user has admin or superadmin role
+    //         if (in_array($user->role, ['admin', 'superadmin'])) {
+    //             $request->session()->regenerate(); // Regenerate session for security
+    //             return redirect()->route('admin.dashboard');
+    //         } else {
+    //             Auth::logout(); // Log out if not admin
+    //             return back()->withErrors(['email' => 'You do not have admin access.']);
+    //         }
+    //     }
+
+    //     return back()->withErrors(['email' => 'Invalid credentials.']);
+    // }
+
+    // public function adminLogout(Request $request)
+    // {
+    //     // Auth::logout();
+    //     // return redirect()->route('admin.login');
+
+    //     Auth::guard('web')->logout();
+    //     $request->session()->invalidate();
+    //     $request->session()->regenerateToken();
+    //     return redirect('/admin/login');
+    // }
 }
