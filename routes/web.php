@@ -38,7 +38,7 @@ Route::get('/', function () {
 
 Route::get('/admin/login', [AuthController::class, 'adminLoginPage']);
 Route::post('/admin/login', [AuthController::class, 'adminLogin'])->name('admin.login');
-Route::post('/admin/logout', [AuthController::class, 'adminLogout'])->middleware('auth');
+Route::post('/admin/logout', [AuthController::class, 'adminLogout'])->name('logout')->middleware('auth');
 Route::get('/admin/dashboard', [AuthController::class, 'dashboardView'])->middleware('auth')->name('admin.dashboard');
 // Route::get('/admin/dashboard', function () {
 //     return view('backend.admin.dashboard');
@@ -46,7 +46,7 @@ Route::get('/admin/dashboard', [AuthController::class, 'dashboardView'])->middle
 Route::controller(AllMail::class)->group(function () {
     Route::post('/reply/mail', 'replyMail')->name('reply.mail');
 });
-Route::middleware('auth', 'role:admin')->group(function () {
+Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
