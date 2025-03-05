@@ -15,19 +15,29 @@ class ApiProductController extends Controller
 {
     public function search(Request $request)
     {
-        try{
+        try {
             $searchTerm = $request->input('q');
 
-            $categoryIds = Category::where('categoryName', 'like', "%{$searchTerm}%")->pluck('id');
+
+            $categories = Category::where('categoryName', 'like', "%{$searchTerm}%")->get(['id', 'categoryName']);
+            $categoryIds = $categories->pluck('id');
 
 
-            $brandIds = Brand::where('BrandName', 'like', "%{$searchTerm}%")->pluck('id');
+            $brands = Brand::where('BrandName', 'like', "%{$searchTerm}%")->get(['id', 'BrandName']);
+            $brandIds = $brands->pluck('id');
 
-            $tagIds = TagName::where('tagName', 'like', "%{$searchTerm}%")->pluck('id');
+            $tags = TagName::where('tagName', 'like', "%{$searchTerm}%")->get(['id', 'tagName']);
+            $tagIds = $tags->pluck('id');
 
 
-            $products = Product::where('product_name', 'like', "%{$searchTerm}%")
-                ->with('variants.variantImage', 'product_tags.tag', 'productStock', 'productdetails', 'variantImage')
+            $products = Product::with([
+                    'variants.variantImage',
+                    'product_tags.tag',
+                    'productStock',
+                    'productdetails',
+                    'variantImage'
+                ])
+                ->where('product_name', 'like', "%{$searchTerm}%")
                 ->orWhereIn('category_id', $categoryIds)
                 ->orWhereIn('brand_id', $brandIds)
                 ->orWhereHas('product_tags', function ($query) use ($tagIds) {
@@ -38,18 +48,19 @@ class ApiProductController extends Controller
             return response()->json([
                 'products' => $products,
                 'searchTerm' => $searchTerm,
-                'categoryIds' => $categoryIds,
+                'categories' => $categories,
+                'brands' => $brands,
+                'tags' => $tags,              
                 'message' => count($products) ? 'Search Results Found' : 'No Results Found',
             ]);
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'message' => 'An error occurred while processing your request.',
                 'error' => $e->getMessage(),
             ], 500);
         }
-
     }
+
 
     public function filter(Request $request) {
         try {
@@ -59,6 +70,7 @@ class ApiProductController extends Controller
             $minPrices = $request->input('min_price', []);
             $maxPrices = $request->input('max_price', []);
 
+            // Ensure we are picking only ONE min and ONE max price
             $minPrice = !empty($minPrices) ? min($minPrices) : null;
             $maxPrice = !empty($maxPrices) ? max($maxPrices) : null;
 
@@ -72,20 +84,27 @@ class ApiProductController extends Controller
                 'productdetails',
                 'variantImage'
             ])
-            ->when(!empty($categoryIds), function ($query) use ($categoryIds) {
-                $query->whereIn('category_id', $categoryIds);
+            ->where(function ($query) use ($categoryIds, $brandIds, $tagIds) {
+                if (!empty($categoryIds)) {
+                    $query->orWhereIn('category_id', $categoryIds);
+                }
+                if (!empty($brandIds)) {
+                    $query->orWhereIn('brand_id', $brandIds);
+                }
+                if (!empty($tagIds)) {
+                    $query->orWhereHas('product_tags', function ($subQuery) use ($tagIds) {
+                        $subQuery->whereIn('product_tags.tag_id', $tagIds);
+                    });
+                }
             })
-            ->when(!empty($brandIds), function ($query) use ($brandIds) {
-                $query->whereIn('brand_id', $brandIds);
-            })
-            ->when(!empty($tagIds), function ($query) use ($tagIds) {
-                $query->whereHas('product_tags', function ($query) use ($tagIds) {
-                    $query->whereIn('product_tags.tag_id', $tagIds);
-                });
-            })
-            ->when(!empty($minPrice) && !empty($maxPrice), function ($query) use ($minPrice, $maxPrice) {
+            ->when($minPrice !== null || $maxPrice !== null, function ($query) use ($minPrice, $maxPrice) {
                 $query->whereHas('variants', function ($variantQuery) use ($minPrice, $maxPrice) {
-                    $variantQuery->whereBetween('regular_price', [$minPrice, $maxPrice]);
+                    if ($minPrice !== null) {
+                        $variantQuery->where('regular_price', '>=', $minPrice);
+                    }
+                    if ($maxPrice !== null) {
+                        $variantQuery->where('regular_price', '<=', $maxPrice);
+                    }
                 });
             })
             ->get()
@@ -111,6 +130,32 @@ class ApiProductController extends Controller
             ], 500);
         }
     }
+
+
+    public function viewAll()
+    {
+
+        $products = Product::orderByDesc('id')->with('variants.variantImage', 'product_tags', 'productStock', 'productdetails', 'variantImage')->where('status', 1)->get();
+        // dd($products);
+        return response()->json([
+            'status' => '200',
+            'message' => 'Product List',
+            'data' => $products,
+        ]);
+    }
+
+    public function show($id)
+    {
+        $products = Product::with('variants.variantImage', 'product_tags', 'productStock', 'productdetails', 'variantImage')->where('id', $id)->first();
+
+        return response()->json([
+            'status' => '200',
+            'message' => 'Product Search',
+            'data' => $products,
+            'ID' => $id,
+        ]);
+    }
+
 
 }
 

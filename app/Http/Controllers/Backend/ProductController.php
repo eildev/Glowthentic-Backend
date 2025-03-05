@@ -664,27 +664,5 @@ class ProductController extends Controller
 
 
     //rest Api Start
-    public function viewAll()
-    {
-
-        $products = Product::orderByDesc('id')->with('variants.variantImage', 'product_tags', 'productStock', 'productdetails', 'variantImage')->where('status', 1)->get();
-        // dd($products);
-        return response()->json([
-            'status' => '200',
-            'message' => 'Product List',
-            'data' => $products,
-        ]);
-    }
-
-    public function show($id)
-    {
-        $products = Product::with('variants.variantImage', 'product_tags', 'productStock', 'productdetails', 'variantImage')->where('id', $id)->first();
-
-        return response()->json([
-            'status' => '200',
-            'message' => 'Product Search',
-            'data' => $products,
-            'ID' => $id,
-        ]);
-    }
+   
 }

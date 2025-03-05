@@ -157,7 +157,7 @@ $(document).on('click', '.remove-row', function () {
                 if(response.status == 200){
                     let updateStock=response.updatestock;
                     toastr.success("Stock Updated Successfully");
-                   
+                    window.location.href = "{{ route('stock.view') }}";
                     updateStock.forEach(function(stock){
                         $('.stock-update').text(stock.stock_quantity);
                     })

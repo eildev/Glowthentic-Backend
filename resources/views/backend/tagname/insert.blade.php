@@ -4,6 +4,12 @@
         <div class="row">
             <div class="col-md-8 offset-md-2">
                 <div class="card border-top border-0 border-3 border-info">
+            @if (session('success'))
+                <div class="alert alert-success">
+                    {{ session('success') }}
+                </div>
+            @endif
+
                     <form action="{{ Route('tagname.store') }}" method="POST">
                         @csrf
                         <div class="card-body">
@@ -46,4 +52,5 @@
         </div>
         <!--end row-->
     </div>
+
 @endsection

@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 use App\Models\TagName;
 use Exception;
-
+use Toastr;
 class TagNameController extends Controller
 {
 
@@ -46,7 +46,8 @@ class TagNameController extends Controller
         $tagname = new TagName;
         $tagname->tagName = $request->tagname;
         $tagname->save();
-        return back()->with('success', 'Successfully Saved Tag');
+   
+        return redirect()->back()->with('success', 'Successfully Saved Tag');
     }
 
     // tagname View function

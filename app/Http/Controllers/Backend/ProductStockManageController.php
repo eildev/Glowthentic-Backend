@@ -26,7 +26,9 @@ class ProductStockManageController extends Controller
 
     public function getVariantRow($id){
         $variant = Variant::where('id', $id)->with('product','productStock')->first();
-        $stockQuantity=$variant->productStock->StockQuantity;
+
+        $stockQuantity=$variant->productStock->StockQuantity??0;
+        // dd($stockQuantity);
         return response()->json([
            'status' => 200,
            'variant' => $variant,

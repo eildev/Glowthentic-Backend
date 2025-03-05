@@ -117,7 +117,6 @@ class ProductPromotionController extends Controller
     }
 
     //rest Api
-
     public function show($id){
         $productPromotion = ProductPromotion::find($id);
         return response()->json([
@@ -135,4 +134,5 @@ class ProductPromotionController extends Controller
             'variant'=>$variant
         ]);
     }
+
 }
