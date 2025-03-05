@@ -18,39 +18,47 @@ class ApiProductController extends Controller
         try {
             $searchTerm = $request->input('q');
 
-
-            $categories = Category::where('categoryName', 'like', "%{$searchTerm}%")->get(['id', 'categoryName']);
+            // Fetch up to 10 categories matching the search term
+            $categories = Category::where('categoryName', 'like', "%{$searchTerm}%")
+                ->take(10) // Limit to 10 categories
+                ->get(['id', 'categoryName']);
             $categoryIds = $categories->pluck('id');
 
-
-            $brands = Brand::where('BrandName', 'like', "%{$searchTerm}%")->get(['id', 'BrandName']);
+            // Fetch up to 10 brands matching the search term
+            $brands = Brand::where('BrandName', 'like', "%{$searchTerm}%")
+                ->take(10) // Limit to 10 brands
+                ->get(['id', 'BrandName']);
             $brandIds = $brands->pluck('id');
 
-            $tags = TagName::where('tagName', 'like', "%{$searchTerm}%")->get(['id', 'tagName']);
+            // Fetch up to 10 tags matching the search term
+            $tags = TagName::where('tagName', 'like', "%{$searchTerm}%")
+                ->take(10) // Limit to 10 tags
+                ->get(['id', 'tagName']);
             $tagIds = $tags->pluck('id');
 
-
+            // Fetch up to 10 products matching the search term or related filters
             $products = Product::with([
-                    'variants.variantImage',
-                    'product_tags.tag',
-                    'productStock',
-                    'productdetails',
-                    'variantImage'
-                ])
+                'variants.variantImage',
+                'product_tags.tag',
+                'productStock',
+                'productdetails',
+                'variantImage'
+            ])
                 ->where('product_name', 'like', "%{$searchTerm}%")
                 ->orWhereIn('category_id', $categoryIds)
                 ->orWhereIn('brand_id', $brandIds)
                 ->orWhereHas('product_tags', function ($query) use ($tagIds) {
                     $query->whereIn('product_tags.tag_id', $tagIds);
                 })
+                ->take(10) // Limit to 10 products
                 ->get();
 
+            // Return the response with limited results
             return response()->json([
                 'products' => $products,
                 'searchTerm' => $searchTerm,
                 'categories' => $categories,
                 'brands' => $brands,
-                'tags' => $tags,              
                 'message' => count($products) ? 'Search Results Found' : 'No Results Found',
             ]);
         } catch (\Exception $e) {
@@ -62,7 +70,8 @@ class ApiProductController extends Controller
     }
 
 
-    public function filter(Request $request) {
+    public function filter(Request $request)
+    {
         try {
             $categoryIds = $request->input('category_id', []);
             $brandIds = $request->input('brand_id', []);
@@ -84,34 +93,34 @@ class ApiProductController extends Controller
                 'productdetails',
                 'variantImage'
             ])
-            ->where(function ($query) use ($categoryIds, $brandIds, $tagIds) {
-                if (!empty($categoryIds)) {
-                    $query->orWhereIn('category_id', $categoryIds);
-                }
-                if (!empty($brandIds)) {
-                    $query->orWhereIn('brand_id', $brandIds);
-                }
-                if (!empty($tagIds)) {
-                    $query->orWhereHas('product_tags', function ($subQuery) use ($tagIds) {
-                        $subQuery->whereIn('product_tags.tag_id', $tagIds);
+                ->where(function ($query) use ($categoryIds, $brandIds, $tagIds) {
+                    if (!empty($categoryIds)) {
+                        $query->orWhereIn('category_id', $categoryIds);
+                    }
+                    if (!empty($brandIds)) {
+                        $query->orWhereIn('brand_id', $brandIds);
+                    }
+                    if (!empty($tagIds)) {
+                        $query->orWhereHas('product_tags', function ($subQuery) use ($tagIds) {
+                            $subQuery->whereIn('product_tags.tag_id', $tagIds);
+                        });
+                    }
+                })
+                ->when($minPrice !== null || $maxPrice !== null, function ($query) use ($minPrice, $maxPrice) {
+                    $query->whereHas('variants', function ($variantQuery) use ($minPrice, $maxPrice) {
+                        if ($minPrice !== null) {
+                            $variantQuery->where('regular_price', '>=', $minPrice);
+                        }
+                        if ($maxPrice !== null) {
+                            $variantQuery->where('regular_price', '<=', $maxPrice);
+                        }
                     });
-                }
-            })
-            ->when($minPrice !== null || $maxPrice !== null, function ($query) use ($minPrice, $maxPrice) {
-                $query->whereHas('variants', function ($variantQuery) use ($minPrice, $maxPrice) {
-                    if ($minPrice !== null) {
-                        $variantQuery->where('regular_price', '>=', $minPrice);
-                    }
-                    if ($maxPrice !== null) {
-                        $variantQuery->where('regular_price', '<=', $maxPrice);
-                    }
+                })
+                ->get()
+                ->map(function ($product) {
+                    $product->lowest_price = $product->variants->min('regular_price');
+                    return $product;
                 });
-            })
-            ->get()
-            ->map(function ($product) {
-                $product->lowest_price = $product->variants->min('regular_price');
-                return $product;
-            });
 
             return response()->json([
                 'products' => $product,
@@ -122,7 +131,6 @@ class ApiProductController extends Controller
                 'maxPrice' => $maxPrice,
                 'message' => count($product) ? 'Filter Results Found' : 'No Results Found',
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'An error occurred while processing your request.',
@@ -155,8 +163,4 @@ class ApiProductController extends Controller
             'ID' => $id,
         ]);
     }
-
-
 }
-
-
