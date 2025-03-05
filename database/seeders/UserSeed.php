@@ -24,10 +24,17 @@ class UserSeed extends Seeder
             ],
             [
                 'id' => 2,
-                'name' => "user",
+                'name' => "User",
                 'email' => 'user@gmail.com',
                 'password' => Hash::make('12345678'),
                 'role' => 'user'
+            ],
+            [
+                'id' => 3,
+                'name' => "Super Admin",
+                'email' => 'superadmin@gmail.com',
+                'password' => Hash::make('12345678'),
+                'role' => 'admin'
             ],
         ];
 
