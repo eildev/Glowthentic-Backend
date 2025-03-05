@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\ApiBlogCategoryController;
 use App\Http\Controllers\API\ApiBlogCommentController;
@@ -9,27 +8,15 @@ use App\Http\Controllers\API\ApiBrandController;
 use App\Http\Controllers\API\ApiCategoryController;
 use App\Http\Controllers\API\ApiComboProductController;
 use App\Http\Controllers\API\ApiContactUsController;
-
 use App\Http\Controllers\API\ApiHomeBannerController;
-use App\Http\Controllers\CartController;
 use App\Http\Controllers\API\ApiOfferBannerController;
-use App\Http\Controllers\PostController;
 use App\Http\Controllers\API\ApiOrderController;
-
 use App\Http\Controllers\API\ApiProductPromotionController;
-use App\Http\Controllers\ReportController;
-use App\Http\Controllers\VendorController;
 use App\Http\Controllers\API\ApiSubscribeController;
 use App\Http\Controllers\API\ApiTagNameController;
-
-use App\Http\Controllers\Frontend\ContactUsController;
-use App\Http\Controllers\Frontend\SubscribeController;
 use App\Http\Controllers\API\ApiProductController;
+use App\Http\Controllers\API\AuthController;
 
-
-// Route::get('/user', function (Request $request) {
-//     return $request->user();
-// })->middleware('auth:sanctum');
 
 // Open Routes
 Route::post('/register', [AuthController::class, "register"]);
