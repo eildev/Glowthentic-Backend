@@ -15,10 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id')->unsigned();
             $table->unsignedBigInteger('product_id')->unsigned();
-<<<<<<< HEAD
             $table->unsignedBigInteger('variant_id')->unsigned();
-=======
->>>>>>> e78c430a4bdf7664f72f49fa548e4ee83aad0a20
             $table->tinyInteger('loved')->default(1);
 
             $table->foreign('user_id')
@@ -31,14 +28,11 @@ return new class extends Migration
                 ->on('products')
                 ->onDelete('cascade');
 
-<<<<<<< HEAD
                 $table->foreign('variant_id')
                 ->references('id')
                 ->on('variants')
                 ->onDelete('cascade');
 
-=======
->>>>>>> e78c430a4bdf7664f72f49fa548e4ee83aad0a20
             $table->timestamps(0);
             $table->softDeletes();
         });

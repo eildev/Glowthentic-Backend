@@ -27,7 +27,6 @@ class HomeBannerController extends Controller
         ]);
 
         if ($request->image) {
-<<<<<<< HEAD
             // $imageName = rand() . '.' . $request->image->extension();
             // $request->image->move(public_path('uploads/banner/'), $imageName);
             $imageName = rand() . '.' . $request->image->extension();
@@ -35,37 +34,22 @@ class HomeBannerController extends Controller
             $request->image->move($path,$imageName);
              $image=$path.$imageName;
 
-=======
-            $imageName = rand() . '.' . $request->image->extension();
-            $request->image->move(public_path('uploads/banner/'), $imageName);
->>>>>>> e78c430a4bdf7664f72f49fa548e4ee83aad0a20
             $banner = new HomeBanner;
             $banner->title = $request->title;
             $banner->short_description = $request->short_description;
             $banner->long_description = $request->long_description;
             $banner->link = $request->link;
-<<<<<<< HEAD
             $banner->image =$image;
-=======
-            $banner->image = $imageName;
->>>>>>> e78c430a4bdf7664f72f49fa548e4ee83aad0a20
             $banner->save();
             if ($request->galleryimages) {
                 $allImages = $request->galleryimages;
                 foreach ($allImages as $galleryImage) {
                     $imageName = rand() . '.' . $galleryImage->extension();
-<<<<<<< HEAD
                     $path= 'uploads/banner/gallery/';
                     $galleryImage->move(public_path('uploads/banner/gallery/'), $imageName);
                     $ImageGallery = new ImageGallery;
                     $ImageGallery->banner_id = $banner->id;
                     $ImageGallery->image =$path.$imageName;
-=======
-                    $galleryImage->move(public_path('uploads/banner/gallery/'), $imageName);
-                    $ImageGallery = new ImageGallery;
-                    $ImageGallery->banner_id = $banner->id;
-                    $ImageGallery->image = $imageName;
->>>>>>> e78c430a4bdf7664f72f49fa548e4ee83aad0a20
                     $ImageGallery->save();
                 }
             }

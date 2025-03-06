@@ -20,11 +20,8 @@ class WishList extends Model
     {
         return $this->belongsTo(Product::class, 'product_id', 'id');
     }
-<<<<<<< HEAD
 
     function variant(){
         return $this->belongsTo(Variant::class, 'variant_id', 'id');
     }
-=======
->>>>>>> e78c430a4bdf7664f72f49fa548e4ee83aad0a20
 }
