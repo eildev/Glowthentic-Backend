@@ -45,10 +45,11 @@ class HomeBannerController extends Controller
                 $allImages = $request->galleryimages;
                 foreach ($allImages as $galleryImage) {
                     $imageName = rand() . '.' . $galleryImage->extension();
+                    $path= 'uploads/banner/gallery/';
                     $galleryImage->move(public_path('uploads/banner/gallery/'), $imageName);
                     $ImageGallery = new ImageGallery;
                     $ImageGallery->banner_id = $banner->id;
-                    $ImageGallery->image = $imageName;
+                    $ImageGallery->image =$path.$imageName;
                     $ImageGallery->save();
                 }
             }

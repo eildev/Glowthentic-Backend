@@ -9,7 +9,7 @@ use App\Models\HomeBanner;
 class ApiHomeBannerController extends Controller
 {
     public function viewAll(){
-        $banners = HomeBanner::all();
+        $banners = HomeBanner::with('gallery')->get();
         return response()->json([
             'banners' => $banners,
             'status' => '200',
@@ -18,7 +18,7 @@ class ApiHomeBannerController extends Controller
     }
 
     public function show($id){
-        $banner = HomeBanner::findOrFail($id);
+        $banner = HomeBanner::with('gallery')->findOrFail($id);
         return response()->json([
             'banner' => $banner,
             'status' => '200',

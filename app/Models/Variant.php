@@ -37,4 +37,8 @@ class Variant extends Model
     {
         return $this->hasMany(VariantImageGallery::class, 'variant_id', 'id');
     }
+
+    public function wishlist(){
+        return $this->hasMany(WishList::class, 'variant_id', 'id');
+    }
 }
