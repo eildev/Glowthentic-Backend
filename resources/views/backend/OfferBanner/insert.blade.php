@@ -56,7 +56,19 @@
                                     </div>
                                 </div>
 
+                                <div class="row mb-3">
+                                    <label for="inputEnterYourName" class="col-sm-3 col-form-label">Link Button Name</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" name="link_button"
+                                            class="form-control @error('title') is-invalid  @enderror"
+                                            id="inputEnterYourName" value="{{ old('title') }}"
+                                            placeholder="Enter Banner Title">
+                                        @error('title')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
 
+                                </div>
                                 <div class="row mb-3">
                                     <label for="inputEnterYourName" class="col-sm-3 col-form-label">Banner Link</label>
                                     <div class="col-sm-9">
@@ -69,6 +81,45 @@
                                         @enderror
                                     </div>
                                 </div>
+
+
+
+                                <div class="row mb-3">
+                                    <label for="inputEnterYourName" class="col-sm-3 col-form-label">Cart Status</label>
+                                    <div class="col-sm-9">
+                                        <select id="" name="status" class="form-select selectCategory">
+                                            <option selected>Choose...</option>
+                                            <option value="cart1">CART 1</option>
+                                            <option value="cart2">CART 2</option>
+                                            <option value="cart3">CART 3</option>
+                                            <option value="cart4">CART 4</option>
+                                            <option value="cart5">CART 5</option>
+                                        </select>
+                                        @error('parent_id')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+
+                                </div>
+
+
+
+                             <div class="row mb-3">
+                                    <label for="image" class="col-sm-3 col-form-label">Gallery Images </label>
+                                    <div class="col-sm-9">
+                                        <input type="file" id="galleryimages" class="form-control" name="galleryimages[]"
+                                            multiple>
+                                        <div class="my-1">
+                                            <i>
+                                                <b>Note:</b> <span class="text-danger">Please provide 142 X 83 size image for cart 1 it's not applicable for other cart</span>
+
+                                            </i>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
 
                                 <div class="row mb-3">
                                     <label for="image" class="col-sm-3 col-form-label">Banner Thumbnail </label>

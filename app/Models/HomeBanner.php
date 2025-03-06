@@ -11,8 +11,8 @@ class HomeBanner extends Model
     use HasFactory, SoftDeletes;
     protected $guarded = [];
 
-    public function gallery()
-    {
-        return $this->hasMany(ImageGallery::class, 'banner_id', 'id');
-    }
+    // public function gallery()
+    // {
+    //     return $this->hasMany(ImageGallery::class, 'banner_id', 'id');
+    // }
 }

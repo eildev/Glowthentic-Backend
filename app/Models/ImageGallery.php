@@ -14,4 +14,8 @@ class ImageGallery extends Model
     {
         return $this->belongsTo(HomeBanner::class, 'banner_id', 'id');
     }
+
+    function offerBanners(){
+        return $this->belongsTo(OfferBanner::class, 'offer_banner_id', 'id');
+    }
 }

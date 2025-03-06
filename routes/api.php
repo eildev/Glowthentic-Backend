@@ -16,7 +16,7 @@ use App\Http\Controllers\API\ApiSubscribeController;
 use App\Http\Controllers\API\ApiTagNameController;
 use App\Http\Controllers\API\ApiProductController;
 use App\Http\Controllers\API\AuthController;
-
+use App\Http\Controllers\API\ApiWishListController;
 
 // Open Routes
 Route::post('/register', [AuthController::class, "register"]);
@@ -108,6 +108,11 @@ Route::controller(ApiSubscribeController::class)->group(function () {
 
 Route::controller(ApiContactUsController::class)->group(function () {
     Route::post('/contact-us/save', 'contactSave');
+});
+
+Route::controller(ApiWishListController::class)->group(function () {
+    Route::post('/wishlist/add', 'addWishList');
+    Route::get('/wishlist/{user_id}','getWishList');
 });
 
 // Route::get('/product', [App\Http\Controllers\Backend\ProductController::class, 'index']);

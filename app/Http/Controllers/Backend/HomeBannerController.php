@@ -41,18 +41,18 @@ class HomeBannerController extends Controller
             $banner->link = $request->link;
             $banner->image =$image;
             $banner->save();
-            if ($request->galleryimages) {
-                $allImages = $request->galleryimages;
-                foreach ($allImages as $galleryImage) {
-                    $imageName = rand() . '.' . $galleryImage->extension();
-                    $path= 'uploads/banner/gallery/';
-                    $galleryImage->move(public_path('uploads/banner/gallery/'), $imageName);
-                    $ImageGallery = new ImageGallery;
-                    $ImageGallery->banner_id = $banner->id;
-                    $ImageGallery->image =$path.$imageName;
-                    $ImageGallery->save();
-                }
-            }
+            // if ($request->galleryimages) {
+            //     $allImages = $request->galleryimages;
+            //     foreach ($allImages as $galleryImage) {
+            //         $imageName = rand() . '.' . $galleryImage->extension();
+            //         $path= 'uploads/banner/gallery/';
+            //         $galleryImage->move(public_path('uploads/banner/gallery/'), $imageName);
+            //         $ImageGallery = new ImageGallery;
+            //         $ImageGallery->banner_id = $banner->id;
+            //         $ImageGallery->image =$path.$imageName;
+            //         $ImageGallery->save();
+            //     }
+            // }
             return back()->with('success', 'banner Successfully Saved');
         }
     }
@@ -85,26 +85,28 @@ class HomeBannerController extends Controller
                 'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             ]);
             $imageName = rand() . '.' . $request->image->extension();
-            $request->image->move(public_path('uploads/banner/'), $imageName);
+            $path= 'uploads/banner/';
+            $request->image->move($path,$imageName);
+             $image=$path.$imageName;
             $banner = HomeBanner::findOrFail($id);
             unlink(public_path('uploads/banner/') . $banner->image);
             $banner->title = $request->title;
             $banner->short_description = $request->short_description;
             $banner->long_description = $request->long_description;
             $banner->link = $request->link;
-            $banner->image = $imageName;
+            $banner->image = $image;
             $banner->update();
-            if ($request->galleryimages) {
-                $allImages = $request->galleryimages;
-                foreach ($allImages as $galleryImage) {
-                    $imageName = rand() . '.' . $galleryImage->extension();
-                    $galleryImage->move(public_path('uploads/banner/gallery/'), $imageName);
-                    $ImageGallery = new ImageGallery;
-                    $ImageGallery->banner_id = $banner->id;
-                    $ImageGallery->image = $imageName;
-                    $ImageGallery->update();
-                }
-            }
+            // if ($request->galleryimages) {
+            //     $allImages = $request->galleryimages;
+            //     foreach ($allImages as $galleryImage) {
+            //         $imageName = rand() . '.' . $galleryImage->extension();
+            //         $galleryImage->move(public_path('uploads/banner/gallery/'), $imageName);
+            //         $ImageGallery = new ImageGallery;
+            //         $ImageGallery->banner_id = $banner->id;
+            //         $ImageGallery->image = $imageName;
+            //         $ImageGallery->update();
+            //     }
+            // }
             return back()->with('success', 'banner Successfully Saved');
         } else {
             $request->validate([

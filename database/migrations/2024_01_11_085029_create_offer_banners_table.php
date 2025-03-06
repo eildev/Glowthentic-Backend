@@ -17,8 +17,9 @@ return new class extends Migration
             $table->string('title', 100);
             $table->string('short_description', 100);
             $table->string('link', 255);
+            $table->string('link_button', 255);
             $table->string('image', 200);
-            $table->tinyInteger('status')->default(1);
+            $table->enum('status',['cart1','cart2','cart3','cart4','cart5']);
             $table->timestamps(0);
             $table->softDeletes();
         });

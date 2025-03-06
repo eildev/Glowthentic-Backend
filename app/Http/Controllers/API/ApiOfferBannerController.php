@@ -8,20 +8,39 @@ use App\Models\OfferBanner;
 class ApiOfferBannerController extends Controller
 {
     public function viewAll(){
-        $banners = OfferBanner::all();
-        return response()->json([
-            'offerbanners' => $banners,
-            'status' => '200',
-            'message' => 'Offerbanner fetched successfully',
-        ]);
+        try{
+            $banners = OfferBanner::with('image')->get();
+            return response()->json([
+                'offerbanners' => $banners,
+                'status' => '200',
+                'message' => 'Offerbanner fetched successfully',
+            ]);
+        }
+      catch(\Exception $e){
+            return response()->json([
+                'status' => '500',
+                'message' => 'Something went wrong',
+            ]);
+        }
     }
 
     public function show($id){
-        $banner = OfferBanner::find($id);
-        return response()->json([
-            'offerbanner' => $banner,
-            'status' => '200',
-            'message' => 'offerbanner Search successfully',
-        ]);
+
+        try{
+            $banner = OfferBanner::with('image')->find($id);
+            return response()->json([
+                'offerbanner' => $banner,
+                'status' => '200',
+                'message' => 'offerbanner Search successfully',
+            ]);
+        }
+        catch(\Exception $e){
+            return response()->json([
+                'status' => '500',
+                'message' => 'Something went wrong',
+                'error' => $e->getMessage(),
+            ]);
+        }
+
     }
 }
