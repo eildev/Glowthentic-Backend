@@ -52,7 +52,7 @@
                                     <div class="col-sm-9">
                                         <input type="text" name="link_button"
                                             class="form-control @error('title') is-invalid  @enderror"
-                                            id="inputEnterYourName" value="{{ old('title') }}"
+                                            id="inputEnterYourName" value="{{ $bannerContent->link_button }}"
                                             placeholder="Enter Banner Title">
                                         @error('title')
                                             <span class="text-danger">{{ $message }}</span>
@@ -81,11 +81,12 @@
                                     <div class="col-sm-9">
                                         <select id="" name="status" class="form-select selectCategory">
                                             <option selected>Choose...</option>
-                                            <option value="cart1">CART 1</option>
-                                            <option value="cart2">CART 2</option>
-                                            <option value="cart3">CART 3</option>
-                                            <option value="cart4">CART 4</option>
-                                            <option value="cart5">CART 5</option>
+                                            <option value="cart1" {{ $bannerContent->status == 'cart1' ? 'selected' : '' }}>CART 1</option>
+                                            <option value="cart2" {{ $bannerContent->status == 'cart2' ? 'selected' : '' }}>CART 2</option>
+                                            <option value="cart3" {{ $bannerContent->status == 'cart3' ? 'selected' : '' }}>CART 3</option>
+                                            <option value="cart4" {{ $bannerContent->status == 'cart4' ? 'selected' : '' }}>CART 4</option>
+                                            <option value="cart5" {{ $bannerContent->status == 'cart5' ? 'selected' : '' }}>CART 5</option>
+
                                         </select>
                                         @error('parent_id')
                                             <span class="text-danger">{{ $message }}</span>
@@ -131,7 +132,7 @@
                                         @enderror
                                         <div class="mt-3">
                                             <img id="showImage" class="" height="150" width="200"
-                                                src="{{ asset('uploads/offer_banner/' . $bannerContent->image) }}"
+                                                src="{{ asset($bannerContent->image) }}"
                                                 alt="banner image">
 
                                         </div>

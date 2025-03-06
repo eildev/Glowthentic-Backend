@@ -11,7 +11,7 @@ class OfferBanner extends Model
     use HasFactory, SoftDeletes;
     protected $guarded = [];
 
-    public function image(){
+    public function images(){
         return $this->hasMany(ImageGallery::class,'offer_banner_id','id');
     }
 }

@@ -9,7 +9,7 @@ class ApiOfferBannerController extends Controller
 {
     public function viewAll(){
         try{
-            $banners = OfferBanner::with('image')->get();
+            $banners = OfferBanner::with('images')->get();
             return response()->json([
                 'offerbanners' => $banners,
                 'status' => '200',
@@ -27,7 +27,7 @@ class ApiOfferBannerController extends Controller
     public function show($id){
 
         try{
-            $banner = OfferBanner::with('image')->find($id);
+            $banner = OfferBanner::with('images')->find($id);
             return response()->json([
                 'offerbanner' => $banner,
                 'status' => '200',
