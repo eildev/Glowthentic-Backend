@@ -20,36 +20,14 @@ return new class extends Migration
             $table->string('product_feature')->nullable();
             $table->string('product_name');
             $table->string('unit_id')->nullable();
-            $table->string('slug', 200);
+            $table->string('slug', 200)->index();
             $table->bigInteger('created_by')->nullable();
-            // $table->string('short_desc');
-            // $table->string('long_desc');
-
-            // $table->string('product_image');
             $table->string('sku');
-            // $table->bigInteger('tag_id')->nullable();
-            $table->tinyInteger('status')->default(1);
-
-
+            $table->tinyInteger('status')->default(1)->index();
             $table->foreign('category_id')
                 ->references('id')
                 ->on('categories')
                 ->onDelete('cascade');
-
-            // $table->foreign('unit_id')
-            // ->references('id')
-            // ->on('units')
-            // ->onDelete('cascade');
-
-            // $table->foreign('tag_id')
-            // ->references('id')
-            // ->on('Product_tags')
-            // ->onDelete('cascade');
-
-            // $table->foreign('subcategory_id')
-            //     ->references('id')
-            //     ->on('categories')
-            //     ->onDelete('cascade');
             $table->foreign('brand_id')
                 ->references('id')
                 ->on('brands')

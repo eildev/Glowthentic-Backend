@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('image_galleries', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('offer_banner_id')->unsigned();
+            $table->unsignedBigInteger('offer_banner_id');
             $table->string('image', 100);
             $table->foreign('offer_banner_id')
                 ->references('id')
