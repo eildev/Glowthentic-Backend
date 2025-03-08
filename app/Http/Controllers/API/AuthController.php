@@ -227,6 +227,7 @@ class AuthController extends Controller
     }
     // POST [Auth: Token]
     public function profile(){
+        // dd("hello");
         $userData = Auth::user();
         $id = Auth::user()->id;
         return response()->json([

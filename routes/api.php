@@ -17,7 +17,7 @@ use App\Http\Controllers\API\ApiTagNameController;
 use App\Http\Controllers\API\ApiProductController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\ApiWishListController;
-
+use App\Http\Controllers\API\ApiUserManageController;
 // Open Routes
 Route::post('/register', [AuthController::class, "register"]);
 Route::post('/login', [AuthController::class, "login"]);
@@ -30,15 +30,14 @@ Route::group([
 ], function(){
     Route::get("/profile", [AuthController::class, "profile"]);
     Route::get("/logout", [AuthController::class, "logout"]);
+
+    Route::put("user/details/{id}",[ApiUserManageController::class, 'update']);
 });
 
 
 
 Route::controller(ApiUserManageController::class)->group(function(){
-   Route::get('/user/details/create', 'DetailsStore')->name('userDetails.Store');
-    Route::get('/user/{id}', 'show')->name('user.show');
-    Route::post('/user/update', 'update')->name('user.update');
-    Route::post('/user/delete', 'delete')->name('user.delete');
+   Route::post('/user/details/create', 'UserDetailsStore')->name('userDetails.Store');
 });
 Route::controller(ApiCategoryController::class)->group(function () {
     Route::get('/category', 'view')->name('category.view');
