@@ -87,7 +87,7 @@
                                 <div class="row mb-3">
                                     <label for="inputEnterYourName" class="col-sm-3 col-form-label">Cart Status</label>
                                     <div class="col-sm-9">
-                                        <select id="" name="status" class="form-select selectCategory">
+                                        <select id="" name="status" class="form-select selectstatus">
                                             <option selected>Choose...</option>
                                             <option value="cart1">CART 1</option>
                                             <option value="cart2">CART 2</option>
@@ -104,7 +104,7 @@
 
 
 
-                             <div class="row mb-3">
+                             <div class="row mb-3 galleryimage" style="display: none;">
                                     <label for="image" class="col-sm-3 col-form-label">Gallery Images </label>
                                     <div class="col-sm-9">
                                         <input type="file" id="galleryimages" class="form-control" name="galleryimages[]"
@@ -156,4 +156,23 @@
         </div>
         <!--end row-->
     </div>
+
+    <script>
+        $(document).ready(function(){
+            $('.galleryimage').hide();
+
+            $(document).on('change', '.selectstatus', function(){
+                var cart = $(this).val();
+                console.log("Selected cart: ", cart);
+
+                if(cart === 'cart1'){
+                    $('.galleryimage').fadeIn();
+                } else {
+                    $('.galleryimage').fadeOut();
+                }
+            });
+        });
+    </script>
+
+
 @endsection

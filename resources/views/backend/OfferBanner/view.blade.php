@@ -7,9 +7,14 @@
                 <div class="card-body">
                     <div class="card-title d-flex justify-content-between align-items-center">
                         <h5 class="mb-0 text-info">Manage Category</h5>
+
+                        @if($all_banner->count() <= 5)
                         <a href="{{ route('offerbanner') }}" class="btn btn-info btn-sm text-light ">
                             <i class='bx bx-plus'></i>
                         </a>
+                     @endif
+
+                   
                     </div>
                     <hr>
                     <div class="table-responsive">

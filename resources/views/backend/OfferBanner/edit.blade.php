@@ -79,7 +79,7 @@
                                 <div class="row mb-3">
                                     <label for="inputEnterYourName" class="col-sm-3 col-form-label">Cart Status</label>
                                     <div class="col-sm-9">
-                                        <select id="" name="status" class="form-select selectCategory">
+                                        <select id="" name="status" class="form-select selectstatus">
                                             <option selected>Choose...</option>
                                             <option value="cart1" {{ $bannerContent->status == 'cart1' ? 'selected' : '' }}>CART 1</option>
                                             <option value="cart2" {{ $bannerContent->status == 'cart2' ? 'selected' : '' }}>CART 2</option>
@@ -96,7 +96,7 @@
                                 </div>
 
 
-
+                              @if($bannerContent->status == 'cart1')
                              <div class="row mb-3">
                                     <label for="image" class="col-sm-3 col-form-label">Gallery Images </label>
                                     <div class="col-sm-9">
@@ -108,10 +108,28 @@
 
                                             </i>
                                         </div>
+                                        <div>
+                                            @foreach ($bannerContent->images as $image)
+                                                <div style="display: inline-block; margin: 5px; position: relative;">
+                                                    <img src="{{ asset($image->image) }}" height="50" width="50" alt="">
+
+                                                    <form action="{{ route('offerBanerimage.delete', $image->id) }}" method="POST" style="display: inline;">
+                                                        @csrf
+
+                                                        <button type="submit" onclick="return confirm('Are you sure you want to delete this image?')"
+                                                                style="position: absolute; top: 0; right: 0; background: red; color: white; border: none; cursor: pointer;">
+                                                            &times;
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            @endforeach
+                                        </div>
+
                                     </div>
 
                                 </div>
 
+                                 @endif
 
 
 
@@ -136,7 +154,10 @@
                                                 alt="banner image">
 
                                         </div>
+
+
                                     </div>
+
                                 </div>
 
                                 <div class="row">
@@ -153,4 +174,21 @@
         </div>
         <!--end row-->
     </div>
+
+    <script>
+        $(document).ready(function(){
+            $('.galleryimage').hide();
+
+            $(document).on('change', '.selectstatus', function(){
+                var cart = $(this).val();
+                console.log("Selected cart: ", cart);
+
+                if(cart === 'cart1'){
+                    $('.galleryimage').fadeIn();
+                } else {
+                    $('.galleryimage').fadeOut();
+                }
+            });
+        });
+    </script>
 @endsection
