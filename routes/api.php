@@ -32,6 +32,14 @@ Route::group([
     Route::get("/logout", [AuthController::class, "logout"]);
 });
 
+
+
+Route::controller(ApiUserManageController::class)->group(function(){
+   Route::get('/user/details/create', 'DetailsStore')->name('userDetails.Store');
+    Route::get('/user/{id}', 'show')->name('user.show');
+    Route::post('/user/update', 'update')->name('user.update');
+    Route::post('/user/delete', 'delete')->name('user.delete');
+});
 Route::controller(ApiCategoryController::class)->group(function () {
     Route::get('/category', 'view')->name('category.view');
     Route::get('/category/{id}', 'show')->name('category.show');

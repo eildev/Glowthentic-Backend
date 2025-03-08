@@ -13,6 +13,13 @@ return new class extends Migration
     {
         Schema::create('billing_information', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->string('session_id')->nullable();
+            $table->boolean('is_default');
+            $table->enum('status','draft')->nullable();
+            $table->enum('')
+
+            ENUM('card', 'mobile_banking', 'COD')
             $table->timestamps();
         });
     }
