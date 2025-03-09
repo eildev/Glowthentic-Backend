@@ -100,7 +100,51 @@ class ApiUserManageController extends Controller
         }
     }
 
-    public function update($id){
-        dd("hello");
+    public function update($id ,Request $request){
+        try{
+            $validator = Validator::make($request->all(), [
+                'full_name' => 'required|string',
+                'phone_number' => 'required|string',
+                'address' => 'required|string',
+                'city' => 'required|string',
+                'postal_code' => 'required|string',
+                'country' => 'required|string',
+            ]);
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 422,
+                    'errors' => $validator->errors(),
+                    'message' => 'Validation Failed',
+                ], 422);
+            }
+            $userDetails = UserDetails::where('user_id', $id)->first();
+            if($userDetails){
+              $userDetails->full_name= $request->full_name;
+              $userDetails->phone_number= $request->phone_number;
+              $userDetails->address= $request->address;
+              $userDetails->city= $request->city;
+              $userDetails->postal_code= $request->postal_code;
+              $userDetails->country= $request->country;
+              $userDetails->save();
+
+           }
+           return response()->json([
+                'status' => 200,
+                'user' => $userDetails,
+                'message' => 'User Details Updated Successfully'
+            ]);
+
+        }
+        catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+
     }
+
+
+
+
 }

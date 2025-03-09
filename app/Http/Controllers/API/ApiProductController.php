@@ -143,7 +143,7 @@ class ApiProductController extends Controller
     public function viewAll()
     {
 
-        try{
+        try {
             $products = Product::orderByDesc('id')->with('variants.variantImage', 'product_tags', 'productStock', 'productdetails', 'variantImage')->where('status', 1)->get();
             // dd($products);
             return response()->json([
@@ -151,8 +151,7 @@ class ApiProductController extends Controller
                 'message' => 'Product List',
                 'data' => $products,
             ]);
-        }
-     catch (\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'status' => '500',
                 'message' => 'Product Not Found',
@@ -164,23 +163,20 @@ class ApiProductController extends Controller
 
     public function show($slug)
     {
-        try{
+        try {
             $products = Product::with('variants.variantImage', 'product_tags', 'productStock', 'productdetails', 'variantImage')->where('slug', $slug)->first();
 
             return response()->json([
                 'status' => '200',
                 'message' => 'Product Search',
                 'data' => $products,
-                'ID' => $id,
             ]);
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'status' => '500',
                 'message' => 'Product Not Found',
                 'error' => $e->getMessage(),
             ]);
         }
-
     }
 }
