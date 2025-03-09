@@ -144,10 +144,10 @@
                 <a href="{{ route('home') }}" style="color: white">Home</a>
                 <div style="height: 100%; width:1px; background:white;border:none">s</div>
                 @auth
-                    <a href="{{ !empty(Auth::user()->id) ? route('user.dashboard') : route('login') }}"
+                    <a href="{{ !empty(Auth::user()->id) ? route('user.dashboard') : route('admin.login') }}"
                         style="color: white">Account</a>
                 @else
-                    <a href="{{ !empty(Auth::user()->id) ? route('user.dashboard') : route('login') }}"
+                    <a href="{{ !empty(Auth::user()->id) ? route('user.dashboard') : route('admin.login') }}"
                         style="color: white">Login</a>
                 @endauth
             </div>

@@ -34,21 +34,19 @@ use App\Http\Controllers\Backend\CouponController;
 use App\Http\Controllers\Backend\ProductPromotionController;
 use App\Http\Controllers\Backend\ProductStockManageController;
 use App\Http\Controllers\Backend\DeliverOrderAssignController;
-Route::get('/', function () {
-    return view('frontend.index');
-})->name('home');
+// Route::get('/home', function () {
+//     return view('frontend.index');
+// })->name('home');
 
 Route::get('/admin/login', [AuthController::class, 'adminLoginPage']);
-Route::post('/admin/login', [AuthController::class, 'adminLogin'])->name('admin.login');
+Route::post('/admin/login', [AuthController::class, 'adminLogin'])->name('login');
 Route::post('/admin/logout', [AuthController::class, 'adminLogout'])->name('logout')->middleware('auth');
-Route::get('/admin/dashboard', [AuthController::class, 'dashboardView'])->middleware('auth')->name('admin.dashboard');
-// Route::get('/admin/dashboard', function () {
-//     return view('backend.admin.dashboard');
-// })->middleware('auth','role:admin')->name('admin.dashboard');
+Route::get('/', [AuthController::class, 'dashboardView'])->middleware('auth:sanctum')->name('admin.dashboard');
+
 Route::controller(AllMail::class)->group(function () {
     Route::post('/reply/mail', 'replyMail')->name('reply.mail');
 });
-Route::middleware('auth')->group(function () {
+Route::middleware('auth:sanctun')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -167,9 +165,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/combo/view', 'view');
         Route::get('/combo/view/{id}', 'viewDeatils');
         Route::post('/combo/update', 'update');
-         Route::post('/combo/delete', 'delete');
-         Route::post('/combo/status/change', 'StatusChange');
-         Route::post(' /combo/delete-image/', 'comboDeleteImage');
+        Route::post('/combo/delete', 'delete');
+        Route::post('/combo/status/change', 'StatusChange');
+        Route::post(' /combo/delete-image/', 'comboDeleteImage');
 
         // Route::post('/offerbanner/update/{id}', 'update')->name('offerbanner.update');
         // Route::get('/offerbanner/delete/{id}', 'delete')->name('offerbanner.delete');
@@ -188,8 +186,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/product/delete/{id}', 'delete')->name('product.delete');
         Route::post('/product/status/{id}', 'productStatus')->name('product.status');
         Route::get('/find/variant/{id}', 'findVariant')->name('find.variant');
-        Route::get('/product/get_variant_data','getVariant_product_id');
-        Route::post('/product/variant/store','variantProductStore');
+        Route::get('/product/get_variant_data', 'getVariant_product_id');
+        Route::post('/product/variant/store', 'variantProductStore');
 
         // Route::post('/product/variant/store', 'variantStore')->name('variant.store');
         // Route::get('/product/variant/show/{id}', 'variantShow')->name('variant.show');
@@ -201,64 +199,57 @@ Route::middleware('auth')->group(function () {
     //All Routes for Product End
 
 
-//product stock manage start
+    //product stock manage start
 
-Route::controller(ProductStockManageController::class)->group(function(){
-    Route::get('/product/stock/manage', 'index')->name('product.stock.manage');
-    //get variant
-    Route::get('get/stock/product/variant/{id}', 'getVariant');
-    Route::get(' variant/stock/product/row/{id}', 'getVariantRow');
-    Route::post('update/multiple/stock', 'updateMultipleStock');
-    Route::get('/stock/view', 'view')->name('stock.view');
-});
+    Route::controller(ProductStockManageController::class)->group(function () {
+        Route::get('/product/stock/manage', 'index')->name('product.stock.manage');
+        //get variant
+        Route::get('get/stock/product/variant/{id}', 'getVariant');
+        Route::get(' variant/stock/product/row/{id}', 'getVariantRow');
+        Route::post('update/multiple/stock', 'updateMultipleStock');
+        Route::get('/stock/view', 'view')->name('stock.view');
+    });
 
-   //all routes for combo product
+    //all routes for combo product
 
-   Route::controller(comboProductController::class)->group(function(){
-    Route::get('/combo/product', 'index')->name('combo.product.index');
-    Route::post('/combo/product/store', 'store')->name('combo.product.store');
-    Route::get('/combo/product/view', 'view')->name('combo.product.view');
-    Route::get('/combo/product/edit/{id}', 'edit')->name('combo.product.edit');
-    Route::post('/combo/product/update', 'update')->name('combo.product.update');
-    Route::post('/combo/product/delete/', 'delete')->name('combo.product.delete');
-    Route::post('/combo/product/change/status', 'statusUpdate')->name('combo.product.status');
-    Route::get('/get/product/and/combo', 'product_and_combo');
+    Route::controller(comboProductController::class)->group(function () {
+        Route::get('/combo/product', 'index')->name('combo.product.index');
+        Route::post('/combo/product/store', 'store')->name('combo.product.store');
+        Route::get('/combo/product/view', 'view')->name('combo.product.view');
+        Route::get('/combo/product/edit/{id}', 'edit')->name('combo.product.edit');
+        Route::post('/combo/product/update', 'update')->name('combo.product.update');
+        Route::post('/combo/product/delete/', 'delete')->name('combo.product.delete');
+        Route::post('/combo/product/change/status', 'statusUpdate')->name('combo.product.status');
+        Route::get('/get/product/and/combo', 'product_and_combo');
+    });
 
+    //coupon controll Route
 
-
-
-
-   });
-
-   //coupon controll Route
-
-   Route::controller(CouponController::class)->group(function(){
-    Route::get('/coupon', 'index')->name('Coupon.index');
-    Route::post('/coupon/store', 'store')->name('coupon.store');
-    Route::get('/coupon/view', 'view')->name('coupon.view');
-    Route::get('/coupon/edit/{id}', 'edit')->name('coupon.edit');
-    Route::post('/coupon/update', 'update')->name('coupon.update');
-    Route::post('/coupon/delete', 'delete')->name('coupon.delete');
-    Route::post('/coupon/status/{id}', 'statusUpdate')->name('coupon.status');
-   });
+    Route::controller(CouponController::class)->group(function () {
+        Route::get('/coupon', 'index')->name('Coupon.index');
+        Route::post('/coupon/store', 'store')->name('coupon.store');
+        Route::get('/coupon/view', 'view')->name('coupon.view');
+        Route::get('/coupon/edit/{id}', 'edit')->name('coupon.edit');
+        Route::post('/coupon/update', 'update')->name('coupon.update');
+        Route::post('/coupon/delete', 'delete')->name('coupon.delete');
+        Route::post('/coupon/status/{id}', 'statusUpdate')->name('coupon.status');
+    });
 
 
-//product promotion start
+    //product promotion start
 
-Route::controller(ProductPromotionController::class)->group(function(){
+    Route::controller(ProductPromotionController::class)->group(function () {
 
-  Route::get('/product/promotion', 'index')->name('product.promotion.index');
-    Route::post('/promotion/product/store', 'store');
-    Route::get('/promotion/product/view', 'view')->name('product.promotion.view');
-    Route::get('/promotioin/product/edit/{id}', 'edit')->name('product.promotion.edit');
-    Route::post('/promotion/product/update', 'update')->name('product.promotion.update');
-    Route::post('/promotion/product/delete/', 'delete')->name('product.promotion.delete');
-    Route::post('/product/promotion/status/{id}', 'statusUpdate')->name('product.promotion.status');
-    Route::get('/get/product/and/promotion', 'getProductPromotion');
-    Route::post('/get/product/variant', 'getProductPromotionVariant');
-
-
-});
+        Route::get('/product/promotion', 'index')->name('product.promotion.index');
+        Route::post('/promotion/product/store', 'store');
+        Route::get('/promotion/product/view', 'view')->name('product.promotion.view');
+        Route::get('/promotioin/product/edit/{id}', 'edit')->name('product.promotion.edit');
+        Route::post('/promotion/product/update', 'update')->name('product.promotion.update');
+        Route::post('/promotion/product/delete/', 'delete')->name('product.promotion.delete');
+        Route::post('/product/promotion/status/{id}', 'statusUpdate')->name('product.promotion.status');
+        Route::get('/get/product/and/promotion', 'getProductPromotion');
+        Route::post('/get/product/variant', 'getProductPromotionVariant');
+    });
 
 
 
@@ -316,13 +307,12 @@ Route::controller(ProductPromotionController::class)->group(function(){
 
     //deliver order assign start
 
-    Route::controller(DeliverOrderAssignController::class)->group(function(){
+    Route::controller(DeliverOrderAssignController::class)->group(function () {
         Route::post('admin/order/assign-deliver', 'assignDeliver')->name('admin.order.assign.deliver');
         Route::get('admin/shipping/order/change/transit/{id}', 'shippingChangeTransit')->name('admin.shipping.order.change.transit');
         Route::get('order/delivered/transit', 'TransitOrder')->name('order.transit');
         Route::get('admin/transit/order/change/completed/{id}', 'TransitChangeCompleted')->name('admin.transit.order.change.completed');
         Route::get('order/delivered', 'Delivered')->name('order.delivered');
-
     });
 
 
@@ -450,5 +440,4 @@ Route::controller(UserTrackerController::class)->group(function () {
 // require __DIR__ . '/auth.php';
 // require __DIR__ . '/frontend.php';
 
-Route::group([],base_path('routes/frontend.php'));
-
+Route::group([], base_path('routes/frontend.php'));
