@@ -243,19 +243,101 @@ public function UserBillingInfoInsert(Request $request){
     }
 }
 
-public function userBillingInfoUpdate(Request $request,$id){
-    try{
+public function userBillingInfoUpdate(Request $request, $id)
+{
+    try {
+        // Try to find the user using user_id or session_id
+        $billing_user = BillingInformation::where('id', $id)->first();
 
-    }
-   catch(\Exception $e){
+        if (!$billing_user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Billing Information not found'
+            ], 404);
+        }
+
+        $user = User::where('id', $request->user_id)->first();
+
+        if (!$user && $billing_user->session_id != $request->session_id) {
+            return response()->json([
+                'status' => false,
+                'message' => 'User not found or session mismatch'
+            ], 404);
+        }
+
+        if (($user && $user->id == $billing_user->user_id) || $billing_user->session_id == $request->session_id) {
+            if ($request->is_default) {
+                $billing_user->is_default = $request->is_default;
+            }
+
+            $billing_user->status = $request->status;
+            $billing_user->active_payment_method = $request->active_payment_method;
+
+            if ($request->active_payment_method == 'card') {
+                $billing_user->card_number = $request->card_number;
+                $billing_user->cvc_code = $request->cvc_code;
+                $billing_user->card_expiry_date = $request->card_expiry_date;
+            } elseif ($request->active_payment_method == 'mobile_banking') {
+                $billing_user->mobile_banking_id = $request->mobile_banking_id;
+                $billing_user->verified_mobile = $request->verified_mobile;
+                $billing_user->verified_mobile_number = $request->verified_mobile_number;
+            }
+
+            $billing_user->save();
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Billing Information Updated Successfully',
+                'billing_info' => $billing_user
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthorized access'
+            ], 403);
+        }
+    } catch (\Exception $e) {
         return response()->json([
             'status' => false,
             'message' => $e->getMessage()
         ], 500);
     }
-
-
-
 }
+
+public function GetUserBillingInfo(Request $request){
+    try {
+        $query = BillingInformation::query();
+
+        if ($request->filled('user_id')) {
+            $query->where('user_id', $request->user_id);
+        }
+
+        if ($request->filled('session_id')) {
+            $query->orWhere('session_id', $request->session_id);
+        }
+
+      
+        if (!$request->filled('user_id') && !$request->filled('session_id')) {
+            return response()->json([
+                'status' => 400,
+                'message' => 'Invalid request: user_id or session_id is required'
+            ], 400);
+        }
+
+        $billing_info = $query->get();
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Billing Information Fetched Successfully',
+            'billing_info' => $billing_info
+        ], 200);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => false,
+            'message' => $e->getMessage()
+        ], 500);
+    }
+}
+
 
 }

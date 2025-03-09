@@ -45,10 +45,15 @@ Route::group([
     // Route::get("/logout", [AuthController::class, "logout"]);
 
 
-    Route::controller(ApiUserManageController::class)->group(function () {
-        Route::put("user/details/update/{id}", [ApiUserManageController::class, 'update']);
-        Route::get("/user/details/show/{id}", [ApiUserManageController::class, 'userDetailsShow']);
-    });
+    Route::controller(ApiUserManageController::class)->group(function(){
+        Route::put("user/details/update/{id}",[ApiUserManageController::class, 'update']);
+       Route::get("/user/details/show/{id}",[ApiUserManageController::class, 'userDetailsShow']);
+     });
+
+     Route::controller(ApiUserManageController::class)->group(function(){
+        Route::put('/user/billing/info/update/{id}',[ApiUserManageController::class, 'userBillingInfoUpdate']);
+        Route::post('/user/billing/info/get/',[ApiUserManageController::class, 'GetUserBillingInfo']);
+     });
 
     Route::controller(ApiUserManageController::class)->group(function () {
         Route::put('/user/billing/info/update/{id}', [ApiUserManageController::class, 'userBillingInfoUpdate']);
