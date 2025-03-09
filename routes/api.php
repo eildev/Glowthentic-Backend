@@ -31,13 +31,25 @@ Route::group([
     Route::get("/profile", [AuthController::class, "profile"]);
     Route::get("/logout", [AuthController::class, "logout"]);
 
-    Route::put("user/details/{id}",[ApiUserManageController::class, 'update']);
+
+    Route::controller(ApiUserManageController::class)->group(function(){
+        Route::put("user/details/update/{id}",[ApiUserManageController::class, 'update']);
+       Route::get("/user/details/show/{id}",[ApiUserManageController::class, 'userDetailsShow']);
+     });
+
+     Route::controller(ApiUserManageController::class)->group(function(){
+        Route::put('/user/billing/info/update/{id}',[ApiUserManageController::class, 'userBillingInfoUpdate']);
+     });
+
 });
 
 
 
 Route::controller(ApiUserManageController::class)->group(function(){
    Route::post('/user/details/create', 'UserDetailsStore')->name('userDetails.Store');
+});
+Route::controller(ApiUserManageController::class)->group(function(){
+    Route::post('/user/billing/info/insert', 'UserBillingInfoInsert')->name('userBillingInfo.Store');
 });
 Route::controller(ApiCategoryController::class)->group(function () {
     Route::get('/category', 'view')->name('category.view');
