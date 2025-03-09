@@ -17,7 +17,7 @@ use App\Http\Controllers\API\ApiTagNameController;
 use App\Http\Controllers\API\ApiProductController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\ApiWishListController;
-
+use App\Http\Controllers\API\ApiUserManageController;
 // Open Routes
 Route::post('/register', [AuthController::class, "register"]);
 Route::post('/login', [AuthController::class, "login"]);
@@ -30,8 +30,28 @@ Route::group([
 ], function(){
     Route::get("/profile", [AuthController::class, "profile"]);
     Route::get("/logout", [AuthController::class, "logout"]);
+
+
+    Route::controller(ApiUserManageController::class)->group(function(){
+        Route::put("user/details/update/{id}",[ApiUserManageController::class, 'update']);
+       Route::get("/user/details/show/{id}",[ApiUserManageController::class, 'userDetailsShow']);
+     });
+
+     Route::controller(ApiUserManageController::class)->group(function(){
+        Route::put('/user/billing/info/update/{id}',[ApiUserManageController::class, 'userBillingInfoUpdate']);
+        Route::post('/user/billing/info/get/',[ApiUserManageController::class, 'GetUserBillingInfo']);
+     });
+
 });
 
+
+
+Route::controller(ApiUserManageController::class)->group(function(){
+   Route::post('/user/details/create', 'UserDetailsStore')->name('userDetails.Store');
+});
+Route::controller(ApiUserManageController::class)->group(function(){
+    Route::post('/user/billing/info/insert', 'UserBillingInfoInsert')->name('userBillingInfo.Store');
+});
 Route::controller(ApiCategoryController::class)->group(function () {
     Route::get('/category', 'view')->name('category.view');
     Route::get('/category/{id}', 'show')->name('category.show');

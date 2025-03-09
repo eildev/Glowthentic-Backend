@@ -150,6 +150,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/offerbanner/update/{id}', 'update')->name('offerbanner.update');
         Route::get('/offerbanner/delete/{id}', 'delete')->name('offerbanner.delete');
         Route::post('/offerbanner/status/{id}', 'statusUpdate')->name('offerbanner.status');
+
+        Route::post('/offerbanner/delete-image/{id}', 'deleteImage')->name('offerBanerimage.delete');
     });
     //All Routes for Offer Banner End
 
