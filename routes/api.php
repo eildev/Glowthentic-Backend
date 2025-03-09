@@ -39,6 +39,7 @@ Route::group([
 
      Route::controller(ApiUserManageController::class)->group(function(){
         Route::put('/user/billing/info/update/{id}',[ApiUserManageController::class, 'userBillingInfoUpdate']);
+        Route::post('/user/billing/info/get/',[ApiUserManageController::class, 'GetUserBillingInfo']);
      });
 
 });
