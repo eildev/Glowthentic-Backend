@@ -253,7 +253,7 @@ class AuthController extends Controller
         return response()->json([
             "status" => 401,
             "message" => "User not authenticated",
-        ], 401);
+        ]);
     }
 
     // Admin Login (Blade View)
