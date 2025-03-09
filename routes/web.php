@@ -27,6 +27,8 @@ use App\Http\Controllers\AllMail;
 use App\Http\Controllers\Backend\PurchaseDetailsController;
 use App\Http\Controllers\Backend\historyController;
 use App\Http\Controllers\Backend\MarketingController;
+use App\Http\Controllers\Backend\ProductAttributeController;
+
 use App\Http\Controllers\Backend\ComboController;
 use App\Http\Controllers\Backend\CouponController;
 use App\Http\Controllers\Backend\ProductPromotionController;
@@ -140,7 +142,10 @@ Route::middleware('auth')->group(function () {
         Route::post('/banner/status/{id}', 'bannerStatus')->name('banner.status');
     });
     //All Routes for Home Banner End
+    Route::controller(ProductAttributeController::class)->group(function () {
+        Route::post('/store/extra/datatype/field', 'store')->name('product.attribute.store');
 
+    });
     //All Routes for Offer Banner Start
     Route::controller(OfferBannerController::class)->group(function () {
         Route::get('/offerbanner', 'index')->name('offerbanner');

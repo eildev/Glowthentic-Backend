@@ -357,7 +357,7 @@ class ApiOrderController extends Controller
             'status' => 200,
             'order' => $order,
             'order_details' => $order->orderDetails,
-            'error_messages' => $error_messages, // Return the error messages
+            'error_messages' => $error_messages, 
             'message' => 'Order Created Successfully',
         ]);
     } catch (\Exception $e) {

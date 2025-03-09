@@ -15,10 +15,17 @@
                                     <i class='bx bx-show'></i>
                                     View All Product</a>
                             </div>
-                            <div class="my-3">
+                            <div class="my-3 me-2">
                                 <a href="{{ route('product') }}" class="btn btn-success">
                                     <i class="fas fa-plus"></i>
                                     Add New Product</a>
+                            </div>
+
+
+                            <div class="my-3 ml-2">
+                                <a href="#" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#addFieldModal">
+                                    <i class="fas fa-plus"></i> Add Extra Field
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -728,14 +735,149 @@
     </div>
 
 
+  {{-- //////////////////////////////////////////////// add extra field modal //////////////////////////////////////////////////////// --}}
 
+
+  <div class="modal fade" id="addFieldModal" tabindex="-1" aria-labelledby="addFieldModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addFieldModalLabel">Add New Field</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addFieldForm">
+                    <!-- Field Name -->
+                    <div class="mb-3">
+                        <label for="field_name" class="form-label">Field Name</label>
+                        <input type="text" class="form-control" id="field_name" name="field_name" required>
+                    </div>
+
+
+
+                    <div class="mb-3">
+                        <label for="data_type" class="form-label">Data Type</label>
+                        <select class="form-select p-2" id="data_type" name="data_type" required>
+                            <option value="">Select Data Type</option>
+
+                            <option value="longText">Text</option>
+                            <option value="text">String</option>
+                            <option value="int">Integer</option>
+
+                            <option value="decimal">Decimal</option>
+                            <option value="double">Double</option>
+                            <option value="date">Date</option>
+                            <option value="json">MultiSelect</option>
+                        </select>
+                    </div>
+                    <div class="mb-3 multiInput" style="display: none;">
+
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <a href="#" class="btn btn-success addFieldForm" form="addFieldForm" id="">Save
+                    Field</a>
+            </div>
+        </div>
+    </div>
+</div>
     <script>
 
-   document.getElementById('image').addEventListener('change', function () {
-    let count = this.files.length;
-    let message = count > 0 ? count + " image(s) selected" : "No images selected";
-    document.getElementById('imageCount').innerText = message;
-   });
+
+           $(document).on('change', '#data_type', function() {
+                    let container = $('.multiInput');
+                    if ($(this).val() == 'json') {
+                        container.fadeIn();
+                        container.html(`
+                            <div class="input-group mb-2">
+                                <input type="text" class="form-control" name="multi_input[]" placeholder="Enter Multi Input">
+                                <button type="button" class="btn btn-success addInput">+</button>
+                            </div>
+                        `);
+                    } else {
+                        container.fadeOut().empty();
+                    }
+                });
+                $(document).on('click', '.addInput', function() {
+                    $('.multiInput').append(`
+                        <div class="input-group mb-2">
+                            <input type="text" class="form-control" name="multi_input[]" placeholder="Enter Multi Input">
+                            <button type="button" class="btn btn-danger removeInput">-</button>
+                        </div>
+                    `);
+                });
+                $(document).on('click', '.removeInput', function() {
+                    $(this).closest('.input-group').remove();
+                });
+
+
+
+           $(document).on('click', '.addFieldForm', function() {
+            let fieldName = $('#field_name').val().trim();
+            let dataType = $('#data_type').val();
+            $('.error-message').remove();
+            if (fieldName === '') {
+                $('#field_name').after('<small class="text-danger error-message">Field Name is required.</small>');
+                return;
+            }
+
+            if (dataType === '') {
+                $('#data_type').after(
+                    '<small class="text-danger error-message">Please select a Data Type.</small>');
+                return;
+            }
+            let fieldForm = new FormData($('#addFieldForm')[0]);
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            $.ajax({
+                url: "{{ url('/store/extra/datatype/field') }}",
+                type: "POST",
+                data: fieldForm,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response.status == 200) {
+                        $('#addFieldForm')[0].reset();
+                        $('#addFieldModal').modal('hide');
+                        toastr.success("Extra Field Added Successfully");
+                    }
+                },
+                error: function(xhr) {
+                    if (xhr.status === 422) {
+                        let errors = xhr.responseJSON.errors;
+                        $('.error-message').remove(); // Remove previous errors
+
+                        $.each(errors, function(key, value) {
+                            let inputField = $('[name="' + key + '"]');
+                            inputField.after('<div class="text-danger error-message">' + value[
+                                0] + '</div>');
+                        });
+                    }
+                }
+            });
+        });
+
+
+
+
+
+
+
+
+
+
+
+            document.getElementById('image').addEventListener('change', function () {
+                let count = this.files.length;
+                let message = count > 0 ? count + " image(s) selected" : "No images selected";
+                document.getElementById('imageCount').innerText = message;
+            });
 
 
         // sku Generator

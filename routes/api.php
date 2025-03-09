@@ -132,7 +132,7 @@ Route::controller(ApiContactUsController::class)->group(function () {
 
 Route::controller(ApiWishListController::class)->group(function () {
     Route::post('/wishlist/add', 'addWishList');
-    Route::get('/wishlist/{user_id}','getWishList');
+    Route::get('/wishlist/{user_id_or_session_id}','getWishList');
 });
 
 // Route::get('/product', [App\Http\Controllers\Backend\ProductController::class, 'index']);

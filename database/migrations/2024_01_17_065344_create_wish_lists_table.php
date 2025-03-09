@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('wish_lists', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->unsigned();
-            $table->unsignedBigInteger('product_id')->unsigned();
+            $table->unsignedBigInteger('product_id')->nullable();
+            $table->string('session_id')->nullable();
             $table->unsignedBigInteger('variant_id')->unsigned();
             $table->tinyInteger('loved')->default(1);
 
