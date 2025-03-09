@@ -27,7 +27,7 @@ return new class extends Migration
             $table->string('weight')->nullable();
             $table->string('flavor')->nullable();
             $table->string('image')->nullable();
-            $table->enum('status', ['Default', 'Variant'])->default('Default');
+            $table->enum('status', ['Default', 'Variant'])->default('Variant');
             // $table->tinyInteger('status')->default(1);
             // $table->date('expire_date')->nullable();
             // $table->date('manufacture_date')->nullable();
