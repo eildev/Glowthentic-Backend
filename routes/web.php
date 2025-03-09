@@ -40,9 +40,7 @@ Route::get('/admin/login', [AuthController::class, 'adminLoginPage']);
 Route::post('/admin/login', [AuthController::class, 'adminLogin'])->name('login');
 Route::post('/admin/logout', [AuthController::class, 'adminLogout'])->name('logout')->middleware('auth');
 Route::get('/', [AuthController::class, 'dashboardView'])->middleware('auth:sanctum')->name('admin.dashboard');
-// Route::get('/admin/dashboard', function () {
-//     return view('backend.admin.dashboard');
-// })->middleware('auth','role:admin')->name('admin.dashboard');
+
 Route::controller(AllMail::class)->group(function () {
     Route::post('/reply/mail', 'replyMail')->name('reply.mail');
 });

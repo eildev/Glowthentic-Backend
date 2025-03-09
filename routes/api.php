@@ -26,34 +26,23 @@ Route::post('/login', [AuthController::class, "login"]);
 // });
 // Protected Routes
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/profile', [AuthController::class, 'profile']);
-    Route::get('/logout', [AuthController::class, 'logout']);
 
-
-    Route::controller(ApiProductController::class)->group(function () {
-        Route::get('/product', 'viewAll')->name('product.view');
-        // Route::get('/product/{id}', 'show')->name('product.show');
-        // Route::post('/product/search', 'search');
-        // Route::post('/product/filter', 'filter');
-    });
-});
 Route::group([
     "middleware" => ["auth:sanctum"]
 ], function () {
-    // Route::get("/profile", [AuthController::class, "profile"]);
-    // Route::get("/logout", [AuthController::class, "logout"]);
+    Route::get("/profile", [AuthController::class, "profile"]);
+    Route::get("/logout", [AuthController::class, "logout"]);
 
 
-    Route::controller(ApiUserManageController::class)->group(function(){
-        Route::put("user/details/update/{id}",[ApiUserManageController::class, 'update']);
-       Route::get("/user/details/show/{id}",[ApiUserManageController::class, 'userDetailsShow']);
-     });
+    Route::controller(ApiUserManageController::class)->group(function () {
+        Route::put("user/details/update/{id}", [ApiUserManageController::class, 'update']);
+        Route::get("/user/details/show/{id}", [ApiUserManageController::class, 'userDetailsShow']);
+    });
 
-     Route::controller(ApiUserManageController::class)->group(function(){
-        Route::put('/user/billing/info/update/{id}',[ApiUserManageController::class, 'userBillingInfoUpdate']);
-        Route::post('/user/billing/info/get/',[ApiUserManageController::class, 'GetUserBillingInfo']);
-     });
+    Route::controller(ApiUserManageController::class)->group(function () {
+        Route::put('/user/billing/info/update/{id}', [ApiUserManageController::class, 'userBillingInfoUpdate']);
+        Route::post('/user/billing/info/get/', [ApiUserManageController::class, 'GetUserBillingInfo']);
+    });
 
     Route::controller(ApiUserManageController::class)->group(function () {
         Route::put('/user/billing/info/update/{id}', [ApiUserManageController::class, 'userBillingInfoUpdate']);
