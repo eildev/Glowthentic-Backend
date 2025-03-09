@@ -39,6 +39,10 @@ class ApiProductController extends Controller
             // Fetch up to 10 products matching the search term or related filters
             $products = Product::with([
                 'variants.variantImage',
+                'variants.product',
+                'variants.productStock',
+                'variants.promotionproduct',
+                'variants.comboProduct',
                 'product_tags.tag',
                 'productStock',
                 'productdetails',
@@ -144,7 +148,17 @@ class ApiProductController extends Controller
     {
 
         try {
-            $products = Product::orderByDesc('id')->with('variants.variantImage', 'product_tags', 'productStock', 'productdetails', 'variantImage')->where('status', 1)->get();
+            $products = Product::orderByDesc('id')->with(
+                'variants.variantImage',
+                'variants.product',
+                'variants.productStock',
+                'variants.promotionproduct',
+                'variants.comboProduct',
+                'product_tags',
+                'productStock',
+                'productdetails',
+                // 'variantImage'
+            )->where('status', 1)->get();
             // dd($products);
             return response()->json([
                 'status' => '200',
