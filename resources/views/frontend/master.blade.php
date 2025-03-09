@@ -35,16 +35,16 @@
         //         .style.setProperty("display", "none", "important");
         // });
         // window.onbeforeunload = function(e) {
-            
+
         //   // Delete specific local storage variables
         // //   localStorage.removeItem('firstActiveLi');
         // //   localStorage.removeItem('secondActiveLi');
         // //   localStorage.removeItem('thirdActiveLi');
-        
+
         //   // Note: There's no need to return anything for this use case
         //   var message = 'Are you sure you want to leave this page?';
         //   e.returnValue = message;
-          
+
         //   // Return the message for compatibility with older browsers
         //   return message;
         // };
@@ -56,12 +56,12 @@
             isNavigatingWithinSite = true;
           }
         });
-        
+
         // Listen for form submissions that might indicate a navigation or reload
         document.addEventListener('submit', () => {
           isNavigatingWithinSite = true;
         });
-        
+
         window.onbeforeunload = function() {
           // Check if we think the user is navigating within the site
           if (!isNavigatingWithinSite) {
@@ -70,7 +70,7 @@
             localStorage.removeItem('secondActiveLi');
             localStorage.removeItem('thirdActiveLi');
           }
-          
+
           // Reset the flag
           setTimeout(() => {
             isNavigatingWithinSite = false;
@@ -92,19 +92,19 @@
     // fbq('init', '1735579183842504');
     // fbq('track', 'PageView');
     </script>
-    
+
     <!--<noscript>-->
         <!--<img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1735579183842504&ev=PageView&noscript=1"-->
     />
     <!--</noscript>-->
 <!-- End Meta Pixel Code -->
-    
+
 <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s);j.async=true;j.src="https://capi.sobrokom.store/2c2ikafchgx.js?"+i;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','1q=aWQ9R1RNLUtTR0xWWDI4&apiKey=ff454ec1');</script>
 <!-- End Google Tag Manager -->
 </head>
 <body style="background: var(--tp-grey-1);">
-    
+
     <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://capi.sobrokom.store/ns.html?id=GTM-KSGLVX28" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
@@ -155,7 +155,7 @@
                 <div class="header__info-cart tp-cart-toggle">
                     <button>
                         <i class="cardI">
-                            
+
                             <img src="{{ asset('frontend') }}/assets/img/icon/cart-1.svg" alt="">
                             <span class="cart_quantity">0</span>
                         </i>
@@ -181,11 +181,11 @@
         }
         .mySlidBar{
             display:none;
-            width: 220px; 
-            background: #2D2C6E; 
+            width: 220px;
+            background: #2D2C6E;
             border-right:1px solid white;
             box-shadow:1px 1px 3px #2D2C6E;
-            position: fixed; 
+            position: fixed;
             z-index: 99999;
             height: 100%;
             top: 50px;
@@ -235,7 +235,7 @@
                     <div class="my_menu_list">
                         <ul class="list-unstyled">
                                 @php
-                                   
+
                                     $categoris = App\Models\Category::orderBy('categoryName', 'ASC')->has('products')->where('status', 1)->get();
                                 @endphp
                                 @if ($categoris->count() > 0)
@@ -287,16 +287,16 @@
         </div>
         </div>
         @yield('maincontent')
-        
-        
-       
+
+
+
     </main>
     <style>
         .item_remove{
             font-size:22px;
             margin-left: -11px;
         }
-        
+
     </style>
     @include('frontend.body.footer')
     <script src="{{ asset('frontend') }}/assets/js/jquery.js" defer></script>
@@ -346,7 +346,7 @@
                     }
                 ]
             });
-            
+
             $('.swiper-wrapper').slick({
                 slidesToShow: 4,  // Default number of slides to show
                 slidesToScroll: 1,
@@ -679,7 +679,7 @@
                             container.style.setProperty('margin-left', '16%', 'important');
                         })
                     }
-                   
+
                 }else{
                     document.querySelector('.mySlidBar').style.display='none';
                      if(width >= 1080){
@@ -692,9 +692,9 @@
                             container.style.setProperty('margin-left', '20%', 'important');
                         })
                     }
-                    
+
                 }
-                
+
             });
             // Function to handle click on list items
             function handleLiClick(items, storageKey) {
