@@ -140,7 +140,7 @@ class ApiUserManageController extends Controller
     }
 
     public function update($id ,Request $request){
-        \Log::info($request->all());
+
         try{
             $validator = Validator::make($request->all(), [
                 'full_name' => 'required|string',
@@ -198,12 +198,14 @@ class ApiUserManageController extends Controller
 
 public function userDetailsShow($id){
     try{
-        $userDetails = UserDetails::Where('session_id', $id)->orWhere('user_id', $id)->with('user')
+        $user= User::where('id', $id)->first();
+        $userDetails = UserDetails::Where('session_id', $id)->orWhere('user_id', $user->id)->with('user')
         ->first();
 
         return response()->json([
             'status' => 200,
-            'user' => $userDetails,
+            'user'=> $user,
+            'userDetails' => $userDetails,
             'message' => 'User Details'
         ], 200);
     }
