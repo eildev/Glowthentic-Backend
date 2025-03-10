@@ -124,6 +124,7 @@ Route::controller(ApiBlogCommentController::class)->group(function () {
 Route::controller(ApiOrderController::class)->group(function () {
     Route::post('/order/create', 'store')->name('order.store');
     Route::get('/order/{id}', 'show')->name('order.show');
+    Route::post('order/tracking','trackingOrder');
 });
 
 
@@ -140,5 +141,7 @@ Route::controller(ApiWishListController::class)->group(function () {
     Route::get('/wishlist/{user_id}', 'getWishList');
     Route::get('/wishlist/{user_id_or_session_id}','getWishList');
 });
+
+
 
 // Route::get('/product', [App\Http\Controllers\Backend\ProductController::class, 'index']);

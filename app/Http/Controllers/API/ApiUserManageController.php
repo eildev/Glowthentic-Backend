@@ -198,7 +198,7 @@ class ApiUserManageController extends Controller
 
 public function userDetailsShow($id){
     try{
-        $userDetails = UserDetails::Where('session_id', $id)->orWhere('user_id', $id)
+        $userDetails = UserDetails::Where('session_id', $id)->orWhere('user_id', $id)->with('user')
         ->first();
 
         return response()->json([

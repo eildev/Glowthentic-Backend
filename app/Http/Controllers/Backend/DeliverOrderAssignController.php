@@ -107,8 +107,8 @@ class DeliverOrderAssignController extends Controller
          $DeliveryOrder->delivery_status = "In Transit";
          $DeliveryOrder->save();
 
-         Toastr::success('Delivery Status Change To In Transit');
-         return back();
+        //  Toastr::success('Delivery Status Change To In Transit');
+         return back()->with('success', 'Delivery Status Change To In Transit');
     }
 
     public function TransitOrder(){
@@ -120,8 +120,8 @@ class DeliverOrderAssignController extends Controller
         $DeliveryOrder = DeliveryOrder::where('id', $id)->first();
         $DeliveryOrder->delivery_status = "delivered";
         $DeliveryOrder->save();
-        Toastr::success('Delivery Status Change To Delivered');
-        return back();
+        // Toastr::success('Delivery Status Change To Delivered');
+        return back()->with('success', 'Delivery Status Change To Delivered');
     }
 
     public function Delivered(){

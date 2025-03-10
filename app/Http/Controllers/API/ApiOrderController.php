@@ -13,6 +13,7 @@ use App\Models\ComboProduct;
 use App\Models\Combo;
 use App\Models\Product;
 use App\Models\ProductPromotion;
+use App\Models\DeliveryOrder;
 use Auth;
 
 class ApiOrderController extends Controller
@@ -361,6 +362,50 @@ class ApiOrderController extends Controller
             'message' => 'Order Created Successfully',
         ]);
     } catch (\Exception $e) {
+        return response()->json([
+            'status' => 500,
+            'message' => $e->getMessage(),
+        ]);
+    }
+}
+
+public function trackingOrder(Request $request){
+    try{
+         $order_id = $request->order_id;
+         $order = Order::where('invoice_number',$order_id)->first();
+         if($order){
+                if($order->status != "Delivering"){
+                    return response()->json([
+                        'status' => 200,
+                        'order_tracking' =>"Ordered",
+                        'message' => 'Order Tracking Successfully',
+                    ]);
+                }
+            else{
+                $delivered_order = DeliveryOrder::where('order_id', $order->id)->first();
+
+                if($delivered_order->delivery_status != "delivered"){
+                    return response()->json([
+                        'status' => 200,
+                        'order' =>"Shipped",
+                        'message' => 'Order Delivered Successfully',
+                    ]);
+
+            }
+
+            else if($delivered_order->delivery_status == "delivered"){
+                return response()->json([
+                    'status' => 200,
+                    'order' =>"Completed",
+                    'message' => 'Order Delivered Successfully',
+                ]);
+            }
+
+         }
+
+    }
+   }
+    catch(\Exception $e){
         return response()->json([
             'status' => 500,
             'message' => $e->getMessage(),
