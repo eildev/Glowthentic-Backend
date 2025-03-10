@@ -14,6 +14,7 @@ class ApiUserManageController extends Controller
 {
 
     public function UserDetailsStore(Request $request){
+
         try{
 
             $validator = Validator::make($request->all(), [
@@ -44,8 +45,8 @@ class ApiUserManageController extends Controller
                     $userDetails->phone_number= $request->phone_number;
                     $userDetails->address= $request->address;
                     $userDetails->city= $request->city;
-                    if($request->hasFile('image')){
 
+                    if($request->hasFile('image')){
                         $file= $request->file('image');
                         $extension = $file->Extension();
                         $filename = time().'.'.$extension;
@@ -139,6 +140,7 @@ class ApiUserManageController extends Controller
     }
 
     public function update($id ,Request $request){
+        \Log::info($request->all());
         try{
             $validator = Validator::make($request->all(), [
                 'full_name' => 'required|string',
@@ -196,7 +198,9 @@ class ApiUserManageController extends Controller
 
 public function userDetailsShow($id){
     try{
-        $userDetails = UserDetails::where('user_id', $id)->first();
+        $userDetails = UserDetails::Where('session_id', $id)->orWhere('user_id', $id)
+        ->first();
+
         return response()->json([
             'status' => 200,
             'user' => $userDetails,
@@ -296,6 +300,7 @@ public function userBillingInfoUpdate(Request $request, $id)
 {
     try {
         // Try to find the user using user_id or session_id
+
         $billing_user = BillingInformation::where('id', $id)->first();
 
         if (!$billing_user) {
