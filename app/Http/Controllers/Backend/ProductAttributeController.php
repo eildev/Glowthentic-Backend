@@ -54,4 +54,21 @@ class ProductAttributeController extends Controller
     }
 
 
+
+    public function getExtraField($id){
+
+        $extraField=Attribute::where('id',$id)->first();
+        return response()->json([
+            'status'=>200,
+            'extraField'=>$extraField
+        ]);
+      }
+
+      public function getExtraFieldInfoProductPageShow(){
+        $extraField=Attribute::all();
+        return response()->json([
+            'status'=>200,
+            'extraField'=>$extraField
+        ]);
+      }
 }

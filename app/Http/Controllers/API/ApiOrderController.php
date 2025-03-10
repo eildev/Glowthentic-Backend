@@ -290,7 +290,7 @@ class ApiOrderController extends Controller
         $order->status = 'pending';
         $order->order_note = $request->order_note;
         $order->invoice_number = rand(100000, 999999);
-        $order->user_id = 1;
+        $order->user_id = $request->user_id;
 
         // Coupon Validation
         if ($request->coupon_code) {
@@ -357,7 +357,7 @@ class ApiOrderController extends Controller
             'status' => 200,
             'order' => $order,
             'order_details' => $order->orderDetails,
-            'error_messages' => $error_messages, 
+            'error_messages' => $error_messages,
             'message' => 'Order Created Successfully',
         ]);
     } catch (\Exception $e) {

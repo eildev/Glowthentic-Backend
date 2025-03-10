@@ -41,12 +41,12 @@ use App\Http\Controllers\Backend\DeliverOrderAssignController;
 Route::get('/admin/login', [AuthController::class, 'adminLoginPage']);
 Route::post('/admin/login', [AuthController::class, 'adminLogin'])->name('login');
 Route::post('/admin/logout', [AuthController::class, 'adminLogout'])->name('logout')->middleware('auth');
-Route::get('/', [AuthController::class, 'dashboardView'])->middleware('auth:sanctum')->name('admin.dashboard');
+Route::get('/', [AuthController::class, 'dashboardView'])->middleware('auth')->name('admin.dashboard');
 
 Route::controller(AllMail::class)->group(function () {
     Route::post('/reply/mail', 'replyMail')->name('reply.mail');
 });
-Route::middleware('auth:sanctun')->group(function () {
+Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -142,6 +142,8 @@ Route::middleware('auth:sanctun')->group(function () {
     //All Routes for Home Banner End
     Route::controller(ProductAttributeController::class)->group(function () {
         Route::post('/store/extra/datatype/field', 'store')->name('product.attribute.store');
+        Route::get('/get/extra/info/field/{id}', 'getExtraField')->name('product.attribute.get.extra.info.field');
+        Route::get('get-extra-field/info/product/page/show', 'getExtraFieldInfoProductPageShow')->name('get.extra.field.info.product.page.show');
 
     });
     //All Routes for Offer Banner Start
