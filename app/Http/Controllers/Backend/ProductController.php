@@ -14,7 +14,8 @@ use App\Models\VariantImageGallery;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\auth;
 use Illuminate\Support\Str;
-
+use App\Models\Attribute;
+use App\Models\AttributeManage;
 class ProductController extends Controller
 {
     // product index function
@@ -139,6 +140,78 @@ class ProductController extends Controller
             $productDetails->created_by = Auth::user()->id;
             $productDetails->save();
         }
+
+
+        if ($request->extra_field) {
+
+            foreach ($request->extra_field_id as $key => $fieldId) {
+                $extraFieldInfo = Attribute::where('id', $fieldId)->first();
+                $data = $request->extra_field[$fieldId];
+
+                switch ($extraFieldInfo->data_type) {
+                    case 'json':
+                        if (is_array($data)) {
+                            $storedValue = json_encode($data);
+                        } else {
+                            $storedValue = json_encode([$data]);
+                        }
+                        break;
+
+                    case 'integer':
+
+                        if (!is_numeric($data)) {
+                            throw new \Exception("Invalid value! Expected a number.");
+                        }
+                        $storedValue = intval($data);
+                        break;
+
+                    case 'float':
+                        if (!is_numeric($data)) {
+                            throw new \Exception("Invalid value! Expected a number.");
+                        }
+                        $storedValue = floatval($data);
+                        break;
+
+                    case 'decimal':
+                        if (!is_numeric($data)) {
+                            throw new \Exception("Invalid value! Expected a number.");
+                        }
+                        $storedValue = number_format((float) $data, 2, '.', '');
+                        break;
+
+                    case 'double':
+                        if (!is_numeric($data)) {
+                            throw new \Exception("Invalid value! Expected a number.");
+                        }
+                        $storedValue = date('Y-m-d', strtotime($value));
+                        break;
+                    case 'date':
+                        if (!strtotime($data)) {
+                            throw new \Exception("Invalid value! Expected a valid date.");
+                        }
+
+                    default:
+                        $storedValue = (string)$data;
+                        break;
+                }
+
+
+                AttributeManage::create([
+                    'attribute_id' => $fieldId,
+                    'value' => $storedValue,
+                    'product_id' => $product->id,
+                ]);
+            }
+        }
+
+
+
+
+
+
+
+
+
 
         if ($product && $request->tag) {
 
@@ -664,5 +737,5 @@ class ProductController extends Controller
 
 
     //rest Api Start
-   
+
 }

@@ -508,6 +508,17 @@
 
 
 
+                                            <div class="mb-3 col-12">
+                                                <label for="" class="mb-2">Extra Field Add</label>
+                                                <select class="form-select extra_field" name="extra_field" >
+
+                                                </select>
+                                            </div>
+                                            <div id="extra_info_field"></div>
+
+
+                                        </div>
+
 
 
 
@@ -556,10 +567,11 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-12">
+                                            <div class="col-12 mt-2">
                                                 <div class="d-grid">
-                                                    <a  class="btn btn-primary add_variant">Add
-                                                        Variant</a>
+                                                    <a  class="btn btn-danger add_variant">
+                                                        <i class="fas fa-plus"></i>
+                                                        Add Variant</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -783,9 +795,46 @@
         </div>
     </div>
 </div>
-    <script>
 
 
+{{-- script start --}}
+<script>
+
+/////////////////////////////////extra field show in product page///////////////////////
+
+function showExtraField() {
+    $.ajax({
+        url: "{{ url('get-extra-field/info/product/page/show') }}",
+        type: "GET",
+        dataType: "json",
+        success: function (data) {
+            // console.log("Response Data:", data);
+
+            if (data.status === 200) {
+                $('.extra_field').empty();
+                let extraField = data.extraField;
+                console.log(extraField);
+                let option = `<option value="" selected disabled>Select Extra Field</option>`;
+
+                extraField.forEach(function (field) {
+                    option += `<option value="${field.id}" data-id="${field.id}">${field.field_name}</option>`;
+                });
+
+                $('.extra_field').append(option);
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error fetching extra fields:", error);
+        }
+    });
+}
+
+
+
+    showExtraField(); // Ensure the function runs after the DOM is fully loaded
+
+
+  //////////////////////////////////////////////extra field multiple input show ////////////////////////////
            $(document).on('change', '#data_type', function() {
                     let container = $('.multiInput');
                     if ($(this).val() == 'json') {
@@ -811,9 +860,9 @@
                 $(document).on('click', '.removeInput', function() {
                     $(this).closest('.input-group').remove();
                 });
+  //////////////////////////////////////extra field multiple input show end ////////////////////////////
 
-
-
+     /////////////////////extra field insert modal ////////////////////////////
            $(document).on('click', '.addFieldForm', function() {
             let fieldName = $('#field_name').val().trim();
             let dataType = $('#data_type').val();
@@ -846,6 +895,7 @@
                         $('#addFieldForm')[0].reset();
                         $('#addFieldModal').modal('hide');
                         toastr.success("Extra Field Added Successfully");
+                        showExtraField();
                     }
                 },
                 error: function(xhr) {
@@ -864,11 +914,123 @@
         });
 
 
+/////////////////////////////////extra field insert modal end///////////////////////////
+
+
+
+   ///////////////////////////Extra field show in product insert page//////////////////////////
+
+        $(document).on('change', '.extra_field', function() {
+            let selectedOption = $(this).find(':selected');
+             console.log(selectedOption);
+            let id = selectedOption.data('id');
+
+            if (id) {
+                $.ajax({
+                    url: "{{ url('/get/extra/info/field/') }}" + "/" + id,
+                    type: "GET",
+                    success: function(response) {
+                        if (response.status == 200) {
+                            let extraData = response.extraField;
+                            let container = $('#extra_info_field');
+
+                            let hiddenInput = $('<input>')
+                                .attr('type', 'hidden')
+                                .attr('name', `extra_field_id[${id}]`)
+                                .val(id);
+
+                            container.append(hiddenInput);
+
+                            if (extraData.data_type === "longtext") {
+                                container.append(`
+                         <div class="mb-3 col-md-6 extra-field-container">
+                            <label for="name" class="form-label">${extraData.field_name}<span class="text-danger"></span></label>
+
+                            <textarea class="form-control name" name="extra_field[${id}]" rows="3"
+                                onkeyup="errorRemove(this);" onchange="errorRemove(this);">{{ old('field_name') }}</textarea>
+                            <span class="text-danger name_error"></span>
+                            <button type="button" class="btn btn-danger btn-sm remove-field" style="margin-top: 5px;">-</button>
+
+                        </div>
+                    `);
+                            } else if (extraData.data_type === "decimal" || extraData.data_type ===
+                                "int" || extraData.data_type === "double") {
+                                container.append(`
+                        <div class="mb-3 col-md-6 extra-field-container">
+                            <label for="name" class="form-label">${extraData.field_name}<span class="text-danger"></span></label>
+
+                            <input class="form-control" type="number" name="extra_field[${id}]" rows="3"
+                                onkeyup="errorRemove(this);" onchange="errorRemove(this);">
+                            <span class="text-danger name_error"></span>
+                            <button type="button" class="btn btn-danger btn-sm remove-field" style="margin-top: 5px;">-</button>
+
+                        </div>
+                    `)
+                            } else if (extraData.data_type === "text") {
+                                container.append(`
+                        <div class="mb-3 col-md-6 extra-field-container">
+                            <label for="name" class="form-label">${extraData.field_name}<span class="text-danger"></span></label>
+
+                            <input class="form-control" type="text" name="extra_field[${id}]" rows="3"
+                                onkeyup="errorRemove(this);" onchange="errorRemove(this);">
+                            <span class="text-danger name_error"></span>
+                            <button type="button" class="btn btn-danger btn-sm remove-field" style="margin-top: 5px;">-</button>
+
+                        </div>
+                    `)
+                            } else if (extraData.data_type === "date") {
+                                container.append(`
+                        <div class="mb-3 col-md-6 extra-field-container">
+                            <label for="name" class="form-label">${extraData.field_name}<span class="text-danger"></span></label>
+
+                            <input class="form-control" type="date" name="extra_field[${id}]" rows="3"
+                                onkeyup="errorRemove(this);" onchange="errorRemove(this);">
+                            <span class="text-danger name_error"></span>
+                            <button type="button" class="btn btn-danger btn-sm remove-field" style="margin-top: 5px;">-</button>
+
+                        </div>
+                    `)
+                            } else if (extraData.data_type === "json") {
+                                let options = JSON.parse(extraData
+                                    .options); // Convert JSON string to array
+
+                                let checkboxes = options.map(option => `
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="extra_field[${id}][]" value="${option}" id="checkbox_${id}_${option}">
+                                <label class="form-check-label" for="checkbox_${id}_${option}">${option}</label>
+                            </div>
+                        `).join('');
+
+                                container.append(`
+                            <div class="mb-3 col-md-6 extra-field-container">
+                                <label for="name" class="form-label">${extraData.field_name}<span class="text-danger"></span></label>
+                                ${checkboxes}
+                                <span class="text-danger name_error"></span>
+                                <button type="button" class="btn btn-danger btn-sm remove-field" style="margin-top: 5px;">-</button>
+                            </div>
+                        `);
+                            }
 
 
 
 
 
+
+
+
+                        }
+                    },
+
+                });
+            }
+        });
+
+        $(document).on("click", ".remove-field", function() {
+            $(this).closest(".extra-field-container").remove();
+        });
+
+
+  /////////////////extra field show end////////////////////
 
 
 

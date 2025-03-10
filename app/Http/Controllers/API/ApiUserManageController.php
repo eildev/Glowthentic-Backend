@@ -44,6 +44,16 @@ class ApiUserManageController extends Controller
                     $userDetails->phone_number= $request->phone_number;
                     $userDetails->address= $request->address;
                     $userDetails->city= $request->city;
+                    if($request->hasFile('image')){
+
+                        $file= $request->file('image');
+                        $extension = $file->Extension();
+                        $filename = time().'.'.$extension;
+                        $path='uploads/user_image/';
+                        $file->move($path,$filename);
+                        $userDetails->image= $path.$filename;
+                    }
+                    $userDetails->police_station= $request->police_station;
                     $userDetails->postal_code= $request->postal_code;
                     $userDetails->country= $request->country;
                     $userDetails->save();
@@ -54,6 +64,15 @@ class ApiUserManageController extends Controller
                     $userDetails->full_name= $request->full_name;
                     $userDetails->phone_number= $request->phone_number;
                     $userDetails->address= $request->address;
+                    if($request->hasFile('image')){
+                        $file= $request->file('image');
+                        $extension = $file->Extension();
+                        $filename = time().'.'.$extension;
+                        $path='uploads/user_image/';
+                        $file->move($path,$filename);
+                        $userDetails->image= $path.$filename;
+                    }
+                    $userDetails->police_station= $request->police_station;
                     $userDetails->city= $request->city;
                     $userDetails->postal_code= $request->postal_code;
                     $userDetails->country= $request->country;
@@ -68,6 +87,15 @@ class ApiUserManageController extends Controller
                     $userDetails->full_name= $request->full_name;
                     $userDetails->phone_number= $request->phone_number;
                     $userDetails->address= $request->address;
+                    if($request->hasFile('image')){
+                        $file= $request->file('image');
+                        $extension = $file->Extension();
+                        $filename = time().'.'.$extension;
+                        $path='uploads/user_image/';
+                        $file->move($path,$filename);
+                        $userDetails->image= $path.$filename;
+                    }
+                    $userDetails->police_station= $request->police_station;
                     $userDetails->city= $request->city;
                     $userDetails->postal_code= $request->postal_code;
                     $userDetails->country= $request->country;
@@ -76,6 +104,15 @@ class ApiUserManageController extends Controller
                   else{
                     $userDetails = new UserDetails();
                     $userDetails->session_id= $request->session_id;
+                    if($request->hasFile('image')){
+                        $file= $request->file('image');
+                        $extension = $file->Extension();
+                        $filename = time().'.'.$extension;
+                        $path='uploads/user_image/';
+                        $file->move($path,$filename);
+                        $userDetails->image= $path.$filename;
+                    }
+                    $userDetails->police_station= $request->police_station;
                     $userDetails->full_name= $request->full_name;
                     $userDetails->phone_number= $request->phone_number;
                     $userDetails->address= $request->address;
@@ -122,6 +159,18 @@ class ApiUserManageController extends Controller
             if($userDetails){
               $userDetails->full_name= $request->full_name;
               $userDetails->phone_number= $request->phone_number;
+              if($request->hasFile('image')){
+                if ($userDetails->image && file_exists($userDetails->image)) {
+                    unlink($userDetails->image);
+                }
+                $file= $request->file('image');
+                $extension = $file->Extension();
+                $filename = time().'.'.$extension;
+                $path='uploads/user_image/';
+                $file->move($path,$filename);
+                $userDetails->image= $path.$filename;
+            }
+            $userDetails->police_station= $request->police_station;
               $userDetails->address= $request->address;
               $userDetails->city= $request->city;
               $userDetails->postal_code= $request->postal_code;
@@ -316,7 +365,7 @@ public function GetUserBillingInfo(Request $request){
             $query->orWhere('session_id', $request->session_id);
         }
 
-      
+
         if (!$request->filled('user_id') && !$request->filled('session_id')) {
             return response()->json([
                 'status' => 400,
