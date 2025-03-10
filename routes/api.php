@@ -18,6 +18,7 @@ use App\Http\Controllers\API\ApiProductController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\ApiWishListController;
 use App\Http\Controllers\API\ApiUserManageController;
+use Illuminate\Http\Request;
 // Open Routes
 Route::post('/register', [AuthController::class, "register"]);
 Route::post('/login', [AuthController::class, "login"]);
@@ -50,6 +51,10 @@ Route::group([
 });
 
 
+Route::middleware('auth:sanctum')->get('/user-info', function (Request $request) {
+    return response()->json(['data' => $request->user()]);
+});
+
 
 Route::controller(ApiUserManageController::class)->group(function () {
     Route::post('/user/details/create', 'UserDetailsStore')->name('userDetails.Store');
@@ -72,11 +77,6 @@ Route::controller(ApiProductController::class)->group(function () {
     Route::post('/product/search', 'search');
     Route::post('/product/filter', 'filter');
 });
-
-
-
-
-
 
 Route::controller(ApiComboProductController::class)->group(function () {
     Route::get('/comboProduct', 'view')->name('comboProduct.view');
@@ -138,7 +138,7 @@ Route::controller(ApiContactUsController::class)->group(function () {
 Route::controller(ApiWishListController::class)->group(function () {
     Route::post('/wishlist/add', 'addWishList');
     Route::get('/wishlist/{user_id}', 'getWishList');
-    Route::get('/wishlist/{user_id_or_session_id}','getWishList');
+    Route::get('/wishlist/{user_id_or_session_id}', 'getWishList');
 });
 
 // Route::get('/product', [App\Http\Controllers\Backend\ProductController::class, 'index']);
