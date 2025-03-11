@@ -61,10 +61,13 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="row">
+                                                    @php
+                                                        $subcategories = App\Models\Category::where('id', $product->subcategory_id)->first();
+                                                    @endphp
                                                     <label class="form-label col-12">Select Subcategory</label>
                                                     <div class="col-12">
                                                         <select class="form-select subcategory_select @error('subcategory_id') is-invalid  @enderror" name="subcategory_id">
-                                                            <option value="">Select Subcategory</option>
+                                                            <option value="">{{ $subcategories->categoryName }}</option>
                                                         </select>
                                                         @error('category_id')
                                                             <span class="text-danger">{{ $message }}</span>
@@ -102,7 +105,7 @@
                                                         <select class="form-select @error('brand_id') is-invalid  @enderror" name="brand_id">
                                                             <option value="">Select Brand</option>
                                                             @foreach ($brands as $brand)
-                                                                <option value="{{ $brand->id }}">
+                                                                <option {{ $product->brand_id==$brand->id?"selected":'' }} value="{{ $brand->id }}">
                                                                     {{ $brand->BrandName }}
                                                                 </option>
                                                             @endforeach
@@ -130,7 +133,7 @@
                                                     <label class="form-label col-12">Select Unit</label>
                                                     <div class="col-12">
                                                         <select class="form-select @error('unit_id') is-invalid  @enderror" name="unit_id">
-                                                            <option value="">Select Unit</option>
+                                                            <option value="{{ $product->unit_id }}">{{$product->unit_id}}</option>
                                                                 <option value="pcs">Piece</option>
                                                                 <option value="set">Set</option>
                                                                 <option value="pair">Pair</option>
@@ -168,7 +171,7 @@
                                                         <label class="form-label col-12">Select Gender</label>
                                                         <div class="col-12">
                                                             <select class="form-select @error('gender') is-invalid  @enderror" name="gender">
-                                                                <option value="">Select Gender</option>
+                                                                <option value="{{ $product->productdetails->gender }}">{{$product->productdetails->gender }}</option>
                                                                 <option value="unisex">Unisex</option>
                                                                 <option value="male">Male</option>
                                                                 <option value="female">Female</option>

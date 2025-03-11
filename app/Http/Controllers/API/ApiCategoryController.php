@@ -130,11 +130,18 @@ class ApiCategoryController extends Controller
     {
 
         $categories = Category::select('id', 'categoryName', 'slug')
-            ->withCount('products')
-            ->orderByDesc('products_count')
-            ->take(10)
-            ->get();
+        ->with([
+            'products' => function ($query) {
+                $query->select('id', 'category_id', 'Product_name', 'slug', 'product_feature') // Add 'features' if stored in products table
+                    ->take(10);
+            }
+        ])
+        ->withCount('products')
+        ->orderByDesc('products_count')
+        ->take(10)
+        ->get();
 
+       dd($categories);
         $categoryData = [];
         $uniqueTags = [];
         $uniqueBrands = [];
@@ -198,10 +205,13 @@ class ApiCategoryController extends Controller
                 'brands' => array_values($uniqueBrands)
             ];
         }
-
+        // $finalTags = array_values(array_slice($uniqueTags, 0, 10));
+        // $finalBrands = array_values(array_slice($uniqueBrands, 0, 10));
         return response()->json([
             'status' => 200,
-            'categories' => $categoryData
+            'categories' => $categoryData,
+            // 'finalTags' => $finalTags,
+            // 'finalBrands' => $finalBrands
         ]);
     }
 
