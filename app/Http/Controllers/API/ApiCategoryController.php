@@ -146,7 +146,10 @@ class ApiCategoryController extends Controller
                 ->where('parent_id', $category->id)
                 ->take(10)
                 ->get();
-
+           $product_feature= Product::select('id','slug','product_feature')
+           ->where('category_id', $category->id)
+           ->take(10)
+           ->get();
 
             $tags = Product_Tags::whereHas('product', function ($query) use ($category) {
                 $query->where('category_id', $category->id);
@@ -169,7 +172,7 @@ class ApiCategoryController extends Controller
                 }
             }
 
-      
+
 
             $brands = Brand::whereHas('brandProduct', function ($query) use ($category) {
                 $query->where('category_id', $category->id);
@@ -195,6 +198,7 @@ class ApiCategoryController extends Controller
                 'categoryName' => $category->categoryName,
                 'slug' => $category->slug,
                 'products_count' => $category->products_count,
+                'product_feature' => $product_feature,
                 'subcategories' => $subcategories,
                 'tags' => array_values($uniqueTags),
                 'brands' => array_values($uniqueBrands)
