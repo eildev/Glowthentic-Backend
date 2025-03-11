@@ -65,6 +65,7 @@ Route::controller(ApiUserManageController::class)->group(function () {
 Route::controller(ApiCategoryController::class)->group(function () {
     Route::get('/category', 'view')->name('category.view');
     Route::get('/category/{id}', 'show')->name('category.show');
+    Route::get('/nav/category/show', 'navCategoryShow')->name('navCategory.show');
 });
 Route::controller(ApiTagNameController::class)->group(function () {
     Route::get('/tagname', 'viewAll')->name('tagname.view');

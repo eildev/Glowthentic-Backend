@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\auth;
 use Illuminate\Support\Str;
 use App\Models\Attribute;
 use App\Models\AttributeManage;
+// use App\Models\
 class ProductController extends Controller
 {
     // product index function
@@ -301,7 +302,13 @@ class ProductController extends Controller
     public function edit($id)
     {
         $product = Product::findOrFail($id);
-        return view('backend.products.edit', compact('product'));
+        $attribute_manages = AttributeManage::where('product_id', $id)->get();
+        $variants = Variant::where('product_id', $id)->get();
+        $tag=Product_Tags::where('product_id', $id)->get();
+        // $brand=Brand::all();
+        // $category = Category::all();
+        // $tags=Tag::all();
+        return view('backend.products.edit', compact('product','attribute_manages','variants','tag'));
     }
 
 
