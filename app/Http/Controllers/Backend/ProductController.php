@@ -121,7 +121,7 @@ class ProductController extends Controller
         $product->brand_id = $request->brand_id;
         $product->sub_subcategory_id = $request->sub_subcategory_id;
         if ($request->product_feature) {
-            $product->product_feature = implode(',', $request->product_feature);
+            $product->product_feature =json_encode($request->product_feature);
         }
 
         $product->product_name = $request->product_name;
@@ -302,14 +302,15 @@ class ProductController extends Controller
     public function edit($id)
     {
         $product = Product::with('productdetails')->findOrFail($id);
-        dd($product->productdetails);
+
         $attribute_manages = AttributeManage::where('product_id', $id)->get();
         $variants = Variant::where('product_id', $id)->get();
-        $tag=Product_Tags::where('product_id', $id)->get();
-        // $brand=Brand::all();
-        // $category = Category::all();
-        // $tags=Tag::all();
-        return view('backend.products.edit', compact('product','attribute_manages','variants','tag'));
+        $inserttag=Product_Tags::where('product_id', $id)->get();
+        $extraFields = AttributeManage::where('product_id', $product->id)->get();
+        // ->pluck('value', 'attribute_id')
+        // ->toArray();
+
+        return view('backend.products.edit', compact('product','attribute_manages','variants','inserttag','extraFields'));
     }
 
 

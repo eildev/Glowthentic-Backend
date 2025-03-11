@@ -32,7 +32,7 @@
 
                     <hr />
                     <div class="form-body mt-4">
-                        <form method="POST" action="" enctype="multipart/form-data" id="productForm">
+                        <form action="" enctype="multipart/form-data" id="productForm">
                             @csrf
                             <div class="row g-3 mb-3">
                                 <div class="col-lg-8">
@@ -171,7 +171,7 @@
                                                         <label class="form-label col-12">Select Gender</label>
                                                         <div class="col-12">
                                                             <select class="form-select @error('gender') is-invalid  @enderror" name="gender">
-                                                                <option value="{{ $product->productdetails->gender}}">{{$product->productdetails->gender}}</option>
+                                                                <option value="{{ $product->productdetails->first()->gender}}">{{$product->productdetails->first()->gender}}</option>
                                                                 <option value="unisex">Unisex</option>
                                                                 <option value="male">Male</option>
                                                                 <option value="female">Female</option>
@@ -216,7 +216,7 @@
                                                     <div class="col-12">
                                                         <input type="text" name="product_name"
                                                             class="form-control product_sku @error('product_name') is-invalid  @enderror" id="inputEnterYourName"
-                                                            placeholder="Enter Product Name">
+                                                            value="{{ $product->product_name }}">
                                                          @error('product_name')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -234,8 +234,11 @@
                                                         <label for="" class="form-label"> Description</label>
                                                     </div>
                                                     <div class="col-12">
-                                                        <textarea class="form-control  product_descriptions @error('description') is-invalid  @enderror" name="description" placeholder="Enter Product Description" style="resize: none; height: 70px;"></textarea>
-                                                         @error('description')
+                                                        <textarea class="form-control product_descriptions @error('description') is-invalid @enderror"
+                                                                  name="description"
+                                                                  style="resize: none; height: 70px;">{{ $product->productdetails->first()->description ?? '' }}</textarea>
+
+                                                        @error('description')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                     </div>
@@ -250,7 +253,7 @@
                                                     </div>
                                                     <div class="col-12">
                                                         <textarea class="form-control product_descriptions" name="ingredients" placeholder="Enter Ingredients"
-                                                            style="resize: none; height: 100px;" id="product_description"></textarea>
+                                                            style="resize: none; height: 100px;" id="product_description" >{{$product->productdetails->first()->ingredients??''}}</textarea>
 
 
                                                             @error('ingredients')
@@ -271,7 +274,7 @@
                                                     </div>
                                                     <div class="col-12">
                                                         <textarea class="form-control product_descriptions" name="usage_instruction" placeholder="Enter Usage Instruction"
-                                                            style="resize: none; height: 100px;" id=""></textarea>
+                                                            style="resize: none; height: 100px;" id="">{{$product->productdetails->first()->ingredients??''}}</textarea>
 
 
                                                             @error('usage_instruction')
@@ -300,7 +303,7 @@
                                                 <div class="mb-3">
                                                     <label class="form-label">SKU</label>
                                                     <input type="text" class="form-control sku_generate @error('sku') is-invalid  @enderror"
-                                                        placeholder="ASD1202" name="sku">
+                                                        value="{{ $product->sku }}" name="sku">
                                                     @error('sku')
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
@@ -319,20 +322,38 @@
 
                                             <div class="col-12">
                                                 <div class="mb-3">
+                                                    @php
+                                                        $selectedFeatures= json_decode($product->product_feature, true) ?? [];
+                                                    @endphp
                                                     <label class="form-label col-12">Select Feature</label>
-                                                    <div class="col-12">
-                                                        <select class="form-select @error('product_feature') is-invalid  @enderror" id="multiple-select-field"
-                                                            name="product_feature[]" data-placeholder="Choose anything"
-                                                            multiple>
-                                                            <option value="feature">Feature</option>
-                                                            <option value="new-arrival">New Arrival</option>
-                                                            <option value="trending">Trending</option>
-                                                            <option value="best-rate">Best Rate</option>
-                                                            <option value="weekend-deals">Weekend Deals</option>
-                                                            <option value="top-seller">Top Seller</option>
-                                                            <option value="top-offers">Top Offers</option>
+                                                    <div class="col-12 ">
+                                                        <select class="form-select @error('product_feature') is-invalid @enderror"
+                                                                id="multiple-select-field"
+                                                                name="product_feature[]"
+                                                                data-placeholder="Choose anything"
+                                                                multiple>
+
+                                                            @php
+                                                                $features = [
+                                                                    "feature" => "Feature",
+                                                                    "new-arrival" => "New Arrival",
+                                                                    "trending" => "Trending",
+                                                                    "best-rate" => "Best Rate",
+                                                                    "weekend-deals" => "Weekend Deals",
+                                                                    "top-seller" => "Top Seller",
+                                                                    "top-offers" => "Top Offers"
+                                                                ];
+                                                            @endphp
+
+                                                            @foreach($features as $key => $value)
+                                                                <option value="{{ $key }}"
+                                                                    {{ in_array($key, $selectedFeatures) ? 'selected' : '' }}>
+                                                                    {{ $value }}
+                                                                </option>
+                                                            @endforeach
                                                         </select>
-                                                         @error('product_feature')
+
+                                                        @error('product_feature')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                     </div>
@@ -341,21 +362,30 @@
 
 
 
-
                                             @php
-                                              $tag=App\Models\TagName::all();
-                                            @endphp
+                                            use App\Models\TagName;
+                                            use App\Models\Product_Tags;
 
-                                            <div class="mb-3">
-                                                <label class="form-label">Select Product Tag</label>
-                                                <select class="multiple-select" data-placeholder="Choose anything" multiple="multiple" name="tag[]">
-                                                    {{-- <option value="" selected>Select Product Tag</option> --}}
-                                                    @foreach($tag as $tag)
-                                                       <option value="{{$tag->id}}">{{$tag->tagName}}</option>
-                                                    @endforeach
 
-                                                </select>
-                                            </div>
+                                            $allTags = TagName::all();
+
+
+                                            $selectedTagIds = Product_Tags::where('product_id', $product->id)
+                                                                ->pluck('tag_id')
+                                                                ->toArray();
+                                        @endphp
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Select Product Tag</label>
+                                        <select class="multiple-select" data-placeholder="Choose anything" multiple="multiple" name="tag[]">
+                                            @foreach($allTags as $tag)
+                                                <option value="{{ $tag->id }}"
+                                                    {{ in_array($tag->id, $selectedTagIds) ? 'selected' : '' }}>
+                                                    {{ $tag->tagName }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
 
 
 
@@ -367,24 +397,58 @@
 
                                                 </select>
                                             </div>
-                                            <div id="extra_info_field"></div>
+                                     <div id="extra_info_field">
 
+
+
+                                        @foreach ($extraFields as $extraField)
+                                            @php
+                                                $attribute = App\Models\Attribute::where('id', $extraField->attribute_id)->first();
+                                                $savedValue = $extraField->value; // Assuming this contains saved data
+                                            @endphp
+
+                                            @if ($attribute)
+                                                <div class="mb-3 col-md-6 extra-field-container">
+                                                    <label for="name" class="form-label">{{ $attribute->field_name }}</label>
+
+                                                    @if ($attribute->data_type === "text")
+                                                        <input class="form-control" type="text" name="extra_field[{{ $attribute->id }}]"
+                                                            value="{{ old("extra_field.$attribute->id", $savedValue) }}">
+
+                                                    @elseif ($attribute->data_type === "decimal" || $attribute->data_type === "int" || $attribute->data_type === "double")
+                                                        <input class="form-control" type="number" name="extra_field[{{ $attribute->id }}]"
+                                                            value="{{ old("extra_field.$attribute->id", $savedValue) }}">
+
+                                                    @elseif ($attribute->data_type === "date")
+                                                        <input class="form-control" type="date" name="extra_field[{{ $attribute->id }}]"
+                                                            value="{{ old("extra_field.$attribute->id", $savedValue) }}">
+
+                                                    @elseif ($attribute->data_type === "json")
+                                                        @php
+                                                            $options = json_decode($attribute->options, true) ?? [];
+                                                            $selectedValues = json_decode($savedValue, true) ?? [];
+                                                        @endphp
+                                                        @foreach ($options as $option)
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="checkbox" name="extra_field[{{ $attribute->id }}][]"
+                                                                    value="{{ $option }}" id="checkbox_{{ $attribute->id }}_{{ $option }}"
+                                                                    {{ in_array($option, $selectedValues) ? 'checked' : '' }}>
+                                                                <label class="form-check-label" for="checkbox_{{ $attribute->id }}_{{ $option }}">{{ $option }}</label>
+                                                            </div>
+                                                        @endforeach
+                                                    @endif
+
+                                                    <span class="text-danger name_error"></span>
+                                                </div>
+                                               @endif
+                                            @endforeach
 
                                         </div>
 
 
-
-
-
-
-
-
-
-
-
                                             <div class="col-12">
                                                 <div class="d-grid">
-                                                    <a type="" class="btn btn-primary add_product">Add
+                                                    <a type="" class="btn btn-primary update_product">Update
                                                         Product</a>
                                                 </div>
                                             </div>
@@ -712,6 +776,11 @@
 {{-- script start --}}
 <script>
 
+$(document).ready(function(){
+       $(document).on('click','.update_product',function(){
+        alert('hello');
+       })
+    });
 /////////////////////////////////extra field show in product page///////////////////////
 
 function showExtraField() {
@@ -1055,30 +1124,30 @@ $(document).on("click", ".removeRow", function () {
 });
 
 
-    // $(document).on("click", ".add_variant", function(){
+    $(document).on("click", ".add_variant", function(){
 
-    //     $('#variant_form').fadeIn(1000);
-    //     this.disabled = true;
-    //     this.innerText = "Variant Added";
-    //     $.ajax({
-    //         url:'/product/get_variant_data',
-    //         type:'Get',
-    //         success:function(res){
-    //           $('#variant_form').append(
-    //             `
+        $('#variant_form').fadeIn(1000);
+        this.disabled = true;
+        this.innerText = "Variant Added";
+        $.ajax({
+            url:'/product/get_variant_data',
+            type:'Get',
+            success:function(res){
+              $('#variant_form').append(
+                `
 
-    //             `
-    //           )
-    //         }
+                `
+              )
+            }
 
 
-    //     });
-    // });
-
+        });
+    });
 
 
 
             $(document).on("click", ".add_product", function () {
+
             let formdata = new FormData($('#productForm')[0]); // Corrected FormData
             $.ajaxSetup({
                         headers: {
@@ -1088,7 +1157,7 @@ $(document).on("click", ".removeRow", function () {
 
                     $.ajax({
                         type: "POST",
-                        url: "/product/store",
+                        url: "/product/update",
                         data: formdata,
                         contentType: false,
                         processData: false,

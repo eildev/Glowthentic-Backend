@@ -57,4 +57,31 @@ class ApiWishListController extends Controller
             ]);
         }
     }
+
+
+    public function deleteWishList($id){
+        try {
+            $wishlist = WishList::find($id);
+
+            if($wishlist){
+                $wishlist->delete();
+                dd($wishlist);
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'Wishlist deleted successfully'
+                ]);
+            }
+            else{
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'Wishlist not found'
+                ]);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 500, // Internal Server Error
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
 }
