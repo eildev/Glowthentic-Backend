@@ -47,7 +47,7 @@ class AuthController extends Controller
 
             // Create and return token
             $response = [];
-            // $response["token"] = $user->createToken("MyApp")->plainTextToken;
+            $response["token"] = $user->createToken("MyApp")->plainTextToken;
             $response["name"] = $user->name;
             $response["email"] = $user->email;
             $response["id"] = $user->id;
@@ -344,6 +344,6 @@ class AuthController extends Controller
 
 
     // public function user(){
-        
+
     // }
 }
