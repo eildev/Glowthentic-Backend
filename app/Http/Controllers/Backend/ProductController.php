@@ -301,7 +301,8 @@ class ProductController extends Controller
     // product edit function
     public function edit($id)
     {
-        $product = Product::findOrFail($id);
+        $product = Product::with('productdetails')->findOrFail($id);
+        dd($product->productdetails);
         $attribute_manages = AttributeManage::where('product_id', $id)->get();
         $variants = Variant::where('product_id', $id)->get();
         $tag=Product_Tags::where('product_id', $id)->get();

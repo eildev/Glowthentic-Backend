@@ -130,18 +130,12 @@ class ApiCategoryController extends Controller
     {
 
         $categories = Category::select('id', 'categoryName', 'slug')
-        ->with([
-            'products' => function ($query) {
-                $query->select('id', 'category_id', 'Product_name', 'slug', 'product_feature') // Add 'features' if stored in products table
-                    ->take(10);
-            }
-        ])
         ->withCount('products')
         ->orderByDesc('products_count')
         ->take(10)
         ->get();
 
-       dd($categories);
+    //    dd($categories);
         $categoryData = [];
         $uniqueTags = [];
         $uniqueBrands = [];
@@ -175,6 +169,7 @@ class ApiCategoryController extends Controller
                 }
             }
 
+      
 
             $brands = Brand::whereHas('brandProduct', function ($query) use ($category) {
                 $query->where('category_id', $category->id);

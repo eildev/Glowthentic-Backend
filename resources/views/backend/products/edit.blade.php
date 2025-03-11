@@ -171,7 +171,7 @@
                                                         <label class="form-label col-12">Select Gender</label>
                                                         <div class="col-12">
                                                             <select class="form-select @error('gender') is-invalid  @enderror" name="gender">
-                                                                <option value="{{ $product->productdetails->gender }}">{{$product->productdetails->gender }}</option>
+                                                                <option value="{{ $product->productdetails->gender}}">{{$product->productdetails->gender}}</option>
                                                                 <option value="unisex">Unisex</option>
                                                                 <option value="male">Male</option>
                                                                 <option value="female">Female</option>
