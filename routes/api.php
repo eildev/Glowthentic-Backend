@@ -26,7 +26,6 @@ Route::post('/login', [AuthController::class, "login"]);
 // });
 // Protected Routes
 
-
 Route::group([
     "middleware" => ["auth:sanctum"]
 ], function () {
@@ -67,7 +66,7 @@ Route::controller(ApiTagNameController::class)->group(function () {
 });
 
 Route::controller(ApiProductController::class)->group(function () {
-    // Route::get('/product', 'viewAll')->name('product.view');
+    Route::get('/product', 'viewAll')->name('product.view');
     Route::get('/product/{id}', 'show')->name('product.show');
     Route::post('/product/search', 'search');
     Route::post('/product/filter', 'filter');
