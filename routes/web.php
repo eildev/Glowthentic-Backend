@@ -191,11 +191,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/product/get_variant_data', 'getVariant_product_id');
         Route::post('/product/variant/store', 'variantProductStore');
         Route::post('/product/variant/update','ProductvariantUpdate');
-        // Route::post('/product/variant/store', 'variantStore')->name('variant.store');
-        // Route::get('/product/variant/show/{id}', 'variantShow')->name('variant.show');
-        // Route::get('/product/variant/edit/{id}', 'editVariant')->name('variant.edit');
-        // Route::post('/product/variant/update/{id}', 'updateVariant')->name('variant.update');
-        // Route::get('/product/variant/delete/{id}', 'deleteVariant')->name('variant.delete');
+        Route::post('/product/variant/image/delete', 'variantImageDelete');
+
 
     });
     //All Routes for Product End

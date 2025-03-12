@@ -563,7 +563,11 @@
                                                 </td>
                                                  <td><input type="number" class="form-control" name="stock_quantity[{{ $variant->id }}]" value="{{ $variant->productStock->StockQuantity??0 }}"></td>
                                                  <td>
+
                                                      <button type="button" class="btn btn-success addRow">+</button>
+
+                                                        <button type="button" class="btn btn-danger removeRow" data-variant_id={{ $variant->id }}>✖</button>
+
                                                  </td>
                                              </tr>
                                              @endforeach
@@ -797,29 +801,36 @@
 <script>
     ///////////////////variant image delete///////////////////
     $(document).on('click','.remove-image',function(){
+        let image_id = $(this).data('id');
+           console.log(image_id);
+          $.ajaxSetup({
+            headers:{ 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
+          });
+           $.ajax({
+            url:"/product/variant/image/delete",
+            type:"POST",
+            data:{image_id:image_id},
+            success:function(response){
+                if(response.status == '200'){
+
+                    toastr.success("Image Delete Successfully");
+                }
+            }
+           })
+
+    });
+    $(document).on('click','.remove-image',function(){
         $(this).parent().remove();
-    })
+
+    });
+
+
 ////////////////////////////////////////variant Update ////////////////////////////////////////
 
 $(document).on("click",".variant_update",function(e){
     e.preventDefault();
 
-    // let isValid = true;
-    // $(".error-message").remove();
-    // $("#productTableBody tr").each(function () {
-    //     let size = $(this).find('[name="size[]"]').val();
-    //     let color = $(this).find('[name="color[]"]').val();
 
-    //     if (!size && !color) {
-    //     $(this).find('[name="size[]"]').after('<div class="text-danger error-message">Size or Color is required</div>');
-    //     isValid = false;
-    // }
-    // });
-
-    // if (!isValid) {
-    //     toastr.error("Please select at least one size and one color before saving.");
-    //     return;
-    // }
 
 
     let formdata = new FormData($('#variant_form_submit')[0]);
@@ -915,6 +926,25 @@ $(document).on("click", ".addRow", function () {
 $(document).on("click", ".removeRow", function () {
     $(this).closest("tr").remove();
 });
+//////////////////////////////////////////////////////variant Delete ////////////////////////////////////////
+    $(document).on('click','.removeRow',function(){
+         let variant_id = $(this).data('variant_id');
+         $.ajaxSetup({
+            headers:{ 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
+         });
+         $.ajax({
+            url:"/variant/delete/",
+            type:"POST",
+            data:{
+                variant_id:variant_id
+            }
+            success:function(res){
+                console.log(res);
+            }
+
+         })
+
+    });
 //////////////////////////////////update product //////////////////////////////////////////////////////
     $(document).on("click", ".update_product", function () {
     let formdata = new FormData($('#productForm')[0]); // Corrected FormData

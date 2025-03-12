@@ -778,7 +778,7 @@ class ProductController extends Controller
             $existingVariants = Variant::where('product_id', $request->product_id)->get()->keyBy('id');
 
             if (!empty($request->price)) {
-                $first = true;
+                $first = true; //identify the first default variant of the product
                 foreach ($request->price as $variant_id => $price) {
 
                     if (isset($existingVariants[$variant_id])) {
@@ -824,7 +824,7 @@ class ProductController extends Controller
                         }
                     }
 
-         
+
                     if (!empty($request->stock_quantity[$variant_id])) {
                         ProductStock::updateOrCreate(
                             ['product_id' => $request->product_id, 'variant_id' => $variant->id],
@@ -846,6 +846,27 @@ class ProductController extends Controller
         }
     }
 
+
+    public function variantImageDelete(Request $request){
+        try{
+            $variantImage = VariantImageGallery::findOrFail($request->image_id);
+
+            if(file_exists($variantImage->image)){
+                unlink($variantImage->image);
+
+            }
+            $variantImage->delete();
+            return response()->json([
+                'status' => 200,
+                'message' => 'Variant Image Deleted Successfully'
+            ]);
+        }catch(\Exception $e){
+            return response()->json([
+                'status' => 500,
+                'message' => 'Something went wrong'
+            ]);
+        }
+    }
 
 
     //rest Api Start

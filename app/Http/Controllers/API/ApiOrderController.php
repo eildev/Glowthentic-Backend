@@ -372,12 +372,15 @@ class ApiOrderController extends Controller
 public function trackingOrder(Request $request){
     try{
          $order_id = $request->order_id;
-         $order = Order::where('invoice_number',$order_id)->first();
+         $order = Order::where('invoice_number',$order_id)->with('orderDetails')->first();
+         $order_details = OrderDetails::where('order_id', $order->id)->with('product')->get();
+       
          if($order){
                 if($order->status != "Delivering"){
                     return response()->json([
                         'status' => 200,
                         'order_tracking' =>"Ordered",
+                         'orderDetails' => $order_details,
                         'message' => 'Order Tracking Successfully',
                     ]);
                 }
@@ -388,6 +391,7 @@ public function trackingOrder(Request $request){
                     return response()->json([
                         'status' => 200,
                         'order' =>"Shipped",
+                        'orderDetails' => $order_details,
                         'message' => 'Order Delivered Successfully',
                     ]);
 
@@ -397,6 +401,7 @@ public function trackingOrder(Request $request){
                 return response()->json([
                     'status' => 200,
                     'order' =>"Completed",
+                    'orderDetails' => $order_details,
                     'message' => 'Order Delivered Successfully',
                 ]);
             }
