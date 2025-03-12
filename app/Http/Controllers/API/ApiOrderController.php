@@ -13,6 +13,7 @@ use App\Models\ComboProduct;
 use App\Models\Combo;
 use App\Models\Product;
 use App\Models\ProductPromotion;
+use App\Models\DeliveryOrder;
 use Auth;
 
 class ApiOrderController extends Controller
@@ -290,7 +291,7 @@ class ApiOrderController extends Controller
         $order->status = 'pending';
         $order->order_note = $request->order_note;
         $order->invoice_number = rand(100000, 999999);
-        $order->user_id = 1;
+        $order->user_id = $request->user_id;
 
         // Coupon Validation
         if ($request->coupon_code) {
@@ -357,10 +358,59 @@ class ApiOrderController extends Controller
             'status' => 200,
             'order' => $order,
             'order_details' => $order->orderDetails,
-            'error_messages' => $error_messages, // Return the error messages
+            'error_messages' => $error_messages,
             'message' => 'Order Created Successfully',
         ]);
     } catch (\Exception $e) {
+        return response()->json([
+            'status' => 500,
+            'message' => $e->getMessage(),
+        ]);
+    }
+}
+
+public function trackingOrder(Request $request){
+    try{
+         $order_id = $request->order_id;
+         $order = Order::where('invoice_number',$order_id)->with('orderDetails')->first();
+         $order_details = OrderDetails::where('order_id', $order->id)->with('product')->get();
+       
+         if($order){
+                if($order->status != "Delivering"){
+                    return response()->json([
+                        'status' => 200,
+                        'order_tracking' =>"Ordered",
+                         'orderDetails' => $order_details,
+                        'message' => 'Order Tracking Successfully',
+                    ]);
+                }
+            else{
+                $delivered_order = DeliveryOrder::where('order_id', $order->id)->first();
+
+                if($delivered_order->delivery_status != "delivered"){
+                    return response()->json([
+                        'status' => 200,
+                        'order' =>"Shipped",
+                        'orderDetails' => $order_details,
+                        'message' => 'Order Delivered Successfully',
+                    ]);
+
+            }
+
+            else if($delivered_order->delivery_status == "delivered"){
+                return response()->json([
+                    'status' => 200,
+                    'order' =>"Completed",
+                    'orderDetails' => $order_details,
+                    'message' => 'Order Delivered Successfully',
+                ]);
+            }
+
+         }
+
+    }
+   }
+    catch(\Exception $e){
         return response()->json([
             'status' => 500,
             'message' => $e->getMessage(),

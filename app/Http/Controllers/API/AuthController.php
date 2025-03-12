@@ -25,7 +25,7 @@ class AuthController extends Controller
                 // 'username' => 'required|string|unique:users,username',
                 'name' => 'required|string|max:255',
                 'email' => 'required|string|email|unique:users,email',
-                'password' => 'required|confirmed|min:6',
+                'password' => 'required|min:8|confirmed',
                 // 'confirm_password' => 'required|confirmed|same:password',
             ]);
 
@@ -47,7 +47,7 @@ class AuthController extends Controller
 
             // Create and return token
             $response = [];
-            // $response["token"] = $user->createToken("MyApp")->plainTextToken;
+            $response["token"] = $user->createToken("MyApp")->plainTextToken;
             $response["name"] = $user->name;
             $response["email"] = $user->email;
             $response["id"] = $user->id;
@@ -340,5 +340,10 @@ class AuthController extends Controller
     //     $request->session()->invalidate();
     //     $request->session()->regenerateToken();
     //     return redirect('/admin/login');
+    // }
+
+
+    // public function user(){
+
     // }
 }

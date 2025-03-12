@@ -14,6 +14,7 @@ class ApiUserManageController extends Controller
 {
 
     public function UserDetailsStore(Request $request){
+
         try{
 
             $validator = Validator::make($request->all(), [
@@ -44,6 +45,16 @@ class ApiUserManageController extends Controller
                     $userDetails->phone_number= $request->phone_number;
                     $userDetails->address= $request->address;
                     $userDetails->city= $request->city;
+
+                    if($request->hasFile('image')){
+                        $file= $request->file('image');
+                        $extension = $file->Extension();
+                        $filename = time().'.'.$extension;
+                        $path='uploads/user_image/';
+                        $file->move($path,$filename);
+                        $userDetails->image= $path.$filename;
+                    }
+                    $userDetails->police_station= $request->police_station;
                     $userDetails->postal_code= $request->postal_code;
                     $userDetails->country= $request->country;
                     $userDetails->save();
@@ -54,6 +65,15 @@ class ApiUserManageController extends Controller
                     $userDetails->full_name= $request->full_name;
                     $userDetails->phone_number= $request->phone_number;
                     $userDetails->address= $request->address;
+                    if($request->hasFile('image')){
+                        $file= $request->file('image');
+                        $extension = $file->Extension();
+                        $filename = time().'.'.$extension;
+                        $path='uploads/user_image/';
+                        $file->move($path,$filename);
+                        $userDetails->image= $path.$filename;
+                    }
+                    $userDetails->police_station= $request->police_station;
                     $userDetails->city= $request->city;
                     $userDetails->postal_code= $request->postal_code;
                     $userDetails->country= $request->country;
@@ -68,6 +88,15 @@ class ApiUserManageController extends Controller
                     $userDetails->full_name= $request->full_name;
                     $userDetails->phone_number= $request->phone_number;
                     $userDetails->address= $request->address;
+                    if($request->hasFile('image')){
+                        $file= $request->file('image');
+                        $extension = $file->Extension();
+                        $filename = time().'.'.$extension;
+                        $path='uploads/user_image/';
+                        $file->move($path,$filename);
+                        $userDetails->image= $path.$filename;
+                    }
+                    $userDetails->police_station= $request->police_station;
                     $userDetails->city= $request->city;
                     $userDetails->postal_code= $request->postal_code;
                     $userDetails->country= $request->country;
@@ -76,6 +105,15 @@ class ApiUserManageController extends Controller
                   else{
                     $userDetails = new UserDetails();
                     $userDetails->session_id= $request->session_id;
+                    if($request->hasFile('image')){
+                        $file= $request->file('image');
+                        $extension = $file->Extension();
+                        $filename = time().'.'.$extension;
+                        $path='uploads/user_image/';
+                        $file->move($path,$filename);
+                        $userDetails->image= $path.$filename;
+                    }
+                    $userDetails->police_station= $request->police_station;
                     $userDetails->full_name= $request->full_name;
                     $userDetails->phone_number= $request->phone_number;
                     $userDetails->address= $request->address;
@@ -102,6 +140,7 @@ class ApiUserManageController extends Controller
     }
 
     public function update($id ,Request $request){
+
         try{
             $validator = Validator::make($request->all(), [
                 'full_name' => 'required|string',
@@ -122,6 +161,18 @@ class ApiUserManageController extends Controller
             if($userDetails){
               $userDetails->full_name= $request->full_name;
               $userDetails->phone_number= $request->phone_number;
+              if($request->hasFile('image')){
+                if ($userDetails->image && file_exists($userDetails->image)) {
+                    unlink($userDetails->image);
+                }
+                $file= $request->file('image');
+                $extension = $file->Extension();
+                $filename = time().'.'.$extension;
+                $path='uploads/user_image/';
+                $file->move($path,$filename);
+                $userDetails->image= $path.$filename;
+            }
+            $userDetails->police_station= $request->police_station;
               $userDetails->address= $request->address;
               $userDetails->city= $request->city;
               $userDetails->postal_code= $request->postal_code;
@@ -147,10 +198,14 @@ class ApiUserManageController extends Controller
 
 public function userDetailsShow($id){
     try{
-        $userDetails = UserDetails::where('user_id', $id)->first();
+        $user= User::where('id', $id)->first();
+        $userDetails = UserDetails::Where('session_id', $id)->orWhere('user_id', $user->id)->with('user')
+        ->first();
+
         return response()->json([
             'status' => 200,
-            'user' => $userDetails,
+            'user'=> $user,
+            'userDetails' => $userDetails,
             'message' => 'User Details'
         ], 200);
     }
@@ -247,6 +302,7 @@ public function userBillingInfoUpdate(Request $request, $id)
 {
     try {
         // Try to find the user using user_id or session_id
+
         $billing_user = BillingInformation::where('id', $id)->first();
 
         if (!$billing_user) {
@@ -316,7 +372,7 @@ public function GetUserBillingInfo(Request $request){
             $query->orWhere('session_id', $request->session_id);
         }
 
-      
+
         if (!$request->filled('user_id') && !$request->filled('session_id')) {
             return response()->json([
                 'status' => 400,

@@ -27,6 +27,8 @@ use App\Http\Controllers\AllMail;
 use App\Http\Controllers\Backend\PurchaseDetailsController;
 use App\Http\Controllers\Backend\historyController;
 use App\Http\Controllers\Backend\MarketingController;
+use App\Http\Controllers\Backend\ProductAttributeController;
+
 use App\Http\Controllers\Backend\ComboController;
 use App\Http\Controllers\Backend\CouponController;
 use App\Http\Controllers\Backend\ProductPromotionController;
@@ -39,12 +41,12 @@ use App\Http\Controllers\Backend\DeliverOrderAssignController;
 Route::get('/admin/login', [AuthController::class, 'adminLoginPage']);
 Route::post('/admin/login', [AuthController::class, 'adminLogin'])->name('login');
 Route::post('/admin/logout', [AuthController::class, 'adminLogout'])->name('logout')->middleware('auth');
-Route::get('/', [AuthController::class, 'dashboardView'])->middleware('auth:sanctum')->name('admin.dashboard');
+Route::get('/', [AuthController::class, 'dashboardView'])->middleware('auth')->name('admin.dashboard');
 
 Route::controller(AllMail::class)->group(function () {
     Route::post('/reply/mail', 'replyMail')->name('reply.mail');
 });
-Route::middleware('auth:sanctun')->group(function () {
+Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -138,7 +140,12 @@ Route::middleware('auth:sanctun')->group(function () {
         Route::post('/banner/status/{id}', 'bannerStatus')->name('banner.status');
     });
     //All Routes for Home Banner End
+    Route::controller(ProductAttributeController::class)->group(function () {
+        Route::post('/store/extra/datatype/field', 'store')->name('product.attribute.store');
+        Route::get('/get/extra/info/field/{id}', 'getExtraField')->name('product.attribute.get.extra.info.field');
+        Route::get('get-extra-field/info/product/page/show', 'getExtraFieldInfoProductPageShow')->name('get.extra.field.info.product.page.show');
 
+    });
     //All Routes for Offer Banner Start
     Route::controller(OfferBannerController::class)->group(function () {
         Route::get('/offerbanner', 'index')->name('offerbanner');
@@ -174,7 +181,7 @@ Route::middleware('auth:sanctun')->group(function () {
     Route::controller(ProductController::class)->group(function () {
         Route::get('/product', 'index')->name('product');
         Route::post('/product/store', 'store')->name('product.store');
-        Route::post('/product/update/{id}', 'update')->name('product.update');
+        Route::post('/product/update', 'update')->name('product.update');
         Route::get('/product/view', 'view')->name('product.view');
         Route::get('/product/view/{id}', 'viewDetails')->name('product.view.details');
         Route::get('/product/edit/{id}', 'edit')->name('product.edit');
@@ -183,12 +190,9 @@ Route::middleware('auth:sanctun')->group(function () {
         Route::get('/find/variant/{id}', 'findVariant')->name('find.variant');
         Route::get('/product/get_variant_data', 'getVariant_product_id');
         Route::post('/product/variant/store', 'variantProductStore');
-
-        // Route::post('/product/variant/store', 'variantStore')->name('variant.store');
-        // Route::get('/product/variant/show/{id}', 'variantShow')->name('variant.show');
-        // Route::get('/product/variant/edit/{id}', 'editVariant')->name('variant.edit');
-        // Route::post('/product/variant/update/{id}', 'updateVariant')->name('variant.update');
-        // Route::get('/product/variant/delete/{id}', 'deleteVariant')->name('variant.delete');
+        Route::post('/product/variant/update','ProductvariantUpdate');
+        Route::post('/product/variant/image/delete', 'variantImageDelete');
+        Route::post('/product/variant/delete', 'variantDelete');
 
     });
     //All Routes for Product End
