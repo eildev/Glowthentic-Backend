@@ -65,7 +65,7 @@ class ApiWishListController extends Controller
 
             if($wishlist){
                 $wishlist->delete();
-                dd($wishlist);
+                
                 return response()->json([
                     'status' => 200,
                     'message' => 'Wishlist deleted successfully'
