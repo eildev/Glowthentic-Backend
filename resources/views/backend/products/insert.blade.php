@@ -1338,7 +1338,8 @@ $(document).on("click", ".removeRow", function () {
                     console.log(res);
                     toastr.success(res.message);
                     $('#variant_form_submit')[0].reset();
-                    // location.reload();
+                    $('#productForm')[0].reset();
+                     location.reload();
                 }
             });
   });

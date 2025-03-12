@@ -34,9 +34,11 @@
                     <div class="form-body mt-4">
                         <form action="" enctype="multipart/form-data" id="productForm">
                             @csrf
+
                             <div class="row g-3 mb-3">
                                 <div class="col-lg-8">
                                     <div class="border border-3 p-4 rounded">
+                                        <input type="text" name="product_id" value="{{ $product->id }}" hidden>
                                         <div class="row mb-3">
                                             <div class="col-md-6">
                                                 @php
@@ -67,7 +69,7 @@
                                                     <label class="form-label col-12">Select Subcategory</label>
                                                     <div class="col-12">
                                                         <select class="form-select subcategory_select @error('subcategory_id') is-invalid  @enderror" name="subcategory_id">
-                                                            <option value="">{{ $subcategories->categoryName }}</option>
+                                                            <option value="">{{ $subcategories->categoryName??'' }}</option>
                                                         </select>
                                                         @error('category_id')
                                                             <span class="text-danger">{{ $message }}</span>
@@ -236,7 +238,7 @@
                                                     <div class="col-12">
                                                         <textarea class="form-control product_descriptions @error('description') is-invalid @enderror"
                                                                   name="description"
-                                                                  style="resize: none; height: 70px;">{{ $product->productdetails->first()->description ?? '' }}</textarea>
+                                                                  style="resize: none; height: 70px;">{!! $product->productdetails->first()->description ?? '' !!}</textarea>
 
                                                         @error('description')
                                                             <span class="text-danger">{{ $message }}</span>
@@ -253,7 +255,7 @@
                                                     </div>
                                                     <div class="col-12">
                                                         <textarea class="form-control product_descriptions" name="ingredients" placeholder="Enter Ingredients"
-                                                            style="resize: none; height: 100px;" id="product_description" >{{$product->productdetails->first()->ingredients??''}}</textarea>
+                                                            style="resize: none; height: 100px;" id="product_description" >{!! $product->productdetails->first()->ingredients??'' !!}</textarea>
 
 
                                                             @error('ingredients')
@@ -274,7 +276,7 @@
                                                     </div>
                                                     <div class="col-12">
                                                         <textarea class="form-control product_descriptions" name="usage_instruction" placeholder="Enter Usage Instruction"
-                                                            style="resize: none; height: 100px;" id="">{{$product->productdetails->first()->ingredients??''}}</textarea>
+                                                            style="resize: none; height: 100px;" id="">{!! $product->productdetails->first()->ingredients??'' !!}</textarea>
 
 
                                                             @error('usage_instruction')
@@ -448,7 +450,7 @@
 
                                             <div class="col-12">
                                                 <div class="d-grid">
-                                                    <a type="" class="btn btn-primary update_product">Update
+                                                    <a type="" class="btn btn-primary update_product" data-product_id="{{ $product->id }}">Update
                                                         Product</a>
                                                 </div>
                                             </div>
@@ -467,7 +469,7 @@
 
                             <form id="variant_form_submit"  enctype="multipart/form-data">
                                 <div class="col-md-12 col-sm-12">
-                                  <h5 class="mb-3 fw-bold  text-primary border-bottom pb-2">Variation Product Name:  ${res.product_name}</h5>
+                                  <h5 class="mb-3 fw-bold  text-primary border-bottom pb-2">Variation Product Name:{{$product->product_name}}</h5>
 
                                     <div class="table-responsive">
                                      <table class="table table-bordered">
@@ -487,71 +489,89 @@
                                              </tr>
                                          </thead>
                                          <tbody id="productTableBody">
+                                            @foreach ( $variants as $variant)
+
+
                                              <tr>
-                                                 <td><input type="hidden" name="product_id" value="${res.product_id}"></td>
-                                                  <td><input type="text" class="form-control" name="variant_name[]"></td>
-                                                 <td><input type="number" class="form-control" name="price[]"></td>
+                                                <input type="text" name="variant_id[]" value="{{ $variant->id }}" hidden>
+                                                 <td><input type="hidden" name="product_id" value="{{$variant->product_id }}"></td>
+
+                                                  <td><input type="text" class="form-control" name="variant_name[{{$variant->id}}]" value="{{ $variant->variant_name??'' }}"></td>
+                                                 <td><input type="number" class="form-control" name="price[{{$variant->id}}]" value="{{ $variant->regular_price??0 }}"></td>
                                                  <td>
-                                                     <select class="form-select @error('size') is-invalid @enderror size" name="size[]">
+                                                     <select class="form-select @error('size') is-invalid @enderror size" name="size[{{ $variant->id }}]">
                                                          <option value="">Select Size</option>
-                                                         <option value="s">Small (S)</option>
-                                                         <option value="m">Medium (M)</option>
-                                                         <option value="l">Large (L)</option>
-                                                         <option value="xl">X-Large (XL)</option>
-                                                         <option value="xxl">XX-Large (XXL)</option>
-                                                         <option value="6">Size 6</option>
-                                                         <option value="7">Size 7</option>
-                                                         <option value="8">Size 8</option>
-                                                         <option value="9">Size 9</option>
-                                                         <option value="10">Size 10</option>
-                                                         <option value="500g">500g</option>
-                                                         <option value="1kg">1kg</option>
-                                                         <option value="500ml">500ml</option>
-                                                         <option value="1l">1L</option>
+                                                         <option value="s" {{ $variant->size=="s"?"selected":'' }}>Small (S)</option>
+                                                         <option value="m" {{ $variant->size=="m"?"selected":'' }}>Medium (M)</option>
+                                                         <option value="l" {{ $variant->size=="l"?"selected":'' }}>Large (L)</option>
+                                                         <option value="xl" {{ $variant->size=="xl"?"selected":'' }}>X-Large (XL)</option>
+                                                         <option value="xxl" {{ $variant->size=="xxl"?"selected":'' }}>XX-Large (XXL)</option>
+                                                         <option value="6" {{ $variant->size=="6"?"selected":'' }}>Size 6</option>
+                                                         <option value="7" {{ $variant->size=="7"?"selected":'' }}>Size 7</option>
+                                                         <option value="8" {{ $variant->size=="8"?"selected":'' }}>Size 8</option>
+                                                         <option value="9" {{ $variant->size=="9"?"selected":'' }}>Size 9</option>
+                                                         <option value="10" {{ $variant->size=="10"?"selected":'' }}>Size 10</option>
+                                                         <option value="500g" {{ $variant->size=="500g"?"selected":'' }}>500g</option>
+                                                         <option value="1kg" {{ $variant->size=="1kg"?"selected":'' }}>1kg</option>
+                                                         <option value="500ml" {{ $variant->size=="500ml"?"selected":'' }}>500ml</option>
+                                                         <option value="1l" {{ $variant->size=="11"?"selected":'' }}>1L</option>
                                                      </select>
                                                  </td>
                                                  <td>
-                                                     <select class="form-select @error('color') is-invalid @enderror color" name="color[]">
+                                                     <select class="form-select @error('color') is-invalid @enderror color" name="color[{{ $variant->id }}]">
                                                          <option value="">Select Color</option>
-                                                         <option value="black">Black</option>
-                                                         <option value="white">White</option>
-                                                         <option value="red">Red</option>
-                                                         <option value="blue">Blue</option>
-                                                         <option value="green">Green</option>
-                                                         <option value="yellow">Yellow</option>
-                                                         <option value="orange">Orange</option>
-                                                         <option value="purple">Purple</option>
-                                                         <option value="pink">Pink</option>
-                                                         <option value="brown">Brown</option>
-                                                         <option value="gray">Gray</option>
-                                                         <option value="silver">Silver</option>
-                                                         <option value="gold">Gold</option>
-                                                         <option value="navy">Navy</option>
-                                                         <option value="maroon">Maroon</option>
-                                                         <option value="beige">Beige</option>
-                                                         <option value="teal">Teal</option>
-                                                         <option value="cyan">Cyan</option>
-                                                         <option value="magenta">Magenta</option>
-                                                         <option value="olive">Olive</option>
-                                                         <option value="violet">Violet</option>
-                                                         <option value="indigo">Indigo</option>
-                                                         <option value="turquoise">Turquoise</option>
-                                                         <option value="charcoal">Charcoal</option>
+                                                         <option value="black"{{ $variant->color=="black"?"selected":'' }}>Black</option>
+                                                         <option value="white"{{ $variant->color=="white"?"selected":'' }}>White</option>
+                                                         <option value="red"{{ $variant->color=="red"?"selected":'' }}>Red</option>
+                                                         <option value="blue"{{ $variant->color=="blue"?"selected":'' }}>Blue</option>
+                                                         <option value="green"{{ $variant->color=="green"?"selected":'' }}>Green</option>
+                                                         <option value="yellow"{{ $variant->color=="yellow"?"selected":'' }}>Yellow</option>
+                                                         <option value="orange"{{ $variant->color=="orange"?"selected":'' }}>Orange</option>
+                                                         <option value="purple"{{ $variant->color=="purple"?"selected":'' }}>Purple</option>
+                                                         <option value="pink"{{ $variant->color=="pink"?"selected":'' }}>Pink</option>
+                                                         <option value="brown"{{ $variant->color=="brown"?"selected":'' }}>Brown</option>
+                                                         <option value="gray"{{ $variant->color=="gray"?"selected":'' }}>Gray</option>
+                                                         <option value="silver"{{ $variant->color==""?"selected":'' }}>Silver</option>
+                                                         <option value="gold"{{ $variant->color=="gold"?"selected":'' }}>Gold</option>
+                                                         <option value="navy"{{ $variant->color=="navy"?"selected":'' }}>Navy</option>
+                                                         <option value="maroon"{{ $variant->color=="maroon"?"selected":'' }}>Maroon</option>
+                                                         <option value="beige"{{ $variant->color=="beige"?"selected":'' }}>Beige</option>
+                                                         <option value="teal"{{ $variant->color=="teal"?"selected":'' }}>Teal</option>
+                                                         <option value="cyan"{{ $variant->color=="cyan"?"selected":'' }}>Cyan</option>
+                                                         <option value="magenta"{{ $variant->color=="magenta"?"selected":'' }}>Magenta</option>
+                                                         <option value="olive"{{ $variant->color=="olive"?"selected":'' }}>Olive</option>
+                                                         <option value="violet"{{ $variant->color=="violet"?"selected":'' }}>Violet</option>
+                                                         <option value="indigo"{{ $variant->color=="indigo"?"selected":'' }}>Indigo</option>
+                                                         <option value="turquoise"{{ $variant->color=="turquoise"?"selected":'' }}>Turquoise</option>
+                                                         <option value="charcoal"{{ $variant->color=="charcoal"?"selected":'' }}>Charcoal</option>
                                                      </select>
                                                  </td>
-                                                 <td><input type="text" class="form-control" name="weight[]"></td>
-                                                 <td><input type="text" class="form-control" name="flavor[]"></td>
-                                                 <td><input type="file" class="form-control" name="image[0][]" multiple></td>
-                                                 <td><input type="number" class="form-control" name="stock_quantity[]"></td>
+                                                 <td><input type="text" class="form-control" name="weight[{{ $variant->id }}]" value="{{ $variant->weight??'' }}"></td>
+                                                 <td><input type="text" class="form-control" name="flavor[{{ $variant->id }}]" value="{{ $variant->flavor??'' }}"></td>
+                                                 <td><input type="file" class="form-control" name="image[{{$variant->id}}][]" multiple>
+                                                    @foreach ($variant->variantImage as $image)
+                                                    <div class="image-container position-relative d-inline-block m-2">
+                                                        <img src="{{ asset($image->image) }}" alt="" width="50px" height="50px" class="border rounded">
+                                                        <button type="button" class="btn btn-danger btn-sm rounded-circle remove-image position-absolute top-0 end-0 p-0 d-flex align-items-center justify-content-center" data-id="{{ $image->id }}" style="width: 20px; height: 20px;">
+                                                            <span class="text-white fw-bold">×</span>
+                                                        </button>
+                                                    </div>
+                                                @endforeach
+
+
+
+                                                </td>
+                                                 <td><input type="number" class="form-control" name="stock_quantity[{{ $variant->id }}]" value="{{ $variant->productStock->StockQuantity??0 }}"></td>
                                                  <td>
                                                      <button type="button" class="btn btn-success addRow">+</button>
                                                  </td>
                                              </tr>
+                                             @endforeach
                                          </tbody>
                                          <tfoot>
                                              <tr>
                                                  <td colspan="10" class="text-end">
-                                                     <button type="submit" class="btn btn-primary variant_save">Variant Update</button>
+                                                     <a  class="btn btn-primary variant_update">Variant Update</a>
                                                  </td>
                                              </tr>
                                          </tfoot>
@@ -775,12 +795,168 @@
 
 {{-- script start --}}
 <script>
+    ///////////////////variant image delete///////////////////
+    $(document).on('click','.remove-image',function(){
+        $(this).parent().remove();
+    })
+////////////////////////////////////////variant Update ////////////////////////////////////////
 
-$(document).ready(function(){
-       $(document).on('click','.update_product',function(){
-        alert('hello');
-       })
+$(document).on("click",".variant_update",function(e){
+    e.preventDefault();
+
+    // let isValid = true;
+    // $(".error-message").remove();
+    // $("#productTableBody tr").each(function () {
+    //     let size = $(this).find('[name="size[]"]').val();
+    //     let color = $(this).find('[name="color[]"]').val();
+
+    //     if (!size && !color) {
+    //     $(this).find('[name="size[]"]').after('<div class="text-danger error-message">Size or Color is required</div>');
+    //     isValid = false;
+    // }
+    // });
+
+    // if (!isValid) {
+    //     toastr.error("Please select at least one size and one color before saving.");
+    //     return;
+    // }
+
+
+    let formdata = new FormData($('#variant_form_submit')[0]);
+
+    $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            $.ajax({
+
+                url:"/product/variant/update",
+                type:"POST",
+                data:formdata,
+                contentType: false,
+                processData:false,
+                success:function(res){
+
+                    console.log(res);
+                    toastr.success(res.message);
+                    $('#variant_form_submit')[0].reset();
+                    // location.reload();
+                }
+            });
+  });
+
+$(document).on("click", ".addRow", function () {
+          let rowCount = $("#productTableBody tr").length;
+        let row = `<tr>
+            <td></td>
+            <td><input type="text" class="form-control" name="variant_name[]"></td>
+            <td><input type="number" class="form-control" name="price[]"></td>
+            <td>
+                <select class="form-select" name="size[]">
+                    <option value="">Select Size</option>
+                    <option value="s">Small (S)</option>
+                    <option value="m">Medium (M)</option>
+                    <option value="l">Large (L)</option>
+                    <option value="xl">X-Large (XL)</option>
+                    <option value="xxl">XX-Large (XXL)</option>
+                    <option value="6">Size 6</option>
+                    <option value="7">Size 7</option>
+                    <option value="8">Size 8</option>
+                    <option value="9">Size 9</option>
+                    <option value="10">Size 10</option>
+                    <option value="500g">500g</option>
+                    <option value="1kg">1kg</option>
+                    <option value="500ml">500ml</option>
+                    <option value="1l">1L</option>
+                </select>
+            </td>
+            <td>
+                <select class="form-select" name="color[]">
+                    <option value="">Select Color</option>
+                    <option value="black">Black</option>
+                    <option value="white">White</option>
+                    <option value="red">Red</option>
+                    <option value="blue">Blue</option>
+                    <option value="green">Green</option>
+                    <option value="yellow">Yellow</option>
+                    <option value="orange">Orange</option>
+                    <option value="purple">Purple</option>
+                    <option value="pink">Pink</option>
+                    <option value="brown">Brown</option>
+                    <option value="gray">Gray</option>
+                    <option value="silver">Silver</option>
+                    <option value="gold">Gold</option>
+                    <option value="navy">Navy</option>
+                    <option value="maroon">Maroon</option>
+                    <option value="beige">Beige</option>
+                    <option value="teal">Teal</option>
+                    <option value="cyan">Cyan</option>
+                    <option value="magenta">Magenta</option>
+                    <option value="olive">Olive</option>
+                    <option value="violet">Violet</option>
+                    <option value="indigo">Indigo</option>
+                    <option value="turquoise">Turquoise</option>
+                    <option value="charcoal">Charcoal</option>
+                </select>
+            </td>
+            <td><input type="text" class="form-control" name="weight[]"></td>
+            <td><input type="text" class="form-control" name="flavor[]"></td>
+            <td><input type="file" class="form-control" name="image[][]" multiple></td>
+            <td><input type="number" class="form-control" name="stock_quantity[]"></td>
+            <td>
+                <button type="button" class="btn btn-danger removeRow">✖</button>
+            </td>
+        </tr>`;
+    $("#productTableBody").append(row);
+});
+
+$(document).on("click", ".removeRow", function () {
+    $(this).closest("tr").remove();
+});
+//////////////////////////////////update product //////////////////////////////////////////////////////
+    $(document).on("click", ".update_product", function () {
+    let formdata = new FormData($('#productForm')[0]); // Corrected FormData
+    $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "/product/update",
+                data: formdata,
+                contentType: false,
+                processData: false,
+                success:function(res){
+
+                    if(res.status == 200){
+                        $('#productForm')[0].reset();
+                    toastr.success("Product Updated Successfully");
+                    location.reload();
+                    }
+               else{
+                toastr.error("Something Went Wrong");
+               }
+
+
+                },
+                error: function (xhr) {
+                        if (xhr.status === 422) {
+                            let errors = xhr.responseJSON.errors;
+                            $('.error-message').remove(); // Remove previous errors
+                            console.log(errors);
+                            $.each(errors, function (key, value) {
+                                let inputField = $('[name="' + key + '"]');
+                                inputField.after('<div class="text-danger error-message">' + value[0] + '</div>');
+                            });
+                        }
+                    }
+            })
     });
+
 /////////////////////////////////extra field show in product page///////////////////////
 
 function showExtraField() {
@@ -1042,7 +1218,7 @@ function showExtraField() {
             if (productNameValue.trim() !== '') {
                 skuGenerate.value = generateProductSKU(10);
             }
-        })
+        });
 
 
 
@@ -1054,74 +1230,6 @@ function showExtraField() {
 
 
 
-        $(document).on("click", ".addRow", function () {
-          let rowCount = $("#productTableBody tr").length; // Get current row count
-        let row = `<tr>
-            <td></td>
-            <td><input type="text" class="form-control" name="variant_name[]"></td>
-            <td><input type="number" class="form-control" name="price[]"></td>
-            <td>
-                <select class="form-select" name="size[]">
-                    <option value="">Select Size</option>
-                    <option value="s">Small (S)</option>
-                    <option value="m">Medium (M)</option>
-                    <option value="l">Large (L)</option>
-                    <option value="xl">X-Large (XL)</option>
-                    <option value="xxl">XX-Large (XXL)</option>
-                    <option value="6">Size 6</option>
-                    <option value="7">Size 7</option>
-                    <option value="8">Size 8</option>
-                    <option value="9">Size 9</option>
-                    <option value="10">Size 10</option>
-                    <option value="500g">500g</option>
-                    <option value="1kg">1kg</option>
-                    <option value="500ml">500ml</option>
-                    <option value="1l">1L</option>
-                </select>
-            </td>
-            <td>
-                <select class="form-select" name="color[]">
-                    <option value="">Select Color</option>
-                    <option value="black">Black</option>
-                    <option value="white">White</option>
-                    <option value="red">Red</option>
-                    <option value="blue">Blue</option>
-                    <option value="green">Green</option>
-                    <option value="yellow">Yellow</option>
-                    <option value="orange">Orange</option>
-                    <option value="purple">Purple</option>
-                    <option value="pink">Pink</option>
-                    <option value="brown">Brown</option>
-                    <option value="gray">Gray</option>
-                    <option value="silver">Silver</option>
-                    <option value="gold">Gold</option>
-                    <option value="navy">Navy</option>
-                    <option value="maroon">Maroon</option>
-                    <option value="beige">Beige</option>
-                    <option value="teal">Teal</option>
-                    <option value="cyan">Cyan</option>
-                    <option value="magenta">Magenta</option>
-                    <option value="olive">Olive</option>
-                    <option value="violet">Violet</option>
-                    <option value="indigo">Indigo</option>
-                    <option value="turquoise">Turquoise</option>
-                    <option value="charcoal">Charcoal</option>
-                </select>
-            </td>
-            <td><input type="text" class="form-control" name="weight[]"></td>
-            <td><input type="text" class="form-control" name="flavor[]"></td>
-            <td><input type="file" class="form-control" name="image[${rowCount}][]" multiple></td>
-            <td><input type="number" class="form-control" name="stock_quantity[]"></td>
-            <td>
-                <button type="button" class="btn btn-danger removeRow">✖</button>
-            </td>
-        </tr>`;
-    $("#productTableBody").append(row);
-});
-
-$(document).on("click", ".removeRow", function () {
-    $(this).closest("tr").remove();
-});
 
 
     $(document).on("click", ".add_variant", function(){
@@ -1146,89 +1254,8 @@ $(document).on("click", ".removeRow", function () {
 
 
 
-            $(document).on("click", ".add_product", function () {
-
-            let formdata = new FormData($('#productForm')[0]); // Corrected FormData
-            $.ajaxSetup({
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        }
-                    });
-
-                    $.ajax({
-                        type: "POST",
-                        url: "/product/update",
-                        data: formdata,
-                        contentType: false,
-                        processData: false,
-                        success:function(res){
-                            if(res.status == 200){
-                            toastr.success(res.message);
-                            }
 
 
-
-                        },
-                        error: function (xhr) {
-                                if (xhr.status === 422) {
-                                    let errors = xhr.responseJSON.errors;
-                                    $('.error-message').remove(); // Remove previous errors
-                                    console.log(errors);
-                                    $.each(errors, function (key, value) {
-                                        let inputField = $('[name="' + key + '"]');
-                                        inputField.after('<div class="text-danger error-message">' + value[0] + '</div>');
-                                    });
-                                }
-                            }
-                    })
-            });
-
-
-  $(document).on("click",".variant_save",function(e){
-    e.preventDefault();
-
-    let isValid = true;
-    $(".error-message").remove();
-    $("#productTableBody tr").each(function () {
-        let size = $(this).find('[name="size[]"]').val();
-        let color = $(this).find('[name="color[]"]').val();
-
-        if (!size && !color) {
-        $(this).find('[name="size[]"]').after('<div class="text-danger error-message">Size or Color is required</div>');
-        isValid = false;
-    }
-    });
-
-    if (!isValid) {
-        toastr.error("Please select at least one size and one color before saving.");
-        return;
-    }
-
-
-    let formdata = new FormData($('#variant_form_submit')[0]);
-
-    $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-
-            $.ajax({
-
-                url:"/product/variant/store",
-                type:"POST",
-                data:formdata,
-                contentType: false,
-                processData:false,
-                success:function(res){
-
-                    console.log(res);
-                    toastr.success(res.message);
-                    $('#variant_form_submit')[0].reset();
-                    // location.reload();
-                }
-            });
-  });
 
 
 

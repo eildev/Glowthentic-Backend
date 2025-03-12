@@ -181,7 +181,7 @@ Route::middleware('auth')->group(function () {
     Route::controller(ProductController::class)->group(function () {
         Route::get('/product', 'index')->name('product');
         Route::post('/product/store', 'store')->name('product.store');
-        Route::post('/product/update/{id}', 'update')->name('product.update');
+        Route::post('/product/update', 'update')->name('product.update');
         Route::get('/product/view', 'view')->name('product.view');
         Route::get('/product/view/{id}', 'viewDetails')->name('product.view.details');
         Route::get('/product/edit/{id}', 'edit')->name('product.edit');
@@ -190,7 +190,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/find/variant/{id}', 'findVariant')->name('find.variant');
         Route::get('/product/get_variant_data', 'getVariant_product_id');
         Route::post('/product/variant/store', 'variantProductStore');
-
+        Route::post('/product/variant/update','ProductvariantUpdate');
         // Route::post('/product/variant/store', 'variantStore')->name('variant.store');
         // Route::get('/product/variant/show/{id}', 'variantShow')->name('variant.show');
         // Route::get('/product/variant/edit/{id}', 'editVariant')->name('variant.edit');
