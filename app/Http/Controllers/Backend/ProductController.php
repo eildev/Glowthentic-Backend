@@ -868,7 +868,41 @@ class ProductController extends Controller
         }
     }
 
+public function variantDelete(Request $request){
+    try{
+        $variant = Variant::findOrFail($request->variant_id);
+    
+   
+        $images = VariantImageGallery::where('variant_id', $variant->id)->get();
 
+        foreach ($images as $image) {
+            $imagePath = public_path($image->image); 
+        
+            if (file_exists($imagePath)) {
+                unlink($imagePath); 
+            }
+        
+            $image->delete(); 
+        }
+    
+        $productStock = ProductStock::where('variant_id', $variant->id)->first();
+        if ($productStock) {
+            $productStock->delete();
+        }
+       
+        $variant->delete();
+        return response()->json([
+            'status' => 200,
+            'message' => 'Variant Deleted Successfully'
+        ]);
+    }catch(\Exception $e){
+        return response()->json([
+            'status' => 500,
+         'message' => 'Error: ' . $e->getMessage(),
+
+        ]);
+    }
+}
     //rest Api Start
 
 }

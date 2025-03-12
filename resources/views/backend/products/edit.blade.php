@@ -69,7 +69,7 @@
                                                     <label class="form-label col-12">Select Subcategory</label>
                                                     <div class="col-12">
                                                         <select class="form-select subcategory_select @error('subcategory_id') is-invalid  @enderror" name="subcategory_id">
-                                                            <option value="">{{ $subcategories->categoryName??'' }}</option>
+                                                            <option value="{{$subcategories->id }}">{{ $subcategories->categoryName??'' }}</option>
                                                         </select>
                                                         @error('category_id')
                                                             <span class="text-danger">{{ $message }}</span>
@@ -853,7 +853,7 @@ $(document).on("click",".variant_update",function(e){
                     console.log(res);
                     toastr.success(res.message);
                     $('#variant_form_submit')[0].reset();
-                    // location.reload();
+                     location.reload();
                 }
             });
   });
@@ -929,20 +929,21 @@ $(document).on("click", ".removeRow", function () {
 //////////////////////////////////////////////////////variant Delete ////////////////////////////////////////
     $(document).on('click','.removeRow',function(){
          let variant_id = $(this).data('variant_id');
+     
          $.ajaxSetup({
             headers:{ 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
          });
-         $.ajax({
-            url:"/variant/delete/",
+        $.ajax({
+            url:"/product/variant/delete",
             type:"POST",
-            data:{
-                variant_id:variant_id
-            }
+            data:{variant_id:variant_id},
             success:function(res){
-                console.log(res);
+               if(res.status == 200){
+                  toastr.success("Variant Delete Successfully");
+               }
             }
 
-         })
+        });
 
     });
 //////////////////////////////////update product //////////////////////////////////////////////////////
@@ -965,7 +966,7 @@ $(document).on("click", ".removeRow", function () {
                     if(res.status == 200){
                         $('#productForm')[0].reset();
                     toastr.success("Product Updated Successfully");
-                    location.reload();
+                 
                     }
                else{
                 toastr.error("Something Went Wrong");

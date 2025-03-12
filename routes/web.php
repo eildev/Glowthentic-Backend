@@ -192,7 +192,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/product/variant/store', 'variantProductStore');
         Route::post('/product/variant/update','ProductvariantUpdate');
         Route::post('/product/variant/image/delete', 'variantImageDelete');
-
+        Route::post('/product/variant/delete', 'variantDelete');
 
     });
     //All Routes for Product End

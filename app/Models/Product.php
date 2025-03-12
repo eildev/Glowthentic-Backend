@@ -41,6 +41,8 @@ class Product extends Model
     {
         return $this->hasMany(Variant::class)->with('variantImage');
     }
+
+
     public function productStock()
     {
         return $this->hasMany(ProductStock::class, 'product_id', 'id');
