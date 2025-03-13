@@ -83,7 +83,7 @@ class OfferBannerController extends Controller
     // banner Edit function
     public function edit($id)
     {
-        $bannerContent = OfferBanner::with('image')->findOrFail($id);
+        $bannerContent = OfferBanner::with('images')->findOrFail($id);
         return view('backend.OfferBanner.edit', compact('bannerContent'));
     }
 
@@ -149,6 +149,24 @@ class OfferBannerController extends Controller
         $banner->delete();
         return back()->with('success', 'banner Successfully deleted');
     }
+
+    //gallery Image Delete
+    public function deleteImage($id)
+        {
+            $image = ImageGallery::findOrFail($id);
+            $imagePath = public_path($image->image);
+
+
+            if (file_exists($imagePath) && is_file($imagePath)) {
+                unlink($imagePath);
+            }
+
+       
+            $image->delete();
+
+            return back()->with('success', 'Image Successfully deleted');
+        }
+
     // banner status Update function
     public function statusUpdate(Request $request,$id)
     {

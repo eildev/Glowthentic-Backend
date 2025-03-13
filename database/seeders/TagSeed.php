@@ -15,16 +15,16 @@ class TagSeed extends Seeder
     {
 
             $tags = [
-                ['tagName' => 'Skincare'],
-                ['tagName' => 'Haircare'],
-                ['tagName' => 'Makeup'],
-                ['tagName' => 'Fitness'],
-                ['tagName' => 'Wellness'],
-                ['tagName' => 'Nutrition'],
-                ['tagName' => 'Mental Health'],
-                ['tagName' => 'Organic Beauty'],
-                ['tagName' => 'Spa & Relaxation'],
-                ['tagName' => 'Anti-Aging'],
+                    ['tagName' => 'Face Care'],
+                    ['tagName' => 'Hair Treatment'],
+                    ['tagName' => 'Cosmetics'],
+                    ['tagName' => 'Workout'],
+                    ['tagName' => 'Self-Care'],
+                    ['tagName' => 'Healthy Eating'],
+                    ['tagName' => 'Mindfulness'],
+                    ['tagName' => 'Natural Beauty'],
+                    ['tagName' => 'Relaxation Therapy'],
+                    ['tagName' => 'Youthful Skin']
             ];
 
             DB::table('tag_names')->insert($tags);

@@ -483,6 +483,14 @@ class ProductSeeder extends Seeder
             ],
         ];
 
+        $sampleImages = [
+            'https://images.unsplash.com/photo-1625772452859-1c3c97d54754',
+            'https://images.unsplash.com/photo-1572635196237-14b3f281503f',
+            'https://images.unsplash.com/photo-1543163521-1bf539c55dd2',
+            'https://images.unsplash.com/photo-1526947425960-945c6e72858f',
+            'https://images.unsplash.com/photo-1596755094514-f87e34085b2c'
+        ];
+
         foreach ($categories as $category) {
             $isSubcategory = $category->parent_id !== null;
 
@@ -527,7 +535,8 @@ class ProductSeeder extends Seeder
                             'updated_at' => now()
                         ]);
 
-                        // Insert variants for this product
+                        // Insert variants for this product with status
+                        $isFirstVariant = true;
                         foreach ($product['variants'] as $variant) {
                             $variantId = DB::table('variants')->insertGetId([
                                 'product_id' => $productId,
@@ -537,20 +546,23 @@ class ProductSeeder extends Seeder
                                 'weight' => $data['attributes']['weight'] ?? null,
                                 'flavor' => $data['attributes']['flavor'] ?? null,
                                 'regular_price' => $product['regular_price'] ?? null,
+                                'status' => $isFirstVariant ? 'Default' : 'Variant',
                                 'created_at' => now(),
                                 'updated_at' => now()
                             ]);
 
-                            // Insert variant images (up to 3 images per variant)
-                            for ($i = 1; $i <= 3; $i++) {
+                            // Insert variant images with online URLs (up to 3 images per variant)
+                            for ($i = 0; $i < 3; $i++) {
                                 DB::table('variant_image_galleries')->insert([
                                     'product_id' => $productId,
                                     'variant_id' => $variantId,
-                                    'image' => 'uploads/products/variant/' . Str::slug($product['name']) . '-' . Str::slug($variant) . '-' . $i . '.jpg',
+                                    'image' => $sampleImages[array_rand($sampleImages)],
                                     'created_at' => now(),
                                     'updated_at' => now()
                                 ]);
                             }
+
+                            $isFirstVariant = false; // Only first variant gets 'Default' status
                         }
                     }
                 }

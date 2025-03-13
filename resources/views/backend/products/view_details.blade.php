@@ -5,11 +5,13 @@
             <div class="card">
                 <div class="row g-0">
                     <div class="col-md-5 border-end">
-                        <img src="{{ asset('/uploads/products/' . $product->product_image) }}" class="img-fluid"
+                       
+                        <img src="{{ asset($product->variantImage->whereNull('deleted_at')->first()->image) }}" class="img-fluid"
                             alt="product-image">
                         <div class="row mb-3 row-cols-auto g-2 justify-content-center mt-3">
-                            @foreach ($product->gallary as $gallery)
-                                <div class="col"><img src="{{ asset('uploads/products/gallery/' . $gallery->image) }}"
+                            @foreach ($product->variantImage()->whereNull('deleted_at')->get() as $gallery)
+
+                                <div class="col"><img src="{{ asset($gallery->image) }}"
                                         width="70" class="border rounded cursor-pointer" alt=""></div>
                             @endforeach
 
@@ -54,7 +56,7 @@
                                         <dd class="col-sm-6">৳ {{ $product->varient[0]->discount_amount ?? 0 }}</dd>
 
                                         <dt class="col-sm-6">Stock Quantity</dt>
-                                        <dd class="col-sm-6">{{ $product->varient[0]->stock_quantity ?? 0 }}</dd>
+                                        <dd class="col-sm-6">{{ $product->productStock[0]->StockQuantity ?? 0 }}</dd>
 
                                         @if (!empty($product->varient[0]->unit))
                                             <dt class="col-sm-6">Unit</dt>
@@ -71,7 +73,11 @@
                                 <div class="col-md-6">
                                     <dl class="row my-3">
                                         <dt class="col-sm-6">Subcategory</dt>
-                                        <dd class="col-sm-6">{{ $product->subcategory->subcategoryName }}</dd>
+                                        @php
+                                            $subcategory =App\Models\Category::where('id',$product->subcategory_id)->first();
+                                        @endphp
+                                        {{-- @dd($product->subcategory_id) --}}
+                                        <dd class="col-sm-6">{{ $subcategory->categoryName??''}}</dd>
 
                                         <dt class="col-sm-6">Brand</dt>
                                         <dd class="col-sm-6">{{ $product->brand->BrandName }}</dd>

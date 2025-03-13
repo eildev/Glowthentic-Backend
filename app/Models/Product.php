@@ -41,6 +41,8 @@ class Product extends Model
     {
         return $this->hasMany(Variant::class)->with('variantImage');
     }
+
+
     public function productStock()
     {
         return $this->hasMany(ProductStock::class, 'product_id', 'id');
@@ -70,5 +72,9 @@ class Product extends Model
     public function productdetails()
     {
         return $this->hasMany(ProductDetails::class, 'product_id', 'id');
+    }
+
+    public function product_attribute(){
+        return $this->hasMany(AttributeManage::class,'product_id','id');
     }
 }

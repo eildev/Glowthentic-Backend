@@ -14,7 +14,9 @@ use App\Models\VariantImageGallery;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\auth;
 use Illuminate\Support\Str;
-
+use App\Models\Attribute;
+use App\Models\AttributeManage;
+// use App\Models\
 class ProductController extends Controller
 {
     // product index function
@@ -119,7 +121,7 @@ class ProductController extends Controller
         $product->brand_id = $request->brand_id;
         $product->sub_subcategory_id = $request->sub_subcategory_id;
         if ($request->product_feature) {
-            $product->product_feature = implode(',', $request->product_feature);
+            $product->product_feature =json_encode($request->product_feature);
         }
 
         $product->product_name = $request->product_name;
@@ -139,6 +141,78 @@ class ProductController extends Controller
             $productDetails->created_by = Auth::user()->id;
             $productDetails->save();
         }
+
+
+        if ($request->extra_field) {
+
+            foreach ($request->extra_field_id as $key => $fieldId) {
+                $extraFieldInfo = Attribute::where('id', $fieldId)->first();
+                $data = $request->extra_field[$fieldId];
+
+                switch ($extraFieldInfo->data_type) {
+                    case 'json':
+                        if (is_array($data)) {
+                            $storedValue = json_encode($data);
+                        } else {
+                            $storedValue = json_encode([$data]);
+                        }
+                        break;
+
+                    case 'integer':
+
+                        if (!is_numeric($data)) {
+                            throw new \Exception("Invalid value! Expected a number.");
+                        }
+                        $storedValue = intval($data);
+                        break;
+
+                    case 'float':
+                        if (!is_numeric($data)) {
+                            throw new \Exception("Invalid value! Expected a number.");
+                        }
+                        $storedValue = floatval($data);
+                        break;
+
+                    case 'decimal':
+                        if (!is_numeric($data)) {
+                            throw new \Exception("Invalid value! Expected a number.");
+                        }
+                        $storedValue = number_format((float) $data, 2, '.', '');
+                        break;
+
+                    case 'double':
+                        if (!is_numeric($data)) {
+                            throw new \Exception("Invalid value! Expected a number.");
+                        }
+                        $storedValue = date('Y-m-d', strtotime($value));
+                        break;
+                    case 'date':
+                        if (!strtotime($data)) {
+                            throw new \Exception("Invalid value! Expected a valid date.");
+                        }
+
+                    default:
+                        $storedValue = (string)$data;
+                        break;
+                }
+
+
+                AttributeManage::create([
+                    'attribute_id' => $fieldId,
+                    'value' => $storedValue,
+                    'product_id' => $product->id,
+                ]);
+            }
+        }
+
+
+
+
+
+
+
+
+
 
         if ($product && $request->tag) {
 
@@ -227,8 +301,16 @@ class ProductController extends Controller
     // product edit function
     public function edit($id)
     {
-        $product = Product::findOrFail($id);
-        return view('backend.products.edit', compact('product'));
+        $product = Product::with('productdetails')->findOrFail($id);
+
+        $attribute_manages = AttributeManage::where('product_id', $id)->get();
+        $variants = Variant::where('product_id', $id)->get();
+        $inserttag=Product_Tags::where('product_id', $id)->get();
+        $extraFields = AttributeManage::where('product_id', $product->id)->get();
+        // ->pluck('value', 'attribute_id')
+        // ->toArray();
+
+        return view('backend.products.edit', compact('product','attribute_manages','variants','inserttag','extraFields'));
     }
 
 
@@ -259,83 +341,112 @@ class ProductController extends Controller
     }
 
     // product update function
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        // dd($request->product_feature);
-        if ($request->product_image) {
-            $productImage = rand() . '.' . $request->product_image->extension();
-            $request->product_image->move(public_path('uploads/products/'), $productImage);
-            $product = Product::findOrFail($id);
-            $path = public_path('uploads/products/') . $product->product_image;
-            if (file_exists($path)) {
-                @unlink($path);
-            }
-            $product->category_id = $request->category_id;
-            $product->subcategory_id = $request->subcategory_id;
-            $product->sub_subcategory_id = $request->sub_subcategory_id;
-            $product->brand_id = $request->brand_id;
-            $product->product_feature = implode(',', $request->product_feature);
-            $product->product_name = $request->product_name;
-            $product->slug = Str::slug($request->product_name);
-            $product->short_desc = $request->short_desc;
-            $product->long_desc = $request->long_desc;
-            $product->product_image = $productImage;
-            $product->sku = $request->sku;
-            $product->tags = $request->tag;
-            // $product->shipping = $request->shipping;
-            $product->update();
-            if ($request->imageGallery) {
-                $imagesGallery = $request->imageGallery;
-                foreach ($imagesGallery as $image) {
-                    $galleryImage = rand() . '.' . $image->extension();
-                    $image->move(public_path('uploads/products/gallery/'), $galleryImage);
-                    $productGallery = ProductGallery::where('product_id', $product->id)->first();
-                    $path = public_path('uploads/products/gallery/') . $productGallery->image;
-                    if (file_exists($path)) {
-                        @unlink($path);
-                    }
-                    $productGallery->delete();
-                    $productGallery = new ProductGallery;
-                    $productGallery->product_id = $id;
-                    $productGallery->image = $galleryImage;
-                    $productGallery->save();
-                }
-            }
-            return redirect()->route('product.view')->with('success', 'Product Successfully updated');
-        } else {
-            $product = Product::findOrFail($id);
-            $product->category_id = $request->category_id;
-            $product->subcategory_id = $request->subcategory_id;
-            $product->sub_subcategory_id = $request->sub_subcategory_id;
-            $product->brand_id = $request->brand_id;
-            $product->product_feature = implode(',', $request->product_feature);
-            $product->product_name = $request->product_name;
-            $product->slug = Str::slug($request->product_name);
-            $product->short_desc = $request->short_desc;
-            $product->long_desc = $request->long_desc;
-            $product->sku = $request->sku;
-            $product->tags = $request->tag;
-            // $product->shipping = $request->shipping;
-            $product->update();
-            if ($request->imageGallery) {
-                $imagesGallery = $request->imageGallery;
-                foreach ($imagesGallery as $image) {
-                    $galleryImage = rand() . '.' . $image->extension();
-                    $image->move(public_path('uploads/products/gallery/'), $galleryImage);
-                    $productGallery = ProductGallery::where('product_id', $product->id)->first();
-                    $path = public_path('uploads/products/gallery/') . $productGallery->image;
-                    if (file_exists($path)) {
-                        @unlink($path);
-                    }
-                    $productGallery->delete();
-                    $productGallery = new ProductGallery;
-                    $productGallery->product_id = $id;
-                    $productGallery->image = $galleryImage;
-                    $productGallery->save();
-                }
-            }
-            return redirect()->route('product.view')->with('success', 'Product Successfully updated');
+
+        $product = Product::findOrFail($request->product_id);
+        $product->category_id = $request->category_id;
+        $product->subcategory_id = $request->subcategory_id;
+        $product->brand_id = $request->brand_id;
+        $product->sub_subcategory_id = $request->sub_subcategory_id;
+        if ($request->product_feature) {
+            $product->product_feature =json_encode($request->product_feature);
         }
+
+        $product->product_name = $request->product_name;
+        $product->unit_id = $request->unit_id;
+        $product->slug = Str::slug($request->product_name);
+        $product->sku = $request->sku;
+        $product->created_by = Auth::user()->id;
+        $product->save();
+
+        if ($product) {
+            $productDetails = ProductDetails::where('product_id', $product->id)->first();
+            $productDetails->product_id = $product->id;
+            $productDetails->gender = $request->gender;
+            $productDetails->description = $request->description;
+            $productDetails->ingredients = $request->ingredients;
+            $productDetails->usage_instruction = $request->usage_instruction;
+            $productDetails->created_by = Auth::user()->id;
+            $productDetails->save();
+        }
+
+
+        if ($request->has('extra_field')) {
+
+            if (!is_array($request->extra_field)) {
+                throw new \Exception("Invalid input! 'extra_field' must be an array.");
+            }
+
+            foreach ($request->extra_field as $fieldId => $data) {
+
+                $extraFieldInfo = Attribute::find($fieldId);
+                if (!$extraFieldInfo) {
+                    throw new \Exception("Attribute ID $fieldId not found.");
+                }
+
+
+                switch ($extraFieldInfo->data_type) {
+                    case 'json':
+                        $storedValue = is_array($data) ? json_encode($data) : json_encode([$data]);
+                        break;
+
+                    case 'int':
+                    case 'integer':
+                        if (!is_numeric($data)) {
+                            throw new \Exception("Invalid value for Attribute ID $fieldId! Expected an integer.");
+                        }
+                        $storedValue = intval($data);
+                        break;
+
+                    case 'float':
+                    case 'decimal':
+                    case 'double':
+                        if (!is_numeric($data)) {
+                            throw new \Exception("Invalid value for Attribute ID $fieldId! Expected a decimal number.");
+                        }
+                        $storedValue = floatval($data);
+                        break;
+
+                    case 'date':
+                        if (!strtotime($data)) {
+                            throw new \Exception("Invalid date format for Attribute ID $fieldId.");
+                        }
+                        $storedValue = date('Y-m-d', strtotime($data));
+                        break;
+
+                    default:
+                        $storedValue = (string)$data;
+                        break;
+                }
+
+                // Save or update the value
+                AttributeManage::updateOrCreate(
+                    [
+                        'attribute_id' => $fieldId,
+                        'product_id' => $product->id,
+                    ],
+                    [
+                        'value' => $storedValue,
+                    ]
+                );
+            }
+        }
+
+        if ($product && $request->tag) {
+
+            foreach ($request->tag as $tag) {
+                $productTag = new Product_Tags();
+                $productTag->product_id = $product->id;
+                $productTag->tag_id = $tag;
+                $productTag->save();
+            }
+        }
+
+      return response()->json([
+            'status' => 200,
+            'message' => 'Product Updated Successfully'
+        ]);
     }
 
 
@@ -660,9 +771,138 @@ class ProductController extends Controller
         }
     }
 
+    public function ProductvariantUpdate(Request $request)
+    {
+        try {
+
+            $existingVariants = Variant::where('product_id', $request->product_id)->get()->keyBy('id');
+
+            if (!empty($request->price)) {
+                $first = true; //identify the first default variant of the product
+                foreach ($request->price as $variant_id => $price) {
+
+                    if (isset($existingVariants[$variant_id])) {
+                        $variant = $existingVariants[$variant_id];
+                    } else {
+                        $variant = new Variant();
+                        $variant->product_id = $request->product_id;
+                        $variant->variant_name = $request->variant_name[$variant_id];
+                        $variant->save();
+
+                    }
 
 
+                    $variant->size = $request->size[$variant_id] ?? null;
+                    $variant->color = $request->color[$variant_id] ?? null;
+                    $variant->regular_price = $price;
+                    $variant->weight = $request->weight[$variant_id] ?? null;
+                    $variant->flavor = $request->flavor[$variant_id] ?? null;
+                    $variant->variant_name = $request->variant_name[$variant_id] ?? null;
 
-    //rest Api Start
+                    if ($first) {
+                        $variant->status = "Default";
+                        $first = false;
+                    } else {
+                        $variant->status = "Variant";
+                    }
+
+                    $variant->save();
+
+                    // Handle images
+                    if ($variant->id && $request->hasFile("image.$variant_id")) {
+
+                        foreach ($request->file("image.$variant_id") as $image) {
+                            $filename = time() . '_' . uniqid() . '.' . $image->extension();
+                            $path = 'uploads/products/variant/';
+                            $image->move(public_path($path), $filename);
+
+                            $variantImage = new VariantImageGallery();
+                            $variantImage->variant_id = $variant->id;
+                            $variantImage->product_id = $request->product_id;
+                            $variantImage->image = $path . $filename;
+                            $variantImage->save();
+                        }
+                    }
+
+
+                    if (!empty($request->stock_quantity[$variant_id])) {
+                        ProductStock::updateOrCreate(
+                            ['product_id' => $request->product_id, 'variant_id' => $variant->id],
+                            ['StockQuantity' => $request->stock_quantity[$variant_id], 'status' => 'Available']
+                        );
+                    }
+                }
+            }
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Variants updated successfully',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 500,
+                'message' => 'Error: ' . $e->getMessage(),
+            ]);
+        }
+    }
+
+
+    public function variantImageDelete(Request $request){
+        try{
+            $variantImage = VariantImageGallery::findOrFail($request->image_id);
+
+            if(file_exists($variantImage->image)){
+                unlink($variantImage->image);
+
+            }
+            $variantImage->delete();
+            return response()->json([
+                'status' => 200,
+                'message' => 'Variant Image Deleted Successfully'
+            ]);
+        }catch(\Exception $e){
+            return response()->json([
+                'status' => 500,
+                'message' => 'Something went wrong'
+            ]);
+        }
+    }
+
+public function variantDelete(Request $request){
+    try{
+        $variant = Variant::findOrFail($request->variant_id);
+    
    
+        $images = VariantImageGallery::where('variant_id', $variant->id)->get();
+
+        foreach ($images as $image) {
+            $imagePath = public_path($image->image); 
+        
+            if (file_exists($imagePath)) {
+                unlink($imagePath); 
+            }
+        
+            $image->delete(); 
+        }
+    
+        $productStock = ProductStock::where('variant_id', $variant->id)->first();
+        if ($productStock) {
+            $productStock->delete();
+        }
+       
+        $variant->delete();
+        return response()->json([
+            'status' => 200,
+            'message' => 'Variant Deleted Successfully'
+        ]);
+    }catch(\Exception $e){
+        return response()->json([
+            'status' => 500,
+         'message' => 'Error: ' . $e->getMessage(),
+
+        ]);
+    }
+}
+    //rest Api Start
+
 }
