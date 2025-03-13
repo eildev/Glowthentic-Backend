@@ -1,0 +1,187 @@
+
+        .pageLoader {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, .7);
+            z-index: 9999999999999999999999;
+        }
+        .chat {
+            font-size: 20px;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            bottom: 24px;
+            left: 30px;
+            z-index: 99999999;
+            border-radius: 50%;
+            height: 50px;
+            width: 50px;
+            box-shadow: 1px 1px 5px gray;
+            background: #2D2A6E;
+            border-color: #9e54a1 !important;
+        }
+        .chat i{
+            padding-top: 8px
+        }
+        .chat:hover {
+            scale: 1.045;
+            color: #2D2A6E !important;
+            background: white;
+        }
+        .chat::after {
+            position: absolute;
+            z-index: -1;
+            content: '';
+            top: 100%;
+            left: 5%;
+            height: 10px;
+            width: 90%;
+            background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, 0) 80%);
+        }
+        .top_search_list li {
+            cursor: pointer;
+            padding: 5px 0;
+        }
+        .my_menu {
+            font-weight: 100;
+            font-size: 14px;
+        }
+        .first_li>ul {
+            margin-left: 13px;
+            color: white;
+            font-weight: 100;
+            font-size: 14px;
+            display: none;
+        }
+        .second_li>ul {
+            margin-left: 13px;
+            color: white;
+            font-weight: 100;
+            font-size: 14px;
+            display: none;
+        }
+        .my_menu li,
+        .my_menu i {
+            line-height: 30px
+        }
+        hr {
+            margin: 0
+        }
+        .mobile-bottom-menu {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            right: 0;
+            background: #2D2C6E;
+            color: #2D2C6E;
+            z-index: 999;
+            border-top: 1px solid white;
+        }
+        .bottom-chat,
+        .mycard {
+            padding: 7px 10px;
+            background: white;
+            text-align: center
+        }
+        .mycard {
+            width: 80px;
+            height: 100% !important;
+            padding: 14px 10px;
+        }
+        .cardI {
+            font-size: 40px
+        }
+        .bottom-chat a {
+            color: #2D2C6E !important;
+            background: white !important;
+            border: none;
+            display: flex;
+            justify-content: center;
+            padding: 7px 10px;
+        }
+        .first_liActive {
+            font-weight: 500 !important;
+            color: var(--tp-heading-secondary);
+        }
+        .my_menu i {
+            float: right;
+        }
+        li {
+            cursor: pointer;
+        }
+        .second_liActive {
+            font-weight: 500 !important;
+            color: var(--tp-heading-secondary);
+        }
+        .third_liActive {
+            font-weight: 500 !important;
+            color: var(--tp-heading-secondary);
+        }
+        .rotate90 {
+            transform: rotate(90deg);
+        }
+       
+        .container{
+            margin:0 0 0 8%;
+        }
+        @media (min-width: 1400px) {
+            .container{
+                margin-left: 1%;    
+            }
+        }
+        @media (min-width: 2400px) {
+            .container{
+                width: 2400px; 
+            }
+        }
+        @media (max-width: 1080px) {
+            .chat{
+                display: block !important;
+            }
+             .container{
+                margin:0 0 0 8%;
+            }
+        }
+        @media (max-width: 767px),
+        only screen and (min-width: 476px) and (max-width: 867px) {
+            
+            .ppp{
+                /*background: red !important;*/
+                padding-top: 30px !important;
+            }
+            .ppp img{
+                /*background: red !important;*/
+                min-height: 133px !important;
+            }
+            .tpslider__content {
+                margin-top: 50px !important;
+            }
+            .tp-btn {
+                padding: 8px 30px;
+            }
+            .mytop-logo {
+                padding-right: 80px !important;
+            }
+            .accounts-nav {
+                display: none !important;
+            }
+            .container {
+                margin: 10px auto !important;
+            }
+            .mobile-bottom-menu {
+                display: flex !important;
+            }
+            .my-scroll-top {
+                display: none !important;
+            }
+            .chat{
+                display: none !important;
+            }
+        }    

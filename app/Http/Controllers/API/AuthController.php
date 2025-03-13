@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Role;
 
 class AuthController extends Controller
 {
@@ -261,7 +262,8 @@ class AuthController extends Controller
     }
     public function dashboardView()
     {
-        return view('backend.admin.dashboard');
+
+        return view('backend.dashboard');
     }
 
     public function adminLogin(Request $request)

@@ -1,0 +1,2 @@
+[15-Feb-2024 07:22:42 UTC] PHP Fatal error:  Unparenthesized `a ? b : c ? d : e` is not supported. Use either `(a ? b : c) ? d : e` or `a ? b : (c ? d : e)` in /home/sobrhudo/public_html/storage/framework/views/0bfa226c80fcb8012261e348b627ed05.php on line 8
+[15-Feb-2024 07:23:31 UTC] PHP Fatal error:  Unparenthesized `a ? b : c ? d : e` is not supported. Use either `(a ? b : c) ? d : e` or `a ? b : (c ? d : e)` in /home/sobrhudo/public_html/storage/framework/views/0bfa226c80fcb8012261e348b627ed05.php on line 8
