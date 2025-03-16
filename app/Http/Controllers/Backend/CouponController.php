@@ -38,6 +38,7 @@ class CouponController extends Controller
             $coupon->discount_type = $request->discount_type;
             $coupon->discount_value = $request->discount_value;
             $coupon->type = $request->type;
+
             $coupon->is_global = $request->is_global;
             $coupon->start_date = $request->start_date;
             $coupon->end_date = $request->end_date;

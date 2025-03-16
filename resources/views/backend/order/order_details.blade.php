@@ -4,36 +4,36 @@
         <div class="row py-1">
             @if ($orders->count() > 0)
                 @php
-                    $customers = $orders->orderBillingDetails;
+                    $customers = App\Models\UserDetails::where('user_id', $orders->user_id)->orWhere('session_id',$orders->session_id)->first();
                     // @dd($customers);
-                    $first_name = $customers->first_name;
-                    $last_name = $customers->last_name;
-                    $email = $customers->email;
-                    $phone = $customers->phone;
-                    $address_1 = $customers->address_1;
-                    $address_2 = $customers->address_2;
-                    $city = $customers->city;
-                    $division = $customers->division;
-                    $post_code = $customers->post_code;
-                    $country = $customers->country;
-                    $order_notes = $customers->order_notes;
+                    $first_name = $customers->full_name??'';
 
-                    $order_id = $orders->id;
-                    $invoice_number = $orders->invoice_number;
-                    $user_identity = $orders->user_identity;
-                    $product_quantity = $orders->product_quantity;
-                    $product_total = $orders->product_total;
-                    $coupon_id = $orders->coupon_id;
-                    $discount = $orders->discount;
-                    $sub_total = $orders->sub_total;
-                    $shipping_method = $orders->shipping_method;
-                    $shipping_amount = $orders->shipping_amount;
-                    $grand_total = $orders->grand_total;
-                    $payment_method = $orders->payment_method;
-                    $payment_id = $orders->payment_id;
-                    $payment_status = $orders->payment_status;
-                    $order_note = $orders->order_note;
-                    $status = $orders->status;
+                    $email = $customers->user->email??'';
+                    $phone = $customers->phone_number??'';
+                    $address_1 = $customers->address??'';
+
+                    $city = $customers->city??'';
+                    $police_station = $customers->police_station??'';
+                    $post_code = $customers->postal_code??'';
+                    $country = $customers->country??'';
+                    $order_notes = $customers->order_notes??'';
+
+                    $order_id = $orders->id??'';
+                    $invoice_number = $orders->invoice_number??'';
+                    $user_identity = $orders->user_identity??'';
+                    $product_quantity = $orders->total_quantity??'';
+                    $product_total = $orders->total_amount??'';
+                    $coupon_id = $orders->global_coupon_id??'';
+                    $discount = $orders->discount??'';
+                    $sub_total = $orders->sub_total??'';
+                    $shipping_method = $orders->shipping_method??'';
+                    $shipping_amount = $orders->shipping_charge??'';
+                    $grand_total = $orders->grand_total??'';
+                    $payment_method = $orders->payment_method??'';
+                    $payment_id = $orders->payment_id??'';
+                    $payment_status = $orders->payment_status??'';
+                    $order_note = $orders->order_note??'';
+                    $status = $orders->status??'';
 
                     // @dd($invoice_number);
                 @endphp
@@ -84,16 +84,17 @@
                         <div class="table-responsive">
                             <div class="row mb-5">
                                 <div class="col-md-6">
+
                                     <strong><p><u> User Information </u></p></strong>
                                     <div class="row py-1">
-                                        <div class="col-4">First Name</div>
+                                        <div class="col-4"> Name</div>
                                         {{-- <div class="col-6">: {{ $order_id }}</div> --}}
                                         <div class="col-6">: {{ $first_name ?? 'Data Not Found' }}</div>
                                     </div>
-                                    <div class="row py-1">
+                                    {{-- <div class="row py-1">
                                         <div class="col-4"> Last Name </div>
                                         <div class="col-6">: {{ $last_name ?? 'Data Not Found' }} </div>
-                                    </div>
+                                    </div> --}}
                                     <div class="row py-1">
                                         <div class="col-4"> Email </div>
                                         <div class="col-6">: {{ $email ?? 'Data Not Found' }} </div>
@@ -115,8 +116,8 @@
                                         <div class="col-6">: {{ $city ?? 'Data Not Found' }} </div>
                                     </div>
                                     <div class="row py-1">
-                                        <div class="col-4"> Division </div>
-                                        <div class="col-6">: {{ $division ?? 'Data Not Found' }} </div>
+                                        <div class="col-4"> Police Station </div>
+                                        <div class="col-6">: {{ $police_station ?? 'Data Not Found' }} </div>
                                     </div>
                                     <div class="row py-1">
                                         <div class="col-4"> Post Code </div>
@@ -215,12 +216,12 @@
                                         <tr>
                                             <td>{{ $serialNumber++ }}</td>
                                             <td>
-                                                <img src="{{ asset('/uploads/products/' . $product->product_image) }}"
+                                                <img src="{{ asset($order->variant->variantImage[0]->image) }}"
                                                     style="height: 100px;" class="img-fluid" alt="Products Image">
                                             </td>
                                             <td>{{ $product->product_name }}</td>
                                             <td>{{ $order->product_quantity }}</td>
-                                            <td>{{ $order->product_price }}</td>
+                                            <td>{{ $order->variant->regular_price }}</td>
                                             <td>{{ $order->total_price }}</td>
 
                                             <!--<td>-->

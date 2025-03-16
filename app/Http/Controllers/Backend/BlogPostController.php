@@ -7,14 +7,15 @@ use Illuminate\Http\Request;
 use App\Models\BlogPost;
 use Illuminate\Support\Facades\Auth;
 use App\Models\BlogCategory;
-
+use App\Services\ImageOptimizerService;
+use Exception;
 class BlogPostController extends Controller
 {
     public function AddBlogPost(){
         $category = BlogCategory::all();
         return view('backend.blog_post.insert',compact('category'));
     }
-    public function StoreBlogPost(Request $request) {
+    public function StoreBlogPost(Request $request, ImageOptimizerService $imageService) {
         $request->validate([
             'title' => 'required|max:200',
             'category' => 'required',
@@ -24,15 +25,21 @@ class BlogPostController extends Controller
         ]);
 
         if ($request->image) {
-            $imageName = rand() . '.' . $request->image->extension();
-            $request->image->move(public_path('uploads/blog/blog_post/'), $imageName);
+
+            // $imageName = rand() . '.' . $request->image->extension();
+            // $request->image->move(public_path('uploads/blog/blog_post/'), $imageName);
+
+            $destinationPath = public_path('uploads/blog/blog_post/');
+            $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
+            $image='uploads/blog/blog_post/'.$imageName;
+
             $blog = new BlogPost;
             $blog->cat_id = $request->category;
             $blog->user_id = Auth::user()->id;
             $blog->title = $request->title;
             $blog->desc = $request->description;
             $blog->tags = $request->tags;
-            $blog->image = $imageName;
+            $blog->image = $image;
             $blog->save();
 
             return redirect()->route('blog.all.post.view')->with('success', 'Blog Post Successfully Saved');
@@ -47,7 +54,7 @@ class BlogPostController extends Controller
         $blogPost = BlogPost::findOrFail($id);
         return view('backend.blog_post.edit',compact('cate','blogPost'));
     }//End Method
-    public function BlogPostupdate(Request $request,$id){
+    public function BlogPostupdate(Request $request,$id,ImageOptimizerService $imageService){
         if ($request->image) {
             $request->validate([
                 'title' => 'required|max:200',
@@ -56,8 +63,9 @@ class BlogPostController extends Controller
                 'tags' => 'required',
                 'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp',
             ]);
-            $imageName = rand() . '.' . $request->image->extension();
-            $request->image->move(public_path('uploads/blog/blog_post/'), $imageName);
+            $destinationPath = public_path('uploads/blog/blog_post/');
+            $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
+            $image='uploads/blog/blog_post/'.$imageName;
             $blog = BlogPost::findOrFail($id);
             unlink(public_path('uploads/blog/blog_post/'.$blog->image));
             $blog->cat_id = $request->category;
@@ -65,7 +73,7 @@ class BlogPostController extends Controller
             $blog->title = $request->title;
             $blog->desc = $request->description;
             $blog->tags = $request->tags;
-            $blog->image = $imageName;
+            $blog->image = $image;
             $blog->update();
             return redirect()->route('blog.all.post.view')->with('success', 'Blog Successfully updated With Image');
         } else {

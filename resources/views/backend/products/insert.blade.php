@@ -43,7 +43,7 @@
                                                     $categories = App\Models\Category::whereNull('parent_id')->get();
                                                 @endphp
                                                 <div class="row">
-                                                    <label class="form-label col-12">Select Category</label>
+                                                    <label class="form-label col-12">Select Category<span class="text-danger fw-bold">*</span></label>
                                                     <div class="col-12">
                                                         <select class="form-select category_select @error('category_id') is-invalid  @enderror" name="category_id">
                                                             <option value="">Select Category</option>
@@ -97,7 +97,7 @@
                                                     $brands = App\Models\Brand::all();
                                                 @endphp
                                                 <div class="row">
-                                                    <label class="form-label col-12">Select Brand</label>
+                                                    <label class="form-label col-12">Select Brand <span class="text-danger fw-bold">*</span></label>
                                                     <div class="col-12">
                                                         <select class="form-select @error('brand_id') is-invalid  @enderror" name="brand_id">
                                                             <option value="">Select Brand</option>
@@ -127,7 +127,7 @@
 
 
                                                 <div class="row">
-                                                    <label class="form-label col-12">Select Unit</label>
+                                                    <label class="form-label col-12">Select Unit <span class="text-danger fw-bold">*</span></label>
                                                     <div class="col-12">
                                                         <select class="form-select @error('unit_id') is-invalid  @enderror" name="unit_id">
                                                             <option value="">Select Unit</option>
@@ -163,7 +163,7 @@
                                             <div class="col-md-6">
 
                                                 <div class="row">
-                                                    <label class="form-label col-12">Select Size</label>
+                                                    <label class="form-label col-12">Select Size <span class="text-danger fw-bold">*</span></label>
                                                     <div class="col-12">
                                                         <select class="form-select @error('size') is-invalid  @enderror" name="size">
                                                             <option value="">Select Size</option>
@@ -201,7 +201,7 @@
                                             <div class="col-md-6">
 
                                                 <div class="row">
-                                                    <label class="form-label col-12">Select Color</label>
+                                                    <label class="form-label col-12">Select Color <span class="text-danger fw-bold">*</span></label>
                                                     <div class="col-12">
                                                         <select class="form-select @error('color') is-invalid  @enderror" name="color">
                                                             <option value="">Select Color</option>
@@ -246,9 +246,9 @@
                                                         <label for="" class="form-label">Product Weight</label>
                                                     </div>
                                                     <div class="col-12">
-                                                        <input type="text" name="weight"
+                                                        <input type="number" name="weight"
                                                             class="form-control @error('weight') is-invalid  @enderror" id="inputEnterYourName"
-                                                            placeholder="Enter Product Weight">
+                                                            placeholder="Enter Product Weight" min="0" value="0">
                                                          @error('weight')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -287,12 +287,12 @@
 
                                                 <div class="row">
                                                     <div class="col-12">
-                                                        <label for="" class="form-label">Product Price</label>
+                                                        <label for="" class="form-label">Product Price <span class="text-danger fw-bold">*</span></label>
                                                     </div>
                                                     <div class="col-12">
-                                                        <input type="text" name="price"
+                                                        <input type="number" name="price"
                                                             class="form-control @error('price') is-invalid  @enderror" id="inputEnterYourName"
-                                                            placeholder="Enter Product Weight">
+                                                            placeholder="Enter Product Weight" min="0" value="0">
                                                          @error('price')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -309,7 +309,7 @@
                                             <div class="col-md-6">
 
                                                 <div class="row">
-                                                    <label class="form-label col-12">Select Gender</label>
+                                                    <label class="form-label col-12">Select Gender <span class="text-danger fw-bold">*</span></label>
                                                     <div class="col-12">
                                                         <select class="form-select @error('gender') is-invalid  @enderror" name="gender">
                                                             <option value="">Select Gender</option>
@@ -335,7 +335,7 @@
                                             <div class="col-12">
                                                 <div class="row">
                                                     <div class="col-12">
-                                                        <label for="" class="form-label">Product Name</label>
+                                                        <label for="" class="form-label">Product Name <span class="text-danger fw-bold">*</span></label>
                                                     </div>
                                                     <div class="col-12">
                                                         <input type="text" name="product_name"
@@ -450,8 +450,8 @@
                                             <div class="col-12">
                                                 <div class="mb-3">
                                                     <label class="form-label"> Stock Quantity</label>
-                                                    <input type="text" class="form-control  @error('stock_quantity') is-invalid  @enderror"
-                                                        placeholder="Enter Stock Quantity" name="stock_quantity">
+                                                    <input type="number" class="form-control  @error('stock_quantity') is-invalid  @enderror"
+                                                        placeholder="Enter Stock Quantity" name="stock_quantity" min="0" value="0">
                                                     @error('stock_quantity')
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
@@ -546,18 +546,30 @@
 
                                             <div class="row mb-3 d-flex align-items-center">
                                                 <div class="col-md-6">
-                                                    <label for="image" class="form-label">Product Thumbnail</label>
-                                                    <input type="file" id="image" class="form-control @error('product_main_image') is-invalid @enderror"
-                                                        name="product_main_image[]" multiple>
+                                                    <label for="image" class="form-label">Product Thumbnail <span class="text-danger fw-bold">*</span></label>
+                                                    <input type="file" id="image"
+                                                        class="form-control @error('product_main_image') is-invalid @enderror"
+                                                        name="product_main_image[]" multiple required>
+
                                                     <div class="my-1">
-                                                        <i><b>Note:</b> Please provide 600 X 600 size image</i>
+                                                        <i><b>Note:</b> Please provide a 600 X 600 size image</i>
                                                     </div>
                                                     <div id="imageCount" class="text-primary mt-1"></div> <!-- Display image count here -->
+
+                                                    <!-- Error message for the main image field -->
                                                     @error('product_main_image')
-                                                    <span class="text-danger">{{ $message }}</span>
+                                                        <span class="text-danger">{{ $message }}</span>
                                                     @enderror
+
+                                                    <!-- Error messages for each uploaded image -->
+                                                    @foreach ($errors->get('product_main_image.*') as $messages)
+                                                        @foreach ($messages as $message)
+                                                            <span class="text-danger d-block">{{ $message }}</span>
+                                                        @endforeach
+                                                    @endforeach
                                                 </div>
                                             </div>
+
 
 
                                             <div class="col-12">
@@ -859,6 +871,7 @@ function showExtraField() {
                 });
                 $(document).on('click', '.removeInput', function() {
                     $(this).closest('.input-group').remove();
+
                 });
   //////////////////////////////////////extra field multiple input show end ////////////////////////////
 
@@ -1026,8 +1039,12 @@ function showExtraField() {
         });
 
         $(document).on("click", ".remove-field", function() {
-            $(this).closest(".extra-field-container").remove();
-        });
+    $(this).closest(".extra-field-container").remove();
+
+    // Reset the extra_field dropdown
+    $(".extra_field").val("").trigger("change");
+});
+
 
 
   /////////////////extra field show end////////////////////
