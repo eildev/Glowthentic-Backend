@@ -22,6 +22,10 @@
                                     <th>Short Description</th>
                                     <th>Long Description</th>
                                     <th>image</th>
+<<<<<<< HEAD
+=======
+                                  
+>>>>>>> c565006ce059e75ec0f3fb8f251d03caa02549b4
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
@@ -43,6 +47,10 @@
                                                     style="height: 100px; object-fit: contain;" class="img-fluid"
                                                     alt="banner Image">
                                             </td>
+<<<<<<< HEAD
+=======
+
+>>>>>>> c565006ce059e75ec0f3fb8f251d03caa02549b4
                                             <td>
                                                 <form action="{{ route('banner.status', $banner->id) }}" method="POST">
                                                     @csrf

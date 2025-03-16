@@ -208,7 +208,7 @@
                                         @enderror
                                         <div class="mt-3">
                                             <img id="showImage" class="showImage" height="150" width="200"
-                                                src="{{ asset('uploads/productempty.jpg') }}" alt="category image">
+                                                 alt="category image">
                                         </div>
                                     </div>
 
@@ -273,6 +273,7 @@ $(document).on('click', '.get_parent_category', function () {
             $('#AddCategoryForm')[0].reset();
             // $('#showImage')[0].reset();
             $('#categoryAddModal').modal('hide');
+            $('#showImage').attr('src', "{{ asset('uploads/productempty.jpg') }}");
             toastr.success('Category Added Successfully');
 
             dataShow();
@@ -402,7 +403,7 @@ $(document).on('click','.change_status',function(){
                                         <td>${category.categoryName }</td>
                                         <td>${category.slug }</td>
                                         <td>
-                                            <img src="/uploads/category/${category.image}" alt="Combo Image" class="img-thumbnail" style="max-width: 100px; max-height: 100px;">
+                                            <img src="${category.image}" alt="Combo Image" class="img-thumbnail" style="max-width: 100px; max-height: 100px;">
 
                                             </td>
 
@@ -455,7 +456,7 @@ $(document).on('click','.change_status',function(){
 
                             $("#cat_id").val(category.id);
                             $("#category_name").val(category.categoryName);
-                            $(".showImage").attr("src", `/uploads/category/${category.image}`);
+                            $(".showImage").attr("src", `${category.image}`);
 
                             let options = `<option selected disabled>Choose...</option>`;
 

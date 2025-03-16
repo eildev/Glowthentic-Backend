@@ -14,6 +14,7 @@ use App\Models\Combo;
 use App\Models\Product;
 use App\Models\ProductPromotion;
 use App\Models\DeliveryOrder;
+use App\Models\BillingInformation;
 use Auth;
 
 class ApiOrderController extends Controller
@@ -198,6 +199,8 @@ class ApiOrderController extends Controller
     public function store(Request $request)
 {
     try {
+
+
         $variant_quantity = 0;
         $variant_price = 0;
         $variant_total_price = 0;
@@ -291,8 +294,26 @@ class ApiOrderController extends Controller
         $order->status = 'pending';
         $order->order_note = $request->order_note;
         $order->invoice_number = rand(100000, 999999);
-        $order->user_id = $request->user_id;
 
+        if ($request->user_id) {
+            $order->user_id = $request->user_id;
+        }
+
+        else if($request->session_id) {
+            $order->session_id = $request->session_id;
+        }
+
+        $verified_phone = BillingInformation::where(function ($query) use ($request) {
+            $query->where('user_id', $request->user_id)
+                  ->orWhere('session_id', $request->session_id);
+        })->first();
+        if($verified_phone){
+            $order->phone_number = $verified_phone->phone;
+        }
+       else{
+        $order->phone_number = $request->phone_number;
+        }
+       
         // Coupon Validation
         if ($request->coupon_code) {
             $coupon = Coupon::where('cupon_code', $request->coupon_code)
@@ -374,7 +395,7 @@ public function trackingOrder(Request $request){
          $order_id = $request->order_id;
          $order = Order::where('invoice_number',$order_id)->with('orderDetails')->first();
          $order_details = OrderDetails::where('order_id', $order->id)->with('product')->get();
-       
+
          if($order){
                 if($order->status != "Delivering"){
                     return response()->json([

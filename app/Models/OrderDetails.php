@@ -22,7 +22,7 @@ class OrderDetails extends Model
 
     public function variant()
     {
-        return $this->belongsTo(Variant::class);
+        return $this->belongsTo(Variant::class,'variant_id','id');
     }
 
     public function combo()

@@ -549,6 +549,7 @@
                                                  <td><input type="text" class="form-control" name="weight[{{ $variant->id }}]" value="{{ $variant->weight??'' }}"></td>
                                                  <td><input type="text" class="form-control" name="flavor[{{ $variant->id }}]" value="{{ $variant->flavor??'' }}"></td>
                                                  <td><input type="file" class="form-control" name="image[{{$variant->id}}][]" multiple>
+
                                                     @foreach ($variant->variantImage as $image)
                                                     <div class="image-container position-relative d-inline-block m-2">
                                                         <img src="{{ asset($image->image) }}" alt="" width="50px" height="50px" class="border rounded">
@@ -561,6 +562,7 @@
 
 
                                                 </td>
+
                                                  <td><input type="number" class="form-control" name="stock_quantity[{{ $variant->id }}]" value="{{ $variant->productStock->StockQuantity??0 }}"></td>
                                                  <td>
 
@@ -929,7 +931,7 @@ $(document).on("click", ".removeRow", function () {
 //////////////////////////////////////////////////////variant Delete ////////////////////////////////////////
     $(document).on('click','.removeRow',function(){
          let variant_id = $(this).data('variant_id');
-     
+
          $.ajaxSetup({
             headers:{ 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
          });
@@ -966,7 +968,7 @@ $(document).on("click", ".removeRow", function () {
                     if(res.status == 200){
                         $('#productForm')[0].reset();
                     toastr.success("Product Updated Successfully");
-                 
+
                     }
                else{
                 toastr.error("Something Went Wrong");

@@ -42,7 +42,7 @@
 
                                         <div class="mt-3">
                                             <img id="showImage" class="" height="150" width="200"
-                                                src="{{ asset('uploads/category/' . $category->image) }}"
+                                                src="{{ asset($category->image) }}"
                                                 alt="category image">
                                         </div>
                                     </div>
