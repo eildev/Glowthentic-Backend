@@ -43,7 +43,7 @@
                                                 <td>{{ $serialNumber++ }}</td>
                                                 <td>{{ $formattedDate }}</td>
                                                 <td>{{ $order->invoice_number }}</td>
-                                                <td>0170........</td>
+                                                <td>{{$order->phone_number}}</td>
                                                 <td>{{ $order->total_quantity }}</td>
                                                 <td>{{ $order->grand_total }}</td>
                                                 <td>{{ $order->payment_method }}</td>
@@ -147,7 +147,7 @@
                                                 <td>{{ $serialNumber++ }}</td>
                                                 <td>{{ $formattedDate }}</td>
                                                 <td>{{ $order->invoice_number }}</td>
-                                                <td>0170........</td>
+                                                <td>{{$order->phone_number}}</td>
                                                 <td>{{ $order->total_quantity }}</td>
                                                 <td>{{ $order->grand_total }}</td>
                                                 <td>{{ $order->payment_method }}</td>

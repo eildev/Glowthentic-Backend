@@ -132,6 +132,7 @@ class ProductController extends Controller
         $product->save();
 
         if ($product) {
+
             $productDetails = new ProductDetails();
             $productDetails->product_id = $product->id;
             $productDetails->gender = $request->gender;
@@ -871,25 +872,25 @@ class ProductController extends Controller
 public function variantDelete(Request $request){
     try{
         $variant = Variant::findOrFail($request->variant_id);
-    
-   
+
+
         $images = VariantImageGallery::where('variant_id', $variant->id)->get();
 
         foreach ($images as $image) {
-            $imagePath = public_path($image->image); 
-        
+            $imagePath = public_path($image->image);
+
             if (file_exists($imagePath)) {
-                unlink($imagePath); 
+                unlink($imagePath);
             }
-        
-            $image->delete(); 
+
+            $image->delete();
         }
-    
+
         $productStock = ProductStock::where('variant_id', $variant->id)->first();
         if ($productStock) {
             $productStock->delete();
         }
-       
+
         $variant->delete();
         return response()->json([
             'status' => 200,
