@@ -22,6 +22,7 @@ class CategoryController extends Controller
     public function store(Request $request, ImageOptimizerService $imageService)
     {
         try {
+            // dd($request->all());
             $validator = Validator::make($request->all(), [
                 'categoryName' => 'required|max:100',
                 // 'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp,svg|max:10240',
@@ -38,6 +39,7 @@ class CategoryController extends Controller
 
 
             if ($request->image) {
+              
                 $category = new Category;
                 $category->categoryName = $request->categoryName;
                 $category->slug = Str::slug($request->categoryName);
@@ -186,7 +188,12 @@ class CategoryController extends Controller
              $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
             $image ='uploads/category/'.$imageName;
             $category = Category::findOrFail($request->cat_id);
-            //  unlink(public_path('uploads/category/') . $category->image);
+            $imagePath = public_path('uploads/category/') . $category->image;
+
+            // Check if file exists before deleting
+            if (file_exists($imagePath) && is_file($imagePath)) {
+                unlink($imagePath);
+            }
             $category->categoryName = $request->categoryName;
             $category->slug = Str::slug($request->categoryName);
             $category->image = $image;
