@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Models\Category;
+use App\Services\ImageOptimizerService;
 use Exception;
 use Illuminate\Support\Str;
 
@@ -18,12 +19,12 @@ class CategoryController extends Controller
     }
 
     // category store function
-    public function store(Request $request)
+    public function store(Request $request, ImageOptimizerService $imageService)
     {
-        try{
+        try {
             $validator = Validator::make($request->all(), [
                 'categoryName' => 'required|max:100',
-                'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp,svg|max:2048',
+                // 'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp,svg|max:10240',
                 'parent_id' => 'nullable|integer|exists:categories,id', // Ensure parent_id is valid
             ]);
 
@@ -36,32 +37,30 @@ class CategoryController extends Controller
             }
 
 
-        if ($request->image) {
-
-            $imageName = rand() . '.' . $request->image->extension();
-            $request->image->move(public_path('uploads/category/'), $imageName);
-            $category = new Category;
-            $category->categoryName = $request->categoryName;
-            $category->slug = Str::slug($request->categoryName);
-            $category->image = $imageName;
-            if ($request->parent_id) {
-                $category->parent_id = $request->parent_id;
+            if ($request->image) {
+                $category = new Category;
+                $category->categoryName = $request->categoryName;
+                $category->slug = Str::slug($request->categoryName);
+                $destinationPath = public_path('uploads/category/');
+                $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
+                $category->image = $imageName;
+                if ($request->parent_id) {
+                    $category->parent_id = $request->parent_id;
+                }
+                // $category->approved_by = auth()->user()->id;
+                $category->save();
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'Category Added Successfully'
+                ]);
             }
-            // $category->approved_by = auth()->user()->id;
-            $category->save();
+        } catch (Exception $e) {
             return response()->json([
-                 'status' => 200,
-                'message' => 'Category Added Successfully'
-            ]);
+                'success' => false,
+                'message' => 'Failed to add category.',
+                'error' => $e->getMessage()
+            ], 500);
         }
-    }
-    catch(Exception $e){
-        return response()->json([
-            'success' => false,
-            'message' => 'Failed to add category.',
-            'error' => $e->getMessage()
-        ], 500);
-    }
     }
 
     // category View function
