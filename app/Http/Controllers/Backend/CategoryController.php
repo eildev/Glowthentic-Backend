@@ -186,7 +186,12 @@ class CategoryController extends Controller
              $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
             $image ='uploads/category/'.$imageName;
             $category = Category::findOrFail($request->cat_id);
-            //  unlink(public_path('uploads/category/') . $category->image);
+            $imagePath = public_path('uploads/category/') . $category->image;
+
+            // Check if file exists before deleting
+            if (file_exists($imagePath) && is_file($imagePath)) {
+                unlink($imagePath);
+            }
             $category->categoryName = $request->categoryName;
             $category->slug = Str::slug($request->categoryName);
             $category->image = $image;
