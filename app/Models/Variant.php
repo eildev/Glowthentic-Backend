@@ -18,7 +18,7 @@ class Variant extends Model
 
     public function productStock()
     {
-        return $this->hasOne(ProductStock::class, 'variant_id', 'id');
+        return $this->hasMany(ProductStock::class, 'variant_id', 'id');
     }
 
     public function orderdetails()
@@ -38,7 +38,8 @@ class Variant extends Model
         return $this->hasMany(VariantImageGallery::class, 'variant_id', 'id');
     }
 
-    public function wishlist(){
+    public function wishlist()
+    {
         return $this->hasMany(WishList::class, 'variant_id', 'id');
     }
 }
