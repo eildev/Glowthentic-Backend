@@ -16,6 +16,9 @@ use Illuminate\Support\Facades\auth;
 use Illuminate\Support\Str;
 use App\Models\Attribute;
 use App\Models\AttributeManage;
+use App\Services\ImageOptimizerService;
+use Exception;
+use File;
 // use App\Models\
 class ProductController extends Controller
 {
@@ -81,40 +84,38 @@ class ProductController extends Controller
     //     return back()->with('success', 'Product Successfully Saved');
     // }
 
-    public function store(Request $request)
+    public function store(Request $request,ImageOptimizerService $imageService)
     {
-        //  dd($request->all());
+        //   dd($request->all());
         $validator = Validator::make($request->all(), [
             'category_id' => 'required',
-            // 'subcategory_id' => 'required',
             'brand_id' => 'required',
-            // 'product_feature' => 'required|array',
             'product_name' => 'required|max:100',
-            // 'description' => 'required',
             'unit_id' => 'required',
-            // 'sku' => 'required',
-            // 'tag' => 'required|array',
             'size' => 'required',
             'color' => 'required',
             'price' => 'required|numeric|min:1',
-            // 'weight' => 'nullable|string',
-            // 'flavor' => 'nullable|string',
             'gender' => 'required',
-            // 'ingredients'=>'nullable|string',
-            // 'usage_instruction'=>'nullable|string',
-            'product_main_image.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-            'product_main_image' => 'required|array',
-
             'stock_quantity' => 'required|integer|min:0',
+
+            // Validate product_main_image as an array
+            'product_main_image' => 'required|array|min:1', // At least one image is required
+            'product_main_image.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:2048', // Validate each image
+        ], [
+            'product_main_image.required' => 'At least one image is required.',
+            'product_main_image.min' => 'You must upload at least one image.',
+            'product_main_image.*.image' => 'Each file must be an image.',
+            'product_main_image.*.mimes' => 'Only jpeg, png, jpg, gif, and webp formats are allowed.',
+            'product_main_image.*.max' => 'Each image must be less than 2MB.',
         ]);
 
-        // dd($validator);
         if ($validator->fails()) {
             return response()->json([
                 'status' => 'error',
                 'errors' => $validator->errors(),
             ], 422);
         }
+
         $product = new Product;
         $product->category_id = $request->category_id;
         $product->subcategory_id = $request->subcategory_id;
@@ -132,6 +133,7 @@ class ProductController extends Controller
         $product->save();
 
         if ($product) {
+
             $productDetails = new ProductDetails();
             $productDetails->product_id = $product->id;
             $productDetails->gender = $request->gender;
@@ -143,59 +145,49 @@ class ProductController extends Controller
         }
 
 
-        if ($request->extra_field) {
 
+        if ($request->extra_field) {
             foreach ($request->extra_field_id as $key => $fieldId) {
                 $extraFieldInfo = Attribute::where('id', $fieldId)->first();
+
+
+                if (!isset($request->extra_field[$fieldId]) || $request->extra_field[$fieldId] === null) {
+                    continue;
+                }
+
                 $data = $request->extra_field[$fieldId];
 
                 switch ($extraFieldInfo->data_type) {
                     case 'json':
-                        if (is_array($data)) {
-                            $storedValue = json_encode($data);
-                        } else {
-                            $storedValue = json_encode([$data]);
-                        }
+                        $storedValue = is_array($data) ? json_encode($data) : json_encode([$data]);
                         break;
 
                     case 'integer':
-
-                        if (!is_numeric($data)) {
-                            throw new \Exception("Invalid value! Expected a number.");
-                        }
-                        $storedValue = intval($data);
-                        break;
-
                     case 'float':
-                        if (!is_numeric($data)) {
-                            throw new \Exception("Invalid value! Expected a number.");
-                        }
-                        $storedValue = floatval($data);
-                        break;
-
                     case 'decimal':
-                        if (!is_numeric($data)) {
-                            throw new \Exception("Invalid value! Expected a number.");
-                        }
-                        $storedValue = number_format((float) $data, 2, '.', '');
-                        break;
-
                     case 'double':
                         if (!is_numeric($data)) {
-                            throw new \Exception("Invalid value! Expected a number.");
+                            continue 2; // Correct way to skip the loop iteration
                         }
-                        $storedValue = date('Y-m-d', strtotime($value));
+                        $storedValue = match ($extraFieldInfo->data_type) {
+                            'integer' => intval($data),
+                            'float' => floatval($data),
+                            'decimal' => number_format((float) $data, 2, '.', ''),
+                            'double' => doubleval($data),
+                        };
                         break;
+
                     case 'date':
                         if (!strtotime($data)) {
-                            throw new \Exception("Invalid value! Expected a valid date.");
+                            continue 2; // Skip invalid dates
                         }
+                        $storedValue = date('Y-m-d', strtotime($data));
+                        break;
 
                     default:
-                        $storedValue = (string)$data;
+                        $storedValue = (string) $data;
                         break;
                 }
-
 
                 AttributeManage::create([
                     'attribute_id' => $fieldId,
@@ -204,7 +196,6 @@ class ProductController extends Controller
                 ]);
             }
         }
-
 
 
 
@@ -230,7 +221,12 @@ class ProductController extends Controller
             $variant->size = $request->size;
             $variant->color = $request->color;
             $variant->regular_price = $request->price;
-            $variant->variant_name = $request->variant_name;
+            if($request->variant_name){
+                $variant->variant_name = $request->variant_name;
+            }
+            else{
+                $variant->variant_name = $product->product_name;
+            }
             $variant->weight = $request->weight;
             $variant->flavor = $request->flavor;
 
@@ -248,20 +244,21 @@ class ProductController extends Controller
             if ($variant->id) {
                 if ($request->hasFile('product_main_image')) {
                     foreach ($request->file('product_main_image') as $image) {
-                        $file = $image;
-                        $extension = $file->extension();
+                        $destinationPath = public_path('uploads/products/variant/');
                         $filename = time() . '_' . uniqid() . '.' . $image->extension();
-                        $path = 'uploads/products/variant/';
-                        $file->move($path, $filename);
-                        $galleryImage = $path . $filename;
+                        $imageName = $imageService->resizeAndOptimize($image, $destinationPath,$filename);
+                        $image='uploads/products/variant/'.$imageName;
+
                         $productGallery = new VariantImageGallery;
                         $productGallery->variant_id = $variant->id;
                         $productGallery->product_id = $product->id;
-                        $productGallery->image = $galleryImage;
+                        $productGallery->image =  $image;
                         $productGallery->save();
                     }
                 }
             }
+
+
 
             if ($product && $variant && $request->stock_quantity) {
                 $stock = new ProductStock();
@@ -709,7 +706,7 @@ class ProductController extends Controller
     // }
 
 
-    public function variantProductStore(Request $request)
+    public function variantProductStore(Request $request,ImageOptimizerService $imageService)
     {
         try {
             if (!empty($request->price ?? 0)) {
@@ -734,14 +731,21 @@ class ProductController extends Controller
 
                     if ($variant->id && $request->hasFile("image.$key")) {
                         foreach ($request->file("image.$key") as $image) {
+
+                            // $filename = time() . '_' . uniqid() . '.' . $image->extension();
+                            // $path = 'uploads/products/variant/';
+                            // $image->move($path, $filename);
+
+                            $destinationPath = public_path('uploads/products/variant/');
                             $filename = time() . '_' . uniqid() . '.' . $image->extension();
-                            $path = 'uploads/products/variant/';
-                            $image->move($path, $filename);
+                            $imageName = $imageService->resizeAndOptimize($image, $destinationPath,$filename);
+                            $image='uploads/products/variant/'.$imageName;
+
 
                             $variantImage = new VariantImageGallery();
                             $variantImage->variant_id = $variant->id;
                             $variantImage->product_id = $request->product_id;
-                            $variantImage->image = $path . $filename;
+                            $variantImage->image = $image;
                             $variantImage->save();
                         }
                     }
@@ -771,7 +775,7 @@ class ProductController extends Controller
         }
     }
 
-    public function ProductvariantUpdate(Request $request)
+    public function ProductvariantUpdate(Request $request,ImageOptimizerService $imageService)
     {
         try {
 
@@ -812,14 +816,15 @@ class ProductController extends Controller
                     if ($variant->id && $request->hasFile("image.$variant_id")) {
 
                         foreach ($request->file("image.$variant_id") as $image) {
+                            $destinationPath = public_path('uploads/products/variant/');
                             $filename = time() . '_' . uniqid() . '.' . $image->extension();
-                            $path = 'uploads/products/variant/';
-                            $image->move(public_path($path), $filename);
+                            $imageName = $imageService->resizeAndOptimize($image, $destinationPath,$filename);
+                            $image='uploads/products/variant/'.$imageName;
 
                             $variantImage = new VariantImageGallery();
                             $variantImage->variant_id = $variant->id;
                             $variantImage->product_id = $request->product_id;
-                            $variantImage->image = $path . $filename;
+                            $variantImage->image =  $image;
                             $variantImage->save();
                         }
                     }
@@ -871,25 +876,25 @@ class ProductController extends Controller
 public function variantDelete(Request $request){
     try{
         $variant = Variant::findOrFail($request->variant_id);
-    
-   
+
+
         $images = VariantImageGallery::where('variant_id', $variant->id)->get();
 
         foreach ($images as $image) {
-            $imagePath = public_path($image->image); 
-        
+            $imagePath = public_path($image->image);
+
             if (file_exists($imagePath)) {
-                unlink($imagePath); 
+                unlink($imagePath);
             }
-        
-            $image->delete(); 
+
+            $image->delete();
         }
-    
+
         $productStock = ProductStock::where('variant_id', $variant->id)->first();
         if ($productStock) {
             $productStock->delete();
         }
-       
+
         $variant->delete();
         return response()->json([
             'status' => 200,

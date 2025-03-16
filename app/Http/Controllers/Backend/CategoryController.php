@@ -43,7 +43,8 @@ class CategoryController extends Controller
                 $category->slug = Str::slug($request->categoryName);
                 $destinationPath = public_path('uploads/category/');
                 $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
-                $category->image = $imageName;
+                $category->image ='uploads/category/'.$imageName;
+
                 if ($request->parent_id) {
                     $category->parent_id = $request->parent_id;
                 }
@@ -157,7 +158,7 @@ class CategoryController extends Controller
 
 
     // category update function
-    public function update(Request $request)
+    public function update(Request $request,ImageOptimizerService $imageService)
     {
 
         $validator = Validator::make($request->all(), [
@@ -181,13 +182,19 @@ class CategoryController extends Controller
             //     'categoryName' => 'required|max:100',
             //     'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp,svg|max:2048',
             // ]);
-            $imageName = rand() . '.' . $request->image->extension();
-            $request->image->move(public_path('uploads/category/'), $imageName);
+            $destinationPath = public_path('uploads/category/');
+             $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
+            $image ='uploads/category/'.$imageName;
             $category = Category::findOrFail($request->cat_id);
-            unlink(public_path('uploads/category/') . $category->image);
+            $imagePath = public_path('uploads/category/') . $category->image;
+
+            // Check if file exists before deleting
+            if (file_exists($imagePath) && is_file($imagePath)) {
+                unlink($imagePath);
+            }
             $category->categoryName = $request->categoryName;
             $category->slug = Str::slug($request->categoryName);
-            $category->image = $imageName;
+            $category->image = $image;
             if ($request->parent_id) {
                 $category->parent_id = $request->parent_id;
             }
