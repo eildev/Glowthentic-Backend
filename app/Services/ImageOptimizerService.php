@@ -20,6 +20,10 @@ class ImageOptimizerService
 
     public function resizeAndOptimize($imageFile, $destinationPath, $width = 800, $height = 600, $quality = 75)
     {
+
+        $width = (int) $width;
+        $height = (int) $height;
+
         if (!File::exists($destinationPath)) {
             File::makeDirectory($destinationPath, 0755, true, true);
         }

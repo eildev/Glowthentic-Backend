@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\OfferBanner;
 use App\Models\ImageGallery;
+use App\Services\ImageOptimizerService;
+use Exception;
 class OfferBannerController extends Controller
 {
     // banner index function
@@ -15,7 +17,7 @@ class OfferBannerController extends Controller
     }
 
     // banner store function
-    public function store(Request $request)
+    public function store(Request $request, ImageOptimizerService $imageService)
     {
         // @dd($request->all());
         $request->validate([
@@ -42,12 +44,15 @@ class OfferBannerController extends Controller
             $offerBanerAdd->link_button = $request->link_button;
             $offerBanerAdd->status = $request->status;
             if($request->hasFile('image')){
-                $file=$request->file('image');
-                $extension=$file->extension();
-                $fileName=time().'.'.$extension;
-                $path='uploads/offer_banner/';
-                $file->move($path,$fileName);
-                $offerBanerAdd->image=$path.$fileName;
+                // $file=$request->file('image');
+                // $extension=$file->extension();
+                // $fileName=time().'.'.$extension;
+                // $path='uploads/offer_banner/';
+                // $file->move($path,$fileName);
+                $destinationPath = public_path('uploads/offer_banner/');
+                $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
+                $offerBanerAdd->image='uploads/offer_banner/'.$imageName;
+                // $offerBanerAdd->image='uploads/offer_banner/'.$fileName;
             }
             $offerBanerAdd->save();
             if($offerBanerAdd){
@@ -55,12 +60,19 @@ class OfferBannerController extends Controller
                     if ($request->galleryimages) {
                         $allImages = $request->galleryimages;
                         foreach ($allImages as $galleryImage) {
-                            $imageName = rand() . '.' . $galleryImage->extension();
-                            $path= 'uploads/banner/gallery/';
-                            $galleryImage->move(public_path('uploads/banner/gallery/'), $imageName);
+                            // $imageName = rand() . '.' . $galleryImage->extension();
+                            // Generate a unique filename
+
+                            $destinationPath = public_path('uploads/offer_banner/');
+                            $filename = time() . '_' . uniqid() . '.' . $galleryImage->extension();
+                            $imageName = $imageService->resizeAndOptimize($galleryImage, $destinationPath,$filename);
+                            $image='uploads/offer_banner/'.$imageName;
+
+                            // $path= 'uploads/banner/gallery/';
+                            // $galleryImage->move(public_path('uploads/banner/gallery/'), $imageName);
                             $ImageGallery = new ImageGallery;
                             $ImageGallery->offer_banner_id =$offerBanerAdd->id;
-                            $ImageGallery->image =$path.$imageName;
+                            $ImageGallery->image =$image;
                             $ImageGallery->save();
                         }
                     }
@@ -89,7 +101,7 @@ class OfferBannerController extends Controller
 
 
     // banner update function
-    public function update(Request $request, $id)
+    public function update(Request $request, $id,ImageOptimizerService $imageService)
     {
         $request->validate([
             'heading' => 'required|max:50',
@@ -114,12 +126,9 @@ class OfferBannerController extends Controller
                 unlink(public_path($offerBanner->image));
             }
 
-            $file = $request->file('image');
-            $extension = $file->extension();
-            $fileName = time() . '.' . $extension;
-            $path = 'uploads/offer_banner/';
-            $file->move(public_path($path), $fileName);
-            $offerBanner->image = $path . $fileName;
+            $destinationPath = public_path('uploads/offer_banner/');
+            $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
+            $offerBanerAdd->image='uploads/offer_banner/'.$imageName;
         }
 
         $offerBanner->save();
@@ -127,13 +136,18 @@ class OfferBannerController extends Controller
         // Handle Gallery Images
         if ($offerBanner->status == "cart1" && $request->galleryimages) {
             foreach ($request->galleryimages as $galleryImage) {
-                $imageName = rand() . '.' . $galleryImage->extension();
-                $path = 'uploads/banner/gallery/';
-                $galleryImage->move(public_path($path), $imageName);
+                // $imageName = rand() . '.' . $galleryImage->extension();
+                // $path = 'uploads/banner/gallery/';
+                // $galleryImage->move(public_path($path), $imageName);
+
+                $destinationPath = public_path('uploads/offer_banner/');
+                $filename = time() . '_' . uniqid() . '.' . $galleryImage->extension();
+                $imageName = $imageService->resizeAndOptimize($galleryImage, $destinationPath,$filename);
+                $image='uploads/offer_banner/'.$imageName;
 
                 $imageGallery = new ImageGallery;
                 $imageGallery->offer_banner_id = $offerBanner->id;
-                $imageGallery->image = $path . $imageName;
+                $imageGallery->image =$image;
                 $imageGallery->save();
             }
         }
@@ -161,7 +175,7 @@ class OfferBannerController extends Controller
                 unlink($imagePath);
             }
 
-       
+
             $image->delete();
 
             return back()->with('success', 'Image Successfully deleted');
