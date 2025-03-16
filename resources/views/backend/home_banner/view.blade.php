@@ -22,7 +22,6 @@
                                     <th>Short Description</th>
                                     <th>Long Description</th>
                                     <th>image</th>
-                                    <th>Gallery Images</th>
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
@@ -40,28 +39,9 @@
                                             <td>{{ Illuminate\Support\Str::limit($banner->long_description, 20) }}</td>
 
                                             <td>
-                                                <img src="{{ asset('/uploads/banner/' . $banner->image) }}"
+                                                <img src="{{ asset($banner->image) }}"
                                                     style="height: 100px; object-fit: contain;" class="img-fluid"
                                                     alt="banner Image">
-                                            </td>
-                                            <td>
-                                                @php
-                                                    $imageGalleries = App\Models\ImageGallery::where(
-                                                        'banner_id',
-                                                        $banner->id,
-                                                    )->get();
-                                                    // dd($imageGalleries->all());
-                                                @endphp
-                                                @if ($imageGalleries->count() > 0)
-                                                    @foreach ($imageGalleries as $imageGallery)
-                                                        <img src="{{ asset('/uploads/banner/gallery/' . $imageGallery->image) }}"
-                                                            style="height: 50px; object-fit:cover;" class="img-fluid"
-                                                            alt="banner Image">
-                                                    @endforeach
-                                                @else
-                                                    <span class="text-center text-warning">Image not
-                                                        Found</span>
-                                                @endif
                                             </td>
                                             <td>
                                                 <form action="{{ route('banner.status', $banner->id) }}" method="POST">
