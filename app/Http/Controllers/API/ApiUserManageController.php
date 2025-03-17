@@ -197,6 +197,7 @@ class ApiUserManageController extends Controller
     }
 
 public function userDetailsShow($id){
+    // dd($id);
     try{
         $user= User::where('id', $id)->first();
         $userDetails = UserDetails::Where('session_id', $id)->orWhere('user_id', $user->id)->with('user')
