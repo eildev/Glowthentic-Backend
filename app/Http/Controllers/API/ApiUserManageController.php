@@ -180,6 +180,31 @@ class ApiUserManageController extends Controller
               $userDetails->save();
 
            }
+
+           else{
+            $userDetails = new UserDetails();
+            $userDetails->user_id= $id;
+            $userDetails->full_name= $request->full_name;
+            $userDetails->phone_number= $request->phone_number;
+            if($request->hasFile('image')){
+              if ($userDetails->image && file_exists($userDetails->image)) {
+                  unlink($userDetails->image);
+              }
+              $file= $request->file('image');
+              $extension = $file->Extension();
+              $filename = time().'.'.$extension;
+              $path='uploads/user_image/';
+              $file->move($path,$filename);
+              $userDetails->image= $path.$filename;
+          }
+          $userDetails->police_station= $request->police_station;
+            $userDetails->address= $request->address;
+            $userDetails->city= $request->city;
+            $userDetails->postal_code= $request->postal_code;
+            $userDetails->country= $request->country;
+            $userDetails->save();
+
+           }
            return response()->json([
                 'status' => 200,
                 'user' => $userDetails,

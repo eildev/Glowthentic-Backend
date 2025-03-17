@@ -35,7 +35,7 @@ Route::group([
 
 
     Route::controller(ApiUserManageController::class)->group(function () {
-        Route::put("user/details/update/{id}", [ApiUserManageController::class, 'update']);
+        Route::post("user/details/update/{id}", [ApiUserManageController::class, 'update']);
         Route::get("/user/details/show/{id}", [ApiUserManageController::class, 'userDetailsShow']);
     });
 
@@ -125,6 +125,8 @@ Route::controller(ApiOrderController::class)->group(function () {
     Route::post('/order/create', 'store')->name('order.store');
     Route::get('/order/{id}', 'show')->name('order.show');
     Route::post('order/tracking','trackingOrder');
+    Route::get('/order/get/{user_idOrSesssion_id}', 'getOrder');
+    Route::get('/order/processing/{user_idOrSesssion_id}', 'getProcessingOrder');
 });
 
 
