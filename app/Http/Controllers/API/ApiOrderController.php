@@ -313,7 +313,7 @@ class ApiOrderController extends Controller
        else{
         $order->phone_number = $request->phone_number;
         }
-       
+
         // Coupon Validation
         if ($request->coupon_code) {
             $coupon = Coupon::where('cupon_code', $request->coupon_code)
@@ -438,5 +438,62 @@ public function trackingOrder(Request $request){
         ]);
     }
 }
+
+public function getOrder($user_idOrSesssion_id){
+    try{
+        $order = Order::where('user_id', $user_idOrSesssion_id)->orWhere('session_id',$user_idOrSesssion_id)->with('orderDetails')->get();
+        return response()->json([
+            'status' => 200,
+            'order' => $order,
+            'message' => 'Order Get Successfully',
+        ]);
+    }
+    catch(\Exception $e){
+        return response()->json([
+            'status' => 500,
+            'message' => $e->getMessage(),
+        ]);
+    }
+}
+
+public function getProcessingOrder($user_idOrSesssion_id){
+    try{
+         $order = Order::where('user_id', $user_idOrSesssion_id)->orWhere('session_id',$user_idOrSesssion_id)->get();
+         $ongoing_order = [];
+         foreach($order as $order_data){
+            if($order_data->status != "Delivering"){
+                $ongoing_order[] = $order_data;
+            }
+            else{
+                $delivered_order = DeliveryOrder::where('order_id', $order_data->id)->first();
+                if($delivered_order->delivery_status != "delivered"){
+                    $ongoing_order[] = $order_data;
+                }
+            }
+         }
+
+
+        return response()->json([
+            'status' => 200,
+            'order' => $ongoing_order,
+            'message' => 'Order Get Successfully',
+        ]);
+    }
+    catch(\Exception $e){
+        return response()->json([
+            'status' => 500,
+            'message' => $e->getMessage(),
+        ]);
+    }
+    catch(\Exception $e){
+        return response()->json([
+            'status' => 500,
+            'message' => $e->getMessage(),
+        ]);
+    }
+}
+
+
+
 
 }

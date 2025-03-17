@@ -44,7 +44,7 @@
                                             <td>{{ $serialNumber++ }}</td>
                                                 <td>{{ $formattedDate }}</td>
                                                 <td>{{ $delivering_orders->order->invoice_number }}</td>
-                                                <td>{{$order->phone_number}}</td>
+                                                <td>{{$delivering_orders->order->phone_number}}</td>
                                                 <td>{{ $delivering_orders->order->total_quantity }}</td>
                                                 <td>{{ $delivering_orders->order->grand_total }}</td>
                                                 <td>{{ $delivering_orders->order->payment_method }}</td>
