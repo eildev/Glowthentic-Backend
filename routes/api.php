@@ -35,7 +35,7 @@ Route::group([
 
 
     Route::controller(ApiUserManageController::class)->group(function () {
-        Route::put("user/details/update/{id}", [ApiUserManageController::class, 'update']);
+        Route::post("user/details/update/{id}", [ApiUserManageController::class, 'update']);
         Route::get("/user/details/show/{id}", [ApiUserManageController::class, 'userDetailsShow']);
     });
 
