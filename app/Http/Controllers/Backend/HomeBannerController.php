@@ -6,7 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\ImageGallery;
 use App\Models\HomeBanner;
-
+use App\Services\ImageOptimizerService;
+use Exception;
 class HomeBannerController extends Controller
 {
     // banner index function
@@ -16,7 +17,7 @@ class HomeBannerController extends Controller
     }
 
     // banner store function
-    public function store(Request $request)
+    public function store(Request $request , ImageOptimizerService $imageService)
     {
         $request->validate([
             'title' => 'required|max:50',
@@ -29,10 +30,9 @@ class HomeBannerController extends Controller
         if ($request->image) {
             // $imageName = rand() . '.' . $request->image->extension();
             // $request->image->move(public_path('uploads/banner/'), $imageName);
-            $imageName = rand() . '.' . $request->image->extension();
-            $path= 'uploads/banner/';
-            $request->image->move($path,$imageName);
-             $image=$path.$imageName;
+            $destinationPath = public_path('uploads/offer_banner/');
+            $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
+            $image='uploads/offer_banner/'.$imageName;
 
             $banner = new HomeBanner;
             $banner->title = $request->title;

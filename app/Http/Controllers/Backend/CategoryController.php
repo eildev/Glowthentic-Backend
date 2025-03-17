@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Models\Category;
+use App\Services\ImageOptimizerService;
 use Exception;
 use Illuminate\Support\Str;
 
@@ -18,12 +19,13 @@ class CategoryController extends Controller
     }
 
     // category store function
-    public function store(Request $request)
+    public function store(Request $request, ImageOptimizerService $imageService)
     {
-        try{
+        try {
+            // dd($request->all());
             $validator = Validator::make($request->all(), [
                 'categoryName' => 'required|max:100',
-                'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp,svg|max:2048',
+                // 'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp,svg|max:10240',
                 'parent_id' => 'nullable|integer|exists:categories,id', // Ensure parent_id is valid
             ]);
 
@@ -36,32 +38,32 @@ class CategoryController extends Controller
             }
 
 
-        if ($request->image) {
+            if ($request->image) {
+              
+                $category = new Category;
+                $category->categoryName = $request->categoryName;
+                $category->slug = Str::slug($request->categoryName);
+                $destinationPath = public_path('uploads/category/');
+                $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
+                $category->image ='uploads/category/'.$imageName;
 
-            $imageName = rand() . '.' . $request->image->extension();
-            $request->image->move(public_path('uploads/category/'), $imageName);
-            $category = new Category;
-            $category->categoryName = $request->categoryName;
-            $category->slug = Str::slug($request->categoryName);
-            $category->image = $imageName;
-            if ($request->parent_id) {
-                $category->parent_id = $request->parent_id;
+                if ($request->parent_id) {
+                    $category->parent_id = $request->parent_id;
+                }
+                // $category->approved_by = auth()->user()->id;
+                $category->save();
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'Category Added Successfully'
+                ]);
             }
-            // $category->approved_by = auth()->user()->id;
-            $category->save();
+        } catch (Exception $e) {
             return response()->json([
-                 'status' => 200,
-                'message' => 'Category Added Successfully'
-            ]);
+                'success' => false,
+                'message' => 'Failed to add category.',
+                'error' => $e->getMessage()
+            ], 500);
         }
-    }
-    catch(Exception $e){
-        return response()->json([
-            'success' => false,
-            'message' => 'Failed to add category.',
-            'error' => $e->getMessage()
-        ], 500);
-    }
     }
 
     // category View function
@@ -158,7 +160,7 @@ class CategoryController extends Controller
 
 
     // category update function
-    public function update(Request $request)
+    public function update(Request $request,ImageOptimizerService $imageService)
     {
 
         $validator = Validator::make($request->all(), [
@@ -182,13 +184,19 @@ class CategoryController extends Controller
             //     'categoryName' => 'required|max:100',
             //     'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp,svg|max:2048',
             // ]);
-            $imageName = rand() . '.' . $request->image->extension();
-            $request->image->move(public_path('uploads/category/'), $imageName);
+            $destinationPath = public_path('uploads/category/');
+             $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
+            $image ='uploads/category/'.$imageName;
             $category = Category::findOrFail($request->cat_id);
-            unlink(public_path('uploads/category/') . $category->image);
+            $imagePath = public_path('uploads/category/') . $category->image;
+
+            // Check if file exists before deleting
+            if (file_exists($imagePath) && is_file($imagePath)) {
+                unlink($imagePath);
+            }
             $category->categoryName = $request->categoryName;
             $category->slug = Str::slug($request->categoryName);
-            $category->image = $imageName;
+            $category->image = $image;
             if ($request->parent_id) {
                 $category->parent_id = $request->parent_id;
             }

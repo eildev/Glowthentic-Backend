@@ -14,32 +14,24 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('invoice_number');
-            $table->unsignedBigInteger('user_id')->unsigned();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->string('session_id')->nullable();
+            $table->unsignedBigInteger('phone_number')->nullable();
             $table->unsignedBigInteger('combo_id')->nullable();
             $table->integer('total_quantity');
-
             $table->decimal('total_amount', '10', '2');
             $table->decimal('sub_total', '10', '2');
             $table->unsignedBigInteger('global_coupon_id')->nullable();
             $table->enum('payment_method', ['COD', 'bank', 'mobile_bank'])->nullable();
             $table->enum('shipping_method', ['In-House', 'Third-Party'])->nullable();
-
             $table->decimal('shipping_charge', '10', '2')->nullable();
             $table->decimal('grand_total', '10', '2');
             $table->enum('status', ['pending', 'completed', 'cancelled', 'returned', 'approve', 'processing', 'Delivering'])->default('pending');
             $table->enum('payment_status', ['paid', 'processing', 'due']);
             $table->string('order_note')->nullable();
-
-
             // $table->string('discount')->nullable();
             // $table->float('sub_total');
             // $table->string('payment_id')->nullable();
-
-
-
-
-
-
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('global_coupon_id')->references('id')->on('coupons');
             $table->foreign('combo_id')->references('id')->on('combos');
