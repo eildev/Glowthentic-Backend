@@ -159,6 +159,10 @@ class ApiUserManageController extends Controller
             }
             $userDetails = UserDetails::where('user_id', $id)->first();
             if($userDetails){
+                $user=User::find($id);
+                $user->email=$request->email;
+                $user->name=$request->full_name;
+                $user->save();
               $userDetails->full_name= $request->full_name;
               $userDetails->phone_number= $request->phone_number;
               if($request->hasFile('image')){
@@ -182,6 +186,10 @@ class ApiUserManageController extends Controller
            }
 
            else{
+                $user=User::find($id);
+                $user->email=$request->email;
+                $user->name=$request->full_name;
+                $user->save();
             $userDetails = new UserDetails();
             $userDetails->user_id= $id;
             $userDetails->full_name= $request->full_name;
