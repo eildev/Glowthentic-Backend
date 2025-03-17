@@ -22,9 +22,9 @@ use Illuminate\Http\Request;
 // Open Routes
 Route::post('/register', [AuthController::class, "register"]);
 Route::post('/login', [AuthController::class, "login"]);
-// Route::get('/sanctum/csrf-cookie', function () {
-//     return response()->noContent();
-// });
+Route::get('/sanctum/csrf-cookie', function () {
+    return response()->noContent();
+});
 // Protected Routes
 
 Route::group([
