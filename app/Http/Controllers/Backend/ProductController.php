@@ -315,7 +315,17 @@ class ProductController extends Controller
     public function delete($id)
     {
         $product = Product::findOrFail($id);
-        unlink(public_path('uploads/products/') . $product->product_image);
+
+        $getVariants=Variant::where('product_id',$id)->get();
+        foreach($getVariants as $variant){
+            if($variant->image){
+                $imagePath = public_path($variant->image);
+                if (file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
+            }
+            $variant->delete();
+        }
         $product->delete();
         return redirect()->route('product.view')->with('success', 'Product deleted successfully');
     }

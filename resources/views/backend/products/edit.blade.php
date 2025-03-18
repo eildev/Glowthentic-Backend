@@ -64,12 +64,14 @@
                                             <div class="col-md-6">
                                                 <div class="row">
                                                     @php
-                                                        $subcategories = App\Models\Category::where('id', $product->subcategory_id)->first();
+                                                        $subcategories = App\Models\Category::where('id', $product->subcategory_id)->first()??'';
                                                     @endphp
                                                     <label class="form-label col-12">Select Subcategory</label>
                                                     <div class="col-12">
                                                         <select class="form-select subcategory_select @error('subcategory_id') is-invalid  @enderror" name="subcategory_id">
+                                                            @if($subcategories)
                                                             <option value="{{$subcategories->id }}">{{ $subcategories->categoryName??'' }}</option>
+                                                            @endif
                                                         </select>
                                                         @error('category_id')
                                                             <span class="text-danger">{{ $message }}</span>
