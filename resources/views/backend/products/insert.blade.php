@@ -1144,7 +1144,7 @@ function showExtraField() {
                     <option value="charcoal">Charcoal</option>
                 </select>
             </td>
-            <td><input type="text" class="form-control" name="weight[]"></td>
+            <td><input type="number" class="form-control" name="weight[]"></td>
             <td><input type="text" class="form-control" name="flavor[]"></td>
             <td><input type="file" class="form-control" name="image[${rowCount}][]" multiple></td>
             <td><input type="number" class="form-control" name="stock_quantity[]"></td>
@@ -1245,7 +1245,7 @@ $(document).on("click", ".removeRow", function () {
                                                     <option value="charcoal">Charcoal</option>
                                                 </select>
                                             </td>
-                                            <td><input type="text" class="form-control" name="weight[]"></td>
+                                            <td><input type="number" class="form-control" name="weight[]"></td>
                                             <td><input type="text" class="form-control" name="flavor[]"></td>
                                             <td><input type="file" class="form-control" name="image[0][]" multiple></td>
                                             <td><input type="number" class="form-control" name="stock_quantity[]"></td>

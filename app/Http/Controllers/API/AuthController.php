@@ -269,6 +269,7 @@ class AuthController extends Controller
 
     public function adminLogin(Request $request)
     {
+
         $credentials = $request->validate([
             'email' => 'required|email',
             'password' => 'required',
@@ -281,11 +282,12 @@ class AuthController extends Controller
                 return redirect()->intended('/');
             }
             Auth::logout();
-            return back()->withErrors(['email' => 'You do not have admin access.']);
+            return back()->withErrors(['email' => 'You do not have admin access.'])->withInput();
         }
 
-        return back()->withErrors(['email' => 'Invalid credentials.']);
+        return back()->withErrors(['email' => 'Invalid credentials.'])->withInput();
     }
+
 
     public function adminLogout(Request $request)
     {

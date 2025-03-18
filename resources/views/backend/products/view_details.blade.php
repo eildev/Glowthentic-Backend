@@ -170,7 +170,7 @@
                                         <img src="{{ asset($image->image) }}" alt="Variant Image" class="img-thumbnail rounded shadow-sm" width="50" height="50">
                                         @endforeach
                                     </td>
-                                    <td class="fw-bold text-primary">{{ $variant->productStock->StockQuantity }}</td>
+                                    <td class="fw-bold text-primary">{{ $variant->productStock->StockQuantity??0 }}</td>
                                     <td>
                                         <span class="badge {{ $variant->status == 'active' ? 'bg-success' : 'bg-danger' }}">
                                             {{ ucfirst($variant->status) }}
