@@ -84,7 +84,7 @@ class ProductController extends Controller
     //     return back()->with('success', 'Product Successfully Saved');
     // }
 
-    public function store(Request $request,ImageOptimizerService $imageService)
+    public function store(Request $request, ImageOptimizerService $imageService)
     {
         //   dd($request->all());
         $validator = Validator::make($request->all(), [
@@ -122,7 +122,7 @@ class ProductController extends Controller
         $product->brand_id = $request->brand_id;
         $product->sub_subcategory_id = $request->sub_subcategory_id;
         if ($request->product_feature) {
-            $product->product_feature =json_encode($request->product_feature);
+            $product->product_feature = json_encode($request->product_feature);
         }
 
         $product->product_name = $request->product_name;
@@ -222,10 +222,9 @@ class ProductController extends Controller
             $variant->color = $request->color;
             $variant->regular_price = $request->price;
             $variant->status = "Default";
-            if($request->variant_name){
+            if ($request->variant_name) {
                 $variant->variant_name = $request->variant_name;
-            }
-            else{
+            } else {
                 $variant->variant_name = $product->product_name;
             }
             $variant->weight = $request->weight;
@@ -247,8 +246,8 @@ class ProductController extends Controller
                     foreach ($request->file('product_main_image') as $image) {
                         $destinationPath = public_path('uploads/products/variant/');
                         $filename = time() . '_' . uniqid() . '.' . $image->extension();
-                        $imageName = $imageService->resizeAndOptimize($image, $destinationPath,$filename);
-                        $image='uploads/products/variant/'.$imageName;
+                        $imageName = $imageService->resizeAndOptimize($image, $destinationPath, $filename);
+                        $image = 'uploads/products/variant/' . $imageName;
 
                         $productGallery = new VariantImageGallery;
                         $productGallery->variant_id = $variant->id;
@@ -303,12 +302,12 @@ class ProductController extends Controller
 
         $attribute_manages = AttributeManage::where('product_id', $id)->get();
         $variants = Variant::where('product_id', $id)->get();
-        $inserttag=Product_Tags::where('product_id', $id)->get();
+        $inserttag = Product_Tags::where('product_id', $id)->get();
         $extraFields = AttributeManage::where('product_id', $product->id)->get();
         // ->pluck('value', 'attribute_id')
         // ->toArray();
 
-        return view('backend.products.edit', compact('product','attribute_manages','variants','inserttag','extraFields'));
+        return view('backend.products.edit', compact('product', 'attribute_manages', 'variants', 'inserttag', 'extraFields'));
     }
 
 
@@ -358,7 +357,7 @@ class ProductController extends Controller
         $product->brand_id = $request->brand_id;
         $product->sub_subcategory_id = $request->sub_subcategory_id;
         if ($request->product_feature) {
-            $product->product_feature =json_encode($request->product_feature);
+            $product->product_feature = json_encode($request->product_feature);
         }
 
         $product->product_name = $request->product_name;
@@ -451,7 +450,7 @@ class ProductController extends Controller
             }
         }
 
-      return response()->json([
+        return response()->json([
             'status' => 200,
             'message' => 'Product Updated Successfully'
         ]);
@@ -717,7 +716,7 @@ class ProductController extends Controller
     // }
 
 
-    public function variantProductStore(Request $request,ImageOptimizerService $imageService)
+    public function variantProductStore(Request $request, ImageOptimizerService $imageService)
     {
         try {
             if (!empty($request->price ?? 0)) {
@@ -749,8 +748,8 @@ class ProductController extends Controller
 
                             $destinationPath = public_path('uploads/products/variant/');
                             $filename = time() . '_' . uniqid() . '.' . $image->extension();
-                            $imageName = $imageService->resizeAndOptimize($image, $destinationPath,$filename);
-                            $image='uploads/products/variant/'.$imageName;
+                            $imageName = $imageService->resizeAndOptimize($image, $destinationPath, $filename);
+                            $image = 'uploads/products/variant/' . $imageName;
 
 
                             $variantImage = new VariantImageGallery();
@@ -786,7 +785,7 @@ class ProductController extends Controller
         }
     }
 
-    public function ProductvariantUpdate(Request $request,ImageOptimizerService $imageService)
+    public function ProductvariantUpdate(Request $request, ImageOptimizerService $imageService)
     {
         try {
 
@@ -803,7 +802,6 @@ class ProductController extends Controller
                         $variant->product_id = $request->product_id;
                         $variant->variant_name = $request->variant_name[$variant_id];
                         $variant->save();
-
                     }
 
 
@@ -829,8 +827,8 @@ class ProductController extends Controller
                         foreach ($request->file("image.$variant_id") as $image) {
                             $destinationPath = public_path('uploads/products/variant/');
                             $filename = time() . '_' . uniqid() . '.' . $image->extension();
-                            $imageName = $imageService->resizeAndOptimize($image, $destinationPath,$filename);
-                            $image='uploads/products/variant/'.$imageName;
+                            $imageName = $imageService->resizeAndOptimize($image, $destinationPath, $filename);
+                            $image = 'uploads/products/variant/' . $imageName;
 
                             $variantImage = new VariantImageGallery();
                             $variantImage->variant_id = $variant->id;
@@ -864,20 +862,20 @@ class ProductController extends Controller
     }
 
 
-    public function variantImageDelete(Request $request){
-        try{
+    public function variantImageDelete(Request $request)
+    {
+        try {
             $variantImage = VariantImageGallery::findOrFail($request->image_id);
 
-            if(file_exists($variantImage->image)){
+            if (file_exists($variantImage->image)) {
                 unlink($variantImage->image);
-
             }
             $variantImage->delete();
             return response()->json([
                 'status' => 200,
                 'message' => 'Variant Image Deleted Successfully'
             ]);
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             return response()->json([
                 'status' => 500,
                 'message' => 'Something went wrong'
@@ -885,41 +883,42 @@ class ProductController extends Controller
         }
     }
 
-public function variantDelete(Request $request){
-    try{
-        $variant = Variant::findOrFail($request->variant_id);
+    public function variantDelete(Request $request)
+    {
+        try {
+            $variant = Variant::findOrFail($request->variant_id);
 
 
-        $images = VariantImageGallery::where('variant_id', $variant->id)->get();
+            $images = VariantImageGallery::where('variant_id', $variant->id)->get();
 
-        foreach ($images as $image) {
-            $imagePath = public_path($image->image);
+            foreach ($images as $image) {
+                $imagePath = public_path($image->image);
 
-            if (file_exists($imagePath)) {
-                unlink($imagePath);
+                if (file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
+
+                $image->delete();
             }
 
-            $image->delete();
+            $productStock = ProductStock::where('variant_id', $variant->id)->first();
+            if ($productStock) {
+                $productStock->delete();
+            }
+
+            $variant->delete();
+            return response()->json([
+                'status' => 200,
+                'message' => 'Variant Deleted Successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 500,
+                'message' => 'Error: ' . $e->getMessage(),
+
+            ]);
         }
-
-        $productStock = ProductStock::where('variant_id', $variant->id)->first();
-        if ($productStock) {
-            $productStock->delete();
-        }
-
-        $variant->delete();
-        return response()->json([
-            'status' => 200,
-            'message' => 'Variant Deleted Successfully'
-        ]);
-    }catch(\Exception $e){
-        return response()->json([
-            'status' => 500,
-         'message' => 'Error: ' . $e->getMessage(),
-
-        ]);
     }
-}
     //rest Api Start
 
 }
