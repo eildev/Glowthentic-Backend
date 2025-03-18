@@ -16,13 +16,72 @@ use App\Models\ProductPromotion;
 use App\Models\DeliveryOrder;
 use App\Models\BillingInformation;
 use Auth;
-
+use App\Models\User;
 class ApiOrderController extends Controller
 {
     public function store(Request $request)
     {
         // dd($request->all());
         try {
+
+            if ($request->user_id) {
+                $user = User::where('id', $request->user_id)->first();
+                if ($user) {
+                    $biilingInfoStore = new BillingInformation();
+                    $biilingInfoStore->user_id = $request->user_id;
+                    $userBeforeBillingInfo = BillingInformation::where('user_id', $request->user_id)->first();
+                    if ($userBeforeBillingInfo) {
+
+                        $biilingInfoStore->is_default = 1;
+                    } else {
+
+                        $biilingInfoStore->is_default = 0;
+                    }
+                    $biilingInfoStore->status = $request->status;
+                    $biilingInfoStore->active_payment_method = $request->active_payment_method;
+                    if ($request->active_payment_method == 'card') {
+                        $biilingInfoStore->card_number = $request->card_number;
+                        $biilingInfoStore->cvc_code = $request->cvc_code;
+                        $biilingInfoStore->card_expiry_date = $request->card_expiry_date;
+                    } else if ($request->active_payment_method == 'mobile_banking') {
+                        $biilingInfoStore->mobile_banking_id = $request->mobile_banking_id;
+                        $biilingInfoStore->verified_mobile = $request->verified_mobile;
+                        $biilingInfoStore->verified_mobile_number = $request->verified_mobile_number;
+                    }
+                    $biilingInfoStore->save();
+                } else {
+                    return response()->json([
+                        'status' => 400,
+                        'message' => 'User Not Found'
+                    ], 400);
+                }
+            } else if ($request->session_id) {
+
+                $biilingInfoStore = new BillingInformation();
+                $biilingInfoStore->session_id = $request->session_id;
+                $userBeforeBillingInfo = BillingInformation::where('session_id', $request->session_id)->first();
+                if ($userBeforeBillingInfo) {
+
+                    $biilingInfoStore->is_default = 1;
+                } else {
+
+                    $biilingInfoStore->is_default = 0;
+                }
+                $biilingInfoStore->status = $request->status;
+                $biilingInfoStore->active_payment_method = $request->active_payment_method;
+                if ($request->active_payment_method == 'card') {
+                    $biilingInfoStore->card_number = $request->card_number;
+                    $biilingInfoStore->cvc_code = $request->cvc_code;
+                    $biilingInfoStore->card_expiry_date = $request->card_expiry_date;
+                } else if ($request->active_payment_method == 'mobile_banking') {
+                    $biilingInfoStore->mobile_banking_id = $request->mobile_banking_id;
+                    $biilingInfoStore->verified_mobile = $request->verified_mobile;
+                    $biilingInfoStore->verified_mobile_number = $request->verified_mobile_number;
+                }
+                $biilingInfoStore->save();
+            }
+
+
             $variant_quantity = 0;
             $variant_price = 0;
             $variant_total_price = 0;
