@@ -10,10 +10,15 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Models\BillingInformation;
 use Auth;
-
+use App\Services\BillingInformationService;
+use Illuminate\Http\JsonResponse;
 class ApiUserManageController extends Controller
 {
 
+    protected $billingInformationService;
+    public function __construct(BillingInformationService $billingInformationService){
+        $this->billingInformationService = $billingInformationService;
+    }
     public function UserDetailsStore(Request $request)
     {
 
@@ -245,131 +250,100 @@ class ApiUserManageController extends Controller
     //Billings info Start
     public function UserBillingInfoInsert(Request $request)
     {
-        try {
-            if ($request->user_id) {
-                $user = User::where('id', $request->user_id)->first();
-                if ($user) {
-                    $biilingInfoStore = new BillingInformation();
-                    $biilingInfoStore->user_id = $request->user_id;
-                    $userBeforeBillingInfo = BillingInformation::where('user_id', $request->user_id)->first();
-                    if ($userBeforeBillingInfo) {
 
-                        $biilingInfoStore->is_default = 1;
-                    } else {
 
-                        $biilingInfoStore->is_default = 0;
-                    }
-                    $biilingInfoStore->status = $request->status;
-                    $biilingInfoStore->active_payment_method = $request->active_payment_method;
-                    if ($request->active_payment_method == 'card') {
-                        $biilingInfoStore->card_number = $request->card_number;
-                        $biilingInfoStore->cvc_code = $request->cvc_code;
-                        $biilingInfoStore->card_expiry_date = $request->card_expiry_date;
-                    } else if ($request->active_payment_method == 'mobile_banking') {
-                        $biilingInfoStore->mobile_banking_id = $request->mobile_banking_id;
-                        $biilingInfoStore->verified_mobile = $request->verified_mobile;
-                        $biilingInfoStore->verified_mobile_number = $request->verified_mobile_number;
-                    }
-                    $biilingInfoStore->save();
-                } else {
-                    return response()->json([
-                        'status' => 400,
-                        'message' => 'User Not Found'
-                    ], 400);
-                }
-            } else if ($request->session_id) {
-
-                $biilingInfoStore = new BillingInformation();
-                $biilingInfoStore->session_id = $request->session_id;
-                $userBeforeBillingInfo = BillingInformation::where('session_id', $request->session_id)->first();
-                if ($userBeforeBillingInfo) {
-
-                    $biilingInfoStore->is_default = 1;
-                } else {
-
-                    $biilingInfoStore->is_default = 0;
-                }
-                $biilingInfoStore->status = $request->status;
-                $biilingInfoStore->active_payment_method = $request->active_payment_method;
-                if ($request->active_payment_method == 'card') {
-                    $biilingInfoStore->card_number = $request->card_number;
-                    $biilingInfoStore->cvc_code = $request->cvc_code;
-                    $biilingInfoStore->card_expiry_date = $request->card_expiry_date;
-                } else if ($request->active_payment_method == 'mobile_banking') {
-                    $biilingInfoStore->mobile_banking_id = $request->mobile_banking_id;
-                    $biilingInfoStore->verified_mobile = $request->verified_mobile;
-                    $biilingInfoStore->verified_mobile_number = $request->verified_mobile_number;
-                }
-                $biilingInfoStore->save();
+        try{
+            $billingResponse = $this->billingInformationService->storeBillingInfo($request);
+            if ($billingResponse instanceof JsonResponse && $billingResponse->getStatusCode() !== 201) {
+                return $billingResponse;
             }
             return response()->json([
                 'status' => 200,
                 'message' => 'Billing Information Added Successfully',
-                'billing_info' => $biilingInfoStore
+                'billing_info' => $billingResponse
             ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => $e->getMessage()
-            ], 500);
         }
+        catch(\Exception $e) {
+                return response()->json([
+                    'status' => false,
+                    'message' => $e->getMessage()
+                ], 500);
+            }
     }
 
     public function userBillingInfoUpdate(Request $request, $id)
     {
-        try {
-            // Try to find the user using user_id or session_id
+        // try {
+        //     // Try to find the user using user_id or session_id
 
-            $billing_user = BillingInformation::where('id', $id)->first();
+        //     $billing_user = BillingInformation::where('id', $id)->first();
 
-            if (!$billing_user) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Billing Information not found'
-                ], 404);
+        //     if (!$billing_user) {
+        //         return response()->json([
+        //             'status' => false,
+        //             'message' => 'Billing Information not found'
+        //         ], 404);
+        //     }
+
+        //     $user = User::where('id', $request->user_id)->first();
+
+        //     if (!$user && $billing_user->session_id != $request->session_id) {
+        //         return response()->json([
+        //             'status' => false,
+        //             'message' => 'User not found or session mismatch'
+        //         ], 404);
+        //     }
+
+        //     if (($user && $user->id == $billing_user->user_id) || $billing_user->session_id == $request->session_id) {
+        //         if ($request->is_default) {
+        //             $billing_user->is_default = $request->is_default;
+        //         }
+
+        //         $billing_user->status = $request->status;
+        //         $billing_user->active_payment_method = $request->active_payment_method;
+
+        //         if ($request->active_payment_method == 'card') {
+        //             $billing_user->card_number = $request->card_number;
+        //             $billing_user->cvc_code = $request->cvc_code;
+        //             $billing_user->card_expiry_date = $request->card_expiry_date;
+        //         } elseif ($request->active_payment_method == 'mobile_banking') {
+        //             $billing_user->mobile_banking_id = $request->mobile_banking_id;
+        //             $billing_user->verified_mobile = $request->verified_mobile;
+        //             $billing_user->verified_mobile_number = $request->verified_mobile_number;
+        //         }
+
+        //         $billing_user->save();
+
+        //         return response()->json([
+        //             'status' => 200,
+        //             'message' => 'Billing Information Updated Successfully',
+        //             'billing_info' => $billing_user
+        //         ], 200);
+        //     } else {
+        //         return response()->json([
+        //             'status' => false,
+        //             'message' => 'Unauthorized access'
+        //         ], 403);
+        //     }
+        // } catch (\Exception $e) {
+        //     return response()->json([
+        //         'status' => false,
+        //         'message' => $e->getMessage()
+        //     ], 500);
+        // }
+
+        try{
+            $billingResponse = $this->billingInformationService->userBillingInfoUpdate($request, $id);
+            if ($billingResponse instanceof JsonResponse && $billingResponse->getStatusCode() !== 200) {
+                return $billingResponse;
             }
-
-            $user = User::where('id', $request->user_id)->first();
-
-            if (!$user && $billing_user->session_id != $request->session_id) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'User not found or session mismatch'
-                ], 404);
-            }
-
-            if (($user && $user->id == $billing_user->user_id) || $billing_user->session_id == $request->session_id) {
-                if ($request->is_default) {
-                    $billing_user->is_default = $request->is_default;
-                }
-
-                $billing_user->status = $request->status;
-                $billing_user->active_payment_method = $request->active_payment_method;
-
-                if ($request->active_payment_method == 'card') {
-                    $billing_user->card_number = $request->card_number;
-                    $billing_user->cvc_code = $request->cvc_code;
-                    $billing_user->card_expiry_date = $request->card_expiry_date;
-                } elseif ($request->active_payment_method == 'mobile_banking') {
-                    $billing_user->mobile_banking_id = $request->mobile_banking_id;
-                    $billing_user->verified_mobile = $request->verified_mobile;
-                    $billing_user->verified_mobile_number = $request->verified_mobile_number;
-                }
-
-                $billing_user->save();
-
-                return response()->json([
-                    'status' => 200,
-                    'message' => 'Billing Information Updated Successfully',
-                    'billing_info' => $billing_user
-                ], 200);
-            } else {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Unauthorized access'
-                ], 403);
-            }
-        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 200,
+                'message' => 'Billing Information Updated Successfully',
+                'billing_info' => $billingResponse
+            ], 200);
+        }
+        catch(\Exception $e) {
             return response()->json([
                 'status' => false,
                 'message' => $e->getMessage()

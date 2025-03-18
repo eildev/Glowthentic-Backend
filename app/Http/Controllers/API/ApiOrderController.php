@@ -38,7 +38,7 @@ class ApiOrderController extends Controller
             if ($billingResponse instanceof JsonResponse && $billingResponse->getStatusCode() !== 201) {
                 return $billingResponse;
             }
-           
+
             $variant_quantity = 0;
             $variant_price = 0;
             $variant_total_price = 0;
@@ -235,7 +235,7 @@ class ApiOrderController extends Controller
                 if ($order->status != "Delivering") {
                     return response()->json([
                         'status' => 200,
-                        'order_tracking' => "Ordered",
+                        'order_tracking_status' => "Ordered",
                         'orderDetails' => $order_details,
                         'message' => 'Order Tracking Successfully',
                     ]);
@@ -245,14 +245,14 @@ class ApiOrderController extends Controller
                     if ($delivered_order->delivery_status != "delivered") {
                         return response()->json([
                             'status' => 200,
-                            'order' => "Shipped",
+                            'order_tracking_status' => "Shipped",
                             'orderDetails' => $order_details,
                             'message' => 'Order Delivered Successfully',
                         ]);
                     } else if ($delivered_order->delivery_status == "delivered") {
                         return response()->json([
                             'status' => 200,
-                            'order' => "Completed",
+                            'order_tracking_status' => "Completed",
                             'orderDetails' => $order_details,
                             'message' => 'Order Delivered Successfully',
                         ]);
