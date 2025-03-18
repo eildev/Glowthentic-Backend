@@ -221,6 +221,7 @@ class ProductController extends Controller
             $variant->size = $request->size;
             $variant->color = $request->color;
             $variant->regular_price = $request->price;
+            $variant->status = "Default";
             if($request->variant_name){
                 $variant->variant_name = $request->variant_name;
             }
@@ -842,6 +843,7 @@ class ProductController extends Controller
             return response()->json([
                 'status' => 200,
                 'message' => 'Variants updated successfully',
+                'product_id' => $variant->product_id
             ]);
         } catch (\Exception $e) {
             return response()->json([
