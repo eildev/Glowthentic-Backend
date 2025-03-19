@@ -324,45 +324,32 @@
 
 
 
-                                            <div class="col-12">
-                                                <div class="mb-3">
-                                                    @php
-                                                        $selectedFeatures= json_decode($product->product_feature, true) ?? [];
-                                                    @endphp
-                                                    <label class="form-label col-12">Select Feature</label>
-                                                    <div class="col-12 ">
-                                                        <select class="form-select @error('product_feature') is-invalid @enderror"
-                                                                id="multiple-select-field"
-                                                                name="product_feature[]"
-                                                                data-placeholder="Choose anything"
-                                                                multiple>
 
-                                                            @php
-                                                                $features = [
-                                                                    "feature" => "Feature",
-                                                                    "new-arrival" => "New Arrival",
-                                                                    "trending" => "Trending",
-                                                                    "best-rate" => "Best Rate",
-                                                                    "weekend-deals" => "Weekend Deals",
-                                                                    "top-seller" => "Top Seller",
-                                                                    "top-offers" => "Top Offers"
-                                                                ];
-                                                            @endphp
+                                            @php
+                                            use App\Models\Features;
+                                            use App\Models\ProductFeature;
 
-                                                            @foreach($features as $key => $value)
-                                                                <option value="{{ $key }}"
-                                                                    {{ in_array($key, $selectedFeatures) ? 'selected' : '' }}>
-                                                                    {{ $value }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
 
-                                                        @error('product_feature')
-                                                            <span class="text-danger">{{ $message }}</span>
-                                                        @enderror
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            $allFeature = Features::all();
+
+
+                                            $selectFeatureId = ProductFeature::where('product_id', $product->id)
+                                                                ->pluck('feature_id')
+                                                                ->toArray();
+                                        @endphp
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Select Product Tag</label>
+                                        <select class="multiple-select" data-placeholder="Choose anything" multiple="multiple" name="tag[]">
+                                            @foreach($allFeature as $feature)
+                                                <option value="{{ $feature->id }}"
+                                                    {{ in_array($feature->id, $selectFeatureId) ? 'selected' : '' }}>
+                                                    {{ $feature->feature_name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
 
 
 

@@ -42,10 +42,11 @@ class TagNameController extends Controller
     {
 
         //  dd($request->all());
-        $request->validate([
+       $validate= $request->validate([
             'tagname' => 'required|max:100',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
+       
         $tagname = new TagName;
         $tagname->tagName = $request->tagname;
 

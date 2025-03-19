@@ -19,9 +19,9 @@
                                             class="form-control @error('tagname') is-invalid  @enderror"
                                             id="inputEnterYourName" placeholder="Enter Category Name"
                                             value="{{ $tagname->tagName }}">
-                                        @error('tagname')
+                                            @error('tagname')
                                             <span class="text-danger">{{ $message }}</span>
-                                        @enderror
+                                           @enderror
                                     </div>
                                 </div>
 
@@ -43,8 +43,8 @@
                                             <img src="{{ asset($tagname->image) }}" alt="" height="100" width="100">
                                         </div>
                                         @error('image')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                         <div class="mt-3">
                                             <img id="showImage" class="showImage" height="150" width="200"
                                                  alt="Tag image">
