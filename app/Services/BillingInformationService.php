@@ -6,20 +6,13 @@ use App\Models\User;
 use App\Models\BillingInformation;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+
 class BillingInformationService
 {
-
-
-
-
-
-
-
-
     public function storeBillingInfo($request)
     {
         // Check if the user exists (for logged-in users)
-        
+
         if ($request->user_id) {
             $user = User::find($request->user_id);
             if (!$user) {
@@ -34,7 +27,6 @@ class BillingInformationService
 
             $existingBillingInfo = BillingInformation::where('user_id', $request->user_id)->first();
             $billingInfo->is_default = $existingBillingInfo ? 1 : 0;
-
         } elseif ($request->session_id) { // Handle guest checkout
             $billingInfo = new BillingInformation();
             $billingInfo->session_id = $request->session_id;
@@ -50,7 +42,7 @@ class BillingInformationService
 
         // Store common details
         $billingInfo->status = $request->status;
-        $billingInfo->active_payment_method = $request->active_payment_method;
+        $billingInfo->active_payment_method = $request->paymentMethod;
 
         // Store payment details based on method
         if ($request->active_payment_method == 'card') {
@@ -125,7 +117,6 @@ class BillingInformationService
                 'message' => 'Billing Information Updated Successfully',
                 'billing_info' => $billing_user
             ], 200);
-
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
@@ -133,5 +124,4 @@ class BillingInformationService
             ], 500);
         }
     }
-
 }
