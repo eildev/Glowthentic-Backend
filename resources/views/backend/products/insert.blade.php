@@ -465,19 +465,20 @@
 
 
                                             <div class="col-12">
+                                                @php
+                                                    $features = App\Models\Features::all();
+                                                @endphp
+                                             
                                                 <div class="mb-3">
                                                     <label class="form-label col-12">Select Feature</label>
                                                     <div class="col-12">
                                                         <select class="form-select @error('product_feature') is-invalid  @enderror" id="multiple-select-field"
                                                             name="product_feature[]" data-placeholder="Choose anything"
                                                             multiple>
-                                                            <option value="feature">Feature</option>
-                                                            <option value="new-arrival">New Arrival</option>
-                                                            <option value="trending">Trending</option>
-                                                            <option value="best-rate">Best Rate</option>
-                                                            <option value="weekend-deals">Weekend Deals</option>
-                                                            <option value="top-seller">Top Seller</option>
-                                                            <option value="top-offers">Top Offers</option>
+                                                           @foreach ( $features as  $feature)
+                                                           <option value="{{ $feature->id }}">{{ $feature->feature_name }}</option>
+
+                                                           @endforeach
                                                         </select>
                                                          @error('product_feature')
                                                             <span class="text-danger">{{ $message }}</span>

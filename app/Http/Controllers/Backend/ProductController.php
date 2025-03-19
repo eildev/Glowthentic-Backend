@@ -18,6 +18,7 @@ use App\Models\Attribute;
 use App\Models\AttributeManage;
 use App\Services\ImageOptimizerService;
 use Exception;
+use App\Models\ProductFeature;
 use File;
 // use App\Models\
 class ProductController extends Controller
@@ -121,9 +122,6 @@ class ProductController extends Controller
         $product->subcategory_id = $request->subcategory_id;
         $product->brand_id = $request->brand_id;
         $product->sub_subcategory_id = $request->sub_subcategory_id;
-        if ($request->product_feature) {
-            $product->product_feature = json_encode($request->product_feature);
-        }
 
         $product->product_name = $request->product_name;
         $product->unit_id = $request->unit_id;
@@ -214,6 +212,16 @@ class ProductController extends Controller
                 $productTag->save();
             }
         }
+
+        if($product && $request->product_feature){
+            foreach($request->product_feature as $feature){
+                $productFeature = new ProductFeature();
+                $productFeature->product_id = $product->id;
+                $productFeature->feature_id = $feature;
+                $productFeature->save();
+            }
+        }
+
 
         if ($product) {
             $variant = new Variant();
@@ -356,9 +364,9 @@ class ProductController extends Controller
         $product->subcategory_id = $request->subcategory_id;
         $product->brand_id = $request->brand_id;
         $product->sub_subcategory_id = $request->sub_subcategory_id;
-        if ($request->product_feature) {
-            $product->product_feature = json_encode($request->product_feature);
-        }
+        // if ($request->product_feature) {
+        //     $product->product_feature = json_encode($request->product_feature);
+        // }
 
         $product->product_name = $request->product_name;
         $product->unit_id = $request->unit_id;
@@ -449,6 +457,18 @@ class ProductController extends Controller
                 $productTag->save();
             }
         }
+
+
+        if($product && $request->product_feature){
+            foreach($request->product_feature as $feature){
+                $productFeature = new ProductFeature();
+                $productFeature->product_id = $product->id;
+                $productFeature->feature_id = $feature;
+                $productFeature->save();
+            }
+        }
+
+
 
         return response()->json([
             'status' => 200,
