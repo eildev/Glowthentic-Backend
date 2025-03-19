@@ -8,9 +8,18 @@ use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 class BillingInformationService
 {
+
+
+
+
+
+
+
+
     public function storeBillingInfo($request)
     {
         // Check if the user exists (for logged-in users)
+        
         if ($request->user_id) {
             $user = User::find($request->user_id);
             if (!$user) {

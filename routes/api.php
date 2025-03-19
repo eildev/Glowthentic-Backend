@@ -8,6 +8,7 @@ use App\Http\Controllers\API\ApiBrandController;
 use App\Http\Controllers\API\ApiCategoryController;
 use App\Http\Controllers\API\ApiComboProductController;
 use App\Http\Controllers\API\ApiContactUsController;
+use App\Http\Controllers\API\ApiFeatureController;
 use App\Http\Controllers\API\ApiHomeBannerController;
 use App\Http\Controllers\API\ApiOfferBannerController;
 use App\Http\Controllers\API\ApiOrderController;
@@ -70,6 +71,9 @@ Route::controller(ApiTagNameController::class)->group(function () {
     Route::get('/tagname', 'viewAll')->name('tagname.view');
     Route::get('/tagname/{id}', 'show')->name('tagname.show');
 });
+Route::controller(ApiFeatureController::class)->group(function () {
+    Route::get('/features', 'viewAll');
+});
 
 Route::controller(ApiProductController::class)->group(function () {
     Route::get('/product', 'viewAll')->name('product.view');
@@ -124,7 +128,7 @@ Route::controller(ApiBlogCommentController::class)->group(function () {
 Route::controller(ApiOrderController::class)->group(function () {
     Route::post('/order/create', 'store')->name('order.store');
     Route::get('/order/{id}', 'show')->name('order.show');
-    Route::post('order/tracking','trackingOrder');
+    Route::post('order/tracking', 'trackingOrder');
     Route::get('/order/get/{user_idOrSesssion_id}', 'getOrder');
     Route::get('/order/processing/{user_idOrSesssion_id}', 'getProcessingOrder');
 });

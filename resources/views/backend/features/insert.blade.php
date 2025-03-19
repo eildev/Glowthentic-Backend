@@ -4,69 +4,56 @@
         <div class="row">
             <div class="col-md-8 offset-md-2">
                 <div class="card border-top border-0 border-3 border-info">
-            @if (session('success'))
-                <div class="alert alert-success">
-                    {{ session('success') }}
-                </div>
-            @endif
-
-                    <form action="{{ Route('tagname.store') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ Route('feature.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="card-body">
                             <div class="border p-4 rounded">
-
                                 <div class="card-title d-flex justify-content-between align-items-center">
-                                    <h5 class="mb-0 text-info">Add Tag</h5>
+                                    <h5 class="mb-0 text-info">Add Feature</h5>
 
-                                    <a href="{{ route('tagname.view') }}" class="btn-info btn-sm text-light ">
+                                    <a href="{{ route('feature.view') }}" class="btn btn-info btn-sm text-light ">
                                         <i class='bx bx-show'></i>
                                     </a>
                                 </div>
 
                                 <hr>
+
                                 <div class="row mb-3">
-                                    <label for="inputEnterYourName" class="col-sm-3 col-form-label">Tag Name</label>
+                                    <label for="inputEnterYourName" class="col-sm-3 col-form-label">Feature Name</label>
                                     <div class="col-sm-9">
-                                        <input type="text" name="tagname"
-                                            class="form-control @error('tagname') is-invalid  @enderror"
-                                            id="inputEnterYourName" value="{{ old('tagname') }}"
-                                            placeholder="Enter Tag Name">
-                                        @error('tagname')
+                                        <input type="text" name="feature_name"
+                                            class="form-control @error('feature_name') is-invalid  @enderror"
+                                            id="inputEnterYourName" placeholder="Enter Feature Name">
+                                        @error('feature_name')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                     </div>
-
                                 </div>
-
-
                                 <div class="row mb-3">
-                                    <label for="image" class="col-sm-3 col-form-label">Tag Thumbnail </label>
+                                    <label for="image" class="col-sm-3 col-form-label">Feature Thumbnail </label>
                                     <div class="col-sm-9">
                                         <input type="file" id="image"
-                                            class="form-control  @error('image') is-invalid  @enderror" name="image">
+                                            class="form-control @error('image') is-invalid  @enderror" name="image">
                                         <div class="my-1">
                                             <i>
-                                                <b>Note:</b> Please provide 300 X 180 size
+                                                <b>Note:</b> Please provide 200 X 200 size
                                                 image
                                             </i>
                                         </div>
                                         @error('image')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
+
                                         <div class="mt-3">
-                                            <img id="showImage" class="showImage" height="150" width="200"
-                                                 alt="Tag image">
+                                            <img id="showImage" class="" height="150" width="200"
+                                                src="{{ asset('uploads/productempty.jpg') }}" alt="category image">
                                         </div>
                                     </div>
-
                                 </div>
-
-
-
                                 <div class="row">
                                     <label class="col-sm-3 col-form-label"></label>
                                     <div class="col-sm-9">
-                                        <button type="submit" class="btn btn-info px-5">Add Tagname</button>
+                                        <button type="submit" class="btn btn-info px-5">Add Feature</button>
                                     </div>
                                 </div>
                             </div>
@@ -77,5 +64,4 @@
         </div>
         <!--end row-->
     </div>
-
 @endsection
