@@ -3,9 +3,24 @@
     <div class="page-content">
         <div class="row">
             <div class="col-md-8 offset-md-2">
+
+
+                @if(session('error'))
+                @php dd(session('error')); @endphp
+            @endif
+
+
                 <div class="card border-top border-0 border-3 border-info">
                     <form action="{{ Route('banner.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
+
+
+
+
+
+
+
+
                         <div class="card-body">
                             <div class="border p-4 rounded">
 
@@ -22,15 +37,15 @@
                                     <label for="inputEnterYourName" class="col-sm-3 col-form-label">Banner Title</label>
                                     <div class="col-sm-9">
                                         <input type="text" name="title"
-                                            class="form-control @error('title') is-invalid  @enderror"
-                                            id="inputEnterYourName" value="{{ old('title') }}"
+                                            class="form-control"
+                                            id="inputEnterYourName"
                                             placeholder="Enter Banner Title">
-                                        @error('title')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
+                                        @if ($errors->has('title'))
+                                            <span class="text-danger">{{ $errors->first('title') }}</span>
+                                        @endif
                                     </div>
-
                                 </div>
+
 
                                 <div class="row mb-3">
                                     <label for="" class="col-sm-3 col-form-label">Short Description</label>
@@ -116,4 +131,8 @@
         </div>
         <!--end row-->
     </div>
+
+
+
+    </script>
 @endsection

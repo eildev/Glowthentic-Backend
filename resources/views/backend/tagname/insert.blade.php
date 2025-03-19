@@ -10,9 +10,13 @@
                 </div>
             @endif
 
+
+
+     
                     <form action="{{ Route('tagname.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="card-body">
+
                             <div class="border p-4 rounded">
 
                                 <div class="card-title d-flex justify-content-between align-items-center">
@@ -24,16 +28,17 @@
                                 </div>
 
                                 <hr>
+
                                 <div class="row mb-3">
                                     <label for="inputEnterYourName" class="col-sm-3 col-form-label">Tag Name</label>
                                     <div class="col-sm-9">
                                         <input type="text" name="tagname"
-                                            class="form-control @error('tagname') is-invalid  @enderror"
+                                            class="form-control"
                                             id="inputEnterYourName" value="{{ old('tagname') }}"
                                             placeholder="Enter Tag Name">
-                                        @error('tagname')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
+                                         @if(isset($errors) && $errors->has('tagname'))
+                                         <span class="text-danger">{{ $errors->first('tagname') }}</span>
+                                         @endif
                                     </div>
 
                                 </div>
@@ -43,16 +48,16 @@
                                     <label for="image" class="col-sm-3 col-form-label">Tag Thumbnail </label>
                                     <div class="col-sm-9">
                                         <input type="file" id="image"
-                                            class="form-control  @error('image') is-invalid  @enderror" name="image">
+                                            class="form-control " name="image">
                                         <div class="my-1">
                                             <i>
                                                 <b>Note:</b> Please provide 300 X 180 size
                                                 image
                                             </i>
                                         </div>
-                                        @error('image')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
+                                        @if(isset($errors) && $errors->has('image'))
+                                        <span class="text-danger">{{ $errors->first('image') }}</span>
+                                        @endif
                                         <div class="mt-3">
                                             <img id="showImage" class="showImage" height="150" width="200"
                                                  alt="Tag image">

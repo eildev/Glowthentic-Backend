@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\ImageGallery;
 use App\Models\HomeBanner;
 use App\Services\ImageOptimizerService;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Validator;
 use Exception;
 class HomeBannerController extends Controller
 {
@@ -19,13 +21,24 @@ class HomeBannerController extends Controller
     // banner store function
     public function store(Request $request , ImageOptimizerService $imageService)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'title' => 'required|max:50',
             'short_description' => 'required|max:100',
             'long_description' => 'required|max:200',
             'link' => 'required|max:200',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
+
+        if ($validator->fails()) {
+
+            
+            return redirect()->back()->with('error', $validator->errors()->all());
+
+
+        }
+
+
+
 
         if ($request->image) {
             // $imageName = rand() . '.' . $request->image->extension();
