@@ -73,6 +73,7 @@ Route::controller(ApiTagNameController::class)->group(function () {
 });
 Route::controller(ApiFeatureController::class)->group(function () {
     Route::get('/features', 'viewAll');
+    Route::get('/features/{id}', 'show')->name('features.show');
 });
 
 Route::controller(ApiProductController::class)->group(function () {
