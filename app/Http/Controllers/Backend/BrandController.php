@@ -30,7 +30,7 @@ class BrandController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request,ImageOptimizerService $imageService)
+    public function store(Request $request, ImageOptimizerService $imageService)
     {
         $request->validate([
             'BrandName' => 'required|max:100',
@@ -39,8 +39,8 @@ class BrandController extends Controller
 
         if ($request->image) {
             $destinationPath = public_path('uploads/brands/');
-                $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
-                $image='uploads/brands/'.$imageName;
+            $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
+            $image = 'uploads/brands/' . $imageName;
             $Brand = new Brand;
             $Brand->BrandName = $request->BrandName;
             $Brand->slug = Str::slug($request->BrandName);
@@ -71,7 +71,7 @@ class BrandController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id, ImageOptimizerService $imageService)
     {
 
         if ($request->image) {
@@ -81,7 +81,7 @@ class BrandController extends Controller
             ]);
             $destinationPath = public_path('uploads/brands/');
             $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
-            $image='uploads/brands/'.$imageName;
+            $image = 'uploads/brands/' . $imageName;
             $brand = Brand::findOrFail($id);
             unlink(public_path('uploads/brand/') . $brand->image);
             $brand->BrandName = $request->BrandName;
