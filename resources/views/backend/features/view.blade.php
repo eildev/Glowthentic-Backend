@@ -7,7 +7,7 @@
                     <div class="card-title d-flex justify-content-between align-items-center">
                         <h5 class="mb-0 text-info">Manage Feature</h5>
 
-                        <a href="{{ route('brand') }}" class="btn btn-info btn-sm text-light ">
+                        <a href="{{ route('product.feature.index') }}" class="btn btn-info btn-sm text-light ">
                             <i class='bx bx-plus'></i>
                         </a>
                     </div>
@@ -38,7 +38,7 @@
                                                     alt="">
                                             </td>
                                             <td>
-                                                <a href="#" class="btn btn-sm btn-success brand_active">Active</a>
+                                                  <a href="#" class="btn btn-sm btn-success brand_active">Active</a>
                                                 <a href="#" class="btn btn-sm btn-success brand_inactive"
                                                     style="display: none;">Inactive</a>
                                             </td>
@@ -46,7 +46,7 @@
                                                 <a href="{{ route('feature.edit', $Brand->id) }}"
                                                     class="btn btn-info">Edit</a>
                                                 <a href="{{ route('feature.delete', $Brand->id) }}" class="btn btn-danger"
-                                                    id="delete">Delete {{ $Brand->id }}</a>
+                                                    id="delete">Delete</a>
                                             </td>
                                         </tr>
                                     @endforeach

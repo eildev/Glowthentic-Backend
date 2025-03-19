@@ -22,16 +22,7 @@
                                     <th>Short Description</th>
                                     <th>Long Description</th>
                                     <th>image</th>
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-                                  
->>>>>>> c565006ce059e75ec0f3fb8f251d03caa02549b4
-=======
-                                  
-=======
->>>>>>> 14cdcfd9d44db1ffb0ae4d4f6732a3364e38ad3f
->>>>>>> 4096d8527dc056d6e0f6b6d7b7013e73b9830440
+
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
@@ -53,16 +44,7 @@
                                                     style="height: 100px; object-fit: contain;" class="img-fluid"
                                                     alt="banner Image">
                                             </td>
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 
->>>>>>> c565006ce059e75ec0f3fb8f251d03caa02549b4
-=======
-
-=======
->>>>>>> 14cdcfd9d44db1ffb0ae4d4f6732a3364e38ad3f
->>>>>>> 4096d8527dc056d6e0f6b6d7b7013e73b9830440
                                             <td>
                                                 <form action="{{ route('banner.status', $banner->id) }}" method="POST">
                                                     @csrf
