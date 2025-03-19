@@ -5,11 +5,13 @@
             <div class="card">
                 <div class="row g-0">
                     <div class="col-md-5 border-end">
-                        <img src="{{ asset('/uploads/products/' . $product->product_image) }}" class="img-fluid"
+
+                        <img src="{{ asset($product->variantImage->whereNull('deleted_at')->first()->image) }}" class="img-fluid"
                             alt="product-image">
                         <div class="row mb-3 row-cols-auto g-2 justify-content-center mt-3">
-                            @foreach ($product->gallary as $gallery)
-                                <div class="col"><img src="{{ asset('uploads/products/gallery/' . $gallery->image) }}"
+                            @foreach ($product->variantImage()->whereNull('deleted_at')->get() as $gallery)
+
+                                <div class="col"><img src="{{ asset($gallery->image) }}"
                                         width="70" class="border rounded cursor-pointer" alt=""></div>
                             @endforeach
 
@@ -54,7 +56,7 @@
                                         <dd class="col-sm-6">৳ {{ $product->varient[0]->discount_amount ?? 0 }}</dd>
 
                                         <dt class="col-sm-6">Stock Quantity</dt>
-                                        <dd class="col-sm-6">{{ $product->varient[0]->stock_quantity ?? 0 }}</dd>
+                                        <dd class="col-sm-6">{{ $product->productStock[0]->StockQuantity ?? 0 }}</dd>
 
                                         @if (!empty($product->varient[0]->unit))
                                             <dt class="col-sm-6">Unit</dt>
@@ -71,7 +73,11 @@
                                 <div class="col-md-6">
                                     <dl class="row my-3">
                                         <dt class="col-sm-6">Subcategory</dt>
-                                        <dd class="col-sm-6">{{ $product->subcategory->subcategoryName }}</dd>
+                                        @php
+                                            $subcategory =App\Models\Category::where('id',$product->subcategory_id)->first();
+                                        @endphp
+                                        {{-- @dd($product->subcategory_id) --}}
+                                        <dd class="col-sm-6">{{ $subcategory->categoryName??''}}</dd>
 
                                         <dt class="col-sm-6">Brand</dt>
                                         <dd class="col-sm-6">{{ $product->brand->BrandName }}</dd>
@@ -89,13 +95,15 @@
                                             <dd class="col-sm-6">{{ $product->varient[0]->size }}</dd>
                                         @endif
 
-                                        @php
-                                            $tags = explode(',', $product->tags);
-                                        @endphp
+
                                         <dt class="col-sm-6">Tags#</dt>
                                         <dd class="col-sm-6">
-                                            @foreach ($tags as $tag)
-                                                <span class="badge bg-warning">#{{ $tag }}</span>
+                                            @foreach ($product->product_tags as $tag)
+                                            @php
+                                                $tag_name = App\Models\TagName::where('id',$tag->tag_id)->first();
+                                            @endphp
+
+                                                <span class="badge bg-warning">#{{$tag_name->tagName }}</span>
                                             @endforeach
                                         </dd>
                                     </dl>
@@ -103,9 +111,13 @@
                             </div>
 
                             <p class="card-text fs-6 mb-3"><b>Short Description:
-                                </b>{{ $product->short_desc }}</p>
+
+                                </b>{!! $product->productdetails->first()->description??'' !!}</p>
+
+                                <p class="card-text fs-6 mb-3"><b>Usage Instructions:
+                                </b>{!! $product->productdetails->first()->usage_instruction??'' !!}</p>
                             <p class="card-text fs-6"><b>Long Description:
-                                </b>{{ $product->long_desc }}</p>
+                                </b>{!! $product->productdetails->first()->ingrediants??'' !!}</p>
                             <hr>
 
                             <div class="d-flex gap-3 mt-3">
@@ -120,7 +132,89 @@
                 </div>
                 <hr>
             </div>
+            <h6 class="mb-0 text-uppercase">DataTable Import</h6>
+            <hr/>
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="example2" class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Varianr Name</th>
+                                    <th>Price</th>
+                                    <th>Size</th>
+                                    <th>Color</th>
+                                    <th>Weight</th>
+                                    <th>Flavor</th>
+                                    <th>Image</th>
+                                    <th>Quantity</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            @php
+                                $variants = $product->variants()->orderBy('id', 'desc')->get();
+                            @endphp
+                            <tbody>
+                                @foreach (  $variants as $variant)
+                                <tr>
+                                    <td class="fw-bold">{{ $variant->variant_name }}</td>
+                                    <td class="text-success fw-semibold">৳{{ number_format($variant->regular_price, 2) }}</td>
+                                    <td>{{ $variant->size }}</td>
+                                    <td>
+                                        <span class="badge bg-primary">{{ $variant->color }}</span>
+                                    </td>
+                                    <td>{{ $variant->weight }} kg</td>
+                                    <td>{{ $variant->flavor }}</td>
+                                    <td>
+                                        @foreach ($variant->variantImage as $image)
+                                        <img src="{{ asset($image->image) }}" alt="Variant Image" class="img-thumbnail rounded shadow-sm" width="50" height="50">
+                                        @endforeach
+                                    </td>
+                                    <td class="fw-bold text-primary">{{ $variant->productStock->StockQuantity??0 }}</td>
+                                    <td>
+                                        <span class="badge {{ $variant->status == 'active' ? 'bg-success' : 'bg-danger' }}">
+                                            {{ ucfirst($variant->status) }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                @endforeach
+
+
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Position</th>
+                                    <th>Office</th>
+                                    <th>Age</th>
+                                    <th>Start date</th>
+                                    <th>Salary</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
         <!--end row-->
     </div>
+
+    <script>
+        <script>
+		$(document).ready(function() {
+			$('#example').DataTable();
+		  } );
+	</script>
+	<script>
+		$(document).ready(function() {
+			var table = $('#example2').DataTable( {
+				lengthChange: false,
+				buttons: [ 'copy', 'excel', 'pdf', 'print']
+			} );
+
+			table.buttons().container()
+				.appendTo( '#example2_wrapper .col-md-6:eq(0)' );
+		} );
+	</script>
+    </script>
 @endsection

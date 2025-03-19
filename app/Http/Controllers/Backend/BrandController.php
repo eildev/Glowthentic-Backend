@@ -6,7 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Brand;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-
+use App\Services\ImageOptimizerService;
+use Exception;
 
 class BrandController extends Controller
 {
@@ -29,7 +30,7 @@ class BrandController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, ImageOptimizerService $imageService)
     {
         $request->validate([
             'BrandName' => 'required|max:100',
@@ -37,12 +38,13 @@ class BrandController extends Controller
         ]);
 
         if ($request->image) {
-            $imageName = rand() . '.' . $request->image->extension();
-            $request->image->move(public_path('uploads/brands/'), $imageName);
+            $destinationPath = public_path('uploads/brands/');
+            $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
+            $image = 'uploads/brands/' . $imageName;
             $Brand = new Brand;
             $Brand->BrandName = $request->BrandName;
             $Brand->slug = Str::slug($request->BrandName);
-            $Brand->image = $imageName;
+            $Brand->image = $image;
             $Brand->save();
             return back()->with('success', 'Brand Successfully Added');
         }
@@ -69,7 +71,7 @@ class BrandController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id, ImageOptimizerService $imageService)
     {
 
         if ($request->image) {
@@ -77,13 +79,14 @@ class BrandController extends Controller
                 'BrandName' => 'required|max:100',
                 'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
-            $imageName = rand() . '.' . $request->image->extension();
-            $request->image->move(public_path('uploads/brands/'), $imageName);
+            $destinationPath = public_path('uploads/brands/');
+            $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
+            $image = 'uploads/brands/' . $imageName;
             $brand = Brand::findOrFail($id);
             unlink(public_path('uploads/brand/') . $brand->image);
             $brand->BrandName = $request->BrandName;
             $brand->slug = Str::slug($request->BrandName);
-            $brand->image = $imageName;
+            $brand->image = $image;
             $brand->update();
             return redirect()->route('brand.view')->with('success', 'Brand Successfully updated');
         } else {

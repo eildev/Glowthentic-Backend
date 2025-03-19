@@ -47,7 +47,7 @@ class AuthController extends Controller
 
             // Create and return token
             $response = [];
-            // $response["token"] = $user->createToken("MyApp")->plainTextToken;
+            $response["token"] = $user->createToken("MyApp")->plainTextToken;
             $response["name"] = $user->name;
             $response["email"] = $user->email;
             $response["id"] = $user->id;
@@ -267,25 +267,84 @@ class AuthController extends Controller
         return view('backend.dashboard');
     }
 
+    // public function adminLogin(Request $request)
+    // {
+
+    //     $credentials = $request->validate([
+    //         'email' => 'required|email',
+    //         'password' => 'required',
+    //     ]);
+
+    //     if (Auth::guard('web')->attempt($credentials)) {
+    //         $user = Auth::user();
+    //         if (in_array($user->role, ['admin', 'superadmin'])) {
+    //             $request->session()->regenerate(); // Keep this for security
+    //             return redirect()->intended('/');
+    //         }
+    //         Auth::logout();
+    //         return back()->withErrors(['email' => 'You do not have admin access.']);
+    //     }
+
+    //     return back()->withErrors(['email' => 'Invalid credentials.']);
+    // }
+
+
+
+
+
     public function adminLogin(Request $request)
     {
-        $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
+        try {
 
-        if (Auth::guard('web')->attempt($credentials)) {
-            $user = Auth::user();
-            if (in_array($user->role, ['admin', 'superadmin'])) {
-                $request->session()->regenerate(); // Keep this for security
-                return redirect()->intended('/');
+            $validator = Validator::make($request->all(), [
+                'email' => 'required|email',
+                'password' => 'required',
+            ]);
+
+
+            if ($validator->fails()) {
+                return response()->json([
+                    "status" => 422,
+                    "message" => "Validation error",
+                    "errors" => $validator->errors(),
+                    "data" => null,
+                ], 422);
             }
-            Auth::logout();
-            return back()->withErrors(['email' => 'You do not have admin access.']);
-        }
 
-        return back()->withErrors(['email' => 'Invalid credentials.']);
+            // Attempt login
+            if (Auth::guard('web')->attempt($request->only('email', 'password'))) {
+                $user = Auth::user();
+                if (in_array($user->role, ['admin', 'superadmin'])) {
+                    $request->session()->regenerate();
+                    return response()->json([
+                        "status" => 200,
+                        "message" => "Login successful",
+                    ]);
+                }
+
+                Auth::logout();
+                return response()->json([
+                    "status" => 403,
+                    "message" => "You do not have admin access.",
+                    "data" => null,
+                ], 403);
+            }
+
+            return response()->json([
+                "status" => 401,
+                "message" => "Invalid credentials.",
+                "data" => null,
+            ], 401);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                "status" => 500,
+                "message" => "An error occurred: " . $e->getMessage(), // Specific error
+                "data" => null,
+            ], 500);
+        }
     }
+
 
     public function adminLogout(Request $request)
     {
@@ -340,5 +399,10 @@ class AuthController extends Controller
     //     $request->session()->invalidate();
     //     $request->session()->regenerateToken();
     //     return redirect('/admin/login');
+    // }
+
+
+    // public function user(){
+
     // }
 }

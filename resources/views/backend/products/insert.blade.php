@@ -43,7 +43,7 @@
                                                     $categories = App\Models\Category::whereNull('parent_id')->get();
                                                 @endphp
                                                 <div class="row">
-                                                    <label class="form-label col-12">Select Category</label>
+                                                    <label class="form-label col-12">Select Category<span class="text-danger fw-bold">*</span></label>
                                                     <div class="col-12">
                                                         <select class="form-select category_select @error('category_id') is-invalid  @enderror" name="category_id">
                                                             <option value="">Select Category</option>
@@ -97,7 +97,7 @@
                                                     $brands = App\Models\Brand::all();
                                                 @endphp
                                                 <div class="row">
-                                                    <label class="form-label col-12">Select Brand</label>
+                                                    <label class="form-label col-12">Select Brand <span class="text-danger fw-bold">*</span></label>
                                                     <div class="col-12">
                                                         <select class="form-select @error('brand_id') is-invalid  @enderror" name="brand_id">
                                                             <option value="">Select Brand</option>
@@ -127,7 +127,7 @@
 
 
                                                 <div class="row">
-                                                    <label class="form-label col-12">Select Unit</label>
+                                                    <label class="form-label col-12">Select Unit <span class="text-danger fw-bold">*</span></label>
                                                     <div class="col-12">
                                                         <select class="form-select @error('unit_id') is-invalid  @enderror" name="unit_id">
                                                             <option value="">Select Unit</option>
@@ -163,7 +163,7 @@
                                             <div class="col-md-6">
 
                                                 <div class="row">
-                                                    <label class="form-label col-12">Select Size</label>
+                                                    <label class="form-label col-12">Select Size <span class="text-danger fw-bold">*</span></label>
                                                     <div class="col-12">
                                                         <select class="form-select @error('size') is-invalid  @enderror" name="size">
                                                             <option value="">Select Size</option>
@@ -201,7 +201,7 @@
                                             <div class="col-md-6">
 
                                                 <div class="row">
-                                                    <label class="form-label col-12">Select Color</label>
+                                                    <label class="form-label col-12">Select Color <span class="text-danger fw-bold">*</span></label>
                                                     <div class="col-12">
                                                         <select class="form-select @error('color') is-invalid  @enderror" name="color">
                                                             <option value="">Select Color</option>
@@ -246,9 +246,9 @@
                                                         <label for="" class="form-label">Product Weight</label>
                                                     </div>
                                                     <div class="col-12">
-                                                        <input type="text" name="weight"
+                                                        <input type="number" name="weight"
                                                             class="form-control @error('weight') is-invalid  @enderror" id="inputEnterYourName"
-                                                            placeholder="Enter Product Weight">
+                                                            placeholder="Enter Product Weight" min="0" value="0">
                                                          @error('weight')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -287,12 +287,12 @@
 
                                                 <div class="row">
                                                     <div class="col-12">
-                                                        <label for="" class="form-label">Product Price</label>
+                                                        <label for="" class="form-label">Product Price <span class="text-danger fw-bold">*</span></label>
                                                     </div>
                                                     <div class="col-12">
-                                                        <input type="text" name="price"
+                                                        <input type="number" name="price"
                                                             class="form-control @error('price') is-invalid  @enderror" id="inputEnterYourName"
-                                                            placeholder="Enter Product Weight">
+                                                            placeholder="Enter Product Weight" min="0" value="0">
                                                          @error('price')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -309,7 +309,7 @@
                                             <div class="col-md-6">
 
                                                 <div class="row">
-                                                    <label class="form-label col-12">Select Gender</label>
+                                                    <label class="form-label col-12">Select Gender <span class="text-danger fw-bold">*</span></label>
                                                     <div class="col-12">
                                                         <select class="form-select @error('gender') is-invalid  @enderror" name="gender">
                                                             <option value="">Select Gender</option>
@@ -335,7 +335,7 @@
                                             <div class="col-12">
                                                 <div class="row">
                                                     <div class="col-12">
-                                                        <label for="" class="form-label">Product Name</label>
+                                                        <label for="" class="form-label">Product Name <span class="text-danger fw-bold">*</span></label>
                                                     </div>
                                                     <div class="col-12">
                                                         <input type="text" name="product_name"
@@ -450,8 +450,8 @@
                                             <div class="col-12">
                                                 <div class="mb-3">
                                                     <label class="form-label"> Stock Quantity</label>
-                                                    <input type="text" class="form-control  @error('stock_quantity') is-invalid  @enderror"
-                                                        placeholder="Enter Stock Quantity" name="stock_quantity">
+                                                    <input type="number" class="form-control  @error('stock_quantity') is-invalid  @enderror"
+                                                        placeholder="Enter Stock Quantity" name="stock_quantity" min="0" value="0">
                                                     @error('stock_quantity')
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
@@ -465,19 +465,20 @@
 
 
                                             <div class="col-12">
+                                                @php
+                                                    $features = App\Models\Features::all();
+                                                @endphp
+                                             
                                                 <div class="mb-3">
                                                     <label class="form-label col-12">Select Feature</label>
                                                     <div class="col-12">
                                                         <select class="form-select @error('product_feature') is-invalid  @enderror" id="multiple-select-field"
                                                             name="product_feature[]" data-placeholder="Choose anything"
                                                             multiple>
-                                                            <option value="feature">Feature</option>
-                                                            <option value="new-arrival">New Arrival</option>
-                                                            <option value="trending">Trending</option>
-                                                            <option value="best-rate">Best Rate</option>
-                                                            <option value="weekend-deals">Weekend Deals</option>
-                                                            <option value="top-seller">Top Seller</option>
-                                                            <option value="top-offers">Top Offers</option>
+                                                           @foreach ( $features as  $feature)
+                                                           <option value="{{ $feature->id }}">{{ $feature->feature_name }}</option>
+
+                                                           @endforeach
                                                         </select>
                                                          @error('product_feature')
                                                             <span class="text-danger">{{ $message }}</span>
@@ -508,6 +509,17 @@
 
 
 
+                                            <div class="mb-3 col-12">
+                                                <label for="" class="mb-2">Extra Field Add</label>
+                                                <select class="form-select extra_field" name="extra_field" >
+
+                                                </select>
+                                            </div>
+                                            <div id="extra_info_field"></div>
+
+
+                                        </div>
+
 
 
 
@@ -535,18 +547,30 @@
 
                                             <div class="row mb-3 d-flex align-items-center">
                                                 <div class="col-md-6">
-                                                    <label for="image" class="form-label">Product Thumbnail</label>
-                                                    <input type="file" id="image" class="form-control @error('product_main_image') is-invalid @enderror"
-                                                        name="product_main_image[]" multiple>
+                                                    <label for="image" class="form-label">Product Thumbnail <span class="text-danger fw-bold">*</span></label>
+                                                    <input type="file" id="image"
+                                                        class="form-control @error('product_main_image') is-invalid @enderror"
+                                                        name="product_main_image[]" multiple required>
+
                                                     <div class="my-1">
-                                                        <i><b>Note:</b> Please provide 600 X 600 size image</i>
+                                                        <i><b>Note:</b> Please provide a 600 X 600 size image</i>
                                                     </div>
                                                     <div id="imageCount" class="text-primary mt-1"></div> <!-- Display image count here -->
+
+                                                    <!-- Error message for the main image field -->
                                                     @error('product_main_image')
-                                                    <span class="text-danger">{{ $message }}</span>
+                                                        <span class="text-danger">{{ $message }}</span>
                                                     @enderror
+
+                                                    <!-- Error messages for each uploaded image -->
+                                                    @foreach ($errors->get('product_main_image.*') as $messages)
+                                                        @foreach ($messages as $message)
+                                                            <span class="text-danger d-block">{{ $message }}</span>
+                                                        @endforeach
+                                                    @endforeach
                                                 </div>
                                             </div>
+
 
 
                                             <div class="col-12">
@@ -556,10 +580,11 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-12">
+                                            <div class="col-12 mt-2">
                                                 <div class="d-grid">
-                                                    <a  class="btn btn-primary add_variant">Add
-                                                        Variant</a>
+                                                    <a  class="btn btn-danger add_variant">
+                                                        <i class="fas fa-plus"></i>
+                                                        Add Variant</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -783,9 +808,46 @@
         </div>
     </div>
 </div>
-    <script>
 
 
+{{-- script start --}}
+<script>
+
+/////////////////////////////////extra field show in product page///////////////////////
+
+function showExtraField() {
+    $.ajax({
+        url: "{{ url('get-extra-field/info/product/page/show') }}",
+        type: "GET",
+        dataType: "json",
+        success: function (data) {
+            // console.log("Response Data:", data);
+
+            if (data.status === 200) {
+                $('.extra_field').empty();
+                let extraField = data.extraField;
+                console.log(extraField);
+                let option = `<option value="" selected disabled>Select Extra Field</option>`;
+
+                extraField.forEach(function (field) {
+                    option += `<option value="${field.id}" data-id="${field.id}">${field.field_name}</option>`;
+                });
+
+                $('.extra_field').append(option);
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error fetching extra fields:", error);
+        }
+    });
+}
+
+
+
+    showExtraField(); // Ensure the function runs after the DOM is fully loaded
+
+
+  //////////////////////////////////////////////extra field multiple input show ////////////////////////////
            $(document).on('change', '#data_type', function() {
                     let container = $('.multiInput');
                     if ($(this).val() == 'json') {
@@ -810,10 +872,11 @@
                 });
                 $(document).on('click', '.removeInput', function() {
                     $(this).closest('.input-group').remove();
+
                 });
+  //////////////////////////////////////extra field multiple input show end ////////////////////////////
 
-
-
+     /////////////////////extra field insert modal ////////////////////////////
            $(document).on('click', '.addFieldForm', function() {
             let fieldName = $('#field_name').val().trim();
             let dataType = $('#data_type').val();
@@ -846,6 +909,7 @@
                         $('#addFieldForm')[0].reset();
                         $('#addFieldModal').modal('hide');
                         toastr.success("Extra Field Added Successfully");
+                        showExtraField();
                     }
                 },
                 error: function(xhr) {
@@ -864,11 +928,127 @@
         });
 
 
+/////////////////////////////////extra field insert modal end///////////////////////////
+
+
+
+   ///////////////////////////Extra field show in product insert page//////////////////////////
+
+        $(document).on('change', '.extra_field', function() {
+            let selectedOption = $(this).find(':selected');
+             console.log(selectedOption);
+            let id = selectedOption.data('id');
+
+            if (id) {
+                $.ajax({
+                    url: "{{ url('/get/extra/info/field/') }}" + "/" + id,
+                    type: "GET",
+                    success: function(response) {
+                        if (response.status == 200) {
+                            let extraData = response.extraField;
+                            let container = $('#extra_info_field');
+
+                            let hiddenInput = $('<input>')
+                                .attr('type', 'hidden')
+                                .attr('name', `extra_field_id[${id}]`)
+                                .val(id);
+
+                            container.append(hiddenInput);
+
+                            if (extraData.data_type === "longtext") {
+                                container.append(`
+                         <div class="mb-3 col-md-6 extra-field-container">
+                            <label for="name" class="form-label">${extraData.field_name}<span class="text-danger"></span></label>
+
+                            <textarea class="form-control name" name="extra_field[${id}]" rows="3"
+                                onkeyup="errorRemove(this);" onchange="errorRemove(this);">{{ old('field_name') }}</textarea>
+                            <span class="text-danger name_error"></span>
+                            <button type="button" class="btn btn-danger btn-sm remove-field" style="margin-top: 5px;">-</button>
+
+                        </div>
+                    `);
+                            } else if (extraData.data_type === "decimal" || extraData.data_type ===
+                                "int" || extraData.data_type === "double") {
+                                container.append(`
+                        <div class="mb-3 col-md-6 extra-field-container">
+                            <label for="name" class="form-label">${extraData.field_name}<span class="text-danger"></span></label>
+
+                            <input class="form-control" type="number" name="extra_field[${id}]" rows="3"
+                                onkeyup="errorRemove(this);" onchange="errorRemove(this);">
+                            <span class="text-danger name_error"></span>
+                            <button type="button" class="btn btn-danger btn-sm remove-field" style="margin-top: 5px;">-</button>
+
+                        </div>
+                    `)
+                            } else if (extraData.data_type === "text") {
+                                container.append(`
+                        <div class="mb-3 col-md-6 extra-field-container">
+                            <label for="name" class="form-label">${extraData.field_name}<span class="text-danger"></span></label>
+
+                            <input class="form-control" type="text" name="extra_field[${id}]" rows="3"
+                                onkeyup="errorRemove(this);" onchange="errorRemove(this);">
+                            <span class="text-danger name_error"></span>
+                            <button type="button" class="btn btn-danger btn-sm remove-field" style="margin-top: 5px;">-</button>
+
+                        </div>
+                    `)
+                            } else if (extraData.data_type === "date") {
+                                container.append(`
+                        <div class="mb-3 col-md-6 extra-field-container">
+                            <label for="name" class="form-label">${extraData.field_name}<span class="text-danger"></span></label>
+
+                            <input class="form-control" type="date" name="extra_field[${id}]" rows="3"
+                                onkeyup="errorRemove(this);" onchange="errorRemove(this);">
+                            <span class="text-danger name_error"></span>
+                            <button type="button" class="btn btn-danger btn-sm remove-field" style="margin-top: 5px;">-</button>
+
+                        </div>
+                    `)
+                            } else if (extraData.data_type === "json") {
+                                let options = JSON.parse(extraData
+                                    .options); // Convert JSON string to array
+
+                                let checkboxes = options.map(option => `
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="extra_field[${id}][]" value="${option}" id="checkbox_${id}_${option}">
+                                <label class="form-check-label" for="checkbox_${id}_${option}">${option}</label>
+                            </div>
+                        `).join('');
+
+                                container.append(`
+                            <div class="mb-3 col-md-6 extra-field-container">
+                                <label for="name" class="form-label">${extraData.field_name}<span class="text-danger"></span></label>
+                                ${checkboxes}
+                                <span class="text-danger name_error"></span>
+                                <button type="button" class="btn btn-danger btn-sm remove-field" style="margin-top: 5px;">-</button>
+                            </div>
+                        `);
+                            }
 
 
 
 
 
+
+
+
+                        }
+                    },
+
+                });
+            }
+        });
+
+        $(document).on("click", ".remove-field", function() {
+    $(this).closest(".extra-field-container").remove();
+
+    // Reset the extra_field dropdown
+    $(".extra_field").val("").trigger("change");
+});
+
+
+
+  /////////////////extra field show end////////////////////
 
 
 
@@ -965,7 +1145,7 @@
                     <option value="charcoal">Charcoal</option>
                 </select>
             </td>
-            <td><input type="text" class="form-control" name="weight[]"></td>
+            <td><input type="number" class="form-control" name="weight[]"></td>
             <td><input type="text" class="form-control" name="flavor[]"></td>
             <td><input type="file" class="form-control" name="image[${rowCount}][]" multiple></td>
             <td><input type="number" class="form-control" name="stock_quantity[]"></td>
@@ -1066,7 +1246,7 @@ $(document).on("click", ".removeRow", function () {
                                                     <option value="charcoal">Charcoal</option>
                                                 </select>
                                             </td>
-                                            <td><input type="text" class="form-control" name="weight[]"></td>
+                                            <td><input type="number" class="form-control" name="weight[]"></td>
                                             <td><input type="text" class="form-control" name="flavor[]"></td>
                                             <td><input type="file" class="form-control" name="image[0][]" multiple></td>
                                             <td><input type="number" class="form-control" name="stock_quantity[]"></td>
@@ -1176,7 +1356,8 @@ $(document).on("click", ".removeRow", function () {
                     console.log(res);
                     toastr.success(res.message);
                     $('#variant_form_submit')[0].reset();
-                    // location.reload();
+                    $('#productForm')[0].reset();
+                     location.reload();
                 }
             });
   });

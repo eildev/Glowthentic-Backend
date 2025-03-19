@@ -45,11 +45,38 @@ class ApiWishListController extends Controller
     }
     public function getWishList($user_id_or_session_id){
         try {
-            $wishlist = WishList::where('user_id', $user_id_or_session_id)->OrWhere('session_id',$user_id_or_session_id)->with('wishlistProduct','variant')->get();
+            $wishlist = WishList::where('user_id', $user_id_or_session_id)->OrWhere('session_id',$user_id_or_session_id)->with('wishlistProduct','variant','variant.variantImage')->get();
             return response()->json([
                 'status' => 200,
                 'wishlist' => $wishlist
             ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 500, // Internal Server Error
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
+
+    public function deleteWishList($id){
+        try {
+            $wishlist = WishList::find($id);
+
+            if($wishlist){
+                $wishlist->delete();
+                
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'Wishlist deleted successfully'
+                ]);
+            }
+            else{
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'Wishlist not found'
+                ]);
+            }
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 500, // Internal Server Error

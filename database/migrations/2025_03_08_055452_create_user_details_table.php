@@ -20,6 +20,8 @@ return new class extends Migration
             $table->integer('phone_number');
             $table->string('city');
             $table->string('postal_code');
+            $table->string('police_station');
+            $table->string('image')->nullable();
             $table->string('country');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();

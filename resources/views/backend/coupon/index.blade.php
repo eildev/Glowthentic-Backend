@@ -103,7 +103,7 @@
                                 <div class="row mb-3">
                                     <label class="col-sm-3 col-form-label">Status</label>
                                     <div class="col-sm-9">
-                                        <select name="status" class="form-select" required>
+                                        <select name="type" class="form-select" required>
                                             <option value="">Choose...</option>
                                             <option value="coupon">Coupon</option>
                                             <option value="promotion">Promotion</option>
@@ -213,7 +213,7 @@
                                 <div class="row mb-3">
                                     <label class="col-sm-3 col-form-label">Status</label>
                                     <div class="col-sm-9">
-                                        <select name="status" class="form-select" required>
+                                        <select name="type" class="form-select" required>
                                             <option value="">Choose...</option>
                                             <option value="coupon">Coupon</option>
                                             <option value="promotion">Promotion</option>

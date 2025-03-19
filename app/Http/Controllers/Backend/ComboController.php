@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Combo;
 use App\Models\ComboImageGallery;
+use App\Services\ImageOptimizerService;
+use Exception;
 class ComboController extends Controller
 {
     public function index()
@@ -13,7 +15,7 @@ class ComboController extends Controller
         return view('backend.combos.index');
     }
 
-    public function store(Request $request){
+    public function store(Request $request, ImageOptimizerService $imageService){
         // $request->validate([
         //     'name' => 'required|string|max:255',
         //     'offerd_price' => 'required|numeric|min:0',
@@ -30,15 +32,20 @@ class ComboController extends Controller
         if($combo->id){
         if($request->hasFile('image')){
             foreach($request->file('image') as $image){
-                $file=$image;
-                $extension = $file->extension();
-                $filename = time().'.'.$extension;
-                $path ='uploads/combo/image/';
-                $file->move($path,$filename);
+                // $file=$image;
+                // $extension = $file->extension();
+                // $filename = time().'.'.$extension;
+                // $path ='uploads/combo/image/';
+                // $file->move($path,$filename);
+
+                $destinationPath = public_path('uploads/combo/image/');
+                $filename = time() . '_' . uniqid() . '.' . $galleryImage->extension();
+                $imageName = $imageService->resizeAndOptimize($galleryImage, $destinationPath,$filename);
+                $image='uploads/combo/image/'.$imageName;
 
                 $combo_image = new ComboImageGallery();
                 $combo_image->combo_id = $combo->id;
-                $combo_image->image = $path.$filename;
+                $combo_image->image = $image;
                 $combo_image->save();
 
             }
@@ -67,7 +74,7 @@ class ComboController extends Controller
        ]);
     }
 
-    public function update(Request $request)
+    public function update(Request $request,ImageOptimizerService $imageService)
     {
 
         $combo = Combo::findOrFail($request->combo_id);
@@ -77,15 +84,14 @@ class ComboController extends Controller
         if($combo->id){
         if($request->hasFile('image')){
             foreach($request->file('image') as $image){
-                $file=$image;
-                $extension = $file->extension();
-                $filename = time() . '_' . uniqid() . '.' . $extension; 
-                $path ='uploads/combo/image/';
-                $file->move($path,$filename);
+                $destinationPath = public_path('uploads/combo/image/');
+                $filename = time() . '_' . uniqid() . '.' . $galleryImage->extension();
+                $imageName = $imageService->resizeAndOptimize($galleryImage, $destinationPath,$filename);
+                $image='uploads/combo/image/'.$imageName;
 
                 $combo_image = new ComboImageGallery();
                 $combo_image->combo_id = $combo->id;
-                $combo_image->image = $path.$filename;
+                $combo_image->image = $image;
                 $combo_image->save();
 
             }

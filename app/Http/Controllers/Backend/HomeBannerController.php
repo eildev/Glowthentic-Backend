@@ -6,7 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\ImageGallery;
 use App\Models\HomeBanner;
-
+use App\Services\ImageOptimizerService;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Validator;
+use Exception;
 class HomeBannerController extends Controller
 {
     // banner index function
@@ -16,23 +19,35 @@ class HomeBannerController extends Controller
     }
 
     // banner store function
-    public function store(Request $request)
+    public function store(Request $request , ImageOptimizerService $imageService)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'title' => 'required|max:50',
             'short_description' => 'required|max:100',
             'long_description' => 'required|max:200',
             'link' => 'required|max:200',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
         ]);
+
+        // if ($validator->fails()) {
+
+
+        //      return redirect()->back()->with('error', $validator->errors()->all());
+
+
+        // }
+        if ($validator->fails()) {
+            return redirect()->back()->with(['errors' => $validator->errors()]);
+        }
+
+
 
         if ($request->image) {
             // $imageName = rand() . '.' . $request->image->extension();
             // $request->image->move(public_path('uploads/banner/'), $imageName);
-            $imageName = rand() . '.' . $request->image->extension();
-            $path= 'uploads/banner/';
-            $request->image->move($path,$imageName);
-             $image=$path.$imageName;
+            $destinationPath = public_path('uploads/offer_banner/');
+            $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
+            $image='uploads/offer_banner/'.$imageName;
 
             $banner = new HomeBanner;
             $banner->title = $request->title;

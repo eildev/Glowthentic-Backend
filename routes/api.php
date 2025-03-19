@@ -8,6 +8,7 @@ use App\Http\Controllers\API\ApiBrandController;
 use App\Http\Controllers\API\ApiCategoryController;
 use App\Http\Controllers\API\ApiComboProductController;
 use App\Http\Controllers\API\ApiContactUsController;
+use App\Http\Controllers\API\ApiFeatureController;
 use App\Http\Controllers\API\ApiHomeBannerController;
 use App\Http\Controllers\API\ApiOfferBannerController;
 use App\Http\Controllers\API\ApiOrderController;
@@ -18,14 +19,14 @@ use App\Http\Controllers\API\ApiProductController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\ApiWishListController;
 use App\Http\Controllers\API\ApiUserManageController;
+use Illuminate\Http\Request;
 // Open Routes
 Route::post('/register', [AuthController::class, "register"]);
 Route::post('/login', [AuthController::class, "login"]);
-// Route::get('/sanctum/csrf-cookie', function () {
-//     return response()->noContent();
-// });
+Route::get('/sanctum/csrf-cookie', function () {
+    return response()->noContent();
+});
 // Protected Routes
-
 
 Route::group([
     "middleware" => ["auth:sanctum"]
@@ -35,7 +36,7 @@ Route::group([
 
 
     Route::controller(ApiUserManageController::class)->group(function () {
-        Route::put("user/details/update/{id}", [ApiUserManageController::class, 'update']);
+        Route::post("user/details/update/{id}", [ApiUserManageController::class, 'update']);
         Route::get("/user/details/show/{id}", [ApiUserManageController::class, 'userDetailsShow']);
     });
 
@@ -44,11 +45,15 @@ Route::group([
         Route::post('/user/billing/info/get/', [ApiUserManageController::class, 'GetUserBillingInfo']);
     });
 
-    Route::controller(ApiUserManageController::class)->group(function () {
-        Route::put('/user/billing/info/update/{id}', [ApiUserManageController::class, 'userBillingInfoUpdate']);
-    });
+    // Route::controller(ApiUserManageController::class)->group(function () {
+    //     Route::put('/user/billing/info/update/{id}', [ApiUserManageController::class, 'userBillingInfoUpdate']);
+    // });
 });
 
+
+Route::middleware('auth:sanctum')->get('/user-info', function (Request $request) {
+    return response()->json(['data' => $request->user()]);
+});
 
 
 Route::controller(ApiUserManageController::class)->group(function () {
@@ -60,10 +65,15 @@ Route::controller(ApiUserManageController::class)->group(function () {
 Route::controller(ApiCategoryController::class)->group(function () {
     Route::get('/category', 'view')->name('category.view');
     Route::get('/category/{id}', 'show')->name('category.show');
+    Route::get('/nav/category/show', 'navCategoryShow')->name('navCategory.show');
 });
 Route::controller(ApiTagNameController::class)->group(function () {
     Route::get('/tagname', 'viewAll')->name('tagname.view');
     Route::get('/tagname/{id}', 'show')->name('tagname.show');
+});
+Route::controller(ApiFeatureController::class)->group(function () {
+    Route::get('/features', 'viewAll');
+    Route::get('/features/{id}', 'show')->name('features.show');
 });
 
 Route::controller(ApiProductController::class)->group(function () {
@@ -72,11 +82,6 @@ Route::controller(ApiProductController::class)->group(function () {
     Route::post('/product/search', 'search');
     Route::post('/product/filter', 'filter');
 });
-
-
-
-
-
 
 Route::controller(ApiComboProductController::class)->group(function () {
     Route::get('/comboProduct', 'view')->name('comboProduct.view');
@@ -124,6 +129,9 @@ Route::controller(ApiBlogCommentController::class)->group(function () {
 Route::controller(ApiOrderController::class)->group(function () {
     Route::post('/order/create', 'store')->name('order.store');
     Route::get('/order/{id}', 'show')->name('order.show');
+    Route::post('order/tracking', 'trackingOrder');
+    Route::get('/order/get/{user_idOrSesssion_id}', 'getOrder');
+    Route::get('/order/processing/{user_idOrSesssion_id}', 'getProcessingOrder');
 });
 
 
@@ -138,7 +146,8 @@ Route::controller(ApiContactUsController::class)->group(function () {
 Route::controller(ApiWishListController::class)->group(function () {
     Route::post('/wishlist/add', 'addWishList');
     Route::get('/wishlist/{user_id}', 'getWishList');
-    Route::get('/wishlist/{user_id_or_session_id}','getWishList');
+    Route::get('/wishlist/{user_id_or_session_id}', 'getWishList');
+    Route::delete('/wishlist/delete/{id}', 'deleteWishList');
 });
 
 // Route::get('/product', [App\Http\Controllers\Backend\ProductController::class, 'index']);
