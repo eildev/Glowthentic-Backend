@@ -24,13 +24,28 @@
                                     <th>SI</th>
                                     <th>Product Name</th>
                                     <th>Promotion Name</th>
+                                    <th>Category Name</th>
                                     <th>Variant Name</th>
                                     {{-- <th>Status</th> --}}
                                     <th>Action</th>
                                 </tr>
                             </thead>
-                            <tbody id="promotionProductTable">
+                            <tbody id="">
+                                @foreach ($productPromotion as $key => $promotionProduct)
+                                <tr>
+                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $promotionProduct->product->product_name??'' }}</td>
+                                    <td>{{ $promotionProduct->coupon->promotion_name }}</td>
+                                    <td>{{ $promotionProduct->category->categoryName??'' }}</td>
+                                    <td>
+                                        @php
+                                            $variant
+                                        @endphp
+                                        {{ $promotionProduct->variant->variant_name??'' }}
+                                    </td>
 
+                                </tr>
+                                @endforeach
                             </tbody>
 
                         </table>

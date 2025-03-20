@@ -16,8 +16,9 @@ class ProductPromotionController extends Controller
 
     public function index()
     {
-
-        return view('backend.promotionProduct.index');
+        $productPromotion = ProductPromotion::with(['product', 'coupon','category'])->get();
+       
+        return view('backend.promotionProduct.index', compact('productPromotion'));
     }
 
 
@@ -30,7 +31,7 @@ class ProductPromotionController extends Controller
     }
     public function getProductPromotion(){
         $product = Product::where('status', 1)->get();
-        $promotion = Coupon::where('type','promotion')->get();
+        $promotion = Coupon::where('type','promotion')->where('status','Active')->get();
         $variant=Variant::all();
 
         return response()->json([
@@ -76,11 +77,7 @@ class ProductPromotionController extends Controller
                         ->where('promotion_id', $request->promotion_id[0])
                         ->latest()
                         ->exists();
-                       
-                     $promotion = Coupon::where('id', $request->promotion_id[0])->first();
-
                         $variants = $request->variant_id[$product_id] ?? [];
-
                         if (!$exists && $productCategory !== (int) $request->category_id) {
                             $productPromotion = new ProductPromotion();
                             $productPromotion->product_id = $product_id;

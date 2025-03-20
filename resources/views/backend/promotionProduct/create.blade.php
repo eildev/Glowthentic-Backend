@@ -13,10 +13,16 @@
                         <div class="col-md-6">
                             <label for="category" class="form-label">Promotion Name</label>
                             <select class="form-select promotion" id="promotion">
+                                @php
+                                $existingPromotionIds = App\Models\ProductPromotion::pluck('promotion_id')->toArray();
+                               @endphp
 
-                                 @foreach ($promotion as $promotion)
-                                    <option value="{{ $promotion->id }}">{{ $promotion->promotion_name }}</option>
-                                 @endforeach
+                            @foreach ($promotion as $promo)
+                                @if (!in_array($promo->id, $existingPromotionIds))
+                                    <option value="{{ $promo->id }}">{{ $promo->promotion_name }}</option>
+                                @endif
+                            @endforeach
+
                             </select>
                         </div>
                         <div class="col-md-6">
