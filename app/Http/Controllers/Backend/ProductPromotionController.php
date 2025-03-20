@@ -73,8 +73,11 @@ class ProductPromotionController extends Controller
                     $productCategory = Product::where('id', $product_id)->value('category_id');
 
                     $exists = ProductPromotion::where('category_id', $productCategory)
+                        ->where('promotion_id', $request->promotion_id[0])
+                        ->latest()
                         ->exists();
-
+                       
+                     $promotion = Coupon::where('id', $request->promotion_id[0])->first();
 
                         $variants = $request->variant_id[$product_id] ?? [];
 

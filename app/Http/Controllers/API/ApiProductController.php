@@ -147,7 +147,7 @@ class ApiProductController extends Controller
                 'variants.variantImage',
                 'variants.product',
                 'variants.productStock',
-                'variants.promotionproduct',
+                'variants.promotionproduct.coupon',
                 'variants.comboProduct',
                 'product_tags',
                 'productStock',
@@ -171,7 +171,14 @@ class ApiProductController extends Controller
     public function show($slug)
     {
         try {
-            $products = Product::with('variants.variantImage', 'product_tags', 'productStock', 'productdetails', 'variantImage')->where('slug', $slug)->first();
+            $products = Product::with( 'variants.variantImage',
+            'variants.product',
+            'variants.productStock',
+            'variants.promotionproduct.coupon',
+            'variants.comboProduct',
+            'product_tags',
+            'productStock',
+            'productdetails','variantImage')->where('slug', $slug)->first();
 
             return response()->json([
                 'status' => '200',

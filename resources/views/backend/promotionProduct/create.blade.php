@@ -243,8 +243,12 @@ $(document).on('click', '.remove-row', function () {
         processData: false,
         success: function(response){
             if(response.status ===200){
+
+                $('#promotionForm')[0].reset();
+                $('.promotion-table-body').empty();
+                $('.promotionTable').fadeOut();
                 toastr.success('Promotion Created Successfully');
-                $()
+
 
             }
         }
