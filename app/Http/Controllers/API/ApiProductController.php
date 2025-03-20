@@ -179,7 +179,8 @@ class ApiProductController extends Controller
             'product_tags',
             'productStock',
             'productdetails','variantImage')->where('slug', $slug)->first();
-
+         // Debug to check variants and their promotions
+    
             return response()->json([
                 'status' => '200',
                 'message' => 'Product Search',
