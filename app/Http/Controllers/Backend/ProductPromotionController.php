@@ -77,15 +77,15 @@ class ProductPromotionController extends Controller
 
 
                         $variants = $request->variant_id[$product_id] ?? [];
-                        
-                    if (!$exists && $request->category_id!= $productCategory) {
-                        $productPromotion = new ProductPromotion();
-                        $productPromotion->product_id = $product_id;
-                        $productPromotion->promotion_id = $request->promotion_id[0];
-                        $productPromotion->variant_id = json_encode($variants);
 
-                        $productPromotion->save();
-                    }
+                        if (!$exists && $productCategory !== (int) $request->category_id) {
+                            $productPromotion = new ProductPromotion();
+                            $productPromotion->product_id = $product_id;
+                            $productPromotion->promotion_id = $request->promotion_id[0];
+                            $productPromotion->variant_id = json_encode($variants);
+                            $productPromotion->save();
+                        }
+
                 }
             }
 

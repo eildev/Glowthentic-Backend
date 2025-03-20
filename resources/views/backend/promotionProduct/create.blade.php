@@ -242,7 +242,11 @@ $(document).on('click', '.remove-row', function () {
         contentType: false,
         processData: false,
         success: function(response){
-            console.log(response);
+            if(response.status ===200){
+                toastr.success('Promotion Created Successfully');
+                $()
+
+            }
         }
     })
   })

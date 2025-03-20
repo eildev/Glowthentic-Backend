@@ -238,6 +238,7 @@ class ApiOrderController extends Controller
                     return response()->json([
                         'status' => 200,
                         'order_tracking_status' => "Ordered",
+                        'order'=> $order,
                         'orderDetails' => $order_details,
                         'message' => 'Order Tracking Successfully',
                     ]);
@@ -248,6 +249,7 @@ class ApiOrderController extends Controller
                         return response()->json([
                             'status' => 200,
                             'order_tracking_status' => "Shipped",
+                            'order'=> $order,
                             'orderDetails' => $order_details,
                             'message' => 'Order tracking shipped Successfully',
                         ]);
@@ -255,6 +257,7 @@ class ApiOrderController extends Controller
                         return response()->json([
                             'status' => 200,
                             'order_tracking_status' => "Completed",
+                            'order'=> $order,
                             'orderDetails' => $order_details,
                             'message' => 'Order completed Successfully',
                         ]);
