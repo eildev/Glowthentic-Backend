@@ -109,16 +109,14 @@
                         <div class="menu-title">Manage Category</div>
                     </a>
                     <ul class="mm-collapse">
-                        <li> <a href="{{ route('category') }}"><i class="bx bx-right-arrow-alt"></i>Add Category</a>
+                        <li> <a href="{{ route('category') }}"><i class="bx bx-right-arrow-alt"></i>Manage Category</a>
                         </li>
-                        <li> <a href="{{ route('category.view') }}"><i class="bx bx-right-arrow-alt"></i>
+                        {{-- <li> <a href="{{ route('category.view') }}"><i class="bx bx-right-arrow-alt"></i>
                                 All Category</a>
-                        </li>
+                        </li> --}}
                     </ul>
                 </li>
-
-
-
+            
 
                 <li>
                     <a href="javascript:;" class="has-arrow">

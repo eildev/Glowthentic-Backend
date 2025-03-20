@@ -466,13 +466,13 @@
 
                                             <div class="col-12">
                                                 @php
-                                                    $features = App\Models\Features::all();
+                                                    $features = App\Models\Features::get();
                                                 @endphp
                                              
                                                 <div class="mb-3">
                                                     <label class="form-label col-12">Select Feature</label>
                                                     <div class="col-12">
-                                                        <select class="form-select @error('product_feature') is-invalid  @enderror" id="multiple-select-field"
+                                                        <select class="multiple-select @error('product_feature') is-invalid  @enderror" id="multiple-select-field"
                                                             name="product_feature[]" data-placeholder="Choose anything"
                                                             multiple>
                                                            @foreach ( $features as  $feature)
