@@ -8,6 +8,7 @@ use App\Http\Controllers\API\ApiBrandController;
 use App\Http\Controllers\API\ApiCategoryController;
 use App\Http\Controllers\API\ApiComboProductController;
 use App\Http\Controllers\API\ApiContactUsController;
+use App\Http\Controllers\API\ApiCouponController;
 use App\Http\Controllers\API\ApiFeatureController;
 use App\Http\Controllers\API\ApiHomeBannerController;
 use App\Http\Controllers\API\ApiOfferBannerController;
@@ -19,6 +20,7 @@ use App\Http\Controllers\API\ApiProductController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\ApiWishListController;
 use App\Http\Controllers\API\ApiUserManageController;
+
 use Illuminate\Http\Request;
 // Open Routes
 Route::post('/register', [AuthController::class, "register"]);
@@ -142,6 +144,12 @@ Route::controller(ApiSubscribeController::class)->group(function () {
 Route::controller(ApiContactUsController::class)->group(function () {
     Route::post('/contact-us/save', 'contactSave');
 });
+
+Route::controller(ApiCouponController::class)->group(function () {
+
+    Route::post('/coupon/check', 'checkCoupon');
+});
+
 
 Route::controller(ApiWishListController::class)->group(function () {
     Route::post('/wishlist/add', 'addWishList');
