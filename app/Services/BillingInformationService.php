@@ -12,7 +12,7 @@ class BillingInformationService
     public function storeBillingInfo($request)
     {
         // Check if the user exists (for logged-in users)
-
+        //    dd($request->all());
         if ($request->user_id) {
             $user = User::find($request->user_id);
             if (!$user) {
@@ -42,10 +42,10 @@ class BillingInformationService
 
         // Store common details
         $billingInfo->status = $request->status;
-        $billingInfo->active_payment_method = $request->paymentMethod;
-
+        $billingInfo->active_payment_method = $request->payment_method;
+      
         // Store payment details based on method
-        if ($request->active_payment_method == 'card') {
+        if ($request->active_payment_method =='card') {
             $billingInfo->card_number = $request->card_number;
             $billingInfo->cvc_code = $request->cvc_code;
             $billingInfo->card_expiry_date = $request->card_expiry_date;

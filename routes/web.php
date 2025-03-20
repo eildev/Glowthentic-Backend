@@ -240,7 +240,14 @@ Route::middleware('auth')->group(function () {
     Route::controller(ProductPromotionController::class)->group(function () {
 
         Route::get('/product/promotion', 'index')->name('product.promotion.index');
-        Route::post('/promotion/product/store', 'store');
+        Route::get('/product/promotion/create', 'create')->name('product.promotion.create');
+
+        Route::post('/promotion/product/store', 'store')->name('promotion.store');
+        Route::post('product/promotion/add/variant', 'productPromotionVariantShow')->name('product.promotion.add.variant');
+
+        Route::post('product/promotion/add/category', 'productPromotionCategoryShow')->name('product.promotion.add.category');
+
+
         Route::get('/promotion/product/view', 'view')->name('product.promotion.view');
         Route::get('/promotioin/product/edit/{id}', 'edit')->name('product.promotion.edit');
         Route::post('/promotion/product/update', 'update')->name('product.promotion.update');

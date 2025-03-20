@@ -12,8 +12,7 @@
                             <i class='bx bx-plus'></i>
                         </a> --}}
 
-                        <a href="#" class="btn btn-info btn-sm text-light get_product_and_promotion" data-bs-toggle="modal"
-                        data-bs-target="#ProductPromotionAddModal">
+                        <a href="{{ route('product.promotion.create') }}" class="btn btn-info btn-sm text-light get_product_and_promotion" >
                         <i class='bx bx-plus'></i>
                     </a>
                     </div>
@@ -43,7 +42,7 @@
     </div>
 
 
-    <div class="modal fade" id="ProductPromotionAddModal" tabindex="-1" aria-hidden="true">
+    {{-- <div class="modal fade" id="ProductPromotionAddModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -97,7 +96,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
 
 
 
@@ -107,7 +106,7 @@
 
 
 
-    <div class="modal fade" id="ProductPromotionEditModal" tabindex="-1" aria-hidden="true">
+    {{-- <div class="modal fade" id="ProductPromotionEditModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -161,7 +160,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
 
 
 

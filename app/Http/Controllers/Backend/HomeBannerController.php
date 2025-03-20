@@ -26,19 +26,19 @@ class HomeBannerController extends Controller
             'short_description' => 'required|max:100',
             'long_description' => 'required|max:200',
             'link' => 'required|max:200',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
-        // if ($validator->fails()) {
-
-
-        //      return redirect()->back()->with('error', $validator->errors()->all());
-
-
-        // }
         if ($validator->fails()) {
-            return redirect()->back()->with(['errors' => $validator->errors()]);
+
+
+             return redirect()->back()->with('error', $validator->errors()->all());
+
+
         }
+        // if ($validator->fails()) {
+        //     return view('backend.home_banner.insert', ['errors' => $validator->errors()]);
+        // }
 
 
 

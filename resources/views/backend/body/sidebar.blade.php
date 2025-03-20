@@ -273,7 +273,7 @@
                         </li>
 
                         <li>
-                            <a href="{{ route('order.delivered') }}"><i class="bx bx-right-arrow-alt"></i>Delivered
+                            <a href="{{ route('order.delivered') }}"><i class="bx bx-right-arrow-alt"></i>Completed
                                 Order</a>
                         </li>
                     </ul>

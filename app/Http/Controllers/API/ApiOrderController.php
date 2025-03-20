@@ -247,14 +247,14 @@ class ApiOrderController extends Controller
                             'status' => 200,
                             'order_tracking_status' => "Shipped",
                             'orderDetails' => $order_details,
-                            'message' => 'Order Delivered Successfully',
+                            'message' => 'Order tracking shipped Successfully',
                         ]);
                     } else if ($delivered_order->delivery_status == "delivered") {
                         return response()->json([
                             'status' => 200,
                             'order_tracking_status' => "Completed",
                             'orderDetails' => $order_details,
-                            'message' => 'Order Delivered Successfully',
+                            'message' => 'Order completed Successfully',
                         ]);
                     }
                 }
