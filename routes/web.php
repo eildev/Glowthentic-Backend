@@ -56,7 +56,7 @@ Route::middleware('auth')->group(function () {
     Route::controller(CategoryController::class)->group(function () {
         Route::get('/category', 'index')->name('category');
         Route::post('/category/store', 'store')->name('category.store');
-        Route::get('/category/view', 'view')->name('category.view');
+        Route::get('/category/view', 'view');
         Route::get('/category/edit/{id}', 'edit')->name('category.edit');
         Route::post('/category/update', 'update')->name('category.update');
         Route::post('/category/delete', 'delete')->name('category.delete');

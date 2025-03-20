@@ -72,8 +72,6 @@ class ApiProductController extends Controller
             ], 500);
         }
     }
-
-
     public function filter(Request $request)
     {
         try {
@@ -142,11 +140,8 @@ class ApiProductController extends Controller
             ], 500);
         }
     }
-
-
     public function viewAll()
     {
-
         try {
             $products = Product::orderByDesc('id')->with(
                 'variants.variantImage',
@@ -173,8 +168,6 @@ class ApiProductController extends Controller
             ]);
         }
     }
-
-
     public function show($slug)
     {
         try {

@@ -19,11 +19,13 @@ use Auth;
 use App\Models\User;
 use App\Services\BillingInformationService;
 use Illuminate\Http\JsonResponse;
+
 class ApiOrderController extends Controller
 {
 
     protected $billingInformationService;
-    public function __construct(BillingInformationService $billingInformationService){
+    public function __construct(BillingInformationService $billingInformationService)
+    {
         $this->billingInformationService = $billingInformationService;
     }
     public function store(Request $request)
@@ -229,7 +231,7 @@ class ApiOrderController extends Controller
         try {
             $order_id = $request->order_id;
             $order = Order::where('invoice_number', $order_id)->with('orderDetails')->first();
-            $order_details = OrderDetails::where('order_id', $order->id)->with('product')->get();
+            $order_details = OrderDetails::where('order_id', $order->id)->with('product', 'variant.variantImage')->get();
 
             if ($order) {
                 if ($order->status != "Delivering") {
@@ -268,16 +270,16 @@ class ApiOrderController extends Controller
     }
 
 
-    public function getOrder($user_idOrSesssion_id){
-        try{
-            $order = Order::where('user_id', $user_idOrSesssion_id)->orWhere('session_id',$user_idOrSesssion_id)->with('orderDetails')->get();
+    public function getOrder($user_idOrSesssion_id)
+    {
+        try {
+            $order = Order::where('user_id', $user_idOrSesssion_id)->orWhere('session_id', $user_idOrSesssion_id)->with('orderDetails')->get();
             return response()->json([
                 'status' => 200,
                 'order' => $order,
                 'message' => 'Order Get Successfully',
             ]);
-        }
-        catch(\Exception $e){
+        } catch (\Exception $e) {
             return response()->json([
                 'status' => 500,
                 'message' => $e->getMessage(),
@@ -285,21 +287,21 @@ class ApiOrderController extends Controller
         }
     }
 
-    public function getProcessingOrder($user_idOrSesssion_id){
-        try{
-             $order = Order::where('user_id', $user_idOrSesssion_id)->orWhere('session_id',$user_idOrSesssion_id)->get();
-             $ongoing_order = [];
-             foreach($order as $order_data){
-                if($order_data->status != "Delivering"){
+    public function getProcessingOrder($user_idOrSesssion_id)
+    {
+        try {
+            $order = Order::where('user_id', $user_idOrSesssion_id)->orWhere('session_id', $user_idOrSesssion_id)->get();
+            $ongoing_order = [];
+            foreach ($order as $order_data) {
+                if ($order_data->status === "Delivering") {
                     $ongoing_order[] = $order_data;
-                }
-                else{
+                } else {
                     $delivered_order = DeliveryOrder::where('order_id', $order_data->id)->first();
-                    if($delivered_order->delivery_status != "delivered"){
+                    if ($delivered_order->delivery_status != "delivered") {
                         $ongoing_order[] = $order_data;
                     }
                 }
-             }
+            }
 
 
             return response()->json([
@@ -307,14 +309,12 @@ class ApiOrderController extends Controller
                 'order' => $ongoing_order,
                 'message' => 'Order Get Successfully',
             ]);
-        }
-        catch(\Exception $e){
+        } catch (\Exception $e) {
             return response()->json([
                 'status' => 500,
                 'message' => $e->getMessage(),
             ]);
-        }
-        catch(\Exception $e){
+        } catch (\Exception $e) {
             return response()->json([
                 'status' => 500,
                 'message' => $e->getMessage(),

@@ -5,14 +5,12 @@
             <div class="col-md-8 offset-md-2">
 
 
-                @if(session('error'))
-                @php dd(session('error')); @endphp
-            @endif
-
-
+                <p>{{ session('test') }}</p>
                 <div class="card border-top border-0 border-3 border-info">
-                    <form action="{{ Route('banner.store') }}" method="POST" enctype="multipart/form-data">
+                                      
+                    <form action="{{ route('banner.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
+<<<<<<< HEAD
 
 
 
@@ -29,6 +27,8 @@
                     @endif
 
 
+=======
+>>>>>>> 8c7a522b0fc88d97b9cd90d336e9a362a534f81b
                         <div class="card-body">
                             <div class="border p-4 rounded">
 
@@ -44,6 +44,9 @@
                                 <div class="row mb-3">
                                     <label for="inputEnterYourName" class="col-sm-3 col-form-label">Banner Title</label>
                                     <div class="col-sm-9">
+                                    @if ($errors && $errors->has('title'))
+                                        <span class="text-danger">{{ $errors->first('title') }}</span>
+                                    @endif
                                         <input type="text" name="title"
                                             class="form-control"
                                             id="inputEnterYourName"

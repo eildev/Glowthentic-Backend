@@ -29,12 +29,11 @@ class HomeBannerController extends Controller
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
+        // dd($validator->errors());
         if ($validator->fails()) {
-
-
-             return redirect()->back()->with('error', $validator->errors()->all());
-
-
+            session(['test' => 'session works']);
+            \Log::info('Session before redirect', [session()->all()]);
+            return redirect()->back()->withErrors($validator)->withInput();
         }
         // if ($validator->fails()) {
         //     return view('backend.home_banner.insert', ['errors' => $validator->errors()]);
