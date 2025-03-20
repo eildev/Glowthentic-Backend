@@ -246,7 +246,7 @@ Route::middleware('auth')->group(function () {
         Route::post('product/promotion/add/variant', 'productPromotionVariantShow')->name('product.promotion.add.variant');
 
         Route::post('product/promotion/add/category', 'productPromotionCategoryShow')->name('product.promotion.add.category');
-
+        Route::get('admin/product/promotion/edit/{id}', 'edit')->name('admin.product.promotion.edit');
 
         Route::get('/promotion/product/view', 'view')->name('product.promotion.view');
         Route::get('/promotioin/product/edit/{id}', 'edit')->name('product.promotion.edit');

@@ -25,9 +25,10 @@ class Variant extends Model
     {
         return $this->hasMany(OrderDetails::class, 'variant_id', 'id');
     }
-    public function promotionproduct()
+    public function promotions()
     {
         return $this->hasMany(ProductPromotion::class, 'variant_id', 'id');
+   
     }
     public function comboProduct()
     {

@@ -22,11 +22,7 @@
                             <thead>
                                 <tr>
                                     <th>SI</th>
-                                    <th>Product Name</th>
                                     <th>Promotion Name</th>
-                                    <th>Category Name</th>
-                                    <th>Variant Name</th>
-                                    {{-- <th>Status</th> --}}
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -34,16 +30,24 @@
                                 @foreach ($productPromotion as $key => $promotionProduct)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $promotionProduct->product->product_name??'' }}</td>
-                                    <td>{{ $promotionProduct->coupon->promotion_name }}</td>
-                                    <td>{{ $promotionProduct->category->categoryName??'' }}</td>
-                                    <td>
-                                        @php
-                                            $variant
-                                        @endphp
-                                        {{ $promotionProduct->variant->variant_name??'' }}
-                                    </td>
 
+                                    <td>{{ $promotionProduct->coupon->promotion_name }}</td>
+
+                                  
+                                    <td>
+                                        <div class="dropdown">
+                                            <button class="btn btn-sm btn-info dropdown-toggle" type="button"
+                                                data-bs-toggle="dropdown" aria-expanded="false">Action</button>
+                                            <ul class="dropdown-menu">
+                                                <li>
+                                                    <a href="{{ route('admin.product.promotion.edit', $promotionProduct->id) }}" class="dropdown-item edit">
+                                                        Edit
+                                                    </a>
+                                                </li>
+                                                <li><a href="#" class="dropdown-item delete">Delete</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -57,125 +61,7 @@
     </div>
 
 
-    {{-- <div class="modal fade" id="ProductPromotionAddModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Add Promotion Product</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="promotionProductAddForm" enctype="multipart/form-data">
-                        @csrf
-                        <div class="card-body">
-                            <div class="border p-4 rounded">
-                                <hr>
-                                <div class="row mb-3">
-                                    <label class="col-sm-3 col-form-label">Product Name</label>
-                                    <div class="col-sm-9">
-                                        <select name="product_id" class="form-select products" required id="product_id_variant">
-                                            <option value="">Choose...</option>
-                                            <option>...</option>
-                                        </select>
-                                    </div>
-                                </div>
 
-                                <div class="row mb-3">
-                                    <label class="col-sm-3 col-form-label">Promotion Name</label>
-                                    <div class="col-sm-9">
-                                        <select name="promotion_id" class="form-select promotion" required>
-                                            <option value="">Choose...</option>
-                                            <option>...</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <label class="col-sm-3 col-form-label">Variant Name</label>
-                                    <div class="col-sm-9">
-                                        <select name="variant_id" class="form-select variant" required>
-                                            <option value="">Choose...</option>
-                                            <option>...</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary save_product_promotion">Save changes</button>
-                </div>
-            </div>
-        </div>
-    </div> --}}
-
-
-
-
-
-
-
-
-
-    {{-- <div class="modal fade" id="ProductPromotionEditModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Edit Product Promotion</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="ProductPromotionEditForm" enctype="multipart/form-data">
-                        @csrf
-                        <div class="card-body">
-                            <div class="border p-4 rounded">
-                                <hr>
-                                <input type="hidden" name="id" class="form-control promotionProduct_id" >
-                                <div class="row mb-3">
-                                    <label class="col-sm-3 col-form-label">Product Name</label>
-                                    <div class="col-sm-9">
-                                        <select name="product_id" class="form-select products" required id="product_id_variant">
-                                            <option value="">Choose...</option>
-                                            <option>...</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <label class="col-sm-3 col-form-label">Promotion Name</label>
-                                    <div class="col-sm-9">
-                                        <select name="promotion_id" class="form-select promotion" required>
-                                            <option value="">Choose...</option>
-                                            <option>...</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <label class="col-sm-3 col-form-label">Variant Name</label>
-                                    <div class="col-sm-9">
-                                        <select name="variant_id" class="form-select variant" required>
-                                            <option value="">Choose...</option>
-                                            <option>...</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary Edit_promotion_Product">Update</button>
-                </div>
-            </div>
-        </div>
-    </div> --}}
 
 
 

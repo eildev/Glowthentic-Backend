@@ -17,7 +17,7 @@ class ProductPromotionController extends Controller
     public function index()
     {
         $productPromotion = ProductPromotion::with(['product', 'coupon','category'])->get();
-       
+
         return view('backend.promotionProduct.index', compact('productPromotion'));
     }
 
@@ -122,17 +122,13 @@ class ProductPromotionController extends Controller
     }
 
     public function edit($id){
-        $productPromotion = ProductPromotion::find($id);
+
+        $promotionProduct = ProductPromotion::with('category','product')->find($id);
+        // dd($promotionProduct);
         $product = Product::where('status', 1)->get();
+        $categories=Category::where('status', 1)->get();
         $promotion = Coupon::where('type','promotion')->get();
-        $variant=Variant::where('product_id',$productPromotion->product_id)->get();
-        return response()->json([
-            'status'=>200,
-            'productPromotion'=>$productPromotion,
-            'product'=>$product,
-            'variant'=>$variant,
-            'promotion'=>$promotion
-        ]);
+        return view('backend.promotionProduct.edit',compact('promotionProduct','product','categories','promotion'));
     }
 
 
