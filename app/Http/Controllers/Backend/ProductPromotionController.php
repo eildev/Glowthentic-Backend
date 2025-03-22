@@ -16,8 +16,11 @@ class ProductPromotionController extends Controller
 
     public function index()
     {
-        $productPromotion = ProductPromotion::with(['product', 'coupon','category'])->get();
-
+        $productPromotion = ProductPromotion::with(['product', 'coupon', 'category'])
+        ->get()
+        ->groupBy('promotion_id');
+    
+        
         return view('backend.promotionProduct.index', compact('productPromotion'));
     }
 
@@ -123,8 +126,9 @@ class ProductPromotionController extends Controller
 
     public function edit($id){
 
-        $promotionProduct = ProductPromotion::with('category','product')->find($id);
-        // dd($promotionProduct);
+        $promotionProduct = ProductPromotion::with('category','product','coupon')->where('promotion_id',$id)->get();
+        
+         
         $product = Product::where('status', 1)->get();
         $categories=Category::where('status', 1)->get();
         $promotion = Coupon::where('type','promotion')->get();
@@ -132,23 +136,62 @@ class ProductPromotionController extends Controller
     }
 
 
-    public function update(Request $request){
-
-        try{
-            $product = ProductPromotion::find($request->id);
-            $product->product_id = $request->product_id;
-            $product->promotion_id = $request->promotion_id;
-            $product->variant_id = $request->variant_id;
-            $product->save();
+    public function update(Request $request)
+    {
+        try {
+            // Ensure promotion_id is a single integer if it's an array
+            // dd($request->all());
+            $promotionId = is_array($request->promotion_id) ? (int) $request->promotion_id[0] : (int) $request->promotion_id;
+    
+            if ($request->product_id) {
+                foreach ($request->product_id as $key => $product_id) {
+                    $productPromotion = ProductPromotion::where('product_id', $product_id)
+                        ->where('promotion_id', $promotionId)
+                        ->first();
+    
+                    if ($productPromotion) {
+                        $productPromotion->product_id = $product_id;
+                        $productPromotion->promotion_id = $promotionId;
+                        $productPromotion->variant_id = json_encode($request->variant_id[$product_id] ?? []);
+                        $productPromotion->save();
+                    } else {
+                        $productPromotion = new ProductPromotion();
+                        $productPromotion->product_id = $product_id;
+                        $productPromotion->promotion_id = $promotionId;
+                        $productPromotion->variant_id = json_encode($request->variant_id[$product_id] ?? []);
+                        $productPromotion->save();
+                    }
+                }
+            }
+    
+            if ($request->category_id) {
+                foreach ($request->category_id as $key => $category_id) {
+                    $productPromotion = ProductPromotion::where('category_id', $category_id)
+                        ->where('promotion_id', $promotionId)
+                        ->first();
+    
+                    if ($productPromotion) {
+                        $productPromotion->category_id = $category_id;
+                        $productPromotion->promotion_id = $promotionId;
+                        $productPromotion->save();
+                    } else {
+                        $productPromotion = new ProductPromotion();
+                        $productPromotion->category_id = $category_id;
+                        $productPromotion->promotion_id = $promotionId;
+                        $productPromotion->save();
+                    }
+                }
+            }
+    
             return response()->json([
-                'status'=>200,
-                'message'=>'Data Updated Successfully'
+                'status' => 200,
+                'message' => 'Data Updated Successfully'
             ]);
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
         }
     }
+    
 
     public function delete(Request $request){
         try{

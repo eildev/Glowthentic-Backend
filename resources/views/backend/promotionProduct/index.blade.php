@@ -40,7 +40,7 @@
                                                 data-bs-toggle="dropdown" aria-expanded="false">Action</button>
                                             <ul class="dropdown-menu">
                                                 <li>
-                                                    <a href="{{ route('admin.product.promotion.edit', $promotionProduct->id) }}" class="dropdown-item edit">
+                                                    <a href="{{ route('admin.product.promotion.edit', $promotionProduct->promotion_id) }}" class="dropdown-item edit">
                                                         Edit
                                                     </a>
                                                 </li>
