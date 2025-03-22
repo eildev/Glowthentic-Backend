@@ -8,6 +8,7 @@ use App\Http\Controllers\API\ApiBrandController;
 use App\Http\Controllers\API\ApiCategoryController;
 use App\Http\Controllers\API\ApiComboProductController;
 use App\Http\Controllers\API\ApiContactUsController;
+use App\Http\Controllers\API\ApiReviewController;
 use App\Http\Controllers\API\ApiCouponController;
 use App\Http\Controllers\API\ApiFeatureController;
 use App\Http\Controllers\API\ApiHomeBannerController;
@@ -158,4 +159,10 @@ Route::controller(ApiWishListController::class)->group(function () {
     Route::delete('/wishlist/delete/{id}', 'deleteWishList');
 });
 
+Route::controller(ApiReviewController::class)->group(function () {
+    Route::post('/review/add', 'addReview');
+    Route::get('/review/{product_id}', 'getReview');
+    Route::get('/review/{product_id}', 'getReview');
+    Route::delete('/review/delete/{id}', 'deleteReview');
+});
 // Route::get('/product', [App\Http\Controllers\Backend\ProductController::class, 'index']);
