@@ -147,12 +147,12 @@ class ApiProductController extends Controller
                 'variants.variantImage',
                 'variants.product',
                 'variants.productStock',
-                'variants.promotionproduct.coupon',
+                // 'variants.promotionproduct.coupon',
                 'variants.comboProduct',
                 'product_tags',
                 'productStock',
                 'productdetails',
-                // 'variantImage'
+                'variantImage'
             )->where('status', 1)->get();
             // dd($products);
             return response()->json([
