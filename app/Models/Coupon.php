@@ -17,4 +17,8 @@ class Coupon extends Model
     {
         return $this->hasMany(ProductPromotion::class, 'promotion_id', 'id');
     }
+
+    public function productVariantPromotion(){
+        return $this->hasMany(VariantPromotion::class, 'promotion_id', 'id');
+    }
 }

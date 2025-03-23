@@ -28,7 +28,7 @@ class Variant extends Model
     public function promotions()
     {
         return $this->hasMany(ProductPromotion::class, 'variant_id', 'id');
-   
+
     }
     public function comboProduct()
     {
@@ -42,5 +42,9 @@ class Variant extends Model
     public function wishlist()
     {
         return $this->hasMany(WishList::class, 'variant_id', 'id');
+    }
+
+    public function productVariantPromotion(){
+        return $this->hasMany(VariantPromotion::class, 'variant_id', 'id');
     }
 }

@@ -10,6 +10,7 @@ use App\Models\ProductPromotion;
 use App\Models\Variant;
 use App\Models\Category;
 use Validator;
+use App\Models\VariantPromotion;
 use Exception;
 class ProductPromotionController extends Controller
 {
@@ -62,8 +63,16 @@ class ProductPromotionController extends Controller
                             $productPromotion = new ProductPromotion();
                             $productPromotion->product_id = $product_id;
                             $productPromotion->promotion_id = $request->promotion_id[0];
-                            $productPromotion->variant_id = json_encode($variants);
+                            // $productPromotion->variant_id = json_encode($variants);
                             $productPromotion->save();
+                            foreach($variants as $variant){
+                                $variantPromotion = new VariantPromotion();
+                                $variantPromotion->variant_id = $variant;
+                                $variantPromotion->product_id = $product_id;
+                                $variantPromotion->promotion_id = $request->promotion_id[0];
+                                $variantPromotion->save();
+                            }
+
                         }
 
                 }
@@ -104,7 +113,7 @@ class ProductPromotionController extends Controller
     public function edit($id){
 
         $promotionProduct = ProductPromotion::with('category','product','coupon')->where('promotion_id',$id)->get();
-
+        // $variant_promotion = VariantPromotion::with('variant')->where('promotion_id',$id)->get();
 
         $product = Product::where('status', 1)->get();
         $categories=Category::where('status', 1)->get();
@@ -129,13 +138,47 @@ class ProductPromotionController extends Controller
                     if ($productPromotion) {
                         $productPromotion->product_id = $product_id;
                         $productPromotion->promotion_id = $promotionId;
-                        $productPromotion->variant_id = json_encode($request->variant_id[$product_id] ?? []);
+                        // $productPromotion->variant_id = json_encode($request->variant_id[$product_id] ?? []);
+                        $variants = $request->variant_id[$product_id] ?? [];
                         $productPromotion->save();
+                        foreach($variants as $variant){
+                            // dd($variant);
+                            $variantPromotion = VariantPromotion::where('variant_id', $variant)
+                            ->where('product_id', $product_id)
+                            ->where('promotion_id', $promotionId)
+                            ->first();
+
+                            if (!$variantPromotion) {
+
+                                 $variantPromotion = new VariantPromotion();
+                                $variantPromotion->variant_id =$variant;
+                                $variantPromotion->product_id = $product_id;
+                                $variantPromotion->promotion_id = $promotionId;
+
+                                $variantPromotion->save();
+                            }
+
+                            // $variantPromotion = new VariantPromotion();
+                            // $variantPromotion->variant_id = $variant;
+                            // $variantPromotion->product_id = $product_id;
+                            // $variantPromotion->promotion_id = $request->promotion_id[0];
+                            // $variantPromotion->save();
+                        }
+
                     } else {
                         $productPromotion = new ProductPromotion();
                         $productPromotion->product_id = $product_id;
                         $productPromotion->promotion_id = $promotionId;
-                        $productPromotion->variant_id = json_encode($request->variant_id[$product_id] ?? []);
+                        // $productPromotion->variant_id = json_encode($request->variant_id[$product_id] ?? []);
+                        $variants = $request->variant_id[$product_id] ?? [];
+                        foreach($variants as $variant){
+                            $variantPromotion = new VariantPromotion();
+                            $variantPromotion->variant_id = $variant;
+                            $variantPromotion->product_id = $product_id;
+                            $variantPromotion->promotion_id = $request->promotion_id[0];
+                            $variantPromotion->save();
+                        }
+
                         $productPromotion->save();
                     }
                 }
@@ -173,7 +216,13 @@ class ProductPromotionController extends Controller
     public function delete(Request $request){
         try{
             $product = ProductPromotion::find($request->id);
+            $variantPromotion = VariantPromotion::where('product_id',$product->product_id)->get();
+
+            foreach($variantPromotion as $variant){
+                $variant->delete();
+            }
             $product->delete();
+
             return response()->json([
                 'status'=>200,
                 'message'=>'Data Deleted Successfully'
@@ -246,4 +295,21 @@ class ProductPromotionController extends Controller
         }
 
 }
+
+public function variantDelete(Request $request){
+    try{
+
+         $variantPromotion = VariantPromotion::where('variant_id',$request->variant_id)->where('product_id',$request->product_id)->first();
+        $variantPromotion->delete();
+        return response()->json([
+            'status'=>200,
+            'message'=>'Data Deleted Successfully'
+        ]);
+    }
+    catch (Exception $e) {
+        return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
+    }
+}
+
+
 }

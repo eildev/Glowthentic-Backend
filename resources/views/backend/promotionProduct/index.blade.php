@@ -46,7 +46,7 @@
                                                         Edit
                                                     </a>
                                                 </li>
-                                                <li><a href="#" class="dropdown-item delete">Delete</a></li>
+                                                <li><a href="#" class="dropdown-item delete" data-id="$promotionProduct->promotion_id">Delete</a></li>
                                             </ul>
                                         </div>
                                     </td>

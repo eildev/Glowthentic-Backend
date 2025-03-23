@@ -76,22 +76,25 @@
 
                             <td>
                                 @php
-                                    $selectedVariants = json_decode($promotionProduct->variant_id, true) ?? [];
+                                    $selectedVariants = App\Models\VariantPromotion::where('product_id', $promotionProduct->product_id)
+                                        ->pluck('variant_id')->toArray();
                                 @endphp
                                 @if($selectedVariants)
-                                <select class="form-select d-flex multiple-select"
-                                        name="variant_id[{{ $promotionProduct->product_id }}][]"
-                                        multiple
-                                        data-placeholder="Choose variants">
-                                    @foreach ($promotionProduct->product->variants as $variant)
-                                        <option value="{{ $variant->id }}"
-                                            {{ in_array($variant->id, $selectedVariants) ? 'selected' : '' }}>
-                                            {{ $variant->variant_name }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                                    <select class="form-select d-flex multiple-select variant-select"
+                                            name="variant_id[{{ $promotionProduct->product_id }}][]"
+                                            multiple
+                                            data-product-id="{{ $promotionProduct->product_id }}"
+                                            data-placeholder="Choose variants">
+                                        @foreach ($promotionProduct->product->variants as $variant)
+                                            <option value="{{ $variant->id }}"
+                                                {{ in_array($variant->id, $selectedVariants) ? 'selected' : '' }}>
+                                                {{ $variant->variant_name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
                                 @endif
                             </td>
+
 
                             <td>
 
@@ -103,7 +106,7 @@
                            @endforeach
                         </tbody>
                     </table>
-                    <button type="button" class="btn btn-success edit_promotion" id="save-promotion">Save</button>
+                    <button type="button" class="btn btn-success edit_promotion" id="save-promotion">Update</button>
                 </form>
 
                </div>
@@ -127,6 +130,46 @@
 <!-- Select2 JS -->
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
+
+
+
+///////////////////////////////////////////////variant delete///////////////////////////////////////////
+
+
+$(document).ready(function () {
+        $(".variant-select").on("change", function () {
+            let productId = $(this).data("product-id");
+            let selectedVariants = $(this).val() || []; // Get selected variants
+            let allVariants = $(this).find("option").map(function () { return this.value; }).get();
+
+            // Find removed variants
+            let removedVariants = allVariants.filter(v => !selectedVariants.includes(v));
+
+            removedVariants.forEach(variantId => {
+                $.ajax({
+                    url: "{{ route('promotion.variant.delete') }}",
+                    type: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        product_id: productId,
+                        variant_id: variantId
+                    },
+                    success: function (response) {
+                        if (response.status==200) {
+                            toastr.success(" Variant deleted successfully.");
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                   
+                });
+            });
+        });
+    });
+
+
+
+
 
 
 $(document).ready(function() {
