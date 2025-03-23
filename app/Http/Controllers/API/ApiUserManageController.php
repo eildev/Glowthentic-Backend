@@ -142,7 +142,7 @@ class ApiUserManageController extends Controller
 
     public function update($id, Request $request)
     {
-
+        // dd($id, $request);
         try {
             $validator = Validator::make($request->all(), [
                 'full_name' => 'required|string',
