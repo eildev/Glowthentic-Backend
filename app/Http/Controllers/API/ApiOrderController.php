@@ -16,13 +16,31 @@ use App\Models\ProductPromotion;
 use App\Models\DeliveryOrder;
 use App\Models\BillingInformation;
 use Auth;
+use App\Models\User;
+use App\Services\BillingInformationService;
+use Illuminate\Http\JsonResponse;
 
 class ApiOrderController extends Controller
 {
+
+    protected $billingInformationService;
+    public function __construct(BillingInformationService $billingInformationService)
+    {
+        $this->billingInformationService = $billingInformationService;
+    }
     public function store(Request $request)
     {
-        // dd($request->all());
+
+
+
         try {
+            $billingResponse = $this->billingInformationService->storeBillingInfo($request);
+
+            // If billing response is an error, return the error response
+            if ($billingResponse instanceof JsonResponse && $billingResponse->getStatusCode() !== 201) {
+                return $billingResponse;
+            }
+
             $variant_quantity = 0;
             $variant_price = 0;
             $variant_total_price = 0;
@@ -213,13 +231,14 @@ class ApiOrderController extends Controller
         try {
             $order_id = $request->order_id;
             $order = Order::where('invoice_number', $order_id)->with('orderDetails')->first();
-            $order_details = OrderDetails::where('order_id', $order->id)->with('product')->get();
+            $order_details = OrderDetails::where('order_id', $order->id)->with('product', 'variant.variantImage')->get();
 
             if ($order) {
                 if ($order->status != "Delivering") {
                     return response()->json([
                         'status' => 200,
-                        'order_tracking' => "Ordered",
+                        'order_tracking_status' => "Ordered",
+                        'order'=> $order,
                         'orderDetails' => $order_details,
                         'message' => 'Order Tracking Successfully',
                     ]);
@@ -229,20 +248,85 @@ class ApiOrderController extends Controller
                     if ($delivered_order->delivery_status != "delivered") {
                         return response()->json([
                             'status' => 200,
-                            'order' => "Shipped",
+                            'order_tracking_status' => "Shipped",
+                            'order'=> $order,
                             'orderDetails' => $order_details,
-                            'message' => 'Order Delivered Successfully',
+                            'message' => 'Order tracking shipped Successfully',
                         ]);
                     } else if ($delivered_order->delivery_status == "delivered") {
                         return response()->json([
                             'status' => 200,
-                            'order' => "Completed",
+                            'order_tracking_status' => "Completed",
+                            'order'=> $order,
                             'orderDetails' => $order_details,
-                            'message' => 'Order Delivered Successfully',
+                            'message' => 'Order completed Successfully',
                         ]);
                     }
                 }
             }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 500,
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
+
+    public function getOrder($user_idOrSesssion_id)
+    {
+        try {
+            $order = Order::where('user_id', $user_idOrSesssion_id)->orWhere('session_id', $user_idOrSesssion_id)->with('orderDetails')->get();
+            return response()->json([
+                'status' => 200,
+                'order' => $order,
+                'message' => 'Order Get Successfully',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 500,
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function getProcessingOrder($user_idOrSesssion_id)
+    {
+        try {
+            $order = Order::where('user_id', $user_idOrSesssion_id)->orWhere('session_id', $user_idOrSesssion_id)->get();
+
+            $ongoing_order = [];
+            foreach ($order as $order_data) {
+
+                if($order_data->status != "Delivering"){
+                    continue;
+                }
+                if ($order_data->status == "Delivering") {
+
+                    $ongoing_order[] = $order_data;
+
+                }
+
+                else {
+                    $delivered_order = DeliveryOrder::where('order_id', $order_data->id)->first();
+
+                    if ($delivered_order->delivery_status != "delivered") {
+                        $ongoing_order[] = $order_data;
+                    }
+                }
+            }
+
+
+            return response()->json([
+                'status' => 200,
+                'order' => $ongoing_order,
+                'message' => 'Order Get Successfully',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 500,
+                'message' => $e->getMessage(),
+            ]);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 500,

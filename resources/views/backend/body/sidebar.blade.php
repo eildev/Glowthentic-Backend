@@ -73,7 +73,8 @@
                                 <div class="menu-title">Manage Product Promotion</div>
                             </a>
                             <ul>
-                                <li> <a href="{{ route('product.promotion.index') }}"><i class="bx bx-right-arrow-alt"></i>Product Promotion</a>
+                                <li> <a href="{{ route('product.promotion.index') }}"><i
+                                            class="bx bx-right-arrow-alt"></i>Product Promotion</a>
                                 </li>
 
                             </ul>
@@ -108,16 +109,14 @@
                         <div class="menu-title">Manage Category</div>
                     </a>
                     <ul class="mm-collapse">
-                        <li> <a href="{{ route('category') }}"><i class="bx bx-right-arrow-alt"></i>Add Category</a>
+                        <li> <a href="{{ route('category') }}"><i class="bx bx-right-arrow-alt"></i>Manage Category</a>
                         </li>
-                        <li> <a href="{{ route('category.view') }}"><i class="bx bx-right-arrow-alt"></i>
+                        {{-- <li> <a href="{{ route('category.view') }}"><i class="bx bx-right-arrow-alt"></i>
                                 All Category</a>
-                        </li>
+                        </li> --}}
                     </ul>
                 </li>
-
-
-
+            
 
                 <li>
                     <a href="javascript:;" class="has-arrow">
@@ -133,11 +132,6 @@
 
                     </ul>
                 </li>
-
-
-
-
-
 
 
 
@@ -192,6 +186,27 @@
                         </li>
                         <li>
                             <a href="{{ route('brand.view') }}"><i class="bx bx-right-arrow-alt"></i>Manage Brand</a>
+                        </li>
+
+
+                    </ul>
+                </li>
+                <li>
+                    <a href="javascript:;" class="has-arrow">
+                        <div class="parent-icon">
+                            <i class='bx bx-package'></i>
+                        </div>
+                        <div class="menu-title">Manage Features</div>
+                    </a>
+                    <ul>
+
+                        <li>
+                            <a href="{{ route('product.feature.index') }}"><i class="bx bx-right-arrow-alt"></i>Add
+                                Feature</a>
+                        </li>
+                        <li>
+                            <a href="{{ route('feature.view') }}"><i class="bx bx-right-arrow-alt"></i>Manage
+                                Features</a>
                         </li>
 
 
@@ -256,7 +271,7 @@
                         </li>
 
                         <li>
-                            <a href="{{ route('order.delivered') }}"><i class="bx bx-right-arrow-alt"></i>Delivered
+                            <a href="{{ route('order.delivered') }}"><i class="bx bx-right-arrow-alt"></i>Completed
                                 Order</a>
                         </li>
                     </ul>
@@ -372,7 +387,8 @@
                     <div class="menu-title">Stock Management</div>
                 </a>
                 <ul>
-                    <li> <a href="{{ route('product.stock.manage') }}"><i class="bx bx-right-arrow-alt"></i>Product Stock</a>
+                    <li> <a href="{{ route('product.stock.manage') }}"><i class="bx bx-right-arrow-alt"></i>Product
+                            Stock</a>
                     </li>
                     <li>
                         <a href="{{ route('stock.view') }}"><i class="bx bx-right-arrow-alt"></i>View Stock</a>
@@ -533,7 +549,8 @@
                 <div class="menu-title">Combo Product Manage</div>
             </a>
             <ul>
-                <li> <a href="{{ route('combo.product.index') }}"><i class="bx bx-right-arrow-alt"></i>Combo Product</a>
+                <li> <a href="{{ route('combo.product.index') }}"><i class="bx bx-right-arrow-alt"></i>Combo
+                        Product</a>
                 </li>
             </ul>
         </li>

@@ -72,8 +72,6 @@ class ApiProductController extends Controller
             ], 500);
         }
     }
-
-
     public function filter(Request $request)
     {
         try {
@@ -142,22 +140,19 @@ class ApiProductController extends Controller
             ], 500);
         }
     }
-
-
     public function viewAll()
     {
-
         try {
             $products = Product::orderByDesc('id')->with(
                 'variants.variantImage',
                 'variants.product',
                 'variants.productStock',
-                'variants.promotionproduct',
+                // 'variants.promotionproduct.coupon',
                 'variants.comboProduct',
                 'product_tags',
                 'productStock',
                 'productdetails',
-                // 'variantImage'
+                'variantImage'
             )->where('status', 1)->get();
             // dd($products);
             return response()->json([
@@ -173,12 +168,21 @@ class ApiProductController extends Controller
             ]);
         }
     }
-
-
     public function show($slug)
     {
         try {
-            $products = Product::with('variants.variantImage', 'product_tags', 'productStock', 'productdetails', 'variantImage')->where('slug', $slug)->first();
+            $products = Product::with(
+                'variants.variantImage',
+                'variants.product',
+                'variants.productStock',
+                'variants.promotions.coupon',
+                'variants.comboProduct',
+                'product_tags',
+                'productStock',
+                'productdetails',
+                'variantImage'
+            )->where('slug', $slug)->first();
+            // Debug to check variants and their promotions
 
             return response()->json([
                 'status' => '200',

@@ -64,12 +64,14 @@
                                             <div class="col-md-6">
                                                 <div class="row">
                                                     @php
-                                                        $subcategories = App\Models\Category::where('id', $product->subcategory_id)->first();
+                                                        $subcategories = App\Models\Category::where('id', $product->subcategory_id)->first()??'';
                                                     @endphp
                                                     <label class="form-label col-12">Select Subcategory</label>
                                                     <div class="col-12">
                                                         <select class="form-select subcategory_select @error('subcategory_id') is-invalid  @enderror" name="subcategory_id">
+                                                            @if($subcategories)
                                                             <option value="{{$subcategories->id }}">{{ $subcategories->categoryName??'' }}</option>
+                                                            @endif
                                                         </select>
                                                         @error('category_id')
                                                             <span class="text-danger">{{ $message }}</span>
@@ -322,45 +324,32 @@
 
 
 
-                                            <div class="col-12">
-                                                <div class="mb-3">
-                                                    @php
-                                                        $selectedFeatures= json_decode($product->product_feature, true) ?? [];
-                                                    @endphp
-                                                    <label class="form-label col-12">Select Feature</label>
-                                                    <div class="col-12 ">
-                                                        <select class="form-select @error('product_feature') is-invalid @enderror"
-                                                                id="multiple-select-field"
-                                                                name="product_feature[]"
-                                                                data-placeholder="Choose anything"
-                                                                multiple>
 
-                                                            @php
-                                                                $features = [
-                                                                    "feature" => "Feature",
-                                                                    "new-arrival" => "New Arrival",
-                                                                    "trending" => "Trending",
-                                                                    "best-rate" => "Best Rate",
-                                                                    "weekend-deals" => "Weekend Deals",
-                                                                    "top-seller" => "Top Seller",
-                                                                    "top-offers" => "Top Offers"
-                                                                ];
-                                                            @endphp
+                                            @php
+                                            use App\Models\Features;
+                                            use App\Models\ProductFeature;
 
-                                                            @foreach($features as $key => $value)
-                                                                <option value="{{ $key }}"
-                                                                    {{ in_array($key, $selectedFeatures) ? 'selected' : '' }}>
-                                                                    {{ $value }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
 
-                                                        @error('product_feature')
-                                                            <span class="text-danger">{{ $message }}</span>
-                                                        @enderror
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            $allFeature = Features::all();
+
+
+                                            $selectFeatureId = ProductFeature::where('product_id', $product->id)
+                                                                ->pluck('feature_id')
+                                                                ->toArray();
+                                        @endphp
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Select Product Tag</label>
+                                        <select class="multiple-select" data-placeholder="Choose anything" multiple="multiple" name="tag[]">
+                                            @foreach($allFeature as $feature)
+                                                <option value="{{ $feature->id }}"
+                                                    {{ in_array($feature->id, $selectFeatureId) ? 'selected' : '' }}>
+                                                    {{ $feature->feature_name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
 
 
 
@@ -546,7 +535,7 @@
                                                          <option value="charcoal"{{ $variant->color=="charcoal"?"selected":'' }}>Charcoal</option>
                                                      </select>
                                                  </td>
-                                                 <td><input type="text" class="form-control" name="weight[{{ $variant->id }}]" value="{{ $variant->weight??'' }}"></td>
+                                                 <td><input type="number" class="form-control" name="weight[{{ $variant->id }}]" value="{{ $variant->weight??'' }}"></td>
                                                  <td><input type="text" class="form-control" name="flavor[{{ $variant->id }}]" value="{{ $variant->flavor??'' }}"></td>
                                                  <td><input type="file" class="form-control" name="image[{{$variant->id}}][]" multiple>
 
@@ -855,7 +844,8 @@ $(document).on("click",".variant_update",function(e){
                     console.log(res);
                     toastr.success(res.message);
                     $('#variant_form_submit')[0].reset();
-                     location.reload();
+                    window.location.href = "/product/view/" + res.product_id;
+
                 }
             });
   });
@@ -914,7 +904,7 @@ $(document).on("click", ".addRow", function () {
                     <option value="charcoal">Charcoal</option>
                 </select>
             </td>
-            <td><input type="text" class="form-control" name="weight[]"></td>
+            <td><input type="number" class="form-control" name="weight[]"></td>
             <td><input type="text" class="form-control" name="flavor[]"></td>
             <td><input type="file" class="form-control" name="image[][]" multiple></td>
             <td><input type="number" class="form-control" name="stock_quantity[]"></td>
@@ -968,6 +958,7 @@ $(document).on("click", ".removeRow", function () {
                     if(res.status == 200){
                         $('#productForm')[0].reset();
                     toastr.success("Product Updated Successfully");
+
 
                     }
                else{

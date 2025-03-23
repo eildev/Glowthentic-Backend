@@ -34,6 +34,8 @@ use App\Http\Controllers\Backend\CouponController;
 use App\Http\Controllers\Backend\ProductPromotionController;
 use App\Http\Controllers\Backend\ProductStockManageController;
 use App\Http\Controllers\Backend\DeliverOrderAssignController;
+use App\Http\Controllers\Backend\FeatureController;
+
 // Route::get('/home', function () {
 //     return view('frontend.index');
 // })->name('home');
@@ -54,7 +56,7 @@ Route::middleware('auth')->group(function () {
     Route::controller(CategoryController::class)->group(function () {
         Route::get('/category', 'index')->name('category');
         Route::post('/category/store', 'store')->name('category.store');
-        Route::get('/category/view', 'view')->name('category.view');
+        Route::get('/category/view', 'view');
         Route::get('/category/edit/{id}', 'edit')->name('category.edit');
         Route::post('/category/update', 'update')->name('category.update');
         Route::post('/category/delete', 'delete')->name('category.delete');
@@ -144,7 +146,6 @@ Route::middleware('auth')->group(function () {
         Route::post('/store/extra/datatype/field', 'store')->name('product.attribute.store');
         Route::get('/get/extra/info/field/{id}', 'getExtraField')->name('product.attribute.get.extra.info.field');
         Route::get('get-extra-field/info/product/page/show', 'getExtraFieldInfoProductPageShow')->name('get.extra.field.info.product.page.show');
-
     });
     //All Routes for Offer Banner Start
     Route::controller(OfferBannerController::class)->group(function () {
@@ -190,10 +191,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/find/variant/{id}', 'findVariant')->name('find.variant');
         Route::get('/product/get_variant_data', 'getVariant_product_id');
         Route::post('/product/variant/store', 'variantProductStore');
-        Route::post('/product/variant/update','ProductvariantUpdate');
+        Route::post('/product/variant/update', 'ProductvariantUpdate');
         Route::post('/product/variant/image/delete', 'variantImageDelete');
         Route::post('/product/variant/delete', 'variantDelete');
-
     });
     //All Routes for Product End
 
@@ -240,11 +240,19 @@ Route::middleware('auth')->group(function () {
     Route::controller(ProductPromotionController::class)->group(function () {
 
         Route::get('/product/promotion', 'index')->name('product.promotion.index');
-        Route::post('/promotion/product/store', 'store');
-        Route::get('/promotion/product/view', 'view')->name('product.promotion.view');
-        Route::get('/promotioin/product/edit/{id}', 'edit')->name('product.promotion.edit');
-        Route::post('/promotion/product/update', 'update')->name('product.promotion.update');
-        Route::post('/promotion/product/delete/', 'delete')->name('product.promotion.delete');
+        Route::get('/product/promotion/create', 'create')->name('product.promotion.create');
+
+        Route::post('/promotion/product/store', 'store')->name('promotion.store');
+        Route::post('product/promotion/add/variant', 'productPromotionVariantShow')->name('product.promotion.add.variant');
+       Route::post('promotion/update','update')->name('promotion.update');
+       Route::post('/promotion/product/delete/', 'delete')->name('promotion.delete');
+
+        Route::post('product/promotion/add/category', 'productPromotionCategoryShow')->name('product.promotion.add.category');
+        Route::get('admin/product/promotion/edit/{id}', 'edit')->name('admin.product.promotion.edit');
+        Route::post('/product/promotion/variant/delete/', 'variantDelete')->name('promotion.variant.delete');
+        Route::post('promotion/delete','Promotiondelete')->name('promotion.delete');
+         Route::get('product.promotion.view','PromotionView')->name('product.promotion.view');
+
         Route::post('/product/promotion/status/{id}', 'statusUpdate')->name('product.promotion.status');
         Route::get('/get/product/and/promotion', 'getProductPromotion');
         Route::post('/get/product/variant', 'getProductPromotionVariant');
@@ -252,7 +260,15 @@ Route::middleware('auth')->group(function () {
 
 
 
-
+    Route::controller(FeatureController::class)->group(function () {
+        Route::get('/product/feature', 'index')->name('product.feature.index');
+        Route::post('/feature/store', 'store')->name('feature.store');
+        Route::get('/feature/view', 'view')->name('feature.view');
+        Route::get('/feature/edit/{id}', 'edit')->name('feature.edit');
+        Route::post('/feature/update/{id}', 'update')->name('feature.update');
+        Route::get('/feature/delete/{id}', 'delete')->name('feature.delete');
+        Route::post('/feature/status/{id}', 'statusUpdate')->name('feature.status');
+    });
 
 
 

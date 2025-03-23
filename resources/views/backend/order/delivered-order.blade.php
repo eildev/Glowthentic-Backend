@@ -5,7 +5,7 @@
             <div class="card border-top border-0 border-3 border-info col-md-12">
                 <div class="card-body">
                     <div class="card-title d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0 text-info">Delivered order list</h5>
+                        <h5 class="mb-0 text-info">Completed order list</h5>
 
                         <a href="{{ route('popupMessage') }}" class="btn btn-info btn-sm text-light ">
                             <i class='bx bx-plus'></i>

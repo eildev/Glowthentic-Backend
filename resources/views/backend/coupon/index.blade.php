@@ -211,7 +211,7 @@
 
                                 <!-- Status -->
                                 <div class="row mb-3">
-                                    <label class="col-sm-3 col-form-label">Status</label>
+                                    <label class="col-sm-3 col-form-label">Coupon Type</label>
                                     <div class="col-sm-9">
                                         <select name="type" class="form-select" required>
                                             <option value="">Choose...</option>
@@ -232,6 +232,17 @@
                                     </div>
                                 </div>
 
+                                <div class="row mb-3">
+                                    <label class="col-sm-3 col-form-label">Coupon Type</label>
+                                    <div class="col-sm-9">
+                                        <select name="status" class="form-select" required>
+                                            <option value="">Choose...</option>
+                                            <option value="Active">Active</option>
+                                            <option value="Inactive">Inactive</option>
+                                            <option value="Expire">Expired</option>
+                                        </select>
+                                    </div>
+                                </div>
                                 <!-- Start Date -->
                                 <div class="row mb-3">
                                     <label class="col-sm-3 col-form-label">Start Date</label>
@@ -323,8 +334,9 @@ $(document).on('click', '.save_coupon', function () {
                 $('#couponEditForm input[name="coupon_code"]').val(response.coupon.cupon_code);
                 $('#couponEditForm select[name="discount_type"]').val(response.coupon.discount_type);
                 $('#couponEditForm input[name="discount_value"]').val(response.coupon.discount_value);
-                $('#couponEditForm select[name="status"]').val(response.coupon.status);
+                $('#couponEditForm select[name="type"]').val(response.coupon.type);
                 $('#couponEditForm select[name="is_global"]').val(response.coupon.is_global);
+                $('#couponEditForm select[name="status"]').val(response.coupon.status);
                 $('#couponEditForm input[name="start_date"]').val(response.coupon.start_date);
                 $('#couponEditForm input[name="end_date"]').val(response.coupon.end_date);
                 $('#couponEditForm').append(`<input type="hidden" name="coupon_id" value="${response.coupon.id}">`);

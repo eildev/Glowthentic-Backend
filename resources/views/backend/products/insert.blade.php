@@ -465,19 +465,20 @@
 
 
                                             <div class="col-12">
+                                                @php
+                                                    $features = App\Models\Features::get();
+                                                @endphp
+                                             
                                                 <div class="mb-3">
                                                     <label class="form-label col-12">Select Feature</label>
                                                     <div class="col-12">
-                                                        <select class="form-select @error('product_feature') is-invalid  @enderror" id="multiple-select-field"
+                                                        <select class="multiple-select @error('product_feature') is-invalid  @enderror" id="multiple-select-field"
                                                             name="product_feature[]" data-placeholder="Choose anything"
                                                             multiple>
-                                                            <option value="feature">Feature</option>
-                                                            <option value="new-arrival">New Arrival</option>
-                                                            <option value="trending">Trending</option>
-                                                            <option value="best-rate">Best Rate</option>
-                                                            <option value="weekend-deals">Weekend Deals</option>
-                                                            <option value="top-seller">Top Seller</option>
-                                                            <option value="top-offers">Top Offers</option>
+                                                           @foreach ( $features as  $feature)
+                                                           <option value="{{ $feature->id }}">{{ $feature->feature_name }}</option>
+
+                                                           @endforeach
                                                         </select>
                                                          @error('product_feature')
                                                             <span class="text-danger">{{ $message }}</span>
@@ -1144,7 +1145,7 @@ function showExtraField() {
                     <option value="charcoal">Charcoal</option>
                 </select>
             </td>
-            <td><input type="text" class="form-control" name="weight[]"></td>
+            <td><input type="number" class="form-control" name="weight[]"></td>
             <td><input type="text" class="form-control" name="flavor[]"></td>
             <td><input type="file" class="form-control" name="image[${rowCount}][]" multiple></td>
             <td><input type="number" class="form-control" name="stock_quantity[]"></td>
@@ -1245,7 +1246,7 @@ $(document).on("click", ".removeRow", function () {
                                                     <option value="charcoal">Charcoal</option>
                                                 </select>
                                             </td>
-                                            <td><input type="text" class="form-control" name="weight[]"></td>
+                                            <td><input type="number" class="form-control" name="weight[]"></td>
                                             <td><input type="text" class="form-control" name="flavor[]"></td>
                                             <td><input type="file" class="form-control" name="image[0][]" multiple></td>
                                             <td><input type="number" class="form-control" name="stock_quantity[]"></td>
