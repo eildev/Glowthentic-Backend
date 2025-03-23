@@ -37,6 +37,10 @@ Route::group([
     Route::get("/profile", [AuthController::class, "profile"]);
     Route::get("/logout", [AuthController::class, "logout"]);
 
+    Route::controller(ApiOrderController::class)->group(function () {
+        Route::post('/order/create', 'store')->name('order.store');
+        Route::get('/order/{id}', 'show')->name('order.show');
+    });
 
     Route::controller(ApiUserManageController::class)->group(function () {
         Route::post("user/details/update/{id}", [ApiUserManageController::class, 'update']);

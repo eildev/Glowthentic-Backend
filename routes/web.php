@@ -244,14 +244,14 @@ Route::middleware('auth')->group(function () {
 
         Route::post('/promotion/product/store', 'store')->name('promotion.store');
         Route::post('product/promotion/add/variant', 'productPromotionVariantShow')->name('product.promotion.add.variant');
-       Route::post('promotion/update','update')->name('promotion.update');                               
+       Route::post('promotion/update','update')->name('promotion.update');
        Route::post('/promotion/product/delete/', 'delete')->name('promotion.delete');
-      
+
         Route::post('product/promotion/add/category', 'productPromotionCategoryShow')->name('product.promotion.add.category');
         Route::get('admin/product/promotion/edit/{id}', 'edit')->name('admin.product.promotion.edit');
+     Route::post('/product/promotion/variant/delete/', 'variantDelete')->name('promotion.variant.delete');
 
 
-  
         Route::post('/product/promotion/status/{id}', 'statusUpdate')->name('product.promotion.status');
         Route::get('/get/product/and/promotion', 'getProductPromotion');
         Route::post('/get/product/variant', 'getProductPromotionVariant');
