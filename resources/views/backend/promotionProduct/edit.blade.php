@@ -41,7 +41,7 @@
                             <select class="form-select product" id="product">
                                 <option selected value="">Select Product</option>
                                 @foreach ($product as $product)
-                                    <option  value="{{ $product->id }}">{{ $product->product_name }}</option>
+                                    <option  value="{{ $product->id }}" data-category-id="{{ $product->category_id }}">{{ $product->product_name }},({{$product->category->categoryName}})</option>
                                 @endforeach
                             </select>
                         </div>
@@ -161,7 +161,7 @@ $(document).ready(function () {
                             alert(response.message);
                         }
                     },
-                   
+
                 });
             });
         });
@@ -184,9 +184,50 @@ $(document).ready(function() {
 
 
 ///////////////////////////Add product variant/////////////////////////////////////
+
+
+///////////////////////////////using for checking category is selected or not////////////////////////
+var previous_category_ids = [];
+
+$(document).on('change', '.category', function () {
+    var selected_category_id = $(this).val();
+
+    if (!previous_category_ids.includes(selected_category_id)) {
+        previous_category_ids.push(selected_category_id);
+    }
+
+
+    $('.product').val('').change();
+});
+
+
+
+
+
+
+
 $(document).on('change','.product', function () {
     var product_id = $('.product').val();
     var promotion_id = $('.promotion').val();
+
+
+
+    var category_id = $('.category').val();
+
+        var productCategory_id = $(this).find(':selected').attr('data-category-id');
+
+        console.log("Selected Product's Category ID:", productCategory_id);
+
+        if (previous_category_ids.includes(productCategory_id)) {
+            alert("This product's category is already selected!");
+            $(this).val('');
+            return;
+        } else {
+            console.log("Valid selection, proceeding...");
+        }
+
+
+
 
     if (!product_id) {
         console.log("No Product selected.");
