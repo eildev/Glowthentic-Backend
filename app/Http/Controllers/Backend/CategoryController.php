@@ -22,6 +22,7 @@ class CategoryController extends Controller
     public function store(Request $request, ImageOptimizerService $imageService)
     {
         try {
+            // dd($request->all());
             $validator = Validator::make($request->all(), [
                 'categoryName' => 'required|max:100',
                 // 'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp,svg|max:10240',
@@ -38,12 +39,13 @@ class CategoryController extends Controller
 
 
             if ($request->image) {
+
                 $category = new Category;
                 $category->categoryName = $request->categoryName;
                 $category->slug = Str::slug($request->categoryName);
                 $destinationPath = public_path('uploads/category/');
                 $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
-                $category->image ='uploads/category/'.$imageName;
+                $category->image = 'uploads/category/' . $imageName;
 
                 if ($request->parent_id) {
                     $category->parent_id = $request->parent_id;
@@ -68,7 +70,7 @@ class CategoryController extends Controller
     public function view()
 
     {
-        $categories = Category::all();
+        $categories = Category::with('parent_category')->get();
 
         return response()->json([
             'status' => 200,
@@ -158,7 +160,7 @@ class CategoryController extends Controller
 
 
     // category update function
-    public function update(Request $request,ImageOptimizerService $imageService)
+    public function update(Request $request, ImageOptimizerService $imageService)
     {
 
         $validator = Validator::make($request->all(), [
@@ -183,8 +185,8 @@ class CategoryController extends Controller
             //     'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp,svg|max:2048',
             // ]);
             $destinationPath = public_path('uploads/category/');
-             $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
-            $image ='uploads/category/'.$imageName;
+            $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
+            $image = 'uploads/category/' . $imageName;
             $category = Category::findOrFail($request->cat_id);
             $imagePath = public_path('uploads/category/') . $category->image;
 

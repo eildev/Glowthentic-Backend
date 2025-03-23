@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use App\Models\TagName;
 use Exception;
 use Toastr;
+use App\Services\ImageOptimizerService;
+
 class TagNameController extends Controller
 {
 
@@ -36,17 +38,26 @@ class TagNameController extends Controller
     //     }
     // }
     // tagname store function
-    public function store(Request $request)
+    public function store(Request $request, ImageOptimizerService $imageService)
     {
 
-        // dd($request->all());
-        $request->validate([
+        //  dd($request->all());
+       $validate= $request->validate([
             'tagname' => 'required|max:100',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
+       
         $tagname = new TagName;
         $tagname->tagName = $request->tagname;
+
+        if($request->hasFile('image')){
+
+               $destinationPath = public_path('uploads/tag/');
+                $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
+                $tagname->image ='uploads/tag/'.$imageName;
+        }
         $tagname->save();
-   
+
         return redirect()->back()->with('success', 'Successfully Saved Tag');
     }
 
@@ -118,14 +129,25 @@ class TagNameController extends Controller
 
 
     // tagname update function
-    public function update(Request $request, $id)
+    public function update(Request $request, $id, ImageOptimizerService $imageService)
     {
         $request->validate([
             'tagname' => 'required|max:100',
         ]);
         $tagname = tagname::findOrFail($id);
         $tagname->tagName = $request->tagname;
-        $tagname->update();
+        if($request->hasFile('image')){
+             if($tagname->image){
+                $imagePath = public_path($tagname->image);
+                if (file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
+             }
+            $destinationPath = public_path('uploads/tag/');
+             $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
+             $tagname->image ='uploads/tag/'.$imageName;
+     }
+        $tagname->save();
         return redirect()->route('tagname.view')->with('success', 'tag Successfully updated');
     }
 
@@ -134,6 +156,12 @@ class TagNameController extends Controller
     public function delete($id)
     {
         $tagname = tagname::findOrFail($id);
+        if($tagname->image){
+            $imagePath = public_path($tagname->image);
+            if (file_exists($imagePath)) {
+                unlink($imagePath);
+            }
+        }
         $tagname->delete();
         return back()->with('success', 'tag Successfully deleted');
     }

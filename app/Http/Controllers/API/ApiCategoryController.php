@@ -8,12 +8,13 @@ use App\Models\Category;
 use App\Models\Product_Tags;
 use App\Models\Brand;
 use App\Models\Product;
+
 class ApiCategoryController extends Controller
 {
     public function view()
-
     {
-        $categories = Category::all();
+        // $categories = Category::where('parent_id', null)->where('status', 1)->get();
+        $categories = Category::where('status', 1)->get();
 
         return response()->json([
             'status' => 200,
@@ -46,96 +47,18 @@ class ApiCategoryController extends Controller
         }
     }
 
-    // public function navCategoryShow()
-    // {
-    //     $categories = Category::select('id', 'categoryName', 'slug')
-    //     ->withCount('products')
-    //     ->orderByDesc('products_count')
-    //     ->take(10)
-    //     ->get();
-    //     $subcategories = [];
-    //     foreach ($categories as $category) {
-    //         $subcategories[$category->id] = Category::select('id', 'categoryName', 'slug')
-    //             ->where('parent_id', $category->id)
-    //             ->take(10)
-    //             ->get();
-    //     }
-
-    //     $tag = Product_Tags::whereHas('product', function ($query) use ($categories) {
-    //         $query->whereIn('category_id', $categories->pluck('id'));
-    //     })
-    //     ->selectRaw('MIN(id) as id, tag_id')
-    //     ->groupBy('tag_id')
-    //     ->take(10)
-    //     ->get();
-
-
-
-
-    // $tagData = [];
-
-    // foreach ($tag as $t) {
-    //     if ($t->tag) {
-    //         $tagName = $t->tag->tagName;
-    //         if (!isset($tagData[$tagName])) {
-    //             $tagData[$tagName] = $t->id;
-    //         }
-    //     }
-    // }
-
-
-    // $tagResult = [];
-    // foreach ($tagData as $name => $id) {
-    //     $tagResult[] = [
-    //         'id' => $id,
-    //         'tagName' => $name
-    //     ];
-    // }
-
-    // $Brand = Brand::whereHas('brandProduct', function ($query) use ($categories) {
-    //     $query->whereIn('category_id', $categories->pluck('id'));
-    // })
-    // ->selectRaw('MIN(id) as id, brandName, slug') // Select first occurrence
-    // ->groupBy('brandName', 'slug') // Group by unique brand attributes
-    // ->take(10)
-    // ->get();
-
-
-    //     $BrandData= [];
-    //     foreach($Brand as $brand){
-    //         if(!isset($BrandData[$brand->brandName])){
-    //             $BrandData[$brand->brandName] = $brand->id;
-    //         }
-    //     }
-
-    //     $BrandResult = [];
-    //     foreach ($BrandData as $name => $id) {
-    //         $BrandResult[] = [
-    //             'id' => $id,
-    //             'brandName' => $name,
-    //             'slug' => $brand->slug
-    //         ];
-    //     }
-
-    //      return response()->json([
-    //         'status' => 200,
-    //         'categories' => $categories,
-    //         'subcategories' => $subcategories,
-    //         'tag' => $tagResult,
-    //         'brand' => $BrandResult
-    //     ]);
-    // }
-
     public function navCategoryShow()
     {
 
         $categories = Category::select('id', 'categoryName', 'slug')
-        ->withCount('products')
-        ->orderByDesc('products_count')
-        ->take(10)
-        ->get();
+            ->where('status', 1)
+            ->where('parent_id', null)
+            ->withCount('products')
+            ->orderByDesc('products_count')
+            ->take(10)
+            ->get();
 
-    //    dd($categories);
+        //    dd($categories);
         $categoryData = [];
         $uniqueTags = [];
         $uniqueBrands = [];
@@ -146,18 +69,18 @@ class ApiCategoryController extends Controller
                 ->where('parent_id', $category->id)
                 ->take(10)
                 ->get();
-           $product_feature= Product::select('id','slug','product_feature')
-           ->where('category_id', $category->id)
-           ->take(10)
-           ->get();
+            $product_feature = Product::select('id', 'slug', 'product_feature')
+                ->where('category_id', $category->id)
+                ->take(10)
+                ->get();
 
             $tags = Product_Tags::whereHas('product', function ($query) use ($category) {
                 $query->where('category_id', $category->id);
             })
-            ->selectRaw('MIN(id) as id, tag_id')
-            ->groupBy('tag_id')
-            ->take(10)
-            ->get();
+                ->selectRaw('MIN(id) as id, tag_id')
+                ->groupBy('tag_id')
+                ->take(10)
+                ->get();
 
             // $tagResult = [];
             foreach ($tags as $t) {
@@ -177,10 +100,10 @@ class ApiCategoryController extends Controller
             $brands = Brand::whereHas('brandProduct', function ($query) use ($category) {
                 $query->where('category_id', $category->id);
             })
-            ->selectRaw('MIN(id) as id, brandName, slug')
-            ->groupBy('brandName', 'slug')
-            ->take(10)
-            ->get();
+                ->selectRaw('MIN(id) as id, brandName, slug')
+                ->groupBy('brandName', 'slug')
+                ->take(10)
+                ->get();
 
             foreach ($brands as $brand) {
                 if (!isset($uniqueBrands[$brand->brandName])) {
@@ -213,6 +136,4 @@ class ApiCategoryController extends Controller
             // 'finalBrands' => $finalBrands
         ]);
     }
-
-
 }

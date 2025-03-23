@@ -77,7 +77,7 @@
                                             <td>{{ Illuminate\Support\Str::limit($product->product_name, 29) }}</td>
                                             <td>{{ $product->category->categoryName }}</td>
                                             @php
-                                                $subcategory=App\models\Category::find($product->subcategory_id);
+                                                $subcategory=App\Models\Category::find($product->subcategory_id);
                                             @endphp
                                             <td>{{ $subcategory->categoryName ?? '' }}</td>
                                             <td>{{ $product->brand->BrandName }}</td>
@@ -86,7 +86,7 @@
                                                 ৳{{ $product->varient[0]->regular_price ?? 0 }}
                                             </td>
                                             @php
-                                                $Total_stock = App\models\ProductStock::where('product_id', $product->id)->sum('StockQuantity')??0;
+                                                $Total_stock = App\Models\ProductStock::where('product_id', $product->id)->sum('StockQuantity')??0;
                                             @endphp
                                             {{-- @dd($Total_stock) --}}
                                             <td>
