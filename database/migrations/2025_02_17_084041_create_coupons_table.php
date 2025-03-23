@@ -18,7 +18,7 @@ return new class extends Migration
             $table->enum('discount_type', ['fixed', 'percentage']);
             $table->decimal('discount_value', 10, 2);
             $table->enum('type', ['coupon', 'promotion']);
-            $table->enum('status', ['Active', 'Inactive', 'Expire'])->default('Inactive');
+            $table->enum('status', ['Active', 'Inactive', 'Expire'])->default('Active');
             $table->boolean('is_global')->default(0);
             $table->date('start_date');
             $table->date('end_date');

@@ -8,7 +8,12 @@ use App\Models\Coupon;
 class ApiCouponController extends Controller
 {
     public function checkCoupon(Request $request){
-      $coupon = Coupon::where('cupon_code',$request->coupon_code)->where('type','coupon')->where('is_global',1)->where('status','Active')->first();
+        $coupon = Coupon::whereRaw('LOWER(cupon_code) = ?', [strtolower($request->coupon_code)])
+        ->where('type', 'coupon')
+        ->where('is_global', 1)
+        ->where('status', 'Active')
+        ->first();
+
       if($coupon){
         return response()->json([
             'status'=>200,

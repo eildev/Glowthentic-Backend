@@ -13,14 +13,12 @@
                         <div class="col-md-6">
                             <label for="category" class="form-label">Promotion Name</label>
                             <select class="form-select promotion" id="promotion">
-                                @php
-                                $existingPromotionIds = App\Models\ProductPromotion::pluck('promotion_id')->toArray();
-                               @endphp
+
 
                             @foreach ($promotion as $promo)
-                                @if (!in_array($promo->id, $existingPromotionIds))
-                                    <option value="{{ $promo->id }}">{{ $promo->promotion_name }}</option>
-                                @endif
+
+                                    <option  {{$promotionProduct->first()->promotion_id==$promo->id?'selected':'' }} value="{{ $promo->id }}">{{ $promo->promotion_name }}</option>
+
                             @endforeach
 
                             </select>
@@ -29,8 +27,8 @@
                             <label for="category" class="form-label">Category</label>
                             <select class="form-select category" id="category">
                                 <option selected value="">Select Category</option>
-                                @foreach ($category as $category)
-                                    <option value="{{ $category->id }}">{{ $category->categoryName }}</option>
+                                @foreach ($categories as $category)
+                                    <option   value="{{ $category->id }}">{{ $category->categoryName }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -43,7 +41,7 @@
                             <select class="form-select product" id="product">
                                 <option selected value="">Select Product</option>
                                 @foreach ($product as $product)
-                                    <option value="{{ $product->id }}">{{ $product->product_name }}</option>
+                                    <option  value="{{ $product->id }}">{{ $product->product_name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -52,7 +50,7 @@
 
                 </div>
 
-               <div class="card-body promotionTable" style="display: none;">
+               <div class="card-body promotionTable">
                 <form id="promotionForm">
                     <table class="table promotionTable">
                         <thead>
@@ -65,10 +63,47 @@
                             </tr>
                         </thead>
                         <tbody class="promotion-table-body">
+                           @foreach ($promotionProduct as $promotionProduct)
+                           <tr>
+                            <td>
+                                <input value="{{ $promotionProduct->promotion_id }}" type="hidden" name="promotion_id[]">
+                                {{ $promotionProduct->coupon->promotion_name??''}}
+                            </td>
+                            <td>
+                                <input value="{{ $promotionProduct->product_id }}" type="hidden" name="product_id[]">
+                                {{ $promotionProduct->product->product_name??'--'}}
+                            </td>
 
+                            <td>
+                                @php
+                                    $selectedVariants = json_decode($promotionProduct->variant_id, true) ?? [];
+                                @endphp
+                                @if($selectedVariants)
+                                <select class="form-select d-flex multiple-select" 
+                                        name="variant_id[{{ $promotionProduct->product_id }}][]" 
+                                        multiple
+                                        data-placeholder="Choose variants">
+                                    @foreach ($promotionProduct->product->variants as $variant)
+                                        <option value="{{ $variant->id }}" 
+                                            {{ in_array($variant->id, $selectedVariants) ? 'selected' : '' }}>
+                                            {{ $variant->variant_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @endif
+                            </td>
+
+                            <td>
+                                
+                            <input value="{{ $promotionProduct->category_id }}" type="hidden" name="catgory_id[]">
+                            {{ $promotionProduct->category->categoryName??'--'}}</td> 
+                            <td><button class="btn btn-danger btn-sm remove-row delete_button" data-id="{{$promotionProduct->id}}">Remove</button></td>
+                           </tr>
+                               
+                           @endforeach
                         </tbody>
                     </table>
-                    <button type="button" class="btn btn-success save_promotion" id="save-promotion">Save</button>
+                    <button type="button" class="btn btn-success edit_promotion" id="save-promotion">Save</button>
                 </form>
 
                </div>
@@ -93,6 +128,19 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
 
+
+$(document).ready(function() {
+    $('.multiple-select').each(function() {
+        $(this).select2({
+            placeholder: "Choose variants",
+            allowClear: true,
+            width: '100%'
+        });
+    });
+});
+
+
+///////////////////////////Add product variant/////////////////////////////////////
 $(document).on('change','.product', function () {
     var product_id = $('.product').val();
     var promotion_id = $('.promotion').val();
@@ -170,7 +218,7 @@ $(document).on('change','.product', function () {
 });
 
 
-
+////////////////////////add show category/////////////////////////////////////
  $(document).on('change','.category',function(){
     var category_id =$('.category').val();
     var promotion_id = $('.promotion').val();
@@ -232,8 +280,8 @@ $(document).on('click', '.remove-row', function () {
     $(this).closest('tr').remove();
 });
 
-
-  $(document).on('click','.save_promotion',function(){
+/////////////////////////////edit promotion/////////////////////////////////////
+  $(document).on('click','.edit_promotion',function(){
     let formData = new FormData($('#promotionForm')[0]);
 
     console.log(formData);
@@ -242,7 +290,7 @@ $(document).on('click', '.remove-row', function () {
     })
 
     $.ajax({
-        url: "{{ route('promotion.store') }}",
+        url: "{{ route('promotion.update') }}",
         type: "POST",
         data: formData,
         contentType: false,
@@ -251,15 +299,36 @@ $(document).on('click', '.remove-row', function () {
             if(response.status ===200){
 
                 $('#promotionForm')[0].reset();
-                $('.promotion-table-body').empty();
-                $('.promotionTable').fadeOut();
-                toastr.success('Promotion Created Successfully');
+                // $('.promotion-table-body').empty();
+                // $('.promotionTable').fadeOut();
+                location.reload();
+                toastr.success('Promotion Updated Successfully');
 
 
             }
         }
     })
   })
+
+//////////////////////////////////////////delete promotion/////////////////////////////////////
+
+$(document).on('click','.delete_button',function(){
+    let id = $(this).data('id');
+    $.ajax({
+        url: "{{ route('promotion.delete') }}",
+        type: "POST",
+        data: {
+            id: id,
+            _token: "{{ csrf_token() }}"
+        },
+        success: function(response){
+            if(response.status === 200){
+                toastr.success('Promotion Deleted Successfully');
+            }
+        }
+    });
+});
+
 
     </script>
 
