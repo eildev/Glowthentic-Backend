@@ -43,7 +43,7 @@
                             <select class="form-select product" id="product">
                                 <option selected value="">Select Product</option>
                                 @foreach ($product as $product)
-                                    <option value="{{ $product->id }}">{{ $product->product_name }}</option>
+                                    <option value="{{ $product->id }}" data-category-id="{{ $product->category_id }}">{{ $product->product_name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -93,14 +93,50 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
 
+
+
+
+
+
+///////////////////////product category selection messege show///////////////////////////
+
+
+
+
+///////////////////////////////using for checking category is selected or not////////////////////////
+var previous_category_ids = [];
+
+$(document).on('change', '.category', function () {
+    var selected_category_id = $(this).val();
+
+    if (!previous_category_ids.includes(selected_category_id)) {
+        previous_category_ids.push(selected_category_id);
+    }
+
+
+    $('.product').val('').change();
+});
+
+
+
+
 $(document).on('change','.product', function () {
     var product_id = $('.product').val();
     var promotion_id = $('.promotion').val();
+    var category_id = $('.category').val();
 
-    if (!product_id) {
-        console.log("No Product selected.");
+    var productCategory_id = $(this).find(':selected').attr('data-category-id');
+
+    console.log("Selected Product's Category ID:", productCategory_id);
+
+    if (previous_category_ids.includes(productCategory_id)) {
+        alert("This product's category is already selected!");
+        $(this).val('');
         return;
+    } else {
+        console.log("Valid selection, proceeding...");
     }
+
 
     $.ajax({
         url: "{{ route('product.promotion.add.variant') }}",
@@ -170,7 +206,7 @@ $(document).on('change','.product', function () {
 });
 
 
-
+//////////////////////////////////////////////use for getting category id//////////////////////////////////////
  $(document).on('change','.category',function(){
     var category_id =$('.category').val();
     var promotion_id = $('.promotion').val();
@@ -232,7 +268,7 @@ $(document).on('click', '.remove-row', function () {
     $(this).closest('tr').remove();
 });
 
-
+/////////////////////////////////////////save promotion///////////////////////////////
   $(document).on('click','.save_promotion',function(){
     let formData = new FormData($('#promotionForm')[0]);
 

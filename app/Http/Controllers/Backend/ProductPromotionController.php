@@ -311,5 +311,20 @@ public function variantDelete(Request $request){
     }
 }
 
-
+  public function Promotiondelete(Request $request){
+    try{
+        $promotion = ProductPromotion::where('promotion_id',$request->promotion_id)->get();
+       foreach($promotion as $promotion){
+            $promotion->delete();
+        }
+      
+        return response()->json([
+            'status'=>200,
+            'message'=>'Data Deleted Successfully'
+        ]);
+    }
+    catch (Exception $e) {
+        return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
+    }
+}
 }
