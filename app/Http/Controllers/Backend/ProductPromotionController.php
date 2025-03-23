@@ -16,11 +16,12 @@ class ProductPromotionController extends Controller
 
     public function index()
     {
-        $productPromotion = ProductPromotion::with(['product', 'coupon','category'])->get();
+        $productPromotion = ProductPromotion::with(['product', 'coupon', 'category'])
+            ->get()
+            ->groupBy('promotion_id');
 
         return view('backend.promotionProduct.index', compact('productPromotion'));
     }
-
 
     public function create(){
         $product = Product::where('status', 1)->get();
@@ -43,29 +44,7 @@ class ProductPromotionController extends Controller
 
     public function store(Request $request){
 
-        //   dd($request->all());
-        // $validator = Validator::make($request->all(), [
-        //     'product_id' => 'required',
-        //     'promotion_id' => 'required',
-        // ]);
-        // if ($validator->fails()) {
-        //     return response()->json(['errors' => $validator->errors()], 422);
-        // }
-        // try{
-        //      $product = new ProductPromotion();
-        //     $product->product_id = $request->product_id;
-        //     $product->promotion_id = $request->promotion_id;
-        //     $product->variant_id = $request->variant_id;
-        //     $product->save();
 
-        //     return response()->json([
-        //         'status'=>200,
-        //         'message'=>'Data Saved Successfully'
-        //     ]);
-        // }
-        // catch (Exception $e) {
-        //     return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
-        // }
 
         try{
             if ($request->product_id) {
@@ -123,7 +102,7 @@ class ProductPromotionController extends Controller
 
     public function edit($id){
 
-        $promotionProduct = ProductPromotion::with('category','product')->find($id);
+        $promotionProduct = ProductPromotion::with('category','product')->where('id',$id)->get();
         // dd($promotionProduct);
         $product = Product::where('status', 1)->get();
         $categories=Category::where('status', 1)->get();

@@ -6,7 +6,7 @@
 
                 <div class="card-body">
                     <div class="card-title d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0 text-info">Add Product Promottion</h5>
+                        <h5 class="mb-0 text-info">Edit Product Promottion</h5>
                     </div>
                     <hr>
                     <div class="row mb-3">
@@ -17,7 +17,7 @@
 
                             @foreach ($promotion as $promo)
 
-                                    <option  {{$promotionProduct->promotion_id==$promo->id?'selected':'' }} value="{{ $promo->id }}">{{ $promo->promotion_name }}</option>
+                                    <option  {{$promotionProduct->first()->promotion_id==$promo->id?'selected':'' }} value="{{ $promo->id }}">{{ $promo->promotion_name }}</option>
 
                             @endforeach
 
@@ -28,7 +28,7 @@
                             <select class="form-select category" id="category">
                                 <option selected value="">Select Category</option>
                                 @foreach ($categories as $category)
-                                    <option  {{$promotionProduct->category_id==$category->id?'selected':'' }}    value="{{ $category->id }}">{{ $category->categoryName }}</option>
+                                    <option  value="{{ $category->id }}">{{ $category->categoryName }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -41,7 +41,7 @@
                             <select class="form-select product" id="product">
                                 <option selected value="">Select Product</option>
                                 @foreach ($product as $product)
-                                    <option  {{$promotionProduct->product_id==$product->id?'selected':'' }} value="{{ $product->id }}">{{ $product->product_name }}</option>
+                                    <option  value="{{ $product->id }}">{{ $product->product_name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -50,7 +50,7 @@
 
                 </div>
 
-               <div class="card-body promotionTable" style="display: none;">
+               <div class="card-body promotionTable" >
                 <form id="promotionForm">
                     <table class="table promotionTable">
                         <thead>
@@ -64,7 +64,20 @@
                         </thead>
                         <tbody class="promotion-table-body">
                            @foreach ($promotionProduct as $promotionProduct)
+                             <tr>
+                                 <td>
+                                    <input value="{{ $promotionProduct->first()->promotion_id }}" type="hidden" name="promotion_id[]">
+                                     @php
+                                         $promotion = App\Models\Coupon::find($promotionProduct->first()->promotion_id);
+                                     @endphp
+                                     {{ $promotion->promotion_name }}
+                                 </td>
+                                 <td>
+                                    <input value="{{ $promotionProduct->product}}" type="hidden" name="product_id[]">
+                                    {{ $promotionProduct->product->product_name }}
 
+                                 </td>
+                             </tr>
                            @endforeach
                         </tbody>
                     </table>

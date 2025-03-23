@@ -27,13 +27,15 @@
                                 </tr>
                             </thead>
                             <tbody id="">
-                                @foreach ($productPromotion as $key => $promotionProduct)
+                                @foreach ($productPromotion as $key => $promotionGroup)
+                                @php
+                                    $promotionProduct = $promotionGroup->first(); // Get the first item in the group
+                                @endphp
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
 
-                                    <td>{{ $promotionProduct->coupon->promotion_name }}</td>
+                                    <td>{{ $promotionProduct->coupon->promotion_name ?? 'N/A' }}</td>
 
-                                  
                                     <td>
                                         <div class="dropdown">
                                             <button class="btn btn-sm btn-info dropdown-toggle" type="button"
@@ -49,7 +51,8 @@
                                         </div>
                                     </td>
                                 </tr>
-                                @endforeach
+                            @endforeach
+
                             </tbody>
 
                         </table>
