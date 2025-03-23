@@ -34,7 +34,7 @@
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
 
-                                    <td>{{ $promotionProduct->coupon->promotion_name ?? 'N/A' }}</td>
+                                    <td><a href="{{ route('product.promotion.view',$promotionProduct->promotion_id ) }}">{{ $promotionProduct->coupon->promotion_name ?? 'N/A' }}</a></td>
 
                                     <td>
                                         <div class="dropdown">

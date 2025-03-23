@@ -21,7 +21,7 @@ class CouponController extends Controller
                 'is_global' => 'required|boolean',
                 'start_date' => 'required',
                 'promotion_name'=>'required',
-                'end_date' => 'required',
+                'end_date' => 'required|date|after_or_equal:today',
                 'discount_type' => 'required',
                 'discount_value' => 'required',
             ]);
@@ -90,7 +90,7 @@ class CouponController extends Controller
                 'is_global' => 'required|boolean',
                 'promotion_name'=>'required',
                 'start_date' => 'required',
-                'end_date' => 'required',
+                'end_date' => 'required|date|after_or_equal:today',
                 'discount_type' => 'required',
                 'discount_value' => 'required',
             ]);
@@ -109,6 +109,7 @@ class CouponController extends Controller
             $coupon->type = $request->type;
             $coupon->is_global = $request->is_global;
             $coupon->start_date = $request->start_date;
+            $coupon->status = $request->status;
             $coupon->end_date = $request->end_date;
             $coupon->save();
 

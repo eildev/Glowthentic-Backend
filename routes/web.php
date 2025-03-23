@@ -251,6 +251,7 @@ Route::middleware('auth')->group(function () {
         Route::get('admin/product/promotion/edit/{id}', 'edit')->name('admin.product.promotion.edit');
         Route::post('/product/promotion/variant/delete/', 'variantDelete')->name('promotion.variant.delete');
         Route::post('promotion/delete','Promotiondelete')->name('promotion.delete');
+         Route::get('product.promotion.view','PromotionView')->name('product.promotion.view');
 
         Route::post('/product/promotion/status/{id}', 'statusUpdate')->name('product.promotion.status');
         Route::get('/get/product/and/promotion', 'getProductPromotion');
