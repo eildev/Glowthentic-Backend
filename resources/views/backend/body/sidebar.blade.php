@@ -116,7 +116,7 @@
                         </li> --}}
                     </ul>
                 </li>
-            
+
 
                 <li>
                     <a href="javascript:;" class="has-arrow">
@@ -347,6 +347,25 @@
                     <li> <a href="{{ route('offerbanner.view') }}"><i class="bx bx-right-arrow-alt"></i>Manage
                             Banner</a>
                     </li>
+                </ul>
+            </li>
+
+
+
+           {{-- courier --}}
+            <li>
+                <a href="javascript:;" class="has-arrow">
+                    <div class="parent-icon">
+                        <i class='bx bx-image-alt'></i>
+                    </div>
+                    <div class="menu-title">Courier </div>
+                </a>
+                <ul>
+                    <li> <a href="{{ route('Courier.steadfast') }}"><i class="bx bx-right-arrow-alt"></i>SteadFast</a>
+                    </li>
+                    {{-- <li> <a href="{{ route('offerbanner.view') }}"><i class="bx bx-right-arrow-alt"></i>Manage
+                            Banner</a>
+                    </li> --}}
                 </ul>
             </li>
             {{-- Subscriber list  --}}

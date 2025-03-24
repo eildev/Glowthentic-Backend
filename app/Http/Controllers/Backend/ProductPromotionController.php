@@ -317,7 +317,7 @@ public function variantDelete(Request $request){
        foreach($promotion as $promotion){
             $promotion->delete();
         }
-      
+
         return response()->json([
             'status'=>200,
             'message'=>'Data Deleted Successfully'
@@ -327,4 +327,12 @@ public function variantDelete(Request $request){
         return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
     }
 }
+
+
+   public function PromotionView($promotion_id){
+    $promotionProduct = ProductPromotion::with('category','product','coupon')->where('promotion_id',$promotion_id)->get();
+
+    return view('backend.promotionProduct.view',compact('promotionProduct'));
+
+   }
 }
