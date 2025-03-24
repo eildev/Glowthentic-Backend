@@ -353,15 +353,18 @@
 
 
            {{-- courier --}}
-            <li>
+          
+
+             {{-- courier --}}
+             <li>
                 <a href="javascript:;" class="has-arrow">
                     <div class="parent-icon">
                         <i class='bx bx-image-alt'></i>
                     </div>
-                    <div class="menu-title">Courier </div>
+                    <div class="menu-title">Courier Manage</div>
                 </a>
                 <ul>
-                    <li> <a href="{{ route('Courier.steadfast') }}"><i class="bx bx-right-arrow-alt"></i>SteadFast</a>
+                    <li> <a href="{{ route('Courier.Manage.steadfast.order') }}"><i class="bx bx-right-arrow-alt"></i>Steadfast Order</a>
                     </li>
                     {{-- <li> <a href="{{ route('offerbanner.view') }}"><i class="bx bx-right-arrow-alt"></i>Manage
                             Banner</a>

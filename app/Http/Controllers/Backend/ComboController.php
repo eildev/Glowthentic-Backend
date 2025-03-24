@@ -39,8 +39,8 @@ class ComboController extends Controller
                 // $file->move($path,$filename);
 
                 $destinationPath = public_path('uploads/combo/image/');
-                $filename = time() . '_' . uniqid() . '.' . $galleryImage->extension();
-                $imageName = $imageService->resizeAndOptimize($galleryImage, $destinationPath,$filename);
+                $filename = time() . '_' . uniqid() . '.' . $image->extension();
+                $imageName = $imageService->resizeAndOptimize($image, $destinationPath,$filename);
                 $image='uploads/combo/image/'.$imageName;
 
                 $combo_image = new ComboImageGallery();
@@ -85,8 +85,8 @@ class ComboController extends Controller
         if($request->hasFile('image')){
             foreach($request->file('image') as $image){
                 $destinationPath = public_path('uploads/combo/image/');
-                $filename = time() . '_' . uniqid() . '.' . $galleryImage->extension();
-                $imageName = $imageService->resizeAndOptimize($galleryImage, $destinationPath,$filename);
+                $filename = time() . '_' . uniqid() . '.' . $image->extension();
+                $imageName = $imageService->resizeAndOptimize($image, $destinationPath,$filename);
                 $image='uploads/combo/image/'.$imageName;
 
                 $combo_image = new ComboImageGallery();

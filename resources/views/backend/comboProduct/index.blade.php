@@ -188,6 +188,63 @@
     <script>
 
 
+
+
+////////////////////////function validate////////////////////////////
+
+
+function validateForm() {
+
+    $(".error-message").remove();
+    $("input, select").removeClass("is-invalid");
+
+    let isValid = true;
+
+    var product_id  = $("select[name='product_id']").val();
+    var combo_id = $("select[name='combo_id']").val();
+    let quantity = $("input[name='quantity']").val().trim();
+
+    if (product_id === "" || product_id == null) {
+        $("select[name='product_id']").addClass("is-invalid")
+            .parent().append('<span class="text-danger error-message">Please select a Product</span>');
+        isValid = false;
+    }
+
+    if (combo_id === "" || combo_id == null) {
+        $("select[name='combo_id']").addClass("is-invalid")
+            .parent().append('<span class="text-danger error-message">Please select a Combo Name</span>');
+        isValid = false;
+    }
+
+    if (quantity === "") {
+        $("input[name='quantity']").addClass("is-invalid")
+            .after('<span class="text-danger error-message">Quantity is required</span>');
+        isValid = false;
+    }
+
+    return isValid;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 $(document).on("change","#product_id_variant",function(){
     let product_id = $(this).val();
 
@@ -243,6 +300,9 @@ $(document).on("change","#product_id_variant",function(){
 
 
    $(document).on('click', '.save_combo_product', function() {
+
+
+    if (!validateForm()) return;
     let formData = new FormData($('#ComboProductAddForm')[0]);
 
     function saveComboProduct(forceSave = false) {

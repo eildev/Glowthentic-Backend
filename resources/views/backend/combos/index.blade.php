@@ -110,7 +110,56 @@
 
     <script>
 
+
+
+         ///////////////////////validation//////////////////////
+
+
+
+ function validateForm() {
+    $(".error-message").remove();
+    $("input, select").removeClass("is-invalid");
+
+    let isValid = true;
+
+    let ComboName = $("input[name='combo_name']").val().trim();
+    let ComboPrice = $("input[name='combo_price']").val().trim();
+    let imageCount = $("input[name='image[]']").get(0).files.length; // Get selected files
+
+    if (ComboName === "") {
+        $("input[name='combo_name']").addClass("is-invalid")
+            .after('<span class="text-danger error-message">Combo name is required</span>');
+        isValid = false;
+    }
+
+    if (ComboPrice === "") {
+        $("input[name='combo_price']").addClass("is-invalid")
+            .after('<span class="text-danger error-message">Combo Price is required</span>');
+        isValid = false;
+    }
+
+    if (imageCount === 0) { // Check if any image is selected
+        $("input[name='image[]']").addClass("is-invalid")
+            .after('<span class="text-danger error-message">Please select at least one image</span>');
+        isValid = false;
+    }
+
+    return isValid;
+}
+
+
+
+
+
+
+
+
+
+
         $(document).on('click', '.save_combo', function() {
+
+
+            if (!validateForm()) return;
             let formData = new FormData($('#comboAddForm')[0]);
 
 
@@ -151,6 +200,9 @@
 
         // update combo
         $(document).on('click', '.update_combo', function () {
+
+
+            // if (!validateForm()) return;
                 let formData= new FormData($('#comboUpdateForm')[0])
 
                 $.ajaxSetup({

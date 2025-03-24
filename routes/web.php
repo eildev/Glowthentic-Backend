@@ -276,6 +276,8 @@ Route::middleware('auth')->group(function () {
   Route::controller(CourierController::class)->group(function(){
    Route::get('steadFast/courier', 'steadfast')->name('Courier.steadfast');
    Route::post('steadFast/courier/store', 'steadfastSend')->name('steadfast.send');
+   Route::get('Courier/Manage/steadfast/order','All')->name('Courier.Manage.steadfast.order');
+
   });
 
     //All Routes for Global Coupons Start

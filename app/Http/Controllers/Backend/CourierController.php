@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use App\Models\DeliveryOrder;
 use Illuminate\Support\Facades\Validator;
 class CourierController extends Controller
 {
@@ -63,5 +64,47 @@ class CourierController extends Controller
     //   dd($responseData);
 
     }
+
+
+     public function All(){
+        $steadfastData =DeliveryOrder::where('courier_service','SteadFast')->get();
+
+        foreach ($steadfastData as $SteadFast) {
+
+            if ($SteadFast->tracking_number) {
+                $endPoint = "https://portal.packzy.com/api/v1/status_by_trackingcode/{$SteadFast->tracking_number}";
+
+                $appKey = "lgx16toeschl9fmulen1rwbdqfluhrin";
+                $secretKey = "kswetbgjpcuz7nwbqgj4vp8z";
+
+                $header = [
+                    'Api-Key' => $appKey,
+                    'Secret-Key' => $secretKey,
+                    'Content-Type' => 'application/json'
+                ];
+
+
+                $response = Http::withHeaders($header)->get($endPoint);
+
+                $responseData=$response->json();
+
+                 if($responseData['status'] == 200){
+                    $steadfastStatus=DeliveryOrder::find($SteadFast->id);
+                    $steadfastStatus->status = $responseData['delivery_status'];
+                    $steadfastStatus->save();
+                 }
+
+            }
+        }
+
+        $SteadfastStatus=DeliveryOrder::where('courier_service','SteadFast')->with('order')->get();
+
+        $pendingStatus=DeliveryOrder::where('status','pending')->with('order')->get();
+        $ApprovelStatus=DeliveryOrder::where('status','approval')->with('order')->get();
+        $cancelStatus=DeliveryOrder::where('status','cancelled')->with('order')->get();
+        $deliveredStatus=DeliveryOrder::where('status','delivered')->with('order')->get();
+        return view('backend.CourierManage.all',compact('SteadfastStatus','pendingStatus','ApprovelStatus','cancelStatus','deliveredStatus'));
+     }
+
     }
 
