@@ -28,6 +28,7 @@ class HomeBannerController extends Controller
             'link' => 'required|max:200',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
+        // dd($validator)->all();
 
         // dd($validator->errors());
         if ($validator->fails()) {
