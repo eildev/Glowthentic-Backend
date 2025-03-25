@@ -54,4 +54,8 @@ class User extends Authenticatable
     public function billingInfo(){
         return $this->hasMany(BillingInformation::class,'user_id','id');
     }
+
+    public function reviewRating(){
+        return $this->hasMany(ReviewRating::class,'user_id','id');
+    }
 }

@@ -35,6 +35,7 @@ use App\Http\Controllers\Backend\ProductPromotionController;
 use App\Http\Controllers\Backend\ProductStockManageController;
 use App\Http\Controllers\Backend\DeliverOrderAssignController;
 use App\Http\Controllers\Backend\FeatureController;
+use App\Http\Controllers\Backend\CourierController;
 
 // Route::get('/home', function () {
 //     return view('frontend.index');
@@ -244,14 +245,15 @@ Route::middleware('auth')->group(function () {
 
         Route::post('/promotion/product/store', 'store')->name('promotion.store');
         Route::post('product/promotion/add/variant', 'productPromotionVariantShow')->name('product.promotion.add.variant');
-       Route::post('promotion/update','update')->name('promotion.update');                               
+       Route::post('promotion/update','update')->name('promotion.update');
        Route::post('/promotion/product/delete/', 'delete')->name('promotion.delete');
-      
+
         Route::post('product/promotion/add/category', 'productPromotionCategoryShow')->name('product.promotion.add.category');
         Route::get('admin/product/promotion/edit/{id}', 'edit')->name('admin.product.promotion.edit');
+        Route::post('/product/promotion/variant/delete/', 'variantDelete')->name('promotion.variant.delete');
+        Route::post('promotion/delete','Promotiondelete')->name('promotion.delete');
+         Route::get('product/promotion/view/{promotion_id}','PromotionView')->name('product.promotion.view');
 
-
-  
         Route::post('/product/promotion/status/{id}', 'statusUpdate')->name('product.promotion.status');
         Route::get('/get/product/and/promotion', 'getProductPromotion');
         Route::post('/get/product/variant', 'getProductPromotionVariant');
@@ -271,7 +273,12 @@ Route::middleware('auth')->group(function () {
 
 
 
+  Route::controller(CourierController::class)->group(function(){
+   Route::get('steadFast/courier', 'steadfast')->name('Courier.steadfast');
+   Route::post('steadFast/courier/store', 'steadfastSend')->name('steadfast.send');
+   Route::get('Courier/Manage/steadfast/order','All')->name('Courier.Manage.steadfast.order');
 
+  });
 
     //All Routes for Global Coupons Start
     Route::controller(GlobalCouponController::class)->group(function () {
@@ -308,6 +315,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/order/canceled-orders', 'canceledOrders')->name('order.canceled');
         Route::post('/order/send-sms', 'SendSMS')->name('send.sms');
 
+        Route::post('admin/order/get-order-details', 'getOrderDetails')->name('get.order.details');
 
         Route::get('/order/detailed-orders/{order_id}', 'DetailOrders')->name('order.details');
         // Route::post('/order/send-sms', 'SendSMS')->name('send.sms');

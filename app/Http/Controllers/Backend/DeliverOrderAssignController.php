@@ -54,7 +54,7 @@ class DeliverOrderAssignController extends Controller
 
                $invoice = $request->invoice;
                $recipient_name = $request->recipient_name;
-               $recipient_phone = $request->recipient_phone;
+               $recipient_phone = '0' . $request->recipient_phone;;
                $cod_amount = $request->cod_amount;
                $recipient_address = $request->recipient_address;
                $note = $request->note;
@@ -76,9 +76,22 @@ class DeliverOrderAssignController extends Controller
                ];
 
               $response=Http::withHeaders($header)->post($endPoint,$data);
-            //   dump($response->json());
+              $responseData = $response->json();
+            //   dump($responseData);
 
-            //   dd($responseData);
+            if($responseData['status']==200){
+
+                $deliver_order_assign->tracking_number = $responseData['consignment']['tracking_code'];
+                $deliver_order_assign->status = $responseData['consignment']['status'];
+                // $deliver_order_assign->tracking_url = $responseData['data']['tracking_url'];
+            }
+            else{
+                return response()->json([
+                    'status'=>400,
+                    'message'=>'SteadFast Courier Service Failed',
+                ]);
+
+            }
 
             }
             $deliver_order_assign->assign_to = $request->assign_to;

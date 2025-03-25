@@ -41,7 +41,8 @@ class ApiProductController extends Controller
                 'variants.variantImage',
                 'variants.product',
                 'variants.productStock',
-                'variants.promotionproduct',
+                // 'variants.promotionproduct',
+                'variants.productVariantPromotion.coupon',
                 'variants.comboProduct',
                 'product_tags.tag',
                 'productStock',
@@ -148,6 +149,7 @@ class ApiProductController extends Controller
                 'variants.product',
                 'variants.productStock',
                 // 'variants.promotionproduct.coupon',
+                'variants.productVariantPromotion.coupon',
                 'variants.comboProduct',
                 'product_tags',
                 'productStock',
@@ -171,16 +173,19 @@ class ApiProductController extends Controller
     public function show($slug)
     {
         try {
-            $products = Product::with( 'variants.variantImage',
-            'variants.product',
-            'variants.productStock',
-            'variants.promotions.coupon',
-            'variants.comboProduct',
-            'product_tags',
-            'productStock',
-            'productdetails','variantImage')->where('slug', $slug)->first();
-         // Debug to check variants and their promotions
-    
+            $products = Product::with(
+                'variants.variantImage',
+                'variants.product',
+                'variants.productStock',
+                'variants.productVariantPromotion.coupon',
+                'variants.comboProduct',
+                'product_tags',
+                'productStock',
+                'productdetails',
+                'variantImage'
+            )->where('slug', $slug)->first();
+            // Debug to check variants and their promotions
+
             return response()->json([
                 'status' => '200',
                 'message' => 'Product Search',

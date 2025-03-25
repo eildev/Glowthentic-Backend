@@ -294,12 +294,22 @@ class ApiOrderController extends Controller
     {
         try {
             $order = Order::where('user_id', $user_idOrSesssion_id)->orWhere('session_id', $user_idOrSesssion_id)->get();
+
             $ongoing_order = [];
             foreach ($order as $order_data) {
-                if ($order_data->status === "Delivering") {
+
+                if($order_data->status != "Delivering"){
+                    continue;
+                }
+                if ($order_data->status == "Delivering") {
+
                     $ongoing_order[] = $order_data;
-                } else {
+
+                }
+
+                else {
                     $delivered_order = DeliveryOrder::where('order_id', $order_data->id)->first();
+
                     if ($delivered_order->delivery_status != "delivered") {
                         $ongoing_order[] = $order_data;
                     }

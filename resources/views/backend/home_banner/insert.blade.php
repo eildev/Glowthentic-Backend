@@ -7,28 +7,9 @@
 
                 <p>{{ session('test') }}</p>
                 <div class="card border-top border-0 border-3 border-info">
-                                      
+
                     <form action="{{ route('banner.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
-<<<<<<< HEAD
-
-
-
-
-
-                        @if ($errors->any())
-                        <div class="alert alert-danger">
-                            <ul>
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
-
-
-=======
->>>>>>> 8c7a522b0fc88d97b9cd90d336e9a362a534f81b
                         <div class="card-body">
                             <div class="border p-4 rounded">
 

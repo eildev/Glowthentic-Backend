@@ -6,7 +6,7 @@
 
                 <div class="card-body">
                     <div class="card-title d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0 text-info">Add Product Promottion</h5>
+                        <h5 class="mb-0 text-info">Edit Product Promottion</h5>
                     </div>
                     <hr>
                     <div class="row mb-3">
@@ -41,7 +41,7 @@
                             <select class="form-select product" id="product">
                                 <option selected value="">Select Product</option>
                                 @foreach ($product as $product)
-                                    <option  value="{{ $product->id }}">{{ $product->product_name }}</option>
+                                    <option  value="{{ $product->id }}" data-category-id="{{ $product->category_id }}">{{ $product->product_name }},({{$product->category->categoryName}})</option>
                                 @endforeach
                             </select>
                         </div>
@@ -76,34 +76,37 @@
 
                             <td>
                                 @php
-                                    $selectedVariants = json_decode($promotionProduct->variant_id, true) ?? [];
+                                    $selectedVariants = App\Models\VariantPromotion::where('product_id', $promotionProduct->product_id)
+                                        ->pluck('variant_id')->toArray();
                                 @endphp
                                 @if($selectedVariants)
-                                <select class="form-select d-flex multiple-select" 
-                                        name="variant_id[{{ $promotionProduct->product_id }}][]" 
-                                        multiple
-                                        data-placeholder="Choose variants">
-                                    @foreach ($promotionProduct->product->variants as $variant)
-                                        <option value="{{ $variant->id }}" 
-                                            {{ in_array($variant->id, $selectedVariants) ? 'selected' : '' }}>
-                                            {{ $variant->variant_name }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                                    <select class="form-select d-flex multiple-select variant-select"
+                                            name="variant_id[{{ $promotionProduct->product_id }}][]"
+                                            multiple
+                                            data-product-id="{{ $promotionProduct->product_id }}"
+                                            data-placeholder="Choose variants">
+                                        @foreach ($promotionProduct->product->variants as $variant)
+                                            <option value="{{ $variant->id }}"
+                                                {{ in_array($variant->id, $selectedVariants) ? 'selected' : '' }}>
+                                                {{ $variant->variant_name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
                                 @endif
                             </td>
 
+
                             <td>
-                                
+
                             <input value="{{ $promotionProduct->category_id }}" type="hidden" name="catgory_id[]">
-                            {{ $promotionProduct->category->categoryName??'--'}}</td> 
+                            {{ $promotionProduct->category->categoryName??'--'}}</td>
                             <td><button class="btn btn-danger btn-sm remove-row delete_button" data-id="{{$promotionProduct->id}}">Remove</button></td>
                            </tr>
-                               
+
                            @endforeach
                         </tbody>
                     </table>
-                    <button type="button" class="btn btn-success edit_promotion" id="save-promotion">Save</button>
+                    <button type="button" class="btn btn-success edit_promotion" id="save-promotion">Update</button>
                 </form>
 
                </div>
@@ -129,6 +132,46 @@
     <script>
 
 
+
+///////////////////////////////////////////////variant delete///////////////////////////////////////////
+
+
+$(document).ready(function () {
+        $(".variant-select").on("change", function () {
+            let productId = $(this).data("product-id");
+            let selectedVariants = $(this).val() || []; // Get selected variants
+            let allVariants = $(this).find("option").map(function () { return this.value; }).get();
+
+            // Find removed variants
+            let removedVariants = allVariants.filter(v => !selectedVariants.includes(v));
+
+            removedVariants.forEach(variantId => {
+                $.ajax({
+                    url: "{{ route('promotion.variant.delete') }}",
+                    type: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        product_id: productId,
+                        variant_id: variantId
+                    },
+                    success: function (response) {
+                        if (response.status==200) {
+                            toastr.success(" Variant deleted successfully.");
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+
+                });
+            });
+        });
+    });
+
+
+
+
+
+
 $(document).ready(function() {
     $('.multiple-select').each(function() {
         $(this).select2({
@@ -141,9 +184,50 @@ $(document).ready(function() {
 
 
 ///////////////////////////Add product variant/////////////////////////////////////
+
+
+///////////////////////////////using for checking category is selected or not////////////////////////
+var previous_category_ids = [];
+
+$(document).on('change', '.category', function () {
+    var selected_category_id = $(this).val();
+
+    if (!previous_category_ids.includes(selected_category_id)) {
+        previous_category_ids.push(selected_category_id);
+    }
+
+
+    $('.product').val('').change();
+});
+
+
+
+
+
+
+
 $(document).on('change','.product', function () {
     var product_id = $('.product').val();
     var promotion_id = $('.promotion').val();
+
+
+
+    var category_id = $('.category').val();
+
+        var productCategory_id = $(this).find(':selected').attr('data-category-id');
+
+        console.log("Selected Product's Category ID:", productCategory_id);
+
+        if (previous_category_ids.includes(productCategory_id)) {
+            alert("This product's category is already selected!");
+            $(this).val('');
+            return;
+        } else {
+            console.log("Valid selection, proceeding...");
+        }
+
+
+
 
     if (!product_id) {
         console.log("No Product selected.");

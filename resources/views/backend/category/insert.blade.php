@@ -213,9 +213,53 @@
         });
 
 
+
+
+
+function validateCategoryForm() {
+    $(".error-message").remove();
+    $("input, select").removeClass("is-invalid");
+
+    let isValid = true;
+
+    // Get form values
+    let categoryName = $("input[name='categoryName']").val().trim();
+    let image = $("input[name='image']").val();
+
+    // Validation rules
+    if (categoryName === "") {
+        $("input[name='categoryName']").addClass("is-invalid")
+            .after('<span class="text-danger error-message">Category name is required</span>');
+        isValid = false;
+    }
+
+    if (image) { // Check only if an image is provided
+        let fileExt = image.split('.').pop().toLowerCase();
+        let allowedExt = ["jpg", "jpeg", "png",'gif'];
+        if (!allowedExt.includes(fileExt)) {
+            $("input[name='image']").addClass("is-invalid")
+                .after('<span class="text-danger error-message">Only JPG, JPEG, PNG files are allowed</span>');
+            isValid = false;
+        }
+    }
+
+    return isValid; // Return true if valid, false otherwise
+}
+
+
+
+validateCategoryForm();
+
+
+
+
         //Add Category
         $(document).on('click', '.save_category', function(e) {
             e.preventDefault();
+
+
+            if (!validateCategoryForm()) return;
+
 
             let formData = new FormData($('#AddCategoryForm')[0]);
 
@@ -260,6 +304,12 @@
 
         //edit category
         $(document).on('click', '.Edit_category', function() {
+
+
+            if (!validateCategoryForm()) return;
+
+
+
             let formData = new FormData($('#EditCategoryForm')[0]);
             $.ajaxSetup({
                 headers: {

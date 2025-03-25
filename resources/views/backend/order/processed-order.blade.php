@@ -60,7 +60,8 @@
                                                Assign Order
                                             </a>
                                                 <a href="{{ route('order.details', $order->id) }}" class="btn btn-sm btn-success">View</a>
-                                                <a href="#" class="btn btn-sm btn-danger" id="delete">Cancel</a>
+                                                <a href="{{ route('admin.denied.order', $order->invoice_number) }}"
+                                                    class="btn btn-sm btn-danger" id="delete">Cancel</a>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -95,7 +96,7 @@
                             <div class="border p-4 rounded">
                                 <hr>
 
-                              <input type="hidden" class="order_id" name="order_id">
+                              <input type="hidden" class="order_id" name="order_id" id="order_id">
                                 <!-- Discount Type -->
                                 <div class="row mb-3">
                                     <label class="col-sm-3 col-form-label">Assign To</label>
@@ -125,7 +126,7 @@
                                     <div class="col-sm-9">
                                         <select name="courier_service" class="form-select courier_service" required >
                                             <option value="">Choose...</option>
-                                            <option value="SteadFast">Stead Fast</option>
+                                            <option value="SteadFast" >Stead Fast</option>
                                             <option value="Pathao">Pathao</option>
                                         </select>
                                     </div>
@@ -139,34 +140,34 @@
                                         <div class="row mb-3" id="" style="">
                                             <label class="col-sm-3 col-form-label">Invoice Number</label>
                                             <div class="col-sm-9">
-                                               <input type="text" class="form-control" name="invoice" placeholder="Invoice Number" >
+                                               <input type="text" class="form-control" name="invoice" placeholder="Invoice Number" id="invoice_number">
                                             </div>
                                         </div>
 
                                         <div class="row mb-3" id="" style="">
                                             <label class="col-sm-3 col-form-label">Recipent Name</label>
                                             <div class="col-sm-9">
-                                               <input type="text" class="form-control" name="recipient_name" placeholder="Enter Recipent Name">
+                                               <input type="text" class="form-control" name="recipient_name" placeholder="Enter Recipent Name" id="recipient_name">
                                             </div>
                                         </div>
 
                                         <div class="row mb-3" id="" style="">
                                             <label class="col-sm-3 col-form-label">Recipient Phone No:</label>
                                             <div class="col-sm-9">
-                                               <input type="text" class="form-control" name="recipient_phone" placeholder="Enter Recipent Phone No">
+                                               <input type="text" class="form-control" name="recipient_phone" placeholder="Enter Recipent Phone No" id="recipient_phone">
                                             </div>
                                         </div>
                                         <div class="row mb-3" id="" style="">
                                             <label class="col-sm-3 col-form-label">COD Amount</label>
                                             <div class="col-sm-9">
-                                               <input type="text" class="form-control" name="cod_amount" placeholder="Enter COD Amount">
+                                               <input type="text" class="form-control" name="cod_amount" placeholder="Enter COD Amount" id="cod_amount">
                                             </div>
                                         </div>
 
                                         <div class="row mb-3" id="" style="">
                                             <label class="col-sm-3 col-form-label">Receipent Address</label>
                                             <div class="col-sm-9">
-                                               <textarea cols="5" rows="5" type="text" class="form-control" name="recipient_address" placeholder="Enter Recipent Address"></textarea>
+                                               <textarea cols="5" rows="5" type="text" class="form-control" name="recipient_address" placeholder="Enter Recipent Address" id="recipient_address"></textarea>
                                             </div>
                                         </div>
 
@@ -217,6 +218,7 @@
                 contentType: false,
                 success:function(response){
                     if(response.status == 200){
+
                         $('#deliverAssignForm')[0].reset();
                         $('#orderAssign').modal('hide');
                         toastr.success("Order Assign Successfully");
@@ -268,7 +270,27 @@
 
         $(document).on('click','.send_data_id',function(){
             let order_id = $(this).data('id');
-            $('.order_id').val(order_id);
+            // $('.order_id').val(order_id);
+
+            $.ajax({
+                url:"{{url('admin/order/get-order-details')}}",
+                type:"POST",
+                data:{
+                    _token:"{{csrf_token()}}",
+                    order_id:order_id
+                },
+                success:function(response){
+                    if(response.status == 200){
+                        $('#order_id').val(response.order.id);
+                        $('#invoice_number').val(response.order.invoice_number);
+                        $('#cod_amount').val(response.order.grand_total);
+                        $('#recipient_name').val(response.userInfo.full_name);
+                        $('#recipient_phone').val(response.userInfo.phone_number);
+                        $('#recipient_address').val(response.userInfo.address);
+
+                    }
+                }
+            });
         });
 
 

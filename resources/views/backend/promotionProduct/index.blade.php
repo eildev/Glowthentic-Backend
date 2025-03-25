@@ -27,13 +27,15 @@
                                 </tr>
                             </thead>
                             <tbody id="">
-                                @foreach ($productPromotion as $key => $promotionProduct)
+                                @foreach ($productPromotion as $key => $promotionGroup)
+                                @php
+                                    $promotionProduct = $promotionGroup->first(); // Get the first item in the group
+                                @endphp
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
 
-                                    <td>{{ $promotionProduct->coupon->promotion_name }}</td>
+                                    <td><a href="{{ route('product.promotion.view',$promotionProduct->promotion_id ) }}" class="text-dark">{{ $promotionProduct->coupon->promotion_name ?? 'N/A' }}</a></td>
 
-                                  
                                     <td>
                                         <div class="dropdown">
                                             <button class="btn btn-sm btn-info dropdown-toggle" type="button"
@@ -44,12 +46,13 @@
                                                         Edit
                                                     </a>
                                                 </li>
-                                                <li><a href="#" class="dropdown-item delete">Delete</a></li>
+                                                <li><a href="#" class="dropdown-item delete" data-id={{$promotionProduct->promotion_id}}>Delete</a></li>
                                             </ul>
                                         </div>
                                     </td>
                                 </tr>
-                                @endforeach
+                            @endforeach
+
                             </tbody>
 
                         </table>
@@ -70,253 +73,36 @@
 
     <script>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-  $(document).on("change","#product_id_variant",function(){
-    let product_id = $(this).val();
-
-    $.ajax({
-        url:'/get/product/variant',
-        type:'POST',
-        data:{product_id:product_id,
-            _token: "{{ csrf_token() }}"
-        },
-        success:function(response){
-             let variant = response.variant;
-             let variantOption =``;
-              variant.forEach(variant=>{
-                variantOption += `<option value="${variant.id}">${variant.variant_name}</option>`;
-                });
-                $('.variant').html(variantOption);
-        }
-    });
-  });
-
-
-
-
-   $(document).on("click",".get_product_and_promotion",function(){
-
-      $.ajax({
-         url:'/get/product/and/promotion',
-         type:'GET',
-         success:function(response){
-            console.log(response);
-            let products = response.product;
-            let promotion = response.promotion;
-
-             let productOption =`<option selected disabled>Choose...</option>`;
-             let promotionOption =`<option selected disabled>Choose...</option>`;
-
-            products.forEach(products=>{
-                productOption += `<option value="${products.id}">${products.product_name}</option>`;
-            });
-
-            promotion.forEach(promotion=>{
-                promotionOption += `<option value="${promotion.id}">${promotion.promotion_name}</option>`;
-            });
-
-
-            $('.products').html(productOption);
-            $('.promotion').html(promotionOption);
-
-         }
-      });
-
-   });
-
-
-
-   $(document).on('click', '.save_product_promotion', function() {
-    // e.preventDefault();
-
-    let formData = new FormData($('#promotionProductAddForm')[0]);
+<script>
+$(document).on('click', '.delete', function() {
+    var promotion_id = $(this).data('id');
+    alert(promotion_id);
 
     $.ajax({
-        url: '/promotion/product/store',
+        url: "{{ route('promotion.delete') }}",
         type: "POST",
-        data: formData,
-        processData: false,
-        contentType: false,
-        dataType: "json",
-        beforeSend: function() {
-            $('.error-message').remove();
+        data: {
+            _token: "{{ csrf_token() }}",
+            promotion_id: promotion_id
         },
         success: function(response) {
-            if (response.status === 200) {
 
-                $('#promotionProductAddForm')[0].reset();
-                $('#ProductPromotionAddModal').modal('hide');
-                showProductPromotion();
-                toastr.success(response.message);
+            if (response.status==200) {
+                toastr.success("Promotion deleted successfully!");
+                location.reload();
+            } else {
+                alert("Failed to delete promotion.");
             }
         },
-        error: function(xhr) {
-            if (xhr.status === 422) {
-                let errors = xhr.responseJSON.errors;
-                $.each(errors, function(key, value) {
-                    let inputField = $('[name="' + key + '"]');
-                    inputField.after('<span class="text-danger error-message">' + value[0] + '</span>');
-                });
-            } else {
-                alert("Something went wrong!");
-            }
+        error: function(xhr, status, error) {
+            console.error(xhr.responseText);
+            alert("Something went wrong!");
         }
     });
 });
+</script>
 
-
-
-
-
-$(document).on('click','.edit',function(){
-
-    let id = $(this).data('id');
-
-     $.ajax({
-        url:'/promotioin/product/edit/'+id,
-        type:'GET',
-        success:function(response){
-            if(response.status === 200){
-
-
-             $('.promotionProduct_id').val(response.productPromotion.id);
-             let products = response.product;
-            let promotion = response.promotion;
-            let variant = response.variant;
-             let productOption =`<option selected disabled>Choose...</option>`;
-             let promotionOption =`<option selected disabled>Choose...</option>`;
-             let variantOption =``;
-             products.forEach(product => {
-                productOption += `<option value="${product.id}" ${product.id === response.productPromotion.product_id ? 'selected' : ''}>${product.product_name}</option>`;
-            });
-
-
-            promotion.forEach(promotion => {
-                promotionOption += `<option value="${promotion.id}" ${promotion.id === response.productPromotion.promotion_id ? 'selected' : ''}>${promotion.promotion_name}</option>`;
-            });
-
-            variant.forEach(variant => {
-                variantOption += `<option value="${variant.id}" ${variant.id === response.productPromotion.variant_id ? 'selected' : ''}>${variant.variant_name}</option>`;
-                });
-                $('.variant').html(variantOption);
-            $('.products').html(productOption);
-            $('.promotion').html(promotionOption);
-
-            }
-        }
-     });
-
-});
-
-
-
-
-  $(document).on('click','.Edit_promotion_Product',function(){
-      let formdata= new FormData($('#ProductPromotionEditForm')[0]);
-      $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }
-                });
-
-        $.ajax({
-             url:'/promotion/product/update',
-             type:'POST',
-             data:formdata,
-             processData:false,
-             contentType:false,
-             success:function(response){
-                if(response.status === 200){
-                    $('#ProductPromotionEditForm')[0].reset();
-                    $('#ProductPromotionEditModal').modal('hide');
-                    toastr.success("Promotion Product Updated Successfully");
-                    showProductPromotion();
-
-                }
-             }
-
-
-
-
-
-            });
-  });
-
-
-  $(document).on('click','.delete',function(){
-     let id = $(this).data('id');
-     $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }
-                });
-
-        $.ajax({
-            url:'/promotion/product/delete/',
-            type:'POST',
-            data:{id:id},
-            success:function(response){
-                if(response.status === 200){
-                toastr.success("Combo Product Deleted Successfully");
-                showProductPromotion();
-                }
-            }
-        });
-
-  });
-
-
-
-
-
-
-
-
-
-
-
-    function showProductPromotion(){
-
-        $.ajax({
-            url:'/promotion/product/view',
-            type:'GET',
-            success:function(response){
-                //  console.log(response);
-                 if(response.status ===200){
-
-                    let productPromotion=response.productPromotion;
-                    console.log(productPromotion);
-                    $('#promotionProductTable').empty();
-                    productPromotion.forEach(function(productPromotion,i){
-                        $('#promotionProductTable').append(`
-                                    <tr>
-                                        <td>${i+1}</td>
-                                        <td>${productPromotion.product.product_name}</td>
-                                        <td>${productPromotion.coupon.promotion_name }</td>
-                                        <td>${productPromotion.variant.variant_name}</td>
-                                            <td>
-                                                <div class="dropdown">
-                                                    <button class="btn btn-sm btn-info dropdown-toggle" type="button"
-                                                        data-bs-toggle="dropdown" aria-expanded="false">Action</button>
-                                                    <ul class="dropdown-menu">
-                                                        <li><a href="#" class="dropdown-item edit "  data-id="${productPromotion.id}" data-bs-toggle="modal"
-                                                    data-bs-target="#ProductPromotionEditModal">Edit</a></li>
-                                                        <li><a href="#" class="dropdown-item delete" data-id="${productPromotion.id}">Delete</a></li>
-                                                    </ul>
-                                                </div>
-                                            </td>
-                                    </tr>
-
-
-                                    `);
-                    });
-
-                 }
-            }
-
-        })
-    }
-
-    showProductPromotion();
     </script>
 @endsection
