@@ -220,53 +220,52 @@ function validateForm() {
 
 
 
-
         function validateEditForm() {
-        $(".error-message").remove(); // Remove previous error messages
-        $("input, select").removeClass("is-invalid"); // Remove previous invalid class
+    $(".error-message").remove();
+    $("input, select").removeClass("is-invalid"); 
 
-        let isValid = true;
+    let isValid = true;
 
-        let ComboName = $("input[name='combo_name']").val().trim();
-        let ComboPrice = $("input[name='combo_price']").val().trim();
-        let imageCount = $("input[name='image[]']").get(0).files.length; // Get selected files
-        let galleryImages = $("input[name='image[]']").get(0).files; // Get image files for size validation
+    // Retrieve modal field values
+    let ComboName = $("#combo_name").val().trim();
+    let ComboPrice = $("#combo_price").val().trim();
+    let imageCount = $("#imageInputedit")[0].files.length;
+    let galleryImages = $("#imageInputedit")[0].files;
 
-        if (ComboName === "") {
-            $("input[name='combo_name']").addClass("is-invalid")
-                .after('<span class="text-danger error-message">Combo name is required</span>');
-            isValid = false;
-        }
+    if (ComboName === "") {
+        $("#combo_name").addClass("is-invalid")
+            .after('<span class="text-danger error-message">Combo name is required</span>');
+        isValid = false;
+    }
 
-        if (ComboPrice === "") {
-            $("input[name='combo_price']").addClass("is-invalid")
-                .after('<span class="text-danger error-message">Combo Price is required</span>');
-            isValid = false;
-        }
+    if (ComboPrice === "") {
+        $("#combo_price").addClass("is-invalid")
+            .after('<span class="text-danger error-message">Combo Price is required</span>');
+        isValid = false;
+    }
 
-        if (imageCount === 0) { // Check if any image is selected
-            $("input[name='image[]']").addClass("is-invalid")
-                .after('<span class="text-danger error-message">Please select at least one image</span>');
-            isValid = false;
-        } else {
-            let maxImageSize = 2 * 1024 * 1024; // 2MB in bytes
+    if (imageCount === 0) { // Check if any image is selected
+        $("#imageInputedit").addClass("is-invalid")
+            .after('<span class="text-danger error-message">Please select at least one image</span>');
+        isValid = false;
+    } else {
+        let maxImageSize = 2 * 1024 * 1024; // 2MB in bytes
 
-            // Validate each image file's size
-            for (let i = 0; i < galleryImages.length; i++) {
-                let imageFile = galleryImages[i];
+        // Validate each image file's size
+        for (let i = 0; i < galleryImages.length; i++) {
+            let imageFile = galleryImages[i];
 
-                if (imageFile.size > maxImageSize) {
-                    $("input[name='image[]']").addClass("is-invalid")
-                        .after('<span class="text-danger error-message">Each image must be less than 2MB</span>');
-                    isValid = false;
-                    break; // No need to check further images if one exceeds the size limit
-                }
+            if (imageFile.size > maxImageSize) {
+                $("#imageInputedit").addClass("is-invalid")
+                    .after('<span class="text-danger error-message">Each image must be less than 2MB</span>');
+                isValid = false;
+                break; // No need to check further images if one exceeds the size limit
             }
         }
+    }
 
-        return isValid;
+    return isValid;
 }
-
 
 
 
