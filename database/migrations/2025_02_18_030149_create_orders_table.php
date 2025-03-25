@@ -21,7 +21,7 @@ return new class extends Migration
             $table->integer('total_quantity');
             $table->decimal('total_amount', '10', '2');
             $table->decimal('sub_total', '10', '2');
-            $table->decimal('discount_amount', '10', '2');
+            $table->decimal('discount_amount', '10', '2')->nullable();
 
             $table->unsignedBigInteger('global_coupon_id')->nullable();
             $table->enum('payment_method', ['COD', 'bank', 'mobile_bank'])->nullable();

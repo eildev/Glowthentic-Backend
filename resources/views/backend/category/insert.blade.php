@@ -224,7 +224,7 @@ function validateCategoryForm() {
 
     // Get form values
     let categoryName = $("input[name='categoryName']").val().trim();
-    let image = $("input[name='image']").val();
+    let imageInput = $("input[name='image']")[0].files[0];
 
     // Validation rules
     if (categoryName === "") {
@@ -233,22 +233,55 @@ function validateCategoryForm() {
         isValid = false;
     }
 
-    if (image) { // Check only if an image is provided
-        let fileExt = image.split('.').pop().toLowerCase();
-        let allowedExt = ["jpg", "jpeg", "png",'gif'];
-        if (!allowedExt.includes(fileExt)) {
-            $("input[name='image']").addClass("is-invalid")
-                .after('<span class="text-danger error-message">Only JPG, JPEG, PNG files are allowed</span>');
-            isValid = false;
+  if (!imageInput) {
+    $("input[name='image']").addClass("is-invalid")
+    .after('<span class="text-danger error-message">Image is required</span>');
+    isValid = false;
+  }
+
+        else{
+            let fileSize = imageInput.size / 1024;
+                            let fileType = imageInput.type;
+
+
+                            let allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+
+                            if (!allowedTypes.includes(fileType)) {
+
+                                $("input[name='image']").addClass("is-invalid")
+                                .after('<span class="text-danger error-message">Only JPG, JPEG, and PNG files are allowed!</span>');
+                                isValid = false;
+                            } else if (fileSize > 2048) {
+                                $("input[name='image']").addClass("is-invalid")
+                                .after('<span class="text-danger error-message">Image size must be less than 2MB!</span>');
+                                isValid = false;
+                            }
+
         }
-    }
+
+
+
 
     return isValid; // Return true if valid, false otherwise
 }
 
 
 
-validateCategoryForm();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -305,10 +338,10 @@ validateCategoryForm();
         //edit category
         $(document).on('click', '.Edit_category', function() {
 
+            let categoryName = $("input[name='categoryName']").val().trim();
+            // if (!validateCategoryEditForm()) return;
 
-            if (!validateCategoryForm()) return;
-
-
+            console.log(categoryName);
 
             let formData = new FormData($('#EditCategoryForm')[0]);
             $.ajaxSetup({

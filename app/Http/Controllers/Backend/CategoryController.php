@@ -224,7 +224,9 @@ class CategoryController extends Controller
     {
         $id = $request->id;
         $category = Category::findOrFail($id);
-        unlink(public_path('uploads/category/') . $category->image);
+        if(file_exists($category->image)) {
+        unlink(public_path($category->image));
+        }
         $category->delete();
         return response()->json(['message' => 'Category Deleted Successfully']);
     }

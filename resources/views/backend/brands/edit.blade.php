@@ -4,7 +4,7 @@
         <div class="row">
             <div class="col-md-8 offset-md-2">
                 <div class="card border-top border-0 border-3 border-info">
-                    <form action="{{ Route('brand.update', $brand->id) }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ Route('brand.update', $brand->id) }}" method="POST" enctype="multipart/form-data" id="brandForm">
                         @csrf
                         <div class="card-body">
                             <div class="border p-4 rounded">
@@ -40,14 +40,14 @@
                                         @enderror
                                         <div class="mt-3">
                                             <img id="showImage" class="" height="150" width="200"
-                                                src="{{ asset('uploads/brands/' . $brand->image) }}" alt="Brand image">
+                                                src="{{ asset($brand->image) }}" alt="Brand image">
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <label class="col-sm-3 col-form-label"></label>
                                     <div class="col-sm-9">
-                                        <button type="submit" class="btn btn-info px-5">Update Brand</button>
+                                        <a  class="btn btn-info px-5 submitBtn">Update Brand</a>
                                     </div>
                                 </div>
                             </div>
@@ -59,5 +59,49 @@
         <!--end row-->
     </div>
 
-    <script></script>
+    <script>
+    $(document).ready(function () {
+        $(".submitBtn").on("click", function (e) {
+            e.preventDefault();
+
+            let form = $("#brandForm");
+            let BrandName = $("input[name='BrandName']").val().trim();
+            let imageInput = $("input[name='image']")[0].files[0];
+
+            $(".text-danger").text("");
+
+            let errors = {};
+
+            if (BrandName === "") {
+                errors.BrandName = "Brand Name is required!";
+            }
+
+            if (imageInput) {
+                let fileSize = imageInput.size / 1024;
+                let fileType = imageInput.type;
+                let allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+
+                if (!allowedTypes.includes(fileType)) {
+                    errors.image = "Only JPG, JPEG, and PNG files are allowed!";
+                } else if (fileSize > 2048) {
+                    errors.image = "Image size must be less than 2MB!";
+                }
+            }
+
+            if (!$.isEmptyObject(errors)) {
+                if (errors.BrandName) {
+                    $("input[name='BrandName']").after(`<span class="text-danger">${errors.BrandName}</span>`);
+                }
+                if (errors.image) {
+                    $("input[name='image']").after(`<span class="text-danger">${errors.image}</span>`);
+                }
+                return false;
+            }
+
+            form.submit();
+        });
+    });
+  </script>
+
+
 @endsection
