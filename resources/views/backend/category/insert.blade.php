@@ -268,10 +268,44 @@ function validateCategoryForm() {
 
 
 
+function validateCategoryEditForm() {
+    // Clear any previous error messages
+    $(".error-message").remove();
+    $("input, select").removeClass("is-invalid");
+
+    let isValid = true;
+
+    // Get form values
+    let categoryName = document.getElementById("category_name").value;
+    let imageInput = $("input[name='image']")[0].files[0];
 
 
+    if (categoryName === "") {
+        $("input[name='categoryName']").addClass("is-invalid")
+            .after('<span class="text-danger error-message">Category name is required</span>');
+        isValid = false;
+    }
 
 
+     if (imageInput) {
+        let fileSize = imageInput.size / 1024; // Convert size to KB
+        let fileType = imageInput.type;
+        let allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+
+        // Check for allowed file types
+        if (!allowedTypes.includes(fileType)) {
+            $("#image").addClass("is-invalid")
+                .after('<span class="text-danger error-message">Only JPG, JPEG, and PNG files are allowed!</span>');
+            isValid = false;
+        } else if (fileSize > 2048) {  // Check for file size (2MB)
+            $("#image").addClass("is-invalid")
+                .after('<span class="text-danger error-message">Image size must be less than 2MB!</span>');
+            isValid = false;
+        }
+    }
+
+    return isValid; // Return true if valid, false otherwise
+}
 
 
 
@@ -338,10 +372,9 @@ function validateCategoryForm() {
         //edit category
         $(document).on('click', '.Edit_category', function() {
 
-            let categoryName = $("input[name='categoryName']").val().trim();
-            // if (!validateCategoryEditForm()) return;
 
-            console.log(categoryName);
+
+    if (!validateCategoryEditForm()) return;
 
             let formData = new FormData($('#EditCategoryForm')[0]);
             $.ajaxSetup({
