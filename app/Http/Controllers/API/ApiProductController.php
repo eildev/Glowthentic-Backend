@@ -177,7 +177,7 @@ class ApiProductController extends Controller
                 'variants.variantImage',
                 'variants.product',
                 'variants.productStock',
-               'variants.productVariantPromotion.coupon',
+                'variants.productVariantPromotion.coupon',
                 'variants.comboProduct',
                 'product_tags',
                 'productStock',
