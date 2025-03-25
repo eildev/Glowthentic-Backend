@@ -5,7 +5,7 @@
             <div class="col-md-8 offset-md-2">
                 <div class="card border-top border-0 border-3 border-info">
                     <form action="{{ Route('offerbanner.update', $bannerContent->id) }}" method="POST"
-                        enctype="multipart/form-data">
+                        enctype="multipart/form-data" id="offerBannerForm">
                         @csrf
                         <div class="card-body">
                             <div class="border p-4 rounded">
@@ -110,19 +110,17 @@
                                         </div>
                                         <div>
                                             @foreach ($bannerContent->images as $image)
-                                                <div style="display: inline-block; margin: 5px; position: relative;">
-                                                    <img src="{{ asset($image->image) }}" height="50" width="50" alt="">
+                                            <div style="display: inline-block; margin: 5px; position: relative;" id="image-{{ $image->id }}">
+                                                <img src="{{ asset($image->image) }}" height="50" width="50" alt="">
 
-                                                    <form action="{{ route('offerBanerimage.delete', $image->id) }}" method="POST" style="display: inline;">
-                                                        @csrf
+                                                <button class="delete-image"
+                                                        data-id="{{ $image->id }}"
+                                                        style="position: absolute; top: 0; right: 0; background: red; color: white; border: none; cursor: pointer;">
+                                                    &times;
+                                                </button>
+                                            </div>
+                                        @endforeach
 
-                                                        <button type="submit" onclick="return confirm('Are you sure you want to delete this image?')"
-                                                                style="position: absolute; top: 0; right: 0; background: red; color: white; border: none; cursor: pointer;">
-                                                            &times;
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                            @endforeach
                                         </div>
 
                                     </div>
@@ -163,7 +161,7 @@
                                 <div class="row">
                                     <label class="col-sm-3 col-form-label"></label>
                                     <div class="col-sm-9">
-                                        <button type="submit" class="btn btn-info px-5">Update Banner</button>
+                                        <a  class="btn btn-info px-5" id="submitBtn">Update Banner</a>
                                     </div>
                                 </div>
                             </div>
@@ -191,4 +189,138 @@
             });
         });
     </script>
+
+
+<script>
+    $(document).ready(function () {
+        $("#submitBtn").on("click", function (e) {
+            e.preventDefault();
+
+            let form = $("#offerBannerForm");
+            let heading = $("input[name='heading']").val().trim();
+            let title = $("input[name='title']").val().trim();
+            let status = $("select[name='status']").val();
+            let link = $("input[name='link']").val().trim();
+            let short_description = $("textarea[name='short_description']").val().trim();
+            let imageInput = $("input[name='image']")[0].files[0];
+            let galleryImages = $("input[name='galleryimages[]']")[0].files;
+
+            // Clear previous error messages
+            $(".text-danger").remove();
+
+            let errors = {};
+
+            // Validation for fields
+            if (heading === "") {
+                errors.heading = "Heading is required!";
+            }
+            if (title === "") {
+                errors.title = "Title is required!";
+            }
+            if (short_description === "") {
+                errors.short_description = "short description is required!";
+            }
+            if (link === "") {
+                errors.link = "Link is required!";
+            }
+
+
+             if (imageInput) {
+                let fileSize = imageInput.size / 1024; // Size in KB
+                let fileType = imageInput.type;
+
+                let allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+
+                if (!allowedTypes.includes(fileType)) {
+                    errors.image = "Only JPG, JPEG, and PNG files are allowed!";
+                } else if (fileSize > 5120) { // 5MB
+                    errors.image = "Image size must be less than 5MB!";
+                }
+            }
+
+            // Gallery Images Validation (if the gallery image input is used)
+            if (galleryImages.length > 0) {
+                let allowedGalleryTypes = ["image/jpeg", "image/png", "image/jpg"];
+                let maxGallerySize = 5120; // 5MB
+
+                for (let i = 0; i < galleryImages.length; i++) {
+                    let galleryFile = galleryImages[i];
+                    let galleryFileSize = galleryFile.size / 1024; // in KB
+
+                    if (!allowedGalleryTypes.includes(galleryFile.type)) {
+                        errors.galleryimages = "Only JPG, JPEG, and PNG files are allowed in gallery images!";
+                        break;
+                    }
+                    if (galleryFileSize > maxGallerySize) {
+                        errors.galleryimages = "Gallery image size must be less than 5MB!";
+                        break;
+                    }
+                }
+            }
+
+            // Show error messages if validation fails
+            if (!$.isEmptyObject(errors)) {
+                if (errors.heading) {
+                    $("input[name='heading']").after(`<span class="text-danger">${errors.heading}</span>`);
+                }
+                if (errors.title) {
+                    $("input[name='title']").after(`<span class="text-danger">${errors.title}</span>`);
+                }
+                if (errors.short_description) {
+                    $("textarea[name='short_description']").after(`<span class="text-danger">${errors.short_description}</span>`);
+                }
+                if (errors.link) {
+                    $("input[name='link']").after(`<span class="text-danger">${errors.link}</span>`);
+                }
+                if (errors.staus) {
+                    $("select[name='link']").after(`<span class="text-danger">${errors.status}</span>`);
+                }
+                if (errors.image) {
+                    $("input[name='image']").after(`<span class="text-danger">${errors.image}</span>`);
+                }
+                if (errors.galleryimages) {
+                    $("input[name='galleryimages[]']").after(`<span class="text-danger">${errors.galleryimages}</span>`);
+                }
+                return false; // Stop form submission if errors exist
+            }
+
+            // Submit the form if no errors
+            form.submit();
+        });
+    });
+</script>
+
+
+<script>
+    $(document).ready(function () {
+        // Handle the delete button click
+        $(".delete-image").on("click", function (e) {
+            e.preventDefault();
+
+            var imageId = $(this).data("id");  // Get the image ID
+            var imageDiv = $("#image-" + imageId); // Find the div to remove
+
+            // Show confirmation prompt
+
+                // Perform AJAX request to delete the image
+                $.ajax({
+                    url: '/offerbanner/delete-image/' + imageId,  // The route for deleting the image
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',  // CSRF token for security
+                       // Use the DELETE HTTP method
+                    },
+                    success: function (response) {
+                       location.reload();
+                    },
+                    error: function () {
+                        alert("An error occurred. Please try again.");
+                    }
+                });
+            
+        });
+    });
+</script>
+
+
 @endsection

@@ -53,7 +53,7 @@ class ApiOrderController extends Controller
             // Process products
             foreach ($request->products as $product) {
                 $variant = Variant::where('id', $product['variant_id'])->first();
-                 
+
                 if ($variant->regular_price == $product['variant_price']) {
                     $variant_quantity += $product['variant_quantity'];
                     $variant_price += $product['variant_price'] * $product['variant_quantity'];
@@ -276,7 +276,7 @@ class ApiOrderController extends Controller
     public function getOrder($user_idOrSesssion_id)
     {
         try {
-            $order = Order::where('user_id', $user_idOrSesssion_id)->orWhere('session_id', $user_idOrSesssion_id)->with('orderDetails')->get();
+            $order = Order::where('user_id', $user_idOrSesssion_id)->orWhere('session_id', $user_idOrSesssion_id)->with('orderDetails.product.variants')->get();
             return response()->json([
                 'status' => 200,
                 'order' => $order,
@@ -293,7 +293,7 @@ class ApiOrderController extends Controller
     public function getProcessingOrder($user_idOrSesssion_id)
     {
         try {
-            $order = Order::where('user_id', $user_idOrSesssion_id)->orWhere('session_id', $user_idOrSesssion_id)->get();
+            $order = Order::where('user_id', $user_idOrSesssion_id)->orWhere('session_id', $user_idOrSesssion_id)->with('orderDetails.product.variants')->get();
 
             $ongoing_order = [];
             foreach ($order as $order_data) {
