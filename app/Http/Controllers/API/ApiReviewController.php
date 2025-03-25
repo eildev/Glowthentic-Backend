@@ -16,8 +16,9 @@ class ApiReviewController extends Controller
     {
 
         try{
-
-
+           
+            // dd($request->all());
+          
             $request->validate([
                 'product_id' => 'required',
                 'user_id' => 'required',
@@ -34,7 +35,7 @@ class ApiReviewController extends Controller
 
 
             if ($request->hasFile('images')){
-
+                 
                     $allImages =$request->file('images');
                     if (!is_array($allImages)) {
                         $allImages = [$allImages];
