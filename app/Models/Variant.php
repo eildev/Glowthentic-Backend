@@ -25,7 +25,7 @@ class Variant extends Model
     {
         return $this->hasMany(OrderDetails::class, 'variant_id', 'id');
     }
-    public function promotions()
+    public function promotionproduct()
     {
         return $this->hasMany(ProductPromotion::class, 'variant_id', 'id');
    

@@ -12,11 +12,13 @@ use App\Models\BillingInformation;
 use Auth;
 use App\Services\BillingInformationService;
 use Illuminate\Http\JsonResponse;
+
 class ApiUserManageController extends Controller
 {
 
     protected $billingInformationService;
-    public function __construct(BillingInformationService $billingInformationService){
+    public function __construct(BillingInformationService $billingInformationService)
+    {
         $this->billingInformationService = $billingInformationService;
     }
     public function UserDetailsStore(Request $request)
@@ -140,6 +142,9 @@ class ApiUserManageController extends Controller
         }
     }
 
+
+
+
     public function update($id, Request $request)
     {
 
@@ -151,13 +156,14 @@ class ApiUserManageController extends Controller
                 'city' => 'required|string',
                 'postal_code' => 'required|string',
                 'country' => 'required|string',
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,webp,svg|max:10240',
             ]);
             if ($validator->fails()) {
                 return response()->json([
                     'status' => 422,
                     'errors' => $validator->errors(),
                     'message' => 'Validation Failed',
-                ], 422);
+                ]);
             }
             $userDetails = UserDetails::where('user_id', $id)->first();
             if ($userDetails) {
@@ -252,7 +258,7 @@ class ApiUserManageController extends Controller
     {
 
 
-        try{
+        try {
             $billingResponse = $this->billingInformationService->storeBillingInfo($request);
             if ($billingResponse instanceof JsonResponse && $billingResponse->getStatusCode() !== 201) {
                 return $billingResponse;
@@ -262,13 +268,12 @@ class ApiUserManageController extends Controller
                 'message' => 'Billing Information Added Successfully',
                 'billing_info' => $billingResponse
             ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage()
+            ], 500);
         }
-        catch(\Exception $e) {
-                return response()->json([
-                    'status' => false,
-                    'message' => $e->getMessage()
-                ], 500);
-            }
     }
 
     public function userBillingInfoUpdate(Request $request, $id)
@@ -332,7 +337,7 @@ class ApiUserManageController extends Controller
         //     ], 500);
         // }
 
-        try{
+        try {
             $billingResponse = $this->billingInformationService->userBillingInfoUpdate($request, $id);
             if ($billingResponse instanceof JsonResponse && $billingResponse->getStatusCode() !== 200) {
                 return $billingResponse;
@@ -342,8 +347,7 @@ class ApiUserManageController extends Controller
                 'message' => 'Billing Information Updated Successfully',
                 'billing_info' => $billingResponse
             ], 200);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
                 'message' => $e->getMessage()
