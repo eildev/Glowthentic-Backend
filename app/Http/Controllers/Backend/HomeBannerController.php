@@ -26,7 +26,7 @@ class HomeBannerController extends Controller
             'short_description' => 'required|max:100',
             'long_description' => 'required|max:200',
             'link' => 'required|max:200',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
         ]);
         // dd($validator)->all();
 
@@ -104,7 +104,9 @@ class HomeBannerController extends Controller
             $request->image->move($path,$imageName);
              $image=$path.$imageName;
             $banner = HomeBanner::findOrFail($id);
-            unlink(public_path('uploads/banner/') . $banner->image);
+            if(file_exists(public_path($banner->image))){
+            unlink(public_path($banner->image));
+            }
             $banner->title = $request->title;
             $banner->short_description = $request->short_description;
             $banner->long_description = $request->long_description;
@@ -143,7 +145,9 @@ class HomeBannerController extends Controller
     public function delete($id)
     {
         $banner = HomeBanner::findOrFail($id);
-        unlink(public_path('uploads/banner/') . $banner->image);
+        if(file_exists(public_path($banner->image))){
+            unlink(public_path($banner->image));
+            }
         $banner->delete();
         return back()->with('success', 'banner Successfully deleted');
     }

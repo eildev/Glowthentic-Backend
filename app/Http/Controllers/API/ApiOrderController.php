@@ -53,7 +53,7 @@ class ApiOrderController extends Controller
             // Process products
             foreach ($request->products as $product) {
                 $variant = Variant::where('id', $product['variant_id'])->first();
-
+                 
                 if ($variant->regular_price == $product['variant_price']) {
                     $variant_quantity += $product['variant_quantity'];
                     $variant_price += $product['variant_price'] * $product['variant_quantity'];
