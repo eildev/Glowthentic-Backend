@@ -12,8 +12,8 @@
 
 
 
-     
-                    <form action="{{ Route('tagname.store') }}" method="POST" enctype="multipart/form-data">
+
+                    <form action="{{ Route('tagname.store') }}" method="POST" enctype="multipart/form-data" id="tagForm">
                         @csrf
                         <div class="card-body">
 
@@ -82,5 +82,13 @@
         </div>
         <!--end row-->
     </div>
+
+  <script>
+
+
+  </script>
+
+
+
 
 @endsection
