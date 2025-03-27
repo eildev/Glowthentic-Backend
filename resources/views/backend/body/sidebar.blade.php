@@ -48,30 +48,10 @@
                         <li>
                             <a href="{{ route('product') }}"><i class="bx bx-right-arrow-alt"></i>Add Product</a>
                         </li>
-                        {{-- tag menu  --}}
-                        <li>
-                            <a href="javascript:;" class="has-arrow">
-                                <div class="parent-icon">
-                                    <i class='bx bx-purchase-tag-alt'></i>
-                                </div>
-                                <div class="menu-title">Product Tag</div>
-                            </a>
-                            <ul>
-                                <li> <a href="{{ route('tagname') }}"><i class="bx bx-right-arrow-alt"></i>Add Tag</a>
-                                </li>
-                                <li> <a href="{{ route('tagname.view') }}"><i class="bx bx-right-arrow-alt"></i>Manage
-                                        Tags</a>
-                                </li>
-                            </ul>
-                        </li>
-
-
-
-
-
                     </ul>
                 </li>
-                <li>
+
+                {{-- <li>
                     <a href="javascript:;" class="has-arrow">
                         <div class="parent-icon">
                             <i class="fas fa-shopping-bag"></i>
@@ -86,7 +66,7 @@
                                 Purchase</a>
                         </li>
                     </ul>
-                </li>
+                </li> --}}
 
                 {{-- category Related menu  --}}
 
@@ -104,19 +84,6 @@
                         </li> --}}
                     </ul>
                 </li>
-
-
-
-
-
-
-
-
-
-
-
-
-
 
                 {{-- Subcategory menu  --}}
                 {{-- <li>
@@ -195,12 +162,28 @@
 
                     </ul>
                 </li>
+                {{-- tag menu  --}}
+                <li>
+                    <a href="javascript:;" class="has-arrow">
+                        <div class="parent-icon">
+                            <i class='bx bx-purchase-tag-alt'></i>
+                        </div>
+                        <div class="menu-title">Product Tag</div>
+                    </a>
+                    <ul>
+                        <li> <a href="{{ route('tagname') }}"><i class="bx bx-right-arrow-alt"></i>Add Tag</a>
+                        </li>
+                        <li> <a href="{{ route('tagname.view') }}"><i class="bx bx-right-arrow-alt"></i>Manage
+                                Tags</a>
+                        </li>
+                    </ul>
+                </li>
             </ul>
         </li>
 
 
-{{-- //////////////////////company related menu/////////////////////// --}}
-        <li class="menu-label">Company Manage</li>
+        {{-- //////////////////////company related menu/////////////////////// --}}
+        {{-- <li class="menu-label">Company Manage</li>
         <li>
             <a href="javascript:;" class="has-arrow">
                 <div class="parent-icon">
@@ -216,7 +199,7 @@
                         Company</a>
                 </li>
             </ul>
-        </li>
+        </li> --}}
 
         <li class="menu-label">Order Management</li>
         {{-- Order Related menu --}}
@@ -344,11 +327,11 @@
 
 
 
-           {{-- courier --}}
+            {{-- courier --}}
 
-           <li class="menu-label">Courier Manage</li>
-             {{-- courier --}}
-             <li>
+            <li class="menu-label">Courier Manage</li>
+            {{-- courier --}}
+            <li>
                 <a href="javascript:;" class="has-arrow">
                     <div class="parent-icon">
                         <i class='bx bx-image-alt'></i>
@@ -356,7 +339,8 @@
                     <div class="menu-title">Courier Manage</div>
                 </a>
                 <ul>
-                    <li> <a href="{{ route('Courier.Manage.steadfast.order') }}"><i class="bx bx-right-arrow-alt"></i>Steadfast Order</a>
+                    <li> <a href="{{ route('Courier.Manage.steadfast.order') }}"><i
+                                class="bx bx-right-arrow-alt"></i>Steadfast Order</a>
                     </li>
                     {{-- <li> <a href="{{ route('offerbanner.view') }}"><i class="bx bx-right-arrow-alt"></i>Manage
                             Banner</a>
@@ -594,36 +578,36 @@
         </li>
 
 
-                <li>
-                    <a href="javascript:;" class="has-arrow">
-                        <div class="parent-icon">
-                            <i class="fas fa-shopping-bag"></i>
-                        </div>
-                        <div class="menu-title">Manage Coupon</div>
-                    </a>
-                    <ul>
+        <li>
+            <a href="javascript:;" class="has-arrow">
+                <div class="parent-icon">
+                    <i class="fas fa-shopping-bag"></i>
+                </div>
+                <div class="menu-title">Manage Coupon</div>
+            </a>
+            <ul>
 
-                        <li> <a href="{{ route('Coupon.index') }}"><i class="bx bx-right-arrow-alt"></i>Coupon</a>
-                        </li>
-
-                    </ul>
+                <li> <a href="{{ route('Coupon.index') }}"><i class="bx bx-right-arrow-alt"></i>Coupon</a>
                 </li>
 
+            </ul>
+        </li>
 
-                            <li>
-                            <a href="javascript:;" class="has-arrow">
-                                <div class="parent-icon">
-                                    <i class='bx bx-purchase-tag-alt'></i>
-                                </div>
-                                <div class="menu-title">Manage Product Promotion</div>
-                            </a>
-                            <ul>
-                                <li> <a href="{{ route('product.promotion.index') }}"><i
-                                            class="bx bx-right-arrow-alt"></i>Product Promotion</a>
-                                </li>
 
-                            </ul>
-                        </li>
+        <li>
+            <a href="javascript:;" class="has-arrow">
+                <div class="parent-icon">
+                    <i class='bx bx-purchase-tag-alt'></i>
+                </div>
+                <div class="menu-title">Manage Product Promotion</div>
+            </a>
+            <ul>
+                <li> <a href="{{ route('product.promotion.index') }}"><i class="bx bx-right-arrow-alt"></i>Product
+                        Promotion</a>
+                </li>
+
+            </ul>
+        </li>
 
 
 
