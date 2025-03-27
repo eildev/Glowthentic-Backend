@@ -8,7 +8,7 @@
                 <p>{{ session('test') }}</p>
                 <div class="card border-top border-0 border-3 border-info">
 
-                    <form action="{{ route('banner.store') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('banner.store') }}" method="POST" enctype="multipart/form-data" id="homeBanerForm">
                         @csrf
                         <div class="card-body">
                             <div class="border p-4 rounded">
@@ -112,7 +112,7 @@
                                 <div class="row">
                                     <label class="col-sm-3 col-form-label"></label>
                                     <div class="col-sm-9">
-                                        <button type="submit" class="btn btn-info px-5 text-white">Add Banner</button>
+                                        <a class="btn btn-info px-5 text-white" id="submitBtn">Add Banner</a>
                                     </div>
                                 </div>
                             </div>
@@ -125,6 +125,80 @@
     </div>
 
 
+    <script>
+        $(document).ready(function () {
+            $("#submitBtn").on("click", function (e) {
+                e.preventDefault();
 
+                let form = $("#homeBanerForm");
+                let title = $("input[name='title']").val().trim();
+                let short_description = $("textarea[name='short_description']").val().trim();
+                let long_description = $("textarea[name='long_description']").val().trim();
+                let link = $("input[name='link']").val().trim();
+                let imageInput = $("input[name='image']")[0].files[0];
+
+                // Clear previous error messages
+                $(".text-danger").remove();
+
+                let errors = {};
+
+                if (title === "") {
+                    errors.title = "Title is required!";
+                }
+
+                if (short_description === "") {
+                    errors.short_description = "Short Description is required!";
+                }
+
+                if (long_description === "") {
+                    errors.long_description = "Long Description is required!";
+                }
+
+                if (link === "") {
+                    errors.link = "Link is required!";
+                }
+
+                if (!imageInput) {
+                    errors.image = "Banner thumbnail is required!";
+                } else {
+                    let fileSize = imageInput.size / 1024; // Size in KB
+                    let fileType = imageInput.type;
+
+                    let allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+
+                    if (!allowedTypes.includes(fileType)) {
+                        errors.image = "Only JPG, JPEG, and PNG files are allowed!";
+                    } else if (fileSize >5120) { // 2MB
+                        errors.image = "Image size must be less than 5MB!";
+                    }
+                }
+
+                // Show error messages if validation fails
+                if (!$.isEmptyObject(errors)) {
+                    if (errors.title) {
+                        $("input[name='title']").after(`<span class="text-danger">${errors.title}</span>`);
+                    }
+                    if (errors.short_description) {
+                        $("textarea[name='short_description']").after(`<span class="text-danger">${errors.short_description}</span>`);
+                    }
+                    if (errors.long_description) {
+                        $("textarea[name='long_description']").after(`<span class="text-danger">${errors.long_description}</span>`);
+                    }
+                    if (errors.link) {
+                        $("input[name='link']").after(`<span class="text-danger">${errors.link}</span>`);
+                    }
+                    if (errors.image) {
+                        $("input[name='image']").after(`<span class="text-danger">${errors.image}</span>`);
+                    }
+                    return false; // Stop form submission if errors exist
+                }
+
+                // Submit the form if no errors
+                form.submit();
+            });
+        });
     </script>
+
+
+
 @endsection

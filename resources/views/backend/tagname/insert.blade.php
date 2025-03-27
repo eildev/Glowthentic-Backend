@@ -71,7 +71,7 @@
                                 <div class="row">
                                     <label class="col-sm-3 col-form-label"></label>
                                     <div class="col-sm-9">
-                                        <button type="submit" class="btn btn-info px-5">Add Tagname</button>
+                                        <a href="" class="btn btn-info px-5" id="submitBtn">Add Tagname</a>
                                     </div>
                                 </div>
                             </div>
@@ -83,10 +83,62 @@
         <!--end row-->
     </div>
 
-  <script>
 
 
-  </script>
+    <script>
+        $(document).ready(function () {
+            $("#submitBtn").on("click", function (e) {
+                e.preventDefault();
+
+                let form = $("#tagForm");
+                let tagname = $("input[name='tagname']").val().trim();
+                let imageInput = $("input[name='image']")[0].files[0];
+
+
+                $(".text-danger").text("");
+
+                let errors = {};
+
+
+                if (tagname === "") {
+                    errors.tagname = "Tag name is required!";
+                }
+
+
+                if (!imageInput) {
+                    errors.image = "Tag thumbnail is required!";
+                } else {
+                    let fileSize = imageInput.size / 1024;
+                    let fileType = imageInput.type;
+
+
+                    let allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+
+                    if (!allowedTypes.includes(fileType)) {
+                        errors.image = "Only JPG, JPEG, and PNG files are allowed!";
+                    } else if (fileSize > 2048) {
+                        errors.image = "Image size must be less than 2MB!";
+                    }
+                }
+
+
+                if (!$.isEmptyObject(errors)) {
+                    if (errors.tagname) {
+                        $("input[name='tagname']").after(`<span class="text-danger">${errors.tagname}</span>`);
+                    }
+                    if (errors.image) {
+                        $("input[name='image']").after(`<span class="text-danger">${errors.image}</span>`);
+                    }
+                    return false;
+                }
+
+             
+                form.submit();
+            });
+        });
+    </script>
+
+
 
 
 
