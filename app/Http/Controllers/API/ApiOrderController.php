@@ -276,7 +276,7 @@ class ApiOrderController extends Controller
     public function getOrder($user_idOrSesssion_id)
     {
         try {
-            $order = Order::where('user_id', $user_idOrSesssion_id)->orWhere('session_id', $user_idOrSesssion_id)->with('orderDetails.variant.variantImage','orderDetails.product')->get();
+            $order = Order::where('user_id', $user_idOrSesssion_id)->orWhere('session_id', $user_idOrSesssion_id)->with('orderDetails.variant.variantImage','orderDetails.product','orderDetails.product.category')->get();
             return response()->json([
                 'status' => 200,
                 'order' => $order,
@@ -293,7 +293,7 @@ class ApiOrderController extends Controller
     public function getProcessingOrder($user_idOrSesssion_id)
     {
         try {
-            $order = Order::where('user_id', $user_idOrSesssion_id)->orWhere('session_id', $user_idOrSesssion_id)->with('orderDetails.variant.variantImage','orderDetails.product')->get();
+            $order = Order::where('user_id', $user_idOrSesssion_id)->orWhere('session_id', $user_idOrSesssion_id)->with('orderDetails.variant.variantImage','orderDetails.product','orderDetails.product.category')->get();
 
             $ongoing_order = [];
             foreach ($order as $order_data) {
