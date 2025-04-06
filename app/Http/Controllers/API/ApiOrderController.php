@@ -28,7 +28,7 @@ class ApiOrderController extends Controller
     {
         $this->billingInformationService = $billingInformationService;
     }
-    public function stor1(Request $request)
+    public function store(Request $request)
     {
 
 
@@ -52,7 +52,7 @@ class ApiOrderController extends Controller
 
             // Process products
             foreach ($request->products as $product) {
-                dd($product);
+                // dd($product);
                 $variant = Variant::where('id', $product['variant_id'])->first();
 
 
@@ -233,7 +233,7 @@ class ApiOrderController extends Controller
 
 
 
-public function store(Request $request){
+public function store1(Request $request){
     try{
         $billingResponse = $this->billingInformationService->storeBillingInfo($request);
 
