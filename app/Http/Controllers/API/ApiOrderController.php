@@ -272,7 +272,7 @@ class ApiOrderController extends Controller
                         ->where('end_date', '>=', Carbon::today())
                         ->first()
                     : null;
-               dd($category_promotion_coupon);
+            //    dd($category_promotion_coupon);
                 $product_promotion_coupon = $product_promotion
                     ? Coupon::where('id', $product_promotion->promotion_id)
                         ->where('is_global', 0)
@@ -289,10 +289,12 @@ class ApiOrderController extends Controller
 
                   $discount_amount = 0;
                 if ($category_promotion_coupon) {
+
                         if ($category_promotion_coupon->discount_type == 'fixed') {
                             $discount_amount = $category_promotion_coupon->discount_value * $product['variant_quantity'];
                         } else {
-                            $discount_amount = ($variant_price * $category_promotion_coupon->discount_value) / 100 * $product['variant_quantity'];
+                            $discount_amount = ($variant->regular_price*$category_promotion_coupon->discount_value) / 100 * $product['variant_quantity'];
+                            //  dd($discount_amount);
                         }
 
                 }
@@ -301,7 +303,7 @@ class ApiOrderController extends Controller
                     if ($product_promotion_coupon->discount_type == 'fixed') {
                         $discount_amount = $product_promotion_coupon->discount_value * $product['variant_quantity'];
                     } else {
-                        $discount_amount = ($variant_price * $product_promotion_coupon->discount_value) / 100 * $product['variant_quantity'];
+                        $discount_amount = ($variant->regular_price* $product_promotion_coupon->discount_value) / 100 * $product['variant_quantity'];
                     }
                 }
                 elseif ($variant_promotion_coupon) {
@@ -309,7 +311,7 @@ class ApiOrderController extends Controller
                     if ($variant_promotion_coupon->discount_type == 'fixed') {
                         $discount_amount = $variant_promotion_coupon->discount_value * $product['variant_quantity'];
                     } else {
-                        $discount_amount = ($variant_price * $variant_promotion_coupon->discount_value) / 100 * $product['variant_quantity'];
+                        $discount_amount = ($variant->regular_price*$variant_promotion_coupon->discount_value) / 100 * $product['variant_quantity'];
                     }
                 }
                 //  else {
@@ -319,8 +321,16 @@ class ApiOrderController extends Controller
                 $variant_quantity += $product['variant_quantity'];
                 $variant_price += $variant->price * $product['variant_quantity'];
                 $discount_price += isset($discount_amount) ? $discount_amount : 0;
-                $variant_total_price += $variant->regular_price * $product['variant_quantity'] - $discount_price ;
-                 dd($variant_total_price );
+                $variant_total_price += $variant->regular_price * $product['variant_quantity'] - $discount_price;
+                // dd($variant_total_price);
+              
+                if($variant_total_price != $product['discount_cut_total_price']){
+                    dd("error");
+                    $error_messages[] = 'Variant price is not matching with total price';
+                }
+                else{
+                    dd("ok");
+                }
             }
 
         } catch (\Exception $e) {
