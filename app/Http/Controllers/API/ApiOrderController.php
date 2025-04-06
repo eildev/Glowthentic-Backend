@@ -20,6 +20,7 @@ use App\Models\User;
 use App\Services\BillingInformationService;
 use Illuminate\Http\JsonResponse;
 use App\Models\Category;
+use App\Models\VariantPromotion;
 class ApiOrderController extends Controller
 {
 
@@ -52,7 +53,7 @@ class ApiOrderController extends Controller
 
             // Process products
             foreach ($request->products as $product) {
-                dd($product);
+                // dd($product);
                 $variant = Variant::where('id', $product['variant_id'])->first();
 
 
@@ -233,36 +234,102 @@ class ApiOrderController extends Controller
 
 
 
-public function store(Request $request){
-    try{
-        $billingResponse = $this->billingInformationService->storeBillingInfo($request);
+    public function store(Request $request)
+    {
+        try {
+            $billingResponse = $this->billingInformationService->storeBillingInfo($request);
 
-        // If billing response is an error, return the error response
-        if ($billingResponse instanceof JsonResponse && $billingResponse->getStatusCode() !== 201) {
-            return $billingResponse;
+            // If billing response is an error, return it
+            if ($billingResponse instanceof JsonResponse && $billingResponse->getStatusCode() !== 201) {
+                return $billingResponse;
+            }
+
+            $variant_quantity = 0;
+            $variant_price = 0;
+            $variant_total_price = 0;
+            $total_price = 0;
+            $total_quantity = 0;
+            $discount_price = 0;
+            $error_messages = [];
+
+            foreach ($request->products as $product) {
+                // Get all related models
+                $getProduct = Product::find($product['product_id']);
+                $category = Category::find($getProduct->category_id);
+                $variant = Variant::find($product['variant_id']);
+                // dd($variant);
+
+                // Get promotions
+                $category_promotion = ProductPromotion::where('category_id', $category->id)->latest()->first();
+                // dd($category_promotion->promotion_id);
+                $product_promotion = ProductPromotion::where('product_id', $getProduct->id)->latest()->first();
+                $variant_promotion = VariantPromotion::where('variant_id', $variant->id)->latest()->first();
+
+                // Get related coupons only if promotions exist
+                $category_promotion_coupon = $category_promotion
+                    ? Coupon::where('id', $category_promotion->promotion_id)
+                        ->where('is_global', 0)
+                        ->where('end_date', '>=', Carbon::today())
+                        ->first()
+                    : null;
+               dd($category_promotion_coupon);
+                $product_promotion_coupon = $product_promotion
+                    ? Coupon::where('id', $product_promotion->promotion_id)
+                        ->where('is_global', 0)
+                        ->where('end_date', '>=', Carbon::today())
+                        ->first()
+                    : null;
+
+                $variant_promotion_coupon = $variant_promotion
+                    ? Coupon::where('id', $variant_promotion->promotion_id)
+                        ->where('is_global', 0)
+                        ->where('end_date', '>=', Carbon::today())
+                        ->first()
+                    : null;
+
+                  $discount_amount = 0;
+                if ($category_promotion_coupon) {
+                        if ($category_promotion_coupon->discount_type == 'fixed') {
+                            $discount_amount = $category_promotion_coupon->discount_value * $product['variant_quantity'];
+                        } else {
+                            $discount_amount = ($variant_price * $category_promotion_coupon->discount_value) / 100 * $product['variant_quantity'];
+                        }
+
+                }
+                elseif ($product_promotion_coupon) {
+
+                    if ($product_promotion_coupon->discount_type == 'fixed') {
+                        $discount_amount = $product_promotion_coupon->discount_value * $product['variant_quantity'];
+                    } else {
+                        $discount_amount = ($variant_price * $product_promotion_coupon->discount_value) / 100 * $product['variant_quantity'];
+                    }
+                }
+                elseif ($variant_promotion_coupon) {
+
+                    if ($variant_promotion_coupon->discount_type == 'fixed') {
+                        $discount_amount = $variant_promotion_coupon->discount_value * $product['variant_quantity'];
+                    } else {
+                        $discount_amount = ($variant_price * $variant_promotion_coupon->discount_value) / 100 * $product['variant_quantity'];
+                    }
+                }
+                //  else {
+
+                //     dd("no promotion");
+                // }
+                $variant_quantity += $product['variant_quantity'];
+                $variant_price += $variant->price * $product['variant_quantity'];
+                $discount_price += isset($discount_amount) ? $discount_amount : 0;
+                $variant_total_price += $variant->regular_price * $product['variant_quantity'] - $discount_price ;
+                 dd($variant_total_price );
+            }
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 500,
+                'message' => $e->getMessage(),
+            ]);
         }
-        $variant_quantity = 0;
-        $variant_price = 0;
-        $variant_total_price = 0;
-        $total_price = 0;
-        $total_quantity = 0;
-        $error_messages = [];
-        foreach($request->products as $product){
-            $getProduct = Product::where('id', $product['product_id'])->first();
-            $category = Category::where('id', $getProduct->category_id)->first();
-           $variant = Variant::where('id', $product['variant_id'])->first();
-           
-        }
-
     }
-    catch(\Exception $e){
-        return response()->json([
-            'status' => 500,
-            'message' => $e->getMessage(),
-        ]);
-    }
-}
-
 
 
 

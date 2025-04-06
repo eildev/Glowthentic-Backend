@@ -120,21 +120,37 @@ class ApiReviewController extends Controller
 
 
     public function getReview($product_id){
-        $reviews = ReviewRating::with('gallary', 'user')->where('product_id', $product_id)->get();
-    $user_details = $reviews->groupBy('user_id')->map(function ($group) {
-        $user = $group->first()->user;
-        return [
-            'email' => $user ? $user->email : null,
-            'name' => $user ? $user->name : null,
-        ];
-    })->values();
+        try{
+            $reviews = ReviewRating::with('gallary', 'user.userDetails')
+            ->where('product_id', $product_id)
+            ->get();
 
+        $transformed = $reviews->map(function ($review) {
+            return [
+                'id' => $review->id,
+                'comment' => $review->comment,
+                'rating' => $review->rating,
+                'gallary' => $review->gallary,
+                'user' => [
+                    'name' => optional($review->user)->name,
+                    'email' => optional($review->user)->email,
+                ],
+            ];
+        });
 
         return response()->json([
             'status' => 200,
-            'reviews' => $reviews,
-            'user_details' => $user_details,
-
+            'reviews' => $transformed,
         ]);
+        }
+
+        catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to add category.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+
     }
 }
