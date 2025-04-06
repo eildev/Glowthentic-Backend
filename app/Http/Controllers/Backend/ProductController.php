@@ -449,7 +449,7 @@ class ProductController extends Controller
         }
 
         if ($product && $request->tag) {
-
+           Product_Tags::where('product_id', $product->id)->delete();
             foreach ($request->tag as $tag) {
                 $productTag = new Product_Tags();
                 $productTag->product_id = $product->id;
@@ -460,6 +460,7 @@ class ProductController extends Controller
 
 
         if($product && $request->product_feature){
+            ProductFeature::where('product_id', $product->id)->delete();
             foreach($request->product_feature as $feature){
                 $productFeature = new ProductFeature();
                 $productFeature->product_id = $product->id;

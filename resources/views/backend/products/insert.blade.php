@@ -813,125 +813,69 @@
 {{-- script start --}}
 <script>
 ////////////////////////////////////show validation error //////////////////////////////////////
-function validationError(){
-
+function validationError() {
     $(".error-message").remove();
     $("input, select").removeClass("is-invalid");
+    $(".text-danger").remove(); // ensure old errors are cleared
 
     let isValid = true;
+    let errors = {};
 
-    let category_id = $('select[name="category_id"]').val().trim();
-    let brand_id = $('select[name="brand_id"]').val().trim();
-    let unit_id = $('select[name="unit_id"]').val().trim();
-    let size= $('select[name="size"]').val().trim();
-    let color= $('select[name="color"]').val().trim();
-    let price = $('input[name="price"]').val().trim();
-    let gender = $('select[name="gender"]').val().trim();
-    let product_name = $('input[name="product_name"]').val().trim();
-    let galleryImages = $("input[name='product_main_image[]']")[0].files;
+    let category_id = $('select[name="category_id"]').val()?.trim() || "";
+    let brand_id = $('select[name="brand_id"]').val()?.trim() || "";
+    let unit_id = $('select[name="unit_id"]').val()?.trim() || "";
+    let size = $('select[name="size"]').val()?.trim() || "";
+    let color = $('select[name="color"]').val()?.trim() || "";
+    let price = $('input[name="price"]').val()?.trim() || "";
+    let gender = $('select[name="gender"]').val()?.trim() || "";
+    let product_name = $('input[name="product_name"]').val()?.trim() || "";
+    let galleryImages = $("input[name='product_main_image[]']")[0]?.files || [];
 
+    if (category_id === "") errors.category_id = "Category is required!";
+    if (brand_id === "") errors.brand_id = "Brand is required!";
+    if (unit_id === "") errors.unit_id = "Unit is required!";
+    if (size === "") errors.size = "Size is required!";
+    if (color === "") errors.color = "Color is required!";
+    if (price === "") errors.price = "Price is required!";
+    if (gender === "") errors.gender = "Gender is required!";
+    if (product_name === "") errors.product_name = "Product Name is required!";
+    if (galleryImages.length === 0) errors.galleryimages = "Gallery Images are required!";
 
+    let allowedGalleryTypes = ["image/jpeg", "image/png", "image/jpg"];
+    let maxGallerySize = 2048; // 2MB
 
-   // Clear previous error messages
-   $(".text-danger").remove();
+    for (let i = 0; i < galleryImages.length; i++) {
+        let galleryFile = galleryImages[i];
+        let galleryFileSize = galleryFile.size / 1024;
 
-        let errors = {};
-
-        // Validation for fields
-        if (category_id === "") {
-            errors.category_id = "Category is required!";
+        if (!allowedGalleryTypes.includes(galleryFile.type)) {
+            errors.galleryimages = "Only JPG, JPEG, and PNG files are allowed!";
+            isValid = false;
+            break;
         }
-        if (brand_id === "") {
-            errors.brand_id = "Brand is required!";
+        if (galleryFileSize > maxGallerySize) {
+            errors.galleryimages = "Gallery image size must be less than 2MB!";
+            isValid = false;
+            break;
         }
-        if (unit_id === "") {
-            errors.unit_id = "Unit is required!";
-        }
-        if (size === "") {
-            errors.size = "size is required!";
-        }
+    }
 
-        if (color=== "") {
-            errors.color= "Color is required!";
-        }
-        if (price === "") {
-            errors.price = "Price is required!";
-        }
-        if (gender === ""){
-            errors.gender = "Gender is required!";
-        }
-        if (product_name === "") {
-            errors.product_name = "Product Name is required!";
-        }
+    if (!$.isEmptyObject(errors)) {
+        isValid = false;
 
-        if(galleryImages.length === 0) {
+        if (errors.category_id) $("select[name='category_id']").after(`<span class="text-danger">${errors.category_id}</span>`);
+        if (errors.brand_id) $("select[name='brand_id']").after(`<span class="text-danger">${errors.brand_id}</span>`);
+        if (errors.unit_id) $("select[name='unit_id']").after(`<span class="text-danger">${errors.unit_id}</span>`);
+        if (errors.size) $("select[name='size']").after(`<span class="text-danger">${errors.size}</span>`);
+        if (errors.color) $("select[name='color']").after(`<span class="text-danger">${errors.color}</span>`);
+        if (errors.price) $("input[name='price']").after(`<span class="text-danger">${errors.price}</span>`);
+        if (errors.gender) $("select[name='gender']").after(`<span class="text-danger">${errors.gender}</span>`);
+        if (errors.product_name) $("input[name='product_name']").after(`<span class="text-danger">${errors.product_name}</span>`);
+        if (errors.galleryimages) $("input[name='product_main_image[]']").after(`<span class="text-danger">${errors.galleryimages}</span>`);
+    }
 
-            errors.galleryimages = "Gallery Images is required!";
-        }
-
-
-        // Gallery Images Validation (if the gallery image input is used)
-        if (galleryImages.length > 0) {
-            let allowedGalleryTypes = ["image/jpeg", "image/png", "image/jpg"];
-            let maxGallerySize = 2048; // 5MB
-
-            for (let i = 0; i < galleryImages.length; i++) {
-                let galleryFile = galleryImages[i];
-                let galleryFileSize = galleryFile.size / 1024; // in KB
-
-                if (!allowedGalleryTypes.includes(galleryFile.type)) {
-                    errors.galleryimages = "Only JPG, JPEG, and PNG files are allowed in gallery images!";
-                    isValid = false;
-                    break;
-
-                }
-                if (galleryFileSize > maxGallerySize) {
-
-                    errors.galleryimages = "Gallery image size must be less than 2MB!";
-                    isValid = false;
-                    break;
-                }
-            }
-        }
-
-        // Show error messages if validation fails
-        if (!$.isEmptyObject(errors)) {
-            if (errors.category_id) {
-                $("select[name='category_id']").after(`<span class="text-danger">${errors.category_id}</span>`);
-            }
-            if (errors.brand_id) {
-                $("select[name='brand_id']").after(`<span class="text-danger">${errors.brand_id}</span>`);
-            }
-            if (errors.unit_id) {
-                $("select[name='unit_id']").after(`<span class="text-danger">${errors.unit_id}</span>`);
-            }
-            if (errors.size) {
-                $("select[name='size']").after(`<span class="text-danger">${errors.size}</span>`);
-            }
-            if (errors.color) {
-                $("select[name='color']").after(`<span class="text-danger">${errors.color}</span>`);
-            }
-
-            if (errors.price) {
-                $("input[name='price']").after(`<span class="text-danger">${errors.price}</span>`);
-            }
-           if (errors.gender) {
-            $("select[name='gender']").after(`<span class="text-danger">${errors.gender}</span>`);
-           }
-           if (errors.product_name) {
-            $("input[name='product_name']").after(`<span class="text-danger">${errors.product_name}</span>`);
-           }
-            if (errors.galleryimages) {
-                $("input[name='product_main_image[]']").after(`<span class="text-danger">${errors.galleryimages}</span>`);
-            }
-            return isValid;
-        }
-
-
-
-
+    return isValid;
 }
-
 
 
 
@@ -1402,7 +1346,10 @@ $(document).on("click", ".removeRow", function () {
 
     $(document).on("click", ".add_product", function () {
 
-      if(!validationError()) return;
+        if (!validationError()) {
+            console.log("Validation failed");
+            return;
+        }
 
 
             let formdata = new FormData($('#productForm')[0]); // Corrected FormData

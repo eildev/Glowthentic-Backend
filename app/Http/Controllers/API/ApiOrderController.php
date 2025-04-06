@@ -28,7 +28,7 @@ class ApiOrderController extends Controller
     {
         $this->billingInformationService = $billingInformationService;
     }
-    public function store(Request $request)
+    public function stor1(Request $request)
     {
 
 
@@ -52,13 +52,18 @@ class ApiOrderController extends Controller
 
             // Process products
             foreach ($request->products as $product) {
+                dd($product);
                 $variant = Variant::where('id', $product['variant_id'])->first();
+
+
+
+
 
                 if ($variant->regular_price == $product['variant_price']) {
                     $variant_quantity += $product['variant_quantity'];
                     $variant_price += $product['variant_price'] * $product['variant_quantity'];
 
-                    $product_promotion = ProductPromotion::where('product_id', $variant->product_id)
+                    $product_promotion = ProductPromotion::where('variant_id', $variant->id)
                         ->latest()
                         ->first();
 
@@ -225,6 +230,44 @@ class ApiOrderController extends Controller
             ]);
         }
     }
+
+
+
+public function store(Request $request){
+    try{
+        $billingResponse = $this->billingInformationService->storeBillingInfo($request);
+
+        // If billing response is an error, return the error response
+        if ($billingResponse instanceof JsonResponse && $billingResponse->getStatusCode() !== 201) {
+            return $billingResponse;
+        }
+        $variant_quantity = 0;
+        $variant_price = 0;
+        $variant_total_price = 0;
+        $total_price = 0;
+        $total_quantity = 0;
+        $error_messages = [];
+       
+
+    }
+    catch(\Exception $e){
+        return response()->json([
+            'status' => 500,
+            'message' => $e->getMessage(),
+        ]);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
 
     public function trackingOrder(Request $request)
     {
