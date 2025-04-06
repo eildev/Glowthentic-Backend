@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('review_ratings', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->unsigned();
-            $table->unsignedBigInteger('product_id')->unsigned();
+            $table->unsignedBigInteger('product_id')->nullable();
+            $table->unsignedBigInteger('order_id')->nullable();
             $table->string('review');
             $table->integer('rating');
             $table->integer('status')->default(0);

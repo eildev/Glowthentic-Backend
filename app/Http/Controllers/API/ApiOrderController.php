@@ -19,7 +19,7 @@ use Auth;
 use App\Models\User;
 use App\Services\BillingInformationService;
 use Illuminate\Http\JsonResponse;
-
+use App\Models\Category;
 class ApiOrderController extends Controller
 {
 
@@ -247,7 +247,12 @@ public function store(Request $request){
         $total_price = 0;
         $total_quantity = 0;
         $error_messages = [];
-       
+        foreach($request->products as $product){
+            $getProduct = Product::where('id', $product['product_id'])->first();
+            $category = Category::where('id', $getProduct->category_id)->first();
+           $variant = Variant::where('id', $product['variant_id'])->first();
+           
+        }
 
     }
     catch(\Exception $e){

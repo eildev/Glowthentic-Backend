@@ -27,10 +27,11 @@ class ApiReviewController extends Controller
                 'review' => 'required',
             ]);
 
-            if($request->product_id){
+            if($request->product_id && $request->order_id){
                 $review = new ReviewRating();
                 $review->product_id = $request->product_id;
                 $review->user_id = $request->user_id;
+                $review->order_id = $request->order_id;
                 $review->rating = $request->rating;
                 $review->review = $request->review;
                 $review->status = $request->status;
@@ -70,6 +71,7 @@ class ApiReviewController extends Controller
                 $review = new ReviewRating();
                 $review->product_id = $value->product_id;
                 $review->user_id = $request->user_id;
+                $review->order_id = $request->order_id;
                 $review->rating = $request->rating;
                 $review->review = $request->review;
                 $review->status = $request->status;
