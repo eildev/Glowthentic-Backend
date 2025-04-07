@@ -1396,6 +1396,7 @@ $(document).on("click", ".removeRow", function () {
     $("#productTableBody tr").each(function () {
         let size = $(this).find('[name="size[]"]').val();
         let color = $(this).find('[name="color[]"]').val();
+        let image = $(this).find('[name="image[0][]"]').files
 
         if (!size && !color) {
         $(this).find('[name="size[]"]').after('<div class="text-danger error-message">Size or Color is required</div>');

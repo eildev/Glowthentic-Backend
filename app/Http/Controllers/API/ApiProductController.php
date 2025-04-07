@@ -45,6 +45,7 @@ class ApiProductController extends Controller
                 'variants.productVariantPromotion.coupon',
                 'variants.comboProduct',
                 'product_tags.tag',
+                'promotionproduct.coupon',
                 'productStock',
                 'productdetails',
                 'variantImage'
@@ -148,6 +149,7 @@ class ApiProductController extends Controller
                 'variants.variantImage',
                 'variants.product',
                 'variants.productStock',
+                'promotionproduct.coupon',
                 // 'variants.promotionproduct.coupon',
                 'variants.productVariantPromotion.coupon',
                 'variants.comboProduct',
@@ -177,6 +179,7 @@ class ApiProductController extends Controller
                 'variants.variantImage',
                 'variants.product',
                 'variants.productStock',
+                'promotionproduct.coupon',
                 'variants.productVariantPromotion.coupon',
                 'variants.comboProduct',
                 'product_tags',
