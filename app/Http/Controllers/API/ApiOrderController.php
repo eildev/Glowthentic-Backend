@@ -259,8 +259,25 @@ class ApiOrderController extends Controller
                 $variant = Variant::find($product['variant_id']);
 
                 $category_promotion = ProductPromotion::where('category_id', $category->id)->latest()->first();
+                // $product_promotion = ProductPromotion::where('product_id', $getProduct->id)->latest()->first();
+
+                // $variant_promotion = VariantPromotion::where('variant_id', $variant->id)->latest()->first();
+
                 $product_promotion = ProductPromotion::where('product_id', $getProduct->id)->latest()->first();
                 $variant_promotion = VariantPromotion::where('variant_id', $variant->id)->latest()->first();
+
+                // Check if both exist and have the same promotion_id
+                if ($product_promotion && $variant_promotion && $product_promotion->promotion_id == $variant_promotion->promotion_id) {
+                    // Ignore product promotion
+                    $product_promotion = null;
+                }
+
+
+
+
+
+
+
 
                 $category_promotion_coupon = $category_promotion
                     ? Coupon::where('id', $category_promotion->promotion_id)
@@ -299,6 +316,7 @@ class ApiOrderController extends Controller
                     }
                 }
                 elseif ($variant_promotion_coupon) {
+                   
                     if ($variant_promotion_coupon->discount_type == 'fixed') {
                         $discount_amount = $variant_promotion_coupon->discount_value * $product['variant_quantity'];
                     } else {
