@@ -907,34 +907,20 @@ $(document).on("click", ".variant_update", function (e) {
             isValid = false;
         }
 
-        // Image validations
-        // if (galleryImages.length > 0) {
-        // let allowedGalleryTypes = ["image/jpeg", "image/png", "image/jpg"];
-        //     let maxGallerySize = 2048; // 2MB
+        var imageInput = row.find('input[type="file"][name^="image"]')[0];
 
-        //     let input = $("input[name='image[]']")[0];
-        //         console.log(input);
-        //     if (input && input.files && input.files.length > 0) {
-        //         let galleryImages = input.files;
+            if (imageInput && imageInput.files.length > 0) {
+                var files = imageInput.files;
 
-        //         for (let i = 0; i < galleryImages.length; i++) {
-        //             let galleryFile = galleryImages[i];
-        //             let galleryFileSize = galleryFile.size / 1024;
+                for (var i = 0; i < files.length; i++) {
+                    if (files[i].size > 2 * 1024 * 1024) { // 2MB
+                        $(imageInput).after('<div class="text-danger error-message">Each image must be less than 2MB</div>');
+                        isValid = false;
+                        break;
+                    }
+                }
+            }
 
-        //             if (!allowedGalleryTypes.includes(galleryFile.type)) {
-        //                 $("input[name='image[]']").after(`<span class="text-danger">Only JPG, JPEG, and PNG files are allowed!</span>`);
-        //                 isValid = false;
-        //                 break;
-        //             }
-
-        //             if (galleryFileSize > maxGallerySize) {
-        //                 $("input[name='image[]']").after(`<span class="text-danger">Gallery image size must be less than 2MB!</span>`);
-        //                 isValid = false;
-        //                 break;
-        //             }
-        //         }
-        //     }
-        // }
     });
 
     if (!isValid) return;

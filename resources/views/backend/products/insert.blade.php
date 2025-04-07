@@ -1396,12 +1396,32 @@ $(document).on("click", ".removeRow", function () {
     $("#productTableBody tr").each(function () {
         let size = $(this).find('[name="size[]"]').val();
         let color = $(this).find('[name="color[]"]').val();
-        let image = $(this).find('[name="image[0][]"]').files
+        // let image = $(this).find('[name="image[0][]"]')[0].files;
+
 
         if (!size && !color) {
         $(this).find('[name="size[]"]').after('<div class="text-danger error-message">Size or Color is required</div>');
         isValid = false;
     }
+
+         var imageInput = $(this).find('[name="image[0][]"]')[0];
+            var files = imageInput.files;
+
+            if (files.length < 1) {
+                $(imageInput).after('<div class="text-danger error-message">Image is required</div>');
+                isValid = false;
+            } else {
+                // Check size of each file
+                for (var i = 0; i < files.length; i++) {
+                    if (files[i].size > 2 * 1024 * 1024) { // 2MB = 2*1024*1024 bytes
+                        $(imageInput).after('<div class="text-danger error-message">Each image must be less than 2MB</div>');
+                        isValid = false;
+                        break;
+                    }
+                }
+            }
+
+
     });
 
     if (!isValid) {
