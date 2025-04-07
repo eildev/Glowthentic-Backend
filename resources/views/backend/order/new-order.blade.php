@@ -154,7 +154,9 @@
                                                 <td>{{ $order->payment_status }}</td>
 
                                                 <td>
-                                                    <span class="text-warning text-capitalize">{{ $order->status }}</span>
+                                                    <span class="text-warning text-capitalize">
+                                                        {{ $order->status }}
+                                                    </span>
                                                 </td>
                                                 <td>Banasree</td>
                                                 <td>
