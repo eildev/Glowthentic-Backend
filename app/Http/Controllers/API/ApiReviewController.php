@@ -128,7 +128,7 @@ class ApiReviewController extends Controller
         $transformed = $reviews->map(function ($review) {
             return [
                 'id' => $review->id,
-                'comment' => $review->comment,
+                'review' => $review->review,
                 'rating' => $review->rating,
                 'gallary' => $review->gallary,
                 'user' => [
