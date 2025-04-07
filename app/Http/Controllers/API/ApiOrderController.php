@@ -29,15 +29,219 @@ class ApiOrderController extends Controller
     {
         $this->billingInformationService = $billingInformationService;
     }
-    public function store(Request $request)
+    // public function stor1(Request $request)
+    // {
+
+
+
+    //     try {
+    //         $billingResponse = $this->billingInformationService->storeBillingInfo($request);
+
+    //         // If billing response is an error, return the error response
+    //         if ($billingResponse instanceof JsonResponse && $billingResponse->getStatusCode() !== 201) {
+    //             return $billingResponse;
+    //         }
+
+    //         $variant_quantity = 0;
+    //         $variant_price = 0;
+    //         $variant_total_price = 0;
+    //         $total_quantity = 0;
+    //         $total_price = 0;
+    //         $discount_price = 0;
+
+    //         $error_messages = []; // Array to collect error messages
+
+    //         // Process products
+    //         foreach ($request->products as $product) {
+    //             // dd($product);
+    //             $variant = Variant::where('id', $product['variant_id'])->first();
+
+
+
+
+
+    //             if ($variant->regular_price == $product['variant_price']) {
+    //                 $variant_quantity += $product['variant_quantity'];
+    //                 $variant_price += $product['variant_price'] * $product['variant_quantity'];
+
+    //                 $product_promotion = ProductPromotion::where('variant_id', $variant->id)
+    //                     ->latest()
+    //                     ->first();
+
+    //                 $discount_amount = 0;
+    //                 if ($product_promotion) {
+    //                     $coupon = Coupon::where('id', $product_promotion->id)
+    //                         ->where('is_global', 0)
+    //                         ->where('end_date', '>=', Carbon::today())
+    //                         ->first();
+
+    //                     if ($coupon) {
+    //                         if ($coupon->discount_type == 'fixed') {
+    //                             $discount_amount = $coupon->discount_value * $product['variant_quantity'];
+    //                         } else {
+    //                             $discount_amount = ($variant_price * $coupon->discount_value) / 100 * $product['variant_quantity'];
+    //                         }
+    //                     }
+    //                 } elseif (isset($product['cupon_code']) && !empty($product['cupon_code'])) {
+    //                     $coupon = Coupon::where('cupon_code', $product['cupon_code'])
+    //                         ->where('is_global', 0)
+    //                         ->where('type', 'coupon')
+    //                         ->where('end_date', '>=', Carbon::today())
+    //                         ->first();
+
+    //                     if ($coupon) {
+    //                         if ($coupon->discount_type == 'fixed') {
+    //                             $discount_amount = $coupon->discount_value * $product['variant_quantity'];
+    //                         } else {
+    //                             $discount_amount = ($variant_price * $coupon->discount_value) / 100 * $product['variant_quantity'];
+    //                         }
+    //                     }
+    //                 }
+    //                 $discount_price += $discount_amount;
+    //                 $variant_total_price = $variant_price - $discount_price;
+    //             } else {
+    //                 $error_messages[] = 'Variant Price Does not match for product ' . $product['product_id'];
+    //             }
+    //         }
+
+    //         // Process combos
+    //         $combo_quantity = 0;
+    //         $combo_price = 0;
+    //         if ($request->combo) {
+    //             foreach ($request->combo as $combo) {
+    //                 $combo_product = ComboProduct::where('combo_id', $combo['combo_id'])->first();
+    //                 $single_combo = Combo::where('id', $combo['combo_id'])->where('status', 'active')->first();
+
+    //                 if ($single_combo) {
+    //                     $combo_quantity += $combo['combo_quantity'];
+    //                     $combo_price += $single_combo->offerd_price * ($combo['combo_quantity'] ?? 1);
+    //                 } else {
+    //                     $error_messages[] = 'Combo Not Found for combo ' . $combo['combo_id'];
+    //                 }
+    //             }
+    //         }
+
+    //         $total_price = $variant_total_price + $combo_price;
+    //         $total_quantity = $variant_quantity + $combo_quantity;
+
+    //         // Create order
+    //         $order = new Order();
+    //         $order->total_amount = $total_price;
+    //         $order->total_quantity = $total_quantity;
+    //         $order->payment_method = $request->payment_method;
+    //         $order->shipping_method = $request->shipping_method;
+    //         $order->shipping_charge = $request->shipping_charge;
+
+    //         if ($request->payment_method == 'COD') {
+    //             $order->payment_status = 'due';
+    //         } else {
+    //             $order->payment_status = 'paid';
+    //         }
+    //         $order->status = 'pending';
+    //         $order->order_note = $request->order_note;
+    //         $order->invoice_number = rand(100000, 999999);
+
+    //         if ($request->user_id) {
+    //             $order->user_id = $request->user_id;
+    //         } else if ($request->session_id) {
+    //             $order->session_id = $request->session_id;
+    //         }
+
+    //         $verified_phone = BillingInformation::where(function ($query) use ($request) {
+    //             $query->where('user_id', $request->user_id)
+    //                 ->orWhere('session_id', $request->session_id);
+    //         })->first();
+    //         if ($verified_phone) {
+    //             $order->phone_number = $verified_phone->phone;
+    //         } else {
+    //             $order->phone_number = $request->phone_number;
+    //         }
+
+    //         // Coupon Validation
+    //         if ($request->coupon_code) {
+    //             $coupon = Coupon::where('cupon_code', $request->coupon_code)
+    //                 ->where('is_global', 1)
+    //                 ->where('end_date', '>=', Carbon::today())
+    //                 ->first();
+    //             if (!$coupon) {
+    //                 $error_messages[] = 'Invalid Coupon Code: ' . $request->coupon_code;
+    //                 $order->sub_total = $total_price;
+    //                 $order->grand_total = $total_price + $request->shipping_charge;
+    //             } else {
+    //                 $order->global_coupon_id = $coupon->id;
+    //                 if ($coupon->discount_type == 'fixed') {
+    //                     $order->sub_total = $total_price - $coupon->discount_value;
+    //                     $order->grand_total = $total_price + $request->shipping_charge - $coupon->discount_value;
+    //                 } else {
+    //                     $order->sub_total = $total_price - ($total_price * $coupon->discount_value) / 100;
+    //                     $order->grand_total = $total_price + $request->shipping_charge - ($total_price * $coupon->discount_value) / 100;
+    //                 }
+    //             }
+    //         } else {
+
+    //             $order->sub_total = $total_price;
+    //             $order->grand_total = $total_price + $request->shipping_charge;
+    //         }
+
+
+    //         $order->save();
+
+    //         // Save order details
+    //         if ($order->id) {
+    //             if ($request->products) {
+    //                 foreach ($request->products as $product) {
+    //                     $order_details = new OrderDetails();
+    //                     $order_details->order_id = $order->id;
+    //                     $order_details->product_id = $product['product_id'];
+    //                     $order_details->variant_id = $product['variant_id'];
+    //                     $order_details->product_quantity = $product['variant_quantity'];
+    //                     $order_details->unit_price = $product['variant_price'];
+    //                     $order_details->total_price = $product['variant_price'] * $product['variant_quantity'];
+    //                     $order_details->save();
+    //                 }
+    //             }
+
+    //             if ($request->combo) {
+    //                 foreach ($request->combo as $combo) {
+    //                     $single_combo = Combo::where('id', $combo['combo_id'])->where('status', 'active')->first();
+    //                     if ($single_combo) {
+    //                         $order_details = new OrderDetails();
+    //                         $order_details->order_id = $order->id;
+    //                         $order_details->combo_id = $combo['combo_id'];
+    //                         $order_details->product_quantity = $combo['combo_quantity'];
+    //                         $order_details->unit_price = $single_combo->offerd_price;
+    //                         $order_details->total_price = $single_combo->offerd_price * ($combo['combo_quantity'] ?? 1);
+    //                         $order_details->save();
+    //                     }
+    //                 }
+    //             }
+    //         }
+
+    //         return response()->json([
+    //             'status' => 200,
+    //             'order' => $order,
+    //             'order_details' => $order->orderDetails,
+    //             'error_messages' => $error_messages,
+    //             'message' => 'Order Created Successfully',
+    //         ]);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'status' => 500,
+    //             'message' => $e->getMessage(),
+    //         ]);
+    //     }
+    // }
+
+
+
+    public function store1(Request $request)
     {
-
-
-
         try {
+
+             dd("hello");
             $billingResponse = $this->billingInformationService->storeBillingInfo($request);
 
-            // If billing response is an error, return the error response
+            // If billing response is an error, return it
             if ($billingResponse instanceof JsonResponse && $billingResponse->getStatusCode() !== 201) {
                 return $billingResponse;
             }
@@ -45,66 +249,80 @@ class ApiOrderController extends Controller
             $variant_quantity = 0;
             $variant_price = 0;
             $variant_total_price = 0;
-            $total_quantity = 0;
             $total_price = 0;
+            $total_quantity = 0;
             $discount_price = 0;
-
-            $error_messages = []; // Array to collect error messages
-
-            // Process products
+            $error_messages = [];
             foreach ($request->products as $product) {
-                // dd($product);
-                $variant = Variant::where('id', $product['variant_id'])->first();
+                $getProduct = Product::find($product['product_id']);
+                $category = Category::find($getProduct->category_id);
+                $variant = Variant::find($product['variant_id']);
 
+                $category_promotion = ProductPromotion::where('category_id', $category->id)->latest()->first();
+                $product_promotion = ProductPromotion::where('product_id', $getProduct->id)->latest()->first();
+                $variant_promotion = VariantPromotion::where('variant_id', $variant->id)->latest()->first();
 
+                $category_promotion_coupon = $category_promotion
+                    ? Coupon::where('id', $category_promotion->promotion_id)
+                        ->where('is_global', 0)
+                        ->where('end_date', '>=', Carbon::today())
+                        ->first()
+                    : null;
 
+                $product_promotion_coupon = $product_promotion
+                    ? Coupon::where('id', $product_promotion->promotion_id)
+                        ->where('is_global', 0)
+                        ->where('end_date', '>=', Carbon::today())
+                        ->first()
+                    : null;
 
+                $variant_promotion_coupon = $variant_promotion
+                    ? Coupon::where('id', $variant_promotion->promotion_id)
+                        ->where('is_global', 0)
+                        ->where('end_date', '>=', Carbon::today())
+                        ->first()
+                    : null;
 
-                if ($variant->regular_price == $product['variant_price']) {
-                    $variant_quantity += $product['variant_quantity'];
-                    $variant_price += $product['variant_price'] * $product['variant_quantity'];
+                $discount_amount = 0;
 
-                    $product_promotion = ProductPromotion::where('variant_id', $variant->id)
-                        ->latest()
-                        ->first();
-
-                    $discount_amount = 0;
-                    if ($product_promotion) {
-                        $coupon = Coupon::where('id', $product_promotion->id)
-                            ->where('is_global', 0)
-                            ->where('end_date', '>=', Carbon::today())
-                            ->first();
-
-                        if ($coupon) {
-                            if ($coupon->discount_type == 'fixed') {
-                                $discount_amount = $coupon->discount_value * $product['variant_quantity'];
-                            } else {
-                                $discount_amount = ($variant_price * $coupon->discount_value) / 100 * $product['variant_quantity'];
-                            }
-                        }
-                    } elseif (isset($product['cupon_code']) && !empty($product['cupon_code'])) {
-                        $coupon = Coupon::where('cupon_code', $product['cupon_code'])
-                            ->where('is_global', 0)
-                            ->where('type', 'coupon')
-                            ->where('end_date', '>=', Carbon::today())
-                            ->first();
-
-                        if ($coupon) {
-                            if ($coupon->discount_type == 'fixed') {
-                                $discount_amount = $coupon->discount_value * $product['variant_quantity'];
-                            } else {
-                                $discount_amount = ($variant_price * $coupon->discount_value) / 100 * $product['variant_quantity'];
-                            }
-                        }
+                if ($category_promotion_coupon) {
+                    if ($category_promotion_coupon->discount_type == 'fixed') {
+                        $discount_amount = $category_promotion_coupon->discount_value * $product['variant_quantity'];
+                    } else {
+                        $discount_amount = ($variant->regular_price * $category_promotion_coupon->discount_value / 100) * $product['variant_quantity'];
                     }
-                    $discount_price += $discount_amount;
-                    $variant_total_price = $variant_price - $discount_price;
-                } else {
-                    $error_messages[] = 'Variant Price Does not match for product ' . $product['product_id'];
+                } elseif ($product_promotion_coupon) {
+                    if ($product_promotion_coupon->discount_type == 'fixed') {
+                        $discount_amount = $product_promotion_coupon->discount_value * $product['variant_quantity'];
+                    } else {
+                        $discount_amount = ($variant->regular_price * $product_promotion_coupon->discount_value / 100) * $product['variant_quantity'];
+                    }
                 }
+                elseif ($variant_promotion_coupon) {
+                    if ($variant_promotion_coupon->discount_type == 'fixed') {
+                        $discount_amount = $variant_promotion_coupon->discount_value * $product['variant_quantity'];
+                    } else {
+                        $discount_amount = ($variant->regular_price * $variant_promotion_coupon->discount_value / 100) * $product['variant_quantity'];
+                    }
+
+                }
+
+                // Total values
+                $variant_quantity += $product['variant_quantity'];
+                $variant_price += $variant->price * $product['variant_quantity'];
+                $discount_price += $discount_amount??0;
+
+                $single_product_total = ($variant->regular_price * $product['variant_quantity']) - $discount_amount;
+                $variant_total_price += $single_product_total;
+
+                if (round($single_product_total, 2) != round($product['discount_cut_total_price'], 2)) {
+
+                    $error_messages[] = 'Variant price is not matching with total price for variant ID: ' . $product['variant_id'];
+                }
+
             }
 
-            // Process combos
+
             $combo_quantity = 0;
             $combo_price = 0;
             if ($request->combo) {
@@ -121,103 +339,112 @@ class ApiOrderController extends Controller
                 }
             }
 
+
+
             $total_price = $variant_total_price + $combo_price;
             $total_quantity = $variant_quantity + $combo_quantity;
-
-            // Create order
-            $order = new Order();
-            $order->total_amount = $total_price;
-            $order->total_quantity = $total_quantity;
-            $order->payment_method = $request->payment_method;
-            $order->shipping_method = $request->shipping_method;
-            $order->shipping_charge = $request->shipping_charge;
-
-            if ($request->payment_method == 'COD') {
-                $order->payment_status = 'due';
-            } else {
-                $order->payment_status = 'paid';
-            }
-            $order->status = 'pending';
-            $order->order_note = $request->order_note;
-            $order->invoice_number = rand(100000, 999999);
-
-            if ($request->user_id) {
-                $order->user_id = $request->user_id;
-            } else if ($request->session_id) {
-                $order->session_id = $request->session_id;
-            }
-
-            $verified_phone = BillingInformation::where(function ($query) use ($request) {
-                $query->where('user_id', $request->user_id)
-                    ->orWhere('session_id', $request->session_id);
-            })->first();
-            if ($verified_phone) {
-                $order->phone_number = $verified_phone->phone;
-            } else {
-                $order->phone_number = $request->phone_number;
-            }
-
-            // Coupon Validation
-            if ($request->coupon_code) {
-                $coupon = Coupon::where('cupon_code', $request->coupon_code)
-                    ->where('is_global', 1)
-                    ->where('end_date', '>=', Carbon::today())
-                    ->first();
-                if (!$coupon) {
-                    $error_messages[] = 'Invalid Coupon Code: ' . $request->coupon_code;
-                    $order->sub_total = $total_price;
-                    $order->grand_total = $total_price + $request->shipping_charge;
-                } else {
-                    $order->global_coupon_id = $coupon->id;
-                    if ($coupon->discount_type == 'fixed') {
-                        $order->sub_total = $total_price - $coupon->discount_value;
-                        $order->grand_total = $total_price + $request->shipping_charge - $coupon->discount_value;
-                    } else {
-                        $order->sub_total = $total_price - ($total_price * $coupon->discount_value) / 100;
-                        $order->grand_total = $total_price + $request->shipping_charge - ($total_price * $coupon->discount_value) / 100;
-                    }
-                }
-            } else {
-
-                $order->sub_total = $total_price;
-                $order->grand_total = $total_price + $request->shipping_charge;
-            }
+            $total_discount = $discount_price;
 
 
-            $order->save();
 
-            // Save order details
-            if ($order->id) {
-                if ($request->products) {
-                    foreach ($request->products as $product) {
-                        $order_details = new OrderDetails();
-                        $order_details->order_id = $order->id;
-                        $order_details->product_id = $product['product_id'];
-                        $order_details->variant_id = $product['variant_id'];
-                        $order_details->product_quantity = $product['variant_quantity'];
-                        $order_details->unit_price = $product['variant_price'];
-                        $order_details->total_price = $product['variant_price'] * $product['variant_quantity'];
-                        $order_details->save();
-                    }
-                }
+              // Create order
+              $order = new Order();
+              $order->total_amount = $total_price;
+              $order->total_quantity = $total_quantity;
+              $order->payment_method = $request->payment_method;
+              $order->shipping_method = $request->shipping_method;
+              $order->shipping_charge = $request->shipping_charge;
+              $order->discount_amount=$total_discount;
+              if ($request->payment_method == 'COD') {
+                  $order->payment_status = 'due';
+              } else {
+                  $order->payment_status = 'paid';
+              }
+              $order->status = 'pending';
+              $order->order_note = $request->order_note;
+              $order->invoice_number = rand(100000, 999999);
 
-                if ($request->combo) {
-                    foreach ($request->combo as $combo) {
-                        $single_combo = Combo::where('id', $combo['combo_id'])->where('status', 'active')->first();
-                        if ($single_combo) {
-                            $order_details = new OrderDetails();
-                            $order_details->order_id = $order->id;
-                            $order_details->combo_id = $combo['combo_id'];
-                            $order_details->product_quantity = $combo['combo_quantity'];
-                            $order_details->unit_price = $single_combo->offerd_price;
-                            $order_details->total_price = $single_combo->offerd_price * ($combo['combo_quantity'] ?? 1);
-                            $order_details->save();
-                        }
-                    }
-                }
-            }
+              if ($request->user_id) {
+                  $order->user_id = $request->user_id;
+              } else if ($request->session_id) {
+                  $order->session_id = $request->session_id;
+              }
 
-            return response()->json([
+              $verified_phone = BillingInformation::where(function ($query) use ($request) {
+                  $query->where('user_id', $request->user_id)
+                      ->orWhere('session_id', $request->session_id);
+              })->first();
+              if ($verified_phone) {
+                  $order->phone_number = $verified_phone->phone;
+              } else {
+                  $order->phone_number = $request->phone_number;
+              }
+
+              // Coupon Validation
+              if ($request->coupon_code) {
+                  $coupon = Coupon::where('cupon_code', $request->coupon_code)
+                      ->where('is_global', 1)
+                      ->where('end_date', '>=', Carbon::today())
+                      ->first();
+                  if (!$coupon) {
+                      $error_messages[] = 'Invalid Coupon Code: ' . $request->coupon_code;
+                      $order->sub_total = $total_price;
+                      $order->grand_total = $total_price + $request->shipping_charge;
+                  } else {
+                      $order->global_coupon_id = $coupon->id;
+                      if ($coupon->discount_type == 'fixed') {
+                          $order->sub_total = $total_price - $coupon->discount_value;
+                          $order->grand_total = $total_price + $request->shipping_charge - $coupon->discount_value + $request->tax;
+                      } else {
+                          $order->sub_total = $total_price - ($total_price * $coupon->discount_value) / 100;
+                          $order->grand_total = $total_price + $request->shipping_charge - ($total_price * $coupon->discount_value) / 100+$request->tax;
+                      }
+                  }
+              } else {
+
+                  $order->sub_total = $total_price;
+                  $order->grand_total = $total_price + $request->shipping_charge+$request->tax;
+              }
+
+
+
+              if(count( $error_messages)){
+                $order->status='mismatchOrder';
+              }
+              $order->save();
+
+              // Save order details
+              if ($order->id) {
+                  if ($request->products) {
+                      foreach ($request->products as $product) {
+                          $order_details = new OrderDetails();
+                          $order_details->order_id = $order->id;
+                          $order_details->product_id = $product['product_id'];
+                          $order_details->variant_id = $product['variant_id'];
+                          $order_details->product_quantity = $product['variant_quantity'];
+                          $order_details->unit_price = $product['variant_price'];
+                          $order_details->total_price = $product['variant_price'] * $product['variant_quantity'];
+                          $order_details->save();
+                      }
+                  }
+
+                  if ($request->combo) {
+                      foreach ($request->combo as $combo) {
+                          $single_combo = Combo::where('id', $combo['combo_id'])->where('status', 'active')->first();
+                          if ($single_combo) {
+                              $order_details = new OrderDetails();
+                              $order_details->order_id = $order->id;
+                              $order_details->combo_id = $combo['combo_id'];
+                              $order_details->product_quantity = $combo['combo_quantity'];
+                              $order_details->unit_price = $single_combo->offerd_price;
+                              $order_details->total_price = $single_combo->offerd_price * ($combo['combo_quantity'] ?? 1);
+                              $order_details->save();
+                          }
+                      }
+                  }
+              }
+
+              return response()->json([
                 'status' => 200,
                 'order' => $order,
                 'order_details' => $order->orderDetails,
@@ -234,112 +461,36 @@ class ApiOrderController extends Controller
 
 
 
-    public function store1(Request $request)
+    public function store(Request $request)
     {
         try {
             $billingResponse = $this->billingInformationService->storeBillingInfo($request);
 
-            // If billing response is an error, return it
-            if ($billingResponse instanceof JsonResponse && $billingResponse->getStatusCode() !== 201) {
-                return $billingResponse;
-            }
-
-            $variant_quantity = 0;
-            $variant_price = 0;
-            $variant_total_price = 0;
-            $total_price = 0;
-            $total_quantity = 0;
-            $discount_price = 0;
-            $error_messages = [];
-
-            foreach ($request->products as $product) {
-                // Get all related models
-                $getProduct = Product::find($product['product_id']);
-                $category = Category::find($getProduct->category_id);
-                $variant = Variant::find($product['variant_id']);
-                // dd($variant);
-
-                // Get promotions
-                $category_promotion = ProductPromotion::where('category_id', $category->id)->latest()->first();
-                // dd($category_promotion->promotion_id);
-                $product_promotion = ProductPromotion::where('product_id', $getProduct->id)->latest()->first();
-                $variant_promotion = VariantPromotion::where('variant_id', $variant->id)->latest()->first();
-
-                // Get related coupons only if promotions exist
-                $category_promotion_coupon = $category_promotion
-                    ? Coupon::where('id', $category_promotion->promotion_id)
-                        ->where('is_global', 0)
-                        ->where('end_date', '>=', Carbon::today())
-                        ->first()
-                    : null;
-            //    dd($category_promotion_coupon);
-                $product_promotion_coupon = $product_promotion
-                    ? Coupon::where('id', $product_promotion->promotion_id)
-                        ->where('is_global', 0)
-                        ->where('end_date', '>=', Carbon::today())
-                        ->first()
-                    : null;
-
-                $variant_promotion_coupon = $variant_promotion
-                    ? Coupon::where('id', $variant_promotion->promotion_id)
-                        ->where('is_global', 0)
-                        ->where('end_date', '>=', Carbon::today())
-                        ->first()
-                    : null;
-
-                  $discount_amount = 0;
-                if ($category_promotion_coupon) {
-
-                        if ($category_promotion_coupon->discount_type == 'fixed') {
-                            $discount_amount = $category_promotion_coupon->discount_value * $product['variant_quantity'];
-                        } else {
-                            $discount_amount = ($variant->regular_price*$category_promotion_coupon->discount_value) / 100 * $product['variant_quantity'];
-                            //  dd($discount_amount);
-                        }
-
-                }
-                elseif ($product_promotion_coupon) {
-
-                    if ($product_promotion_coupon->discount_type == 'fixed') {
-                        $discount_amount = $product_promotion_coupon->discount_value * $product['variant_quantity'];
-                    } else {
-                        $discount_amount = ($variant->regular_price* $product_promotion_coupon->discount_value) / 100 * $product['variant_quantity'];
-                    }
-                }
-                elseif ($variant_promotion_coupon) {
-
-                    if ($variant_promotion_coupon->discount_type == 'fixed') {
-                        $discount_amount = $variant_promotion_coupon->discount_value * $product['variant_quantity'];
-                    } else {
-                        $discount_amount = ($variant->regular_price*$variant_promotion_coupon->discount_value) / 100 * $product['variant_quantity'];
-                    }
-                }
-                //  else {
-
-                //     dd("no promotion");
-                // }
-                $variant_quantity += $product['variant_quantity'];
-                $variant_price += $variant->price * $product['variant_quantity'];
-                $discount_price += isset($discount_amount) ? $discount_amount : 0;
-                $variant_total_price += $variant->regular_price * $product['variant_quantity'] - $discount_price;
-                // dd($variant_total_price);
-              
-                if($variant_total_price != $product['discount_cut_total_price']){
-                    dd("error");
-                    $error_messages[] = 'Variant price is not matching with total price';
-                }
-                else{
-                    dd("ok");
-                }
-            }
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 500,
-                'message' => $e->getMessage(),
-            ]);
+        // If billing response is an error, return the error response
+        if ($billingResponse instanceof JsonResponse && $billingResponse->getStatusCode() !== 201) {
+            return $billingResponse;
         }
+        $variant_quantity = 0;
+        $variant_price = 0;
+        $variant_total_price = 0;
+        $total_price = 0;
+        $total_quantity = 0;
+        $error_messages = [];
+        foreach($request->products as $product){
+            $getProduct = Product::where('id', $product['product_id'])->first();
+            $category = Category::where('id', $getProduct->category_id)->first();
+           $variant = Variant::where('id', $product['variant_id'])->first();
+           
+        }
+
     }
+    catch(\Exception $e){
+        return response()->json([
+            'status' => 500,
+            'message' => $e->getMessage(),
+        ]);
+    }
+}
 
 
 
