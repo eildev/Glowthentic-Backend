@@ -311,5 +311,25 @@ public function variantDelete(Request $request){
     }
 }
 
+  public function Promotiondelete(Request $request){
+    try{
+        $promotion = ProductPromotion::where('id',$request->id)->first();
+        $promotion->delete();
+        return response()->json([
+            'status'=>200,
+            'message'=>'Data Deleted Successfully'
+        ]);
+    }
+    catch (Exception $e) {
+        return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
+    }
+}
 
+
+   public function PromotionView($promotion_id){
+    $promotionProduct = ProductPromotion::with('category','product','coupon')->where('promotion_id',$promotion_id)->get();
+
+    return view('backend.promotionProduct.view',compact('promotionProduct'));
+
+   }
 }

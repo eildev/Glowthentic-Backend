@@ -166,7 +166,6 @@ Route::controller(ApiWishListController::class)->group(function () {
 Route::controller(ApiReviewController::class)->group(function () {
     Route::post('/review/add', 'addReview');
     Route::get('/review/{product_id}', 'getReview');
-    Route::get('/review/{product_id}', 'getReview');
     Route::delete('/review/delete/{id}', 'deleteReview');
 });
 // Route::get('/product', [App\Http\Controllers\Backend\ProductController::class, 'index']);

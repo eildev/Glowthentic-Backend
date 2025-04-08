@@ -83,7 +83,10 @@ class BrandController extends Controller
             $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
             $image = 'uploads/brands/' . $imageName;
             $brand = Brand::findOrFail($id);
-            unlink(public_path('uploads/brand/') . $brand->image);
+
+            if (file_exists($brand->image)) {
+            unlink($brand->image);
+            }
             $brand->BrandName = $request->BrandName;
             $brand->slug = Str::slug($request->BrandName);
             $brand->image = $image;

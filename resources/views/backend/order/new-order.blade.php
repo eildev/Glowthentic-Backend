@@ -58,7 +58,7 @@
                                                         class="btn btn-sm btn-info">Approve</a>
                                                     <a href="{{ route('order.details', $order->id) }}"
                                                         class="btn btn-sm btn-success">View</a>
-                                                    <a href="{{ route('admin.denied.order', $order->id) }}"
+                                                    <a href="{{ route('admin.denied.order', $order->invoice_number) }}"
                                                         class="btn btn-sm btn-danger" id="delete">Denied</a>
                                                 </td>
                                             </tr>
@@ -154,7 +154,9 @@
                                                 <td>{{ $order->payment_status }}</td>
 
                                                 <td>
-                                                    <span class="text-warning text-capitalize">{{ $order->status }}</span>
+                                                    <span class="text-warning text-capitalize">
+                                                        {{ $order->status }}
+                                                    </span>
                                                 </td>
                                                 <td>Banasree</td>
                                                 <td>
@@ -162,7 +164,7 @@
                                                         class="btn btn-sm btn-info">Approve</a>
                                                     <a href="{{ route('order.details', $order->id) }}"
                                                         class="btn btn-sm btn-success">View</a>
-                                                    <a href="{{ route('admin.denied.order', $order->id) }}"
+                                                    <a href="{{ route('admin.denied.order', $order->invoice_number) }}"
                                                         class="btn btn-sm btn-danger" id="delete">Denied</a>
                                                 </td>
                                             </tr>

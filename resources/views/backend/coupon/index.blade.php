@@ -177,7 +177,7 @@
                                 <div class="row mb-3">
                                     <label class="col-sm-3 col-form-label">Promotion Name</label>
                                     <div class="col-sm-9">
-                                        <input type="text" name="promotion_name" class="form-control" required>
+                                        <input type="text" name="promotion_name" id="promotion_name" class="form-control" required>
                                     </div>
                                 </div>
 
@@ -185,7 +185,7 @@
                                 <div class="row mb-3">
                                     <label class="col-sm-3 col-form-label">Coupon Code</label>
                                     <div class="col-sm-9">
-                                        <input type="text" name="coupon_code" class="form-control" maxlength="50" required>
+                                        <input type="text" name="coupon_code" id="coupon_code" class="form-control" maxlength="50" required>
                                     </div>
                                 </div>
 
@@ -193,7 +193,7 @@
                                 <div class="row mb-3">
                                     <label class="col-sm-3 col-form-label">Discount Type</label>
                                     <div class="col-sm-9">
-                                        <select name="discount_type" class="form-select" required>
+                                        <select name="discount_type" class="form-select" required id="discount_type">
                                             <option value="">Choose...</option>
                                             <option value="percentage">Percentage</option>
                                             <option value="fixed">Fixed Amount</option>
@@ -205,15 +205,15 @@
                                 <div class="row mb-3">
                                     <label class="col-sm-3 col-form-label">Discount Value</label>
                                     <div class="col-sm-9">
-                                        <input type="number" name="discount_value" class="form-control" required>
+                                        <input type="number" name="discount_value" class="form-control" required id="discount_value">
                                     </div>
                                 </div>
 
                                 <!-- Status -->
                                 <div class="row mb-3">
-                                    <label class="col-sm-3 col-form-label">Status</label>
+                                    <label class="col-sm-3 col-form-label">Coupon Type</label>
                                     <div class="col-sm-9">
-                                        <select name="type" class="form-select" required>
+                                        <select name="type" class="form-select" required id="type">
                                             <option value="">Choose...</option>
                                             <option value="coupon">Coupon</option>
                                             <option value="promotion">Promotion</option>
@@ -232,11 +232,22 @@
                                     </div>
                                 </div>
 
+                                <div class="row mb-3">
+                                    <label class="col-sm-3 col-form-label">Coupon Status</label>
+                                    <div class="col-sm-9">
+                                        <select name="status" class="form-select" required id="status">
+                                            <option value="">Choose...</option>
+                                            <option value="Active">Active</option>
+                                            <option value="Inactive">Inactive</option>
+                                            <option value="Expire">Expired</option>
+                                        </select>
+                                    </div>
+                                </div>
                                 <!-- Start Date -->
                                 <div class="row mb-3">
                                     <label class="col-sm-3 col-form-label">Start Date</label>
                                     <div class="col-sm-9">
-                                        <input type="date" name="start_date" class="form-control" required>
+                                        <input type="date" name="start_date" class="form-control" required id="start_date">
                                     </div>
                                 </div>
 
@@ -244,7 +255,7 @@
                                 <div class="row mb-3">
                                     <label class="col-sm-3 col-form-label">End Date</label>
                                     <div class="col-sm-9">
-                                        <input type="date" name="end_date" class="form-control" required>
+                                        <input type="date" name="end_date" class="form-control" required id="end_date">
                                     </div>
                                 </div>
 
@@ -267,9 +278,117 @@
 
     <script>
 
+
+function validationError(){
+    $(".error-message").remove(); // Remove previous error messages
+    $("input, select").removeClass("is-invalid"); // Reset invalid styles
+
+    let isValid = true;
+    let promotion_name= $("input[name='promotion_name']").val().trim();
+    let discount_type=$("select[name='discount_type']").val().trim();
+    let discount_value=$("input[name='discount_value']").val().trim();
+    let type=$("select[name='type']").val().trim();
+    let  start_date=$("input[name='start_date']").val().trim();
+    let end_date=$("input[name='end_date']").val().trim();
+    let status=$("select[name='status']").val().trim();
+
+    if (promotion_name=== '') {
+        $("input[name='promotion_name']").addClass("is-invalid")
+            .after('<span class="text-danger error-message">Promotion name is required</span>');
+        isValid = false;
+    }
+
+    if (discount_type=== '') {
+        $("select[name='discount_type']").addClass("is-invalid")
+        .after('<span class="text-danger error-message">Discount type is required</span>');
+        isValid = false;
+    }
+    if (discount_value=== '') {
+        $("input[name='discount_value']").addClass("is-invalid")
+        .after('<span class="text-danger error-message">Discount value is required</span>');
+        isValid = false;
+    }
+    if (type=== '') {
+        $("select[name='type']").addClass("is-invalid")
+        .after('<span class="text-danger error-message">Type is required</span>');
+        isValid = false;
+    }
+    if (start_date=== '') {
+        $("input[name='start_date']").addClass("is-invalid")
+        .after('<span class="text-danger error-message">Start date is required</span>');
+        isValid = false;
+    }
+    if (end_date=== '') {
+        $("input[name='end_date']").addClass("is-invalid")
+        .after('<span class="text-danger error-message">End date is required</span>');
+        isValid = false;
+    }
+
+    return isValid;
+}
+
+
+
+function validationEditError(){
+    $(".error-message").remove(); // Remove previous error messages
+    $("input, select").removeClass("is-invalid"); // Reset invalid styles
+
+    let isValid = true;
+    let promotion_name=document.getElementById("promotion_name").value.trim();
+    let discount_type=document.getElementById("discount_type").value.trim();
+    let discount_value=document.getElementById("discount_value").value.trim();
+    let type=document.getElementById("type").value.trim();
+    let  start_date=document.getElementById("start_date").value.trim();
+    let end_date=document.getElementById("end_date").value.trim();
+    let status=document.getElementById("status").value.trim();
+
+    if (promotion_name=== '') {
+        $("input[name='promotion_name']").addClass("is-invalid")
+            .after('<span class="text-danger error-message">Promotion name is required</span>');
+        isValid = false;
+    }
+
+    if (discount_type=== '') {
+        $("select[name='discount_type']").addClass("is-invalid")
+        .after('<span class="text-danger error-message">Discount type is required</span>');
+        isValid = false;
+    }
+    if (discount_value=== '') {
+        $("input[name='discount_value']").addClass("is-invalid")
+        .after('<span class="text-danger error-message">Discount value is required</span>');
+        isValid = false;
+    }
+    if (type=== '') {
+        $("select[name='type']").addClass("is-invalid")
+        .after('<span class="text-danger error-message">Type is required</span>');
+        isValid = false;
+    }
+    if (start_date=== '') {
+        $("input[name='start_date']").addClass("is-invalid")
+        .after('<span class="text-danger error-message">Start date is required</span>');
+        isValid = false;
+    }
+    if (end_date=== '') {
+        $("input[name='end_date']").addClass("is-invalid")
+        .after('<span class="text-danger error-message">End date is required</span>');
+        isValid = false;
+    }
+
+    return isValid;
+}
+
+
+
+
+
+
+//////////////add coupon/////////////
 $(document).on('click', '.save_coupon', function () {
+
+
+   if(!validationError()) return;
     let formData = new FormData($('#couponAddForm')[0]);
-    console.log(formData);
+
 
     $.ajaxSetup({
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
@@ -323,8 +442,9 @@ $(document).on('click', '.save_coupon', function () {
                 $('#couponEditForm input[name="coupon_code"]').val(response.coupon.cupon_code);
                 $('#couponEditForm select[name="discount_type"]').val(response.coupon.discount_type);
                 $('#couponEditForm input[name="discount_value"]').val(response.coupon.discount_value);
-                $('#couponEditForm select[name="status"]').val(response.coupon.status);
+                $('#couponEditForm select[name="type"]').val(response.coupon.type);
                 $('#couponEditForm select[name="is_global"]').val(response.coupon.is_global);
+                $('#couponEditForm select[name="status"]').val(response.coupon.status);
                 $('#couponEditForm input[name="start_date"]').val(response.coupon.start_date);
                 $('#couponEditForm input[name="end_date"]').val(response.coupon.end_date);
                 $('#couponEditForm').append(`<input type="hidden" name="coupon_id" value="${response.coupon.id}">`);
@@ -339,6 +459,8 @@ $(document).on('click', '.save_coupon', function () {
 
 
 $(document).on('click', '.Edit_Coupon', function () {
+
+    if(!validationEditError()) return;
     let formData = new FormData($('#couponEditForm')[0]);
     $.ajaxSetup({
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }

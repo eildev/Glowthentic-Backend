@@ -59,7 +59,8 @@
 
                                                 <a href="{{ route('admin.transit.order.change.completed',$transit_orders->id) }}" class="btn btn-sm btn-info">Delivered</a>
                                                 <a href="{{ route('order.details', $transit_orders->id) }}" class="btn btn-sm btn-success" >View</a>
-                                                <a href="#" class="btn btn-sm btn-danger" id="delete">Cancel</a>
+                                                <a href="{{ route('admin.denied.order', $order->invoice_number) }}"
+                                                    class="btn btn-sm btn-danger" id="delete">Cancel</a>
                                             </td>
                                         </tr>
                                     @endforeach

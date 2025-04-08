@@ -11,6 +11,7 @@ use App\Models\OrderBillingDetails;
 use App\Models\User;
 use App\Models\Variant;
 use App\Models\DeliveryOrder;
+use App\Models\UserDetails;
 class OrderManageController extends Controller
 {
     public function allUser(){
@@ -50,7 +51,8 @@ class OrderManageController extends Controller
         }
     }
     public function index(){
-        $newOrders = Order::where("status", 'pending')->latest()->get();
+        $newOrders = Order::where("status", 'pending')->orWhere('status','mismatchOrder')->latest()->get();
+        
         return view('backend.order.new-order', compact('newOrders'));
     }
     public function approvedOrders(){
@@ -150,7 +152,9 @@ class OrderManageController extends Controller
         return back()->with('success','Order Status Updated Sucessfully');
     }
     public function adminDenied($invoice){
+
         $denied_order = Order::where("invoice_number",$invoice)->latest()->first();
+
         $denied_order->status = "denied";
         $denied_order->update();
         return back()->with('success','Order Status Denied Sucessfully');
@@ -226,5 +230,20 @@ class OrderManageController extends Controller
         $order_details = OrderDetails::where('order_id', $order->id)->get();
         $billing = OrderBillingDetails::where('order_id', $order->id)->latest()->first();
         return view('frontend.e-com.thank-you', compact('order', 'order_details', 'billing'));
+    }
+
+    public function getOrderDetails(Request $request){
+        $order_id = $request->order_id;
+         $getorder= Order::where('id',$order_id)->first();
+         $user_id = $getorder->user_id??$getorder->session_id;
+
+         $userInfo = UserDetails::where('user_id',$user_id)->orWhere('session_id',$user_id)->first();
+
+         return response()->json([
+            'status' => 200,
+            'userInfo' => $userInfo,
+            'order' => $getorder
+         ]);
+
     }
 }

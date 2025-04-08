@@ -4,7 +4,7 @@
         <div class="row">
             <div class="col-md-8 offset-md-2">
                 <div class="card border-top border-0 border-3 border-info">
-                    <form action="{{ Route('feature.update', $brand->id) }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ Route('feature.update', $brand->id) }}" method="POST" enctype="multipart/form-data" id="featureForm">
                         @csrf
                         <div class="card-body">
                             <div class="border p-4 rounded">
@@ -47,7 +47,7 @@
                                 <div class="row">
                                     <label class="col-sm-3 col-form-label"></label>
                                     <div class="col-sm-9">
-                                        <button type="submit" class="btn btn-info px-5">Update Brand</button>
+                                        <a class="btn btn-info px-5" id="submitBtn">Update Brand</a>
                                     </div>
                                 </div>
                             </div>
@@ -59,5 +59,57 @@
         <!--end row-->
     </div>
 
-    <script></script>
+    <script>
+        $(document).ready(function () {
+            $("#submitBtn").on("click", function (e) {
+                e.preventDefault();
+
+                let form = $("#featureForm");
+                let feature_name = $("input[name='feature_name']").val().trim(); // Fix the variable name
+
+                let imageInput = $("input[name='image']")[0].files[0];
+
+                $(".text-danger").text(""); // Clear existing error messages
+
+                let errors = {}; // Initialize the errors object
+
+                // Validate feature name
+                if (feature_name === "") {
+                    errors.feature_name = "Feature Name is required!";
+                }
+
+                // Validate image input
+                // if (!imageInput) {
+                //     errors.image = "Feature thumbnail is required!";
+                // } else {
+
+                if (imageInput) {
+                    let fileSize = imageInput.size / 1024; // Convert to KB
+                    let fileType = imageInput.type;
+
+                    let allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+
+                    if (!allowedTypes.includes(fileType)) {
+                        errors.image = "Only JPG, JPEG, and PNG files are allowed!";
+                    } else if (fileSize > 2048) { // 2MB
+                        errors.image = "Image size must be less than 2MB!";
+                    }
+                }
+
+                // Check if any validation errors exist
+                if (!$.isEmptyObject(errors)) {
+                    // Display errors if any
+                    if (errors.feature_name) {
+                        $("input[name='feature_name']").after(`<span class="text-danger">${errors.feature_name}</span>`);
+                    }
+                    if (errors.image) {
+                        $("input[name='image']").after(`<span class="text-danger">${errors.image}</span>`);
+                    }
+                    return false; // Prevent form submission if there are errors
+                }
+
+                form.submit(); // Submit the form if no errors
+            });
+        });
+    </script>
 @endsection
