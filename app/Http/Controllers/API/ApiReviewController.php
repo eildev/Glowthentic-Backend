@@ -9,6 +9,7 @@ use App\Models\ReviewImages;
 use App\Services\ImageOptimizerService;
 use Exception;
 use App\Models\User;
+use App\Models\OrderDetails;
 class ApiReviewController extends Controller
 {
 
@@ -17,23 +18,65 @@ class ApiReviewController extends Controller
 
         try{
 
+            // dd($request->all());
 
             $request->validate([
-                'product_id' => 'required',
+                // 'product_id' => 'required',
                 'user_id' => 'required',
                 'rating' => 'required',
                 'review' => 'required',
             ]);
-            $review = new ReviewRating();
-            $review->product_id = $request->product_id;
-            $review->user_id = $request->user_id;
-            $review->rating = $request->rating;
-            $review->review = $request->review;
-            $review->status = $request->status;
-            $review->save();
+
+            if($request->product_id && $request->order_id){
+                $review = new ReviewRating();
+                $review->product_id = $request->product_id;
+                $review->user_id = $request->user_id;
+                $review->order_id = $request->order_id;
+                $review->rating = $request->rating;
+                $review->review = $request->review;
+                $review->status = $request->status;
+                $review->save();
 
 
-            if ($request->hasFile('images')){
+                if ( $review->id && $request->hasFile('images')){
+
+                        $allImages =$request->file('images');
+                        if (!is_array($allImages)) {
+                            $allImages = [$allImages];
+                        }
+                        foreach ( $allImages as $image) {
+                            //   dd("hello");
+                            $destinationPath = public_path('uploads/review/Image/');
+
+                            // Use $image instead of $images
+                            $filename = time() . '_' . uniqid() . '.' . $image->extension();
+
+                            // Use $image instead of $images
+                            $imageName = $imageService->resizeAndOptimize($image, $destinationPath, $filename);
+                            $imagePath = 'uploads/review/Image/' . $imageName;
+
+                            $ImageGallery = new ReviewImages();
+                            $ImageGallery->review_id = $review->id;
+                            $ImageGallery->image = $imagePath;
+                            $ImageGallery->save();
+                        }
+                    }
+
+            }
+
+            else if($request->order_id){
+
+               $product=OrderDetails::where('order_id',$request->order_id)->get();
+               foreach($product as $key => $value){
+                $review = new ReviewRating();
+                $review->product_id = $value->product_id;
+                $review->user_id = $request->user_id;
+                $review->order_id = $request->order_id;
+                $review->rating = $request->rating;
+                $review->review = $request->review;
+                $review->status = $request->status;
+                $review->save();
+                if ( $review->id && $request->hasFile('images')){
 
                     $allImages =$request->file('images');
                     if (!is_array($allImages)) {
@@ -56,8 +99,8 @@ class ApiReviewController extends Controller
                         $ImageGallery->save();
                     }
                 }
-
-
+            }
+            }
 
             return response()->json([
                 'status' => 200,
@@ -77,24 +120,37 @@ class ApiReviewController extends Controller
 
 
     public function getReview($product_id){
-        $reviews = ReviewRating::with('gallary', 'user')->where('product_id', $product_id)->get();
+        try{
+            $reviews = ReviewRating::with('gallary', 'user.userDetails')
+            ->where('product_id', $product_id)
+            ->get();
 
-
-
-    $user_details = $reviews->groupBy('user_id')->map(function ($group) {
-        $user = $group->first()->user;
-        return [
-            'email' => $user ? $user->email : null,
-            'name' => $user ? $user->name : null,
-        ];
-    })->values();
-
+        $transformed = $reviews->map(function ($review) {
+            return [
+                'id' => $review->id,
+                'review' => $review->review,
+                'rating' => $review->rating,
+                'gallary' => $review->gallary,
+                'user' => [
+                    'name' => optional($review->user)->name,
+                    'email' => optional($review->user)->email,
+                ],
+            ];
+        });
 
         return response()->json([
             'status' => 200,
-            'reviews' => $reviews,
-            'user_details' => $user_details,
-
+            'reviews' => $transformed,
         ]);
+        }
+
+        catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to add category.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+
     }
 }

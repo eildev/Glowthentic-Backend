@@ -313,11 +313,8 @@ public function variantDelete(Request $request){
 
   public function Promotiondelete(Request $request){
     try{
-        $promotion = ProductPromotion::where('promotion_id',$request->promotion_id)->get();
-       foreach($promotion as $promotion){
-            $promotion->delete();
-        }
-
+        $promotion = ProductPromotion::where('id',$request->id)->first();
+        $promotion->delete();
         return response()->json([
             'status'=>200,
             'message'=>'Data Deleted Successfully'

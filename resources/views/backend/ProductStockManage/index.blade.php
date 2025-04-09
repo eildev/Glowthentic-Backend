@@ -57,6 +57,17 @@
     </div>
 </div>
 <script>
+
+
+/////////////////////////////stock validation start//////////////////
+
+
+
+
+
+
+
+/////////////////////////////stock validation end//////////////////
 $(document).on('change','.product',function(){
   var id = $(this).val();
   var url = "{{ url('get/stock/product/variant') }}/" + id;
@@ -139,6 +150,31 @@ $(document).on('click', '.remove-row', function () {
 
     $(document).on('click','.updateMultipleStock',function(){
 
+
+        let isValid = true;
+        $(".error-message").remove();
+
+        $('input[name="quantity[]"]').each(function () {
+            let value = ($(this).val() || '').trim();
+
+            if (value === '') {
+                $(this).addClass('is-invalid');
+                $(this).after('<span class="text-danger error-message">Quantity is required</span>');
+                isValid = false;
+            } else {
+                $(this).removeClass('is-invalid');
+            }
+        });
+
+        if (!isValid) {
+            return;
+        }
+
+
+
+
+
+
         let formData=new FormData($('#stockUpdateForm')[0]);
 
         $.ajaxSetup({
@@ -157,7 +193,7 @@ $(document).on('click', '.remove-row', function () {
                 if(response.status == 200){
                     let updateStock=response.updatestock;
                     toastr.success("Stock Updated Successfully");
-                    window.location.href = "{{ route('stock.view') }}";
+                     window.location.href = "{{ route('stock.view') }}";
                     updateStock.forEach(function(stock){
                         $('.stock-update').text(stock.stock_quantity);
                     })

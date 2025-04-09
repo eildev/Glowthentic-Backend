@@ -224,7 +224,7 @@ function validateCategoryForm() {
 
     // Get form values
     let categoryName = $("input[name='categoryName']").val().trim();
-    let image = $("input[name='image']").val();
+    let imageInput = $("input[name='image']")[0].files[0];
 
     // Validation rules
     if (categoryName === "") {
@@ -233,12 +233,73 @@ function validateCategoryForm() {
         isValid = false;
     }
 
-    if (image) { // Check only if an image is provided
-        let fileExt = image.split('.').pop().toLowerCase();
-        let allowedExt = ["jpg", "jpeg", "png",'gif'];
-        if (!allowedExt.includes(fileExt)) {
-            $("input[name='image']").addClass("is-invalid")
-                .after('<span class="text-danger error-message">Only JPG, JPEG, PNG files are allowed</span>');
+  if (!imageInput) {
+    $("input[name='image']").addClass("is-invalid")
+    .after('<span class="text-danger error-message">Image is required</span>');
+    isValid = false;
+  }
+
+        else{
+            let fileSize = imageInput.size / 1024;
+                            let fileType = imageInput.type;
+
+
+                            let allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+
+                            if (!allowedTypes.includes(fileType)) {
+
+                                $("input[name='image']").addClass("is-invalid")
+                                .after('<span class="text-danger error-message">Only JPG, JPEG, and PNG files are allowed!</span>');
+                                isValid = false;
+                            } else if (fileSize > 2048) {
+                                $("input[name='image']").addClass("is-invalid")
+                                .after('<span class="text-danger error-message">Image size must be less than 2MB!</span>');
+                                isValid = false;
+                            }
+
+        }
+
+
+
+
+    return isValid; // Return true if valid, false otherwise
+}
+
+
+
+
+function validateCategoryEditForm() {
+    // Clear any previous error messages
+    $(".error-message").remove();
+    $("input, select").removeClass("is-invalid");
+
+    let isValid = true;
+
+    // Get form values
+    let categoryName = document.getElementById("category_name").value;
+    let imageInput = $("input[name='image']")[0].files[0];
+
+
+    if (categoryName === "") {
+        $("input[name='categoryName']").addClass("is-invalid")
+            .after('<span class="text-danger error-message">Category name is required</span>');
+        isValid = false;
+    }
+
+
+     if (imageInput) {
+        let fileSize = imageInput.size / 1024; // Convert size to KB
+        let fileType = imageInput.type;
+        let allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+
+        // Check for allowed file types
+        if (!allowedTypes.includes(fileType)) {
+            $("#image").addClass("is-invalid")
+                .after('<span class="text-danger error-message">Only JPG, JPEG, and PNG files are allowed!</span>');
+            isValid = false;
+        } else if (fileSize > 2048) {  // Check for file size (2MB)
+            $("#image").addClass("is-invalid")
+                .after('<span class="text-danger error-message">Image size must be less than 2MB!</span>');
             isValid = false;
         }
     }
@@ -248,7 +309,13 @@ function validateCategoryForm() {
 
 
 
-validateCategoryForm();
+
+
+
+
+
+
+
 
 
 
@@ -306,9 +373,8 @@ validateCategoryForm();
         $(document).on('click', '.Edit_category', function() {
 
 
-            if (!validateCategoryForm()) return;
 
-
+    if (!validateCategoryEditForm()) return;
 
             let formData = new FormData($('#EditCategoryForm')[0]);
             $.ajaxSetup({

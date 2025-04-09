@@ -21,14 +21,14 @@ return new class extends Migration
             $table->integer('total_quantity');
             $table->decimal('total_amount', '10', '2');
             $table->decimal('sub_total', '10', '2');
-            $table->decimal('discount_amount', '10', '2');
+            $table->decimal('discount_amount', '10', '2')->nullable();
 
             $table->unsignedBigInteger('global_coupon_id')->nullable();
             $table->enum('payment_method', ['COD', 'bank', 'mobile_bank'])->nullable();
             $table->enum('shipping_method', ['In-House', 'Third-Party'])->nullable();
             $table->decimal('shipping_charge', '10', '2')->nullable();
             $table->decimal('grand_total', '10', '2');
-            $table->enum('status', ['pending', 'completed', 'cancelled', 'returned', 'approve', 'processing', 'Delivering'])->default('pending');
+            $table->enum('status', ['pending', 'completed', 'cancelled', 'returned', 'approve', 'processing', 'Delivering','mismatchOrder'])->default('pending');
             $table->enum('payment_status', ['paid', 'processing', 'due']);
             $table->string('order_note')->nullable();
             // $table->string('discount')->nullable();

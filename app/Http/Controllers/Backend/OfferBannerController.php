@@ -8,6 +8,9 @@ use App\Models\OfferBanner;
 use App\Models\ImageGallery;
 use App\Services\ImageOptimizerService;
 use Exception;
+
+use function PHPUnit\Framework\fileExists;
+
 class OfferBannerController extends Controller
 {
     // banner index function
@@ -25,7 +28,7 @@ class OfferBannerController extends Controller
             'title' => 'required|max:100',
             'short_description' => 'required|max:100',
             'link' => 'required|max:200',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
         ]);
 
 
@@ -108,7 +111,7 @@ class OfferBannerController extends Controller
             'title' => 'required|max:100',
             'short_description' => 'required|max:100',
             'link' => 'required|max:200',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
         ]);
 
         $offerBanner = OfferBanner::findOrFail($id);
@@ -128,7 +131,7 @@ class OfferBannerController extends Controller
 
             $destinationPath = public_path('uploads/offer_banner/');
             $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
-            $offerBanerAdd->image='uploads/offer_banner/'.$imageName;
+            $offerBanner->image='uploads/offer_banner/'.$imageName;
         }
 
         $offerBanner->save();
@@ -159,7 +162,19 @@ class OfferBannerController extends Controller
     public function delete($id)
     {
         $banner = OfferBanner::findOrFail($id);
-        unlink(public_path('uploads/offer_banner/').$banner->image);
+         $galleryImages = ImageGallery::where('offer_banner_id', $id)->get();
+        if(fileExists($banner->image)){
+            unlink(public_path($banner->image));
+        }
+
+        foreach ($galleryImages as $galleryImage) {
+            $imagePath = public_path($galleryImage->image);
+            if (file_exists($imagePath) && is_file($imagePath)) {
+                unlink($imagePath);
+            }
+            $galleryImage->delete();
+        }
+
         $banner->delete();
         return back()->with('success', 'banner Successfully deleted');
     }
@@ -168,6 +183,7 @@ class OfferBannerController extends Controller
     public function deleteImage($id)
         {
             $image = ImageGallery::findOrFail($id);
+
             $imagePath = public_path($image->image);
 
 

@@ -12,11 +12,13 @@ use App\Models\BillingInformation;
 use Auth;
 use App\Services\BillingInformationService;
 use Illuminate\Http\JsonResponse;
+
 class ApiUserManageController extends Controller
 {
 
     protected $billingInformationService;
-    public function __construct(BillingInformationService $billingInformationService){
+    public function __construct(BillingInformationService $billingInformationService)
+    {
         $this->billingInformationService = $billingInformationService;
     }
     public function UserDetailsStore(Request $request)
@@ -85,45 +87,11 @@ class ApiUserManageController extends Controller
                         $userDetails->save();
                     }
                 } else {
-                    $userDetails = UserDetails::where('session_id', $request->session_id)->first();
-                    if ($userDetails) {
 
-                        $userDetails->full_name = $request->full_name;
-                        $userDetails->phone_number = $request->phone_number;
-                        $userDetails->address = $request->address;
-                        if ($request->hasFile('image')) {
-                            $file = $request->file('image');
-                            $extension = $file->Extension();
-                            $filename = time() . '.' . $extension;
-                            $path = 'uploads/user_image/';
-                            $file->move($path, $filename);
-                            $userDetails->image = $path . $filename;
-                        }
-                        $userDetails->police_station = $request->police_station;
-                        $userDetails->city = $request->city;
-                        $userDetails->postal_code = $request->postal_code;
-                        $userDetails->country = $request->country;
-                        $userDetails->save();
-                    } else {
-                        $userDetails = new UserDetails();
-                        $userDetails->session_id = $request->session_id;
-                        if ($request->hasFile('image')) {
-                            $file = $request->file('image');
-                            $extension = $file->Extension();
-                            $filename = time() . '.' . $extension;
-                            $path = 'uploads/user_image/';
-                            $file->move($path, $filename);
-                            $userDetails->image = $path . $filename;
-                        }
-                        $userDetails->police_station = $request->police_station;
-                        $userDetails->full_name = $request->full_name;
-                        $userDetails->phone_number = $request->phone_number;
-                        $userDetails->address = $request->address;
-                        $userDetails->city = $request->city;
-                        $userDetails->postal_code = $request->postal_code;
-                        $userDetails->country = $request->country;
-                        $userDetails->save();
-                    }
+                    return response()->json([
+                        'status' => 401,
+                        'message' => 'You must need to login first',
+                    ], 401);
                 }
             }
 
@@ -140,6 +108,9 @@ class ApiUserManageController extends Controller
         }
     }
 
+
+
+
     public function update($id, Request $request)
     {
         // dd($id, $request);
@@ -151,13 +122,14 @@ class ApiUserManageController extends Controller
                 'city' => 'required|string',
                 'postal_code' => 'required|string',
                 'country' => 'required|string',
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,webp,svg|max:10240',
             ]);
             if ($validator->fails()) {
                 return response()->json([
                     'status' => 422,
                     'errors' => $validator->errors(),
                     'message' => 'Validation Failed',
-                ], 422);
+                ]);
             }
             $userDetails = UserDetails::where('user_id', $id)->first();
             if ($userDetails) {
@@ -252,7 +224,7 @@ class ApiUserManageController extends Controller
     {
 
 
-        try{
+        try {
             $billingResponse = $this->billingInformationService->storeBillingInfo($request);
             if ($billingResponse instanceof JsonResponse && $billingResponse->getStatusCode() !== 201) {
                 return $billingResponse;
@@ -262,13 +234,12 @@ class ApiUserManageController extends Controller
                 'message' => 'Billing Information Added Successfully',
                 'billing_info' => $billingResponse
             ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage()
+            ], 500);
         }
-        catch(\Exception $e) {
-                return response()->json([
-                    'status' => false,
-                    'message' => $e->getMessage()
-                ], 500);
-            }
     }
 
     public function userBillingInfoUpdate(Request $request, $id)
@@ -332,7 +303,7 @@ class ApiUserManageController extends Controller
         //     ], 500);
         // }
 
-        try{
+        try {
             $billingResponse = $this->billingInformationService->userBillingInfoUpdate($request, $id);
             if ($billingResponse instanceof JsonResponse && $billingResponse->getStatusCode() !== 200) {
                 return $billingResponse;
@@ -342,8 +313,7 @@ class ApiUserManageController extends Controller
                 'message' => 'Billing Information Updated Successfully',
                 'billing_info' => $billingResponse
             ], 200);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
                 'message' => $e->getMessage()

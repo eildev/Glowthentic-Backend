@@ -17,7 +17,13 @@
 
                             @foreach ($promotion as $promo)
 
-                                    <option  {{$promotionProduct->first()->promotion_id==$promo->id?'selected':'' }} value="{{ $promo->id }}">{{ $promo->promotion_name }}</option>
+
+                            <option
+                            {{ optional($promotionProduct->first())->promotion_id == $promo->id ? 'selected' : '' }}
+                            value="{{ $promo->id ?? '' }}">
+                            {{ $promo->promotion_name }}
+                        </option>
+
 
                             @endforeach
 
@@ -398,8 +404,9 @@ $(document).on('click', '.remove-row', function () {
 
 $(document).on('click','.delete_button',function(){
     let id = $(this).data('id');
+
     $.ajax({
-        url: "{{ route('promotion.delete') }}",
+        url: "{{ route('product.promotion.delete') }}",
         type: "POST",
         data: {
             id: id,
