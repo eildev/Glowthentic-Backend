@@ -234,11 +234,9 @@ class ApiOrderController extends Controller
 
 
 
-    public function store1(Request $request)
+    public function store(Request $request)
     {
         try {
-
-             dd("hello");
             $billingResponse = $this->billingInformationService->storeBillingInfo($request);
 
             // If billing response is an error, return it
@@ -476,39 +474,6 @@ class ApiOrderController extends Controller
             ]);
         }
     }
-
-
-
-    public function store(Request $request)
-    {
-        try {
-            $billingResponse = $this->billingInformationService->storeBillingInfo($request);
-
-        // If billing response is an error, return the error response
-        if ($billingResponse instanceof JsonResponse && $billingResponse->getStatusCode() !== 201) {
-            return $billingResponse;
-        }
-        $variant_quantity = 0;
-        $variant_price = 0;
-        $variant_total_price = 0;
-        $total_price = 0;
-        $total_quantity = 0;
-        $error_messages = [];
-        foreach($request->products as $product){
-            $getProduct = Product::where('id', $product['product_id'])->first();
-            $category = Category::where('id', $getProduct->category_id)->first();
-           $variant = Variant::where('id', $product['variant_id'])->first();
-           
-        }
-
-    }
-    catch(\Exception $e){
-        return response()->json([
-            'status' => 500,
-            'message' => $e->getMessage(),
-        ]);
-    }
-}
 
 
 
