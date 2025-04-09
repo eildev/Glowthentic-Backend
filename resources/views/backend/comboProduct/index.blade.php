@@ -130,8 +130,8 @@
                             <div class="border p-4 rounded">
                                 <hr>
                                 <div class="row mb-3">
-                                    <input type="hidden" class="comboProduct_id" name="comboProduct_id" required>
-                                    <label class="col-sm-3 col-form-label">Product Name</label>
+                                    <input type="hidden" class="comboProduct_id" name="comboProduct_id" id="comboProduct_id" required>
+                                    <label for="product_id_variant" class="col-sm-3 col-form-label">Product Name</label>
                                     <div class="col-sm-9">
                                         <select name="product_id" class="form-select products" required id="product_id_variant">
                                             <option value="">Choose...</option>
@@ -141,31 +141,29 @@
                                 </div>
 
                                 <div class="row mb-3">
-                                    <label class="col-sm-3 col-form-label">Combo Name</label>
+                                    <label for="combo_id" class="col-sm-3 col-form-label">Combo Name</label>
                                     <div class="col-sm-9">
-                                        <select name="combo_id" class="form-select combos" required>
+                                        <select name="combo_id" class="form-select combos" required id="combo_id">
                                             <option value="">Choose...</option>
                                             <option>...</option>
                                         </select>
                                     </div>
                                 </div>
 
-
                                 <div class="row mb-3">
-                                    <label class="col-sm-3 col-form-label">Variant Name</label>
+                                    <label for="variant_id" class="col-sm-3 col-form-label">Variant Name</label>
                                     <div class="col-sm-9">
-                                        <select name="variant_id" class="form-select variant" required>
+                                        <select name="variant_id" class="form-select variant" required id="variant_id">
                                             <option value="">Choose...</option>
                                             <option>...</option>
                                         </select>
                                     </div>
                                 </div>
 
-
                                 <div class="row mb-3">
-                                    <label class="col-sm-3 col-form-label">Quantity</label>
+                                    <label for="quantity" class="col-sm-3 col-form-label">Quantity</label>
                                     <div class="col-sm-9">
-                                        <input type="number" name="quantity" class="form-control quantity" required>
+                                        <input type="number" name="quantity" class="form-control quantity" required id="quantity">
                                     </div>
                                 </div>
                             </div>
@@ -174,11 +172,12 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary Edit_comboProduct">Update</button>
+                    <button type="button" class="btn btn-primary Edit_comboProduct" id="Edit_comboProduct">Update</button>
                 </div>
             </div>
         </div>
     </div>
+
 
 
 
@@ -374,6 +373,54 @@ $(document).on("change","#product_id_variant",function(){
 
 
 
+
+
+
+function validateEditForm() {
+    $(".error-message").remove(); // Remove previous error messages
+    $("input, select").removeClass("is-invalid"); // Reset invalid styles
+
+    let isValid = true;
+
+    var product_id = $("#product_id_variant").val();
+    var combo_id = $("#combo_id").val();
+    var variant_id = $("#variant_id").val();
+    let quantity = $("#quantity").val().trim();
+
+    if (product_id === "" || product_id == null) {
+        $("#product_id_variant").addClass("is-invalid")
+            .parent().append('<span class="text-danger error-message">Please select a Product</span>');
+        isValid = false;
+    }
+
+    if (combo_id === "" || combo_id == null) {
+        $("#combo_id").addClass("is-invalid")
+            .parent().append('<span class="text-danger error-message">Please select a Combo Name</span>');
+        isValid = false;
+    }
+
+    if (variant_id === "" || variant_id == null) {
+        $("#combo_id").addClass("is-invalid")
+            .parent().append('<span class="text-danger error-message">Please select a Combo Name</span>');
+        isValid = false;
+    }
+
+
+    if (quantity === "") {
+        $("#quantity").addClass("is-invalid")
+            .after('<span class="text-danger error-message">Quantity is required</span>');
+        isValid = false;
+    }
+
+    return isValid;
+}
+
+
+
+
+
+
+
 $(document).on('click','.edit',function(){
 
     let id = $(this).data('id');
@@ -415,6 +462,9 @@ $(document).on('click','.edit',function(){
 });
 
   $(document).on('click','.Edit_comboProduct',function(){
+
+
+    if(!validateEditForm()) return;
       let formdata= new FormData($('#ComboProductEditForm')[0]);
       $.ajaxSetup({
                     headers: {

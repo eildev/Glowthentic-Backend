@@ -468,7 +468,7 @@
                                                 @php
                                                     $features = App\Models\Features::get();
                                                 @endphp
-                                             
+
                                                 <div class="mb-3">
                                                     <label class="form-label col-12">Select Feature</label>
                                                     <div class="col-12">
@@ -812,6 +812,72 @@
 
 {{-- script start --}}
 <script>
+////////////////////////////////////show validation error //////////////////////////////////////
+function validationError() {
+    $(".error-message").remove();
+    $("input, select").removeClass("is-invalid");
+    $(".text-danger").remove(); // ensure old errors are cleared
+
+    let isValid = true;
+    let errors = {};
+
+    let category_id = $('select[name="category_id"]').val()?.trim() || "";
+    let brand_id = $('select[name="brand_id"]').val()?.trim() || "";
+    let unit_id = $('select[name="unit_id"]').val()?.trim() || "";
+    let size = $('select[name="size"]').val()?.trim() || "";
+    let color = $('select[name="color"]').val()?.trim() || "";
+    let price = $('input[name="price"]').val()?.trim() || "";
+    let gender = $('select[name="gender"]').val()?.trim() || "";
+    let product_name = $('input[name="product_name"]').val()?.trim() || "";
+    let galleryImages = $("input[name='product_main_image[]']")[0]?.files || [];
+
+    if (category_id === "") errors.category_id = "Category is required!";
+    if (brand_id === "") errors.brand_id = "Brand is required!";
+    if (unit_id === "") errors.unit_id = "Unit is required!";
+    if (size === "") errors.size = "Size is required!";
+    if (color === "") errors.color = "Color is required!";
+    if (price === "") errors.price = "Price is required!";
+    if (gender === "") errors.gender = "Gender is required!";
+    if (product_name === "") errors.product_name = "Product Name is required!";
+    if (galleryImages.length === 0) errors.galleryimages = "Gallery Images are required!";
+
+    let allowedGalleryTypes = ["image/jpeg", "image/png", "image/jpg"];
+    let maxGallerySize = 2048; // 2MB
+
+    for (let i = 0; i < galleryImages.length; i++) {
+        let galleryFile = galleryImages[i];
+        let galleryFileSize = galleryFile.size / 1024;
+
+        if (!allowedGalleryTypes.includes(galleryFile.type)) {
+            errors.galleryimages = "Only JPG, JPEG, and PNG files are allowed!";
+            isValid = false;
+            break;
+        }
+        if (galleryFileSize > maxGallerySize) {
+            errors.galleryimages = "Gallery image size must be less than 2MB!";
+            isValid = false;
+            break;
+        }
+    }
+
+    if (!$.isEmptyObject(errors)) {
+        isValid = false;
+
+        if (errors.category_id) $("select[name='category_id']").after(`<span class="text-danger">${errors.category_id}</span>`);
+        if (errors.brand_id) $("select[name='brand_id']").after(`<span class="text-danger">${errors.brand_id}</span>`);
+        if (errors.unit_id) $("select[name='unit_id']").after(`<span class="text-danger">${errors.unit_id}</span>`);
+        if (errors.size) $("select[name='size']").after(`<span class="text-danger">${errors.size}</span>`);
+        if (errors.color) $("select[name='color']").after(`<span class="text-danger">${errors.color}</span>`);
+        if (errors.price) $("input[name='price']").after(`<span class="text-danger">${errors.price}</span>`);
+        if (errors.gender) $("select[name='gender']").after(`<span class="text-danger">${errors.gender}</span>`);
+        if (errors.product_name) $("input[name='product_name']").after(`<span class="text-danger">${errors.product_name}</span>`);
+        if (errors.galleryimages) $("input[name='product_main_image[]']").after(`<span class="text-danger">${errors.galleryimages}</span>`);
+    }
+
+    return isValid;
+}
+
+
 
 /////////////////////////////////extra field show in product page///////////////////////
 
@@ -1278,7 +1344,14 @@ $(document).on("click", ".removeRow", function () {
 
 
 
-            $(document).on("click", ".add_product", function () {
+    $(document).on("click", ".add_product", function () {
+
+        if (!validationError()) {
+            console.log("Validation failed");
+            return;
+        }
+
+
             let formdata = new FormData($('#productForm')[0]); // Corrected FormData
             $.ajaxSetup({
                         headers: {
@@ -1323,11 +1396,32 @@ $(document).on("click", ".removeRow", function () {
     $("#productTableBody tr").each(function () {
         let size = $(this).find('[name="size[]"]').val();
         let color = $(this).find('[name="color[]"]').val();
+        // let image = $(this).find('[name="image[0][]"]')[0].files;
+
 
         if (!size && !color) {
         $(this).find('[name="size[]"]').after('<div class="text-danger error-message">Size or Color is required</div>');
         isValid = false;
     }
+
+         var imageInput = $(this).find('[name="image[0][]"]')[0];
+            var files = imageInput.files;
+
+            if (files.length < 1) {
+                $(imageInput).after('<div class="text-danger error-message">Image is required</div>');
+                isValid = false;
+            } else {
+                // Check size of each file
+                for (var i = 0; i < files.length; i++) {
+                    if (files[i].size > 2 * 1024 * 1024) { // 2MB = 2*1024*1024 bytes
+                        $(imageInput).after('<div class="text-danger error-message">Each image must be less than 2MB</div>');
+                        isValid = false;
+                        break;
+                    }
+                }
+            }
+
+
     });
 
     if (!isValid) {

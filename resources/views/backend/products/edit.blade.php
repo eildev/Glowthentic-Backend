@@ -339,8 +339,8 @@
                                         @endphp
 
                                     <div class="mb-3">
-                                        <label class="form-label">Select Product Tag</label>
-                                        <select class="multiple-select" data-placeholder="Choose anything" multiple="multiple" name="tag[]">
+                                        <label class="form-label">Select Product Feature</label>
+                                        <select class="multiple-select" data-placeholder="Choose anything" multiple="multiple" name="product_feature[]">
                                             @foreach($allFeature as $feature)
                                                 <option value="{{ $feature->id }}"
                                                     {{ in_array($feature->id, $selectFeatureId) ? 'selected' : '' }}>
@@ -790,6 +790,60 @@
 
 {{-- script start --}}
 <script>
+
+
+////////////////////////////////////////////validation error///////////////////////////////
+
+function validationError() {
+    $(".error-message").remove();
+    $("input, select").removeClass("is-invalid");
+    $(".text-danger").remove(); // ensure old errors are cleared
+
+    let isValid = true;
+    let errors = {};
+
+    let category_id = $('select[name="category_id"]').val()?.trim() || "";
+    let brand_id = $('select[name="brand_id"]').val()?.trim() || "";
+    let unit_id = $('select[name="unit_id"]').val()?.trim() || "";
+
+    let gender = $('select[name="gender"]').val()?.trim() || "";
+    let product_name = $('input[name="product_name"]').val()?.trim() || "";
+
+
+    if (category_id === "") errors.category_id = "Category is required!";
+    if (brand_id === "") errors.brand_id = "Brand is required!";
+    if (unit_id === "") errors.unit_id = "Unit is required!";
+
+    if (gender === "") errors.gender = "Gender is required!";
+    if (product_name === "") errors.product_name = "Product Name is required!";
+
+
+    if (!$.isEmptyObject(errors)) {
+        isValid = false;
+
+        if (errors.category_id) $("select[name='category_id']").after(`<span class="text-danger">${errors.category_id}</span>`);
+        if (errors.brand_id) $("select[name='brand_id']").after(`<span class="text-danger">${errors.brand_id}</span>`);
+        if (errors.unit_id) $("select[name='unit_id']").after(`<span class="text-danger">${errors.unit_id}</span>`);
+
+        if (errors.gender) $("select[name='gender']").after(`<span class="text-danger">${errors.gender}</span>`);
+        if (errors.product_name) $("input[name='product_name']").after(`<span class="text-danger">${errors.product_name}</span>`);
+
+    }
+
+    return isValid;
+}
+
+///////////////////tag delete///////////////////////
+
+
+
+
+
+
+
+
+
+
     ///////////////////variant image delete///////////////////
     $(document).on('click','.remove-image',function(){
         let image_id = $(this).data('id');
@@ -818,37 +872,82 @@
 
 ////////////////////////////////////////variant Update ////////////////////////////////////////
 
-$(document).on("click",".variant_update",function(e){
+$(document).on("click", ".variant_update", function (e) {
     e.preventDefault();
 
+    let isValid = true;
+    $(".text-danger").remove(); // Remove old error messages
+
+    $('#productTableBody tr').each(function () {
+        let row = $(this);
+
+        let priceInput = row.find('input[name^="price"]');
+        let sizeSelect = row.find('select[name^="size"]');
+        let colorSelect = row.find('select[name^="color"]');
+        // let galleryImages = $("input[name^='image[][]']")[0].files;
 
 
 
+        let price = priceInput.val()?.trim();
+        let size = sizeSelect.val()?.trim();
+        let color = colorSelect.val()?.trim();
+
+        if (!size) {
+            sizeSelect.after(`<span class="text-danger">Size is required</span>`);
+            isValid = false;
+        }
+
+        if (!color) {
+            colorSelect.after(`<span class="text-danger">Color is required</span>`);
+            isValid = false;
+        }
+
+        if (!price) {
+            priceInput.after(`<span class="text-danger">Price is required</span>`);
+            isValid = false;
+        }
+
+        var imageInput = row.find('input[type="file"][name^="image"]')[0];
+
+            if (imageInput && imageInput.files.length > 0) {
+                var files = imageInput.files;
+
+                for (var i = 0; i < files.length; i++) {
+                    if (files[i].size > 2 * 1024 * 1024) { // 2MB
+                        $(imageInput).after('<div class="text-danger error-message">Each image must be less than 2MB</div>');
+                        isValid = false;
+                        break;
+                    }
+                }
+            }
+
+    });
+
+    if (!isValid) return;
+
+    // Submit the form via AJAX
     let formdata = new FormData($('#variant_form_submit')[0]);
 
     $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
 
-            $.ajax({
+    $.ajax({
+        url: "/product/variant/update",
+        type: "POST",
+        data: formdata,
+        contentType: false,
+        processData: false,
+        success: function (res) {
+            toastr.success(res.message);
+            $('#variant_form_submit')[0].reset();
+            window.location.href = "/product/view/" + res.product_id;
+        }
+    });
+});
 
-                url:"/product/variant/update",
-                type:"POST",
-                data:formdata,
-                contentType: false,
-                processData:false,
-                success:function(res){
-
-                    console.log(res);
-                    toastr.success(res.message);
-                    $('#variant_form_submit')[0].reset();
-                    window.location.href = "/product/view/" + res.product_id;
-
-                }
-            });
-  });
 
 $(document).on("click", ".addRow", function () {
           let rowCount = $("#productTableBody tr").length;
@@ -939,7 +1038,14 @@ $(document).on("click", ".removeRow", function () {
 
     });
 //////////////////////////////////update product //////////////////////////////////////////////////////
-    $(document).on("click", ".update_product", function () {
+$(document).on("click", ".update_product", function () {
+
+    if (!validationError()) {
+            console.log("Validation failed");
+            return;
+        }
+
+
     let formdata = new FormData($('#productForm')[0]); // Corrected FormData
     $.ajaxSetup({
                 headers: {
