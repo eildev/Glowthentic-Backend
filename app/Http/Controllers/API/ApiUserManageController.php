@@ -87,45 +87,11 @@ class ApiUserManageController extends Controller
                         $userDetails->save();
                     }
                 } else {
-                    $userDetails = UserDetails::where('session_id', $request->session_id)->first();
-                    if ($userDetails) {
 
-                        $userDetails->full_name = $request->full_name;
-                        $userDetails->phone_number = $request->phone_number;
-                        $userDetails->address = $request->address;
-                        if ($request->hasFile('image')) {
-                            $file = $request->file('image');
-                            $extension = $file->Extension();
-                            $filename = time() . '.' . $extension;
-                            $path = 'uploads/user_image/';
-                            $file->move($path, $filename);
-                            $userDetails->image = $path . $filename;
-                        }
-                        $userDetails->police_station = $request->police_station;
-                        $userDetails->city = $request->city;
-                        $userDetails->postal_code = $request->postal_code;
-                        $userDetails->country = $request->country;
-                        $userDetails->save();
-                    } else {
-                        $userDetails = new UserDetails();
-                        $userDetails->session_id = $request->session_id;
-                        if ($request->hasFile('image')) {
-                            $file = $request->file('image');
-                            $extension = $file->Extension();
-                            $filename = time() . '.' . $extension;
-                            $path = 'uploads/user_image/';
-                            $file->move($path, $filename);
-                            $userDetails->image = $path . $filename;
-                        }
-                        $userDetails->police_station = $request->police_station;
-                        $userDetails->full_name = $request->full_name;
-                        $userDetails->phone_number = $request->phone_number;
-                        $userDetails->address = $request->address;
-                        $userDetails->city = $request->city;
-                        $userDetails->postal_code = $request->postal_code;
-                        $userDetails->country = $request->country;
-                        $userDetails->save();
-                    }
+                    return response()->json([
+                        'status' => 401,
+                        'message' => 'You must need to login first',
+                    ], 401);
                 }
             }
 
