@@ -18,7 +18,7 @@ class ImageOptimizerService
         $this->imageManager = new ImageManager(new GdDriver());
     }
 
-    public function resizeAndOptimize($imageFile, $destinationPath, $width = 800, $height = 600, $quality = 75)
+    public function resizeAndOptimize($imageFile, $destinationPath, $width = 800, $height = 600, $quality = 100)
     {
 
         $width = (int) $width;

@@ -17,7 +17,10 @@ return new class extends Migration
             $table->string('short_description', 100);
             $table->string('long_description', 200);
             $table->string('link', 255);
-            $table->string('image', 200);
+            $table->string('small_image', 200);
+            $table->string('medium_image', 200);
+            $table->string('large_image', 200);
+            $table->string('extra_large_image', 200);
             $table->tinyInteger('status')->default(1);
             $table->timestamps(0);
             $table->softDeletes();
