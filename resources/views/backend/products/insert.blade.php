@@ -3,6 +3,7 @@
 <link href="{{ asset('backend') }}/assets/plugins/select2/css/select2.min.css" rel="stylesheet" />
 <link href="{{ asset('backend') }}/assets/plugins/select2/css/select2-bootstrap4.css" rel="stylesheet" />
     <div class="page-content">
+
         <div class="row">
             <div class="card">
                 <div class="card-body p-4">
@@ -32,6 +33,26 @@
 
                     <hr />
                     <div class="form-body mt-4">
+
+
+                  <!-- Loader -->
+                        <div id="loader"
+                        style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.7); z-index:9999; display:none;">
+
+                        <div style="width:100%; height:100%; display:flex; justify-content:center; align-items:center;">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                        </div>
+
+                        </div>
+
+
+
+
+
+
+
                         <form method="POST" action="" enctype="multipart/form-data" id="productForm">
                             @csrf
                             <div class="row g-3 mb-3">
@@ -509,7 +530,7 @@
 
 
 
-                                            <div class="mb-3 col-12">
+                                            <div class="mb-3 col-12 data" style="display:none">
                                                 <label for="" class="mb-2">Extra Field Add</label>
                                                 <select class="form-select extra_field" name="extra_field" >
 
@@ -892,15 +913,100 @@ function showExtraField() {
             if (data.status === 200) {
                 $('.extra_field').empty();
                 let extraField = data.extraField;
-                console.log(extraField);
-                let option = `<option value="" selected disabled>Select Extra Field</option>`;
+                if (extraField.length > 3) {
+    // Show dropdown and hide auto-fields
+    $('.data').fadeIn(); // Show the dropdown container
+    $('#extra_info_field').empty(); // Clear previously added fields if any
 
-                extraField.forEach(function (field) {
-                    option += `<option value="${field.id}" data-id="${field.id}">${field.field_name}</option>`;
-                });
+    let option = `<option value="" selected disabled>Select Extra Field</option>`;
 
-                $('.extra_field').append(option);
+    extraField.forEach(function (field) {
+        option += `<option value="${field.id}" data-id="${field.id}">${field.field_name}</option>`;
+    });
+
+    $('.extra_field').html(option).prop('disabled', false); // Populate dropdown
+} else {
+    // Hide dropdown and auto-render input fields
+    $('.data').fadeOut();
+    $('.extra_field').prop('disabled', true); // Optional: disable dropdown
+
+    $('#extra_info_field').empty(); // Clear any old input
+
+    extraField.forEach(function (extraData) {
+        let id = extraData.id;
+
+        // Hidden input for tracking
+        let hiddenInput = $('<input>')
+            .attr('type', 'hidden')
+            .attr('name', `extra_field_id[${id}]`)
+            .val(id);
+
+        $('#extra_info_field').append(hiddenInput);
+
+        // Now render inputs by type
+        if (extraData.data_type === "longtext") {
+            $('#extra_info_field').append(`
+                <div class="mb-3 col-md-6 extra-field-container">
+                    <label class="form-label">${extraData.field_name}</label>
+                    <textarea class="form-control" name="extra_field[${id}]" rows="3"
+                        onkeyup="errorRemove(this);" onchange="errorRemove(this);"></textarea>
+                    <span class="text-danger name_error"></span>
+                    <button type="button" class="btn btn-danger btn-sm remove-field mt-2">-</button>
+                </div>
+            `);
+        } else if (["decimal", "int", "double"].includes(extraData.data_type)) {
+            $('#extra_info_field').append(`
+                <div class="mb-3 col-md-6 extra-field-container">
+                    <label class="form-label">${extraData.field_name}</label>
+                    <input class="form-control" type="number" name="extra_field[${id}]"
+                        onkeyup="errorRemove(this);" onchange="errorRemove(this);">
+                    <span class="text-danger name_error"></span>
+                    <button type="button" class="btn btn-danger btn-sm remove-field mt-2">-</button>
+                </div>
+            `);
+        } else if (extraData.data_type === "text") {
+            $('#extra_info_field').append(`
+                <div class="mb-3 col-md-6 extra-field-container">
+                    <label class="form-label">${extraData.field_name}</label>
+                    <input class="form-control" type="text" name="extra_field[${id}]"
+                        onkeyup="errorRemove(this);" onchange="errorRemove(this);">
+                    <span class="text-danger name_error"></span>
+                    <button type="button" class="btn btn-danger btn-sm remove-field mt-2">-</button>
+                </div>
+            `);
+        } else if (extraData.data_type === "date") {
+            $('#extra_info_field').append(`
+                <div class="mb-3 col-md-6 extra-field-container">
+                    <label class="form-label">${extraData.field_name}</label>
+                    <input class="form-control" type="date" name="extra_field[${id}]"
+                        onkeyup="errorRemove(this);" onchange="errorRemove(this);">
+                    <span class="text-danger name_error"></span>
+                    <button type="button" class="btn btn-danger btn-sm remove-field mt-2">-</button>
+                </div>
+            `);
+        } else if (extraData.data_type === "json") {
+            let options = JSON.parse(extraData.options);
+            let checkboxes = options.map(option => `
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="extra_field[${id}][]" value="${option}" id="checkbox_${id}_${option}">
+                    <label class="form-check-label" for="checkbox_${id}_${option}">${option}</label>
+                </div>
+            `).join('');
+
+            $('#extra_info_field').append(`
+                <div class="mb-3 col-md-6 extra-field-container">
+                    <label class="form-label">${extraData.field_name}</label>
+                    ${checkboxes}
+                    <span class="text-danger name_error"></span>
+                    <button type="button" class="btn btn-danger btn-sm remove-field mt-2">-</button>
+                </div>
+            `);
+        }
+    });
+}
+
             }
+
         },
         error: function (xhr, status, error) {
             console.error("Error fetching extra fields:", error);
@@ -1365,7 +1471,12 @@ $(document).on("click", ".removeRow", function () {
                         data: formdata,
                         contentType: false,
                         processData: false,
+                        beforeSend: function () {
+                            $('#loader').show(); // Show loader
+                        },
+
                         success:function(res){
+                            $('#loader').hide();
                             if(res.status == 200){
                             toastr.success(res.message);
                             }
@@ -1374,6 +1485,7 @@ $(document).on("click", ".removeRow", function () {
 
                         },
                         error: function (xhr) {
+                            $('#loader').hide();
                                 if (xhr.status === 422) {
                                     let errors = xhr.responseJSON.errors;
                                     $('.error-message').remove(); // Remove previous errors
@@ -1445,8 +1557,12 @@ $(document).on("click", ".removeRow", function () {
                 data:formdata,
                 contentType: false,
                 processData:false,
-                success:function(res){
+                beforeSend: function () {
+                            $('#loader').show(); // Show loader
+                        },
 
+                success:function(res){
+                    $('#loader').hide();
                     console.log(res);
                     toastr.success(res.message);
                     $('#variant_form_submit')[0].reset();

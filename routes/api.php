@@ -75,7 +75,7 @@ Route::controller(ApiCategoryController::class)->group(function () {
     Route::get('/nav/category/show', 'navCategoryShow')->name('navCategory.show');
 });
 Route::controller(ApiTagNameController::class)->group(function () {
-    Route::get('/tagname', 'viewAll')->name('tagname.view');
+    Route::get('/tagname', 'viewAll');
     Route::get('/tagname/{id}', 'show')->name('tagname.show');
 });
 Route::controller(ApiFeatureController::class)->group(function () {
@@ -84,7 +84,7 @@ Route::controller(ApiFeatureController::class)->group(function () {
 });
 
 Route::controller(ApiProductController::class)->group(function () {
-    Route::get('/product', 'viewAll')->name('product.view');
+    Route::get('/product', 'viewAll');
     Route::get('/product/{id}', 'show')->name('product.show');
     Route::post('/product/search', 'search');
     Route::post('/product/filter', 'filter');
@@ -96,7 +96,7 @@ Route::controller(ApiComboProductController::class)->group(function () {
 });
 
 Route::controller(ApiBrandController::class)->group(function () {
-    Route::get('/brand', 'view')->name('brand.view');
+    Route::get('/brand', 'view');
     Route::get('/brand/{id}', 'showIndividual')->name('brand.show');
 });
 
