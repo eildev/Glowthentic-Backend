@@ -34,13 +34,13 @@
 
                                         <tr>
                                             <td>{{ $serialNumber++ }}</td>
-                                            <td>{{ $alluser->userName }}</td>
-                                            <td>{{ $alluser->fullName }}</td>
-                                            <td>{{ $alluser->phone }}</td>
-                                            <td>{{ $alluser->email}}</td>
+                                            <td>{{ $alluser->name }}</td>
+                                            <td>{{ $alluser->userDetails->full_name??'' }}</td>
+                                            <td>{{ $alluser->userDetails->phone??'' }}</td>
+                                            <td>{{ $alluser->userDetails->email??''}}</td>
 
                                             <td>
-                                                @if ( $alluser->status == 'Active')
+                                                @if ( $alluser->status == 'active')
                                                     <a href="{{ route('admin.disable-user',$alluser->id) }}" class="btn btn-sm btn-warning">Inactive</a>
                                                 @else
                                                     <a href="{{ route('admin.enable-user',$alluser->id) }}" class="btn btn-sm btn-success">Active</a>
