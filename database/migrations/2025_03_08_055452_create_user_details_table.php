@@ -17,12 +17,12 @@ return new class extends Migration
             $table->string('session_id')->nullable();
             $table->string('full_name');
             $table->longText('address');
-            $table->integer('phone_number');
+            $table->string('phone_number');
             $table->string('city');
-            $table->string('postal_code');
-            $table->string('police_station');
+            $table->string('postal_code')->nullable();
+            $table->string('police_station')->nullable();
             $table->string('image')->nullable();
-            $table->string('country');
+            $table->string('country')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
