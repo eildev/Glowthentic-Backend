@@ -156,7 +156,10 @@ class ApiProductController extends Controller
                 'product_tags',
                 'productStock',
                 'productdetails',
-                'variantImage'
+                'variantImage',
+                'category',
+                'subcategory',
+                'brand',
             )->where('status', 1)->get();
             // dd($products);
             return response()->json([
