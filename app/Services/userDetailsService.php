@@ -47,7 +47,7 @@ class UserDetailsService
            elseif($request->session_id){
 
 
-              $userDetailsFind = UserDetails::where('user_id',$request->session_id)->first();
+              $userDetailsFind = UserDetails::where('session_id',$request->session_id)->first();
               if($userDetailsFind){
                 $userDetails = $userDetailsFind;
               }else{

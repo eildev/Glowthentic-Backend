@@ -18,6 +18,7 @@ return new class extends Migration
             $table->longText('usage_instruction')->nullable();
             $table->enum('gender', ['male', 'female', 'unisex'])->default('unisex');
             $table->bigInteger('created_by');
+            $table->longText('short_description')->nullable();
             $table->bigInteger('approved_by')->nullable();
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
             $table->timestamps(0);
