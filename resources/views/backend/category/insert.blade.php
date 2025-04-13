@@ -233,11 +233,11 @@ function validateCategoryForm() {
         isValid = false;
     }
 
-  if (!imageInput) {
-    $("input[name='image']").addClass("is-invalid")
-    .after('<span class="text-danger error-message">Image is required</span>');
-    isValid = false;
-  }
+    if (!imageInput) {
+        $("input[name='image']").addClass("is-invalid")
+        .after('<span class="text-danger error-message">Image is required</span>');
+        isValid = false;
+    }
 
         else{
             let fileSize = imageInput.size / 1024;
@@ -327,7 +327,7 @@ function validateCategoryEditForm() {
 
             if (!validateCategoryForm()) return;
 
-
+         
             let formData = new FormData($('#AddCategoryForm')[0]);
 
             $.ajaxSetup({
