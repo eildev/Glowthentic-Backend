@@ -101,6 +101,8 @@
                                 </div>
 
 
+
+
                                 @if ($bannerContent->status == 'cart1')
                                     <div class="row mb-3">
                                         <label for="image" class="col-sm-3 col-form-label">Gallery Images </label>
@@ -133,8 +135,18 @@
                                         </div>
 
                                     </div>
+
                                 @endif
 
+                                <div class="row mb-3 galleryimage" style="display: none;">
+                                    <label class="col-sm-3 col-form-label">Gallery Images</label>
+                                    <div class="col-sm-9">
+                                        <input type="file" class="form-control" name="galleryimages[]" multiple>
+                                        <small class="">
+                                            Note: Please provide 142x83 image for cart 1. It’s not applicable for others.
+                                        </small>
+                                    </div>
+                                </div>
 
 
 
@@ -181,6 +193,7 @@
     <script>
         $(document).ready(function() {
             $('.galleryimage').hide();
+
 
             $(document).on('change', '.selectstatus', function() {
                 var cart = $(this).val();
@@ -304,9 +317,9 @@
                     }
                 }
 
-                // if (status === "cart1" && galleryImages.length === 0) {
-                //     errors.gallery = "Gallery images are required for cart 1!";
-                // }
+                if (status === "cart1" && galleryImages.length === 0) {
+                    errors.gallery = "Gallery images are required for cart 1!";
+                }
                 if (status === "cart1" && galleryImages.length > 0) {
                     for (let img of galleryImages) {
                         if (!["image/jpeg", "image/png", "image/jpg"].includes(img.type)) {
