@@ -122,6 +122,9 @@ class ProductController extends Controller
         $product->subcategory_id = $request->subcategory_id;
         $product->brand_id = $request->brand_id;
         $product->sub_subcategory_id = $request->sub_subcategory_id;
+        if($request->shipping_charge){
+            $product->shipping_charge = $request->shipping_charge;
+        }
 
         $product->product_name = $request->product_name;
         $product->unit_id = $request->unit_id;
@@ -135,6 +138,8 @@ class ProductController extends Controller
             $productDetails = new ProductDetails();
             $productDetails->product_id = $product->id;
             $productDetails->gender = $request->gender;
+            $productDetails->short_description = $request->short_description;
+            $productDetails->product_policy = $request->product_policy;
             $productDetails->description = $request->description;
             $productDetails->ingredients = $request->ingredients;
             $productDetails->usage_instruction = $request->usage_instruction;
@@ -370,6 +375,9 @@ class ProductController extends Controller
 
         $product->product_name = $request->product_name;
         $product->unit_id = $request->unit_id;
+        if($request->shipping_charge){
+            $product->shipping_charge = $request->shipping_charge;
+        }
         $product->slug = Str::slug($request->product_name);
         $product->sku = $request->sku;
         $product->created_by = Auth::user()->id;
@@ -380,6 +388,9 @@ class ProductController extends Controller
             $productDetails->product_id = $product->id;
             $productDetails->gender = $request->gender;
             $productDetails->description = $request->description;
+            $productDetails->short_description = $request->short_description;
+            $productDetails->product_policy = $request->product_policy;
+
             $productDetails->ingredients = $request->ingredients;
             $productDetails->usage_instruction = $request->usage_instruction;
             $productDetails->created_by = Auth::user()->id;

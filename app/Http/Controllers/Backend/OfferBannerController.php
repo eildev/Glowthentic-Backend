@@ -32,10 +32,10 @@ class OfferBannerController extends Controller
         // ]);
 
 
-        $offerbanerCount = OfferBanner::count();
-        if ($offerbanerCount >= 5) {
-            return back()->with('error', 'You can not add more than Five banner');
-        } else {
+        // $offerbanerCount = OfferBanner::count();
+        // if ($offerbanerCount >= 5) {
+        //     return back()->with('error', 'You can not add more than Five banner');
+        // } else {
 
             $offerBanerAdd = new OfferBanner;
             $offerBanerAdd->head = $request->heading;
@@ -52,7 +52,7 @@ class OfferBannerController extends Controller
                 // $file->move($path,$fileName);
                 $destinationPath = public_path('uploads/offer_banner/');
                 $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
-                $offerBanerAdd->image = 'uploads/offer_banner/' . $imageName;
+                $offerBanerAdd->image = 'uploads/offer_banner/'. $imageName;
                 // $offerBanerAdd->image='uploads/offer_banner/'.$fileName;
             }
             $offerBanerAdd->save();
@@ -67,7 +67,7 @@ class OfferBannerController extends Controller
                             $destinationPath = public_path('uploads/offer_banner/');
                             $filename = time() . '_' . uniqid() . '.' . $galleryImage->extension();
                             $imageName = $imageService->resizeAndOptimize($galleryImage, $destinationPath, $filename);
-                            $image = 'uploads/offer_banner/' . $imageName;
+                            $image = 'uploads/offer_banner/'.$imageName;
 
                             // $path= 'uploads/banner/gallery/';
                             // $galleryImage->move(public_path('uploads/banner/gallery/'), $imageName);
@@ -80,7 +80,7 @@ class OfferBannerController extends Controller
                 }
             }
             return back()->with('success', 'Offer Banner Added Successfully');
-        }
+        // }
     }
 
     // banner View function
@@ -126,7 +126,7 @@ class OfferBannerController extends Controller
 
             $destinationPath = public_path('uploads/offer_banner/');
             $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
-            $offerBanner->image = 'uploads/offer_banner/' . $imageName;
+            $offerBanner->image = 'uploads/offer_banner/'.$imageName;
         }
 
         $offerBanner->save();
@@ -141,7 +141,7 @@ class OfferBannerController extends Controller
                 $destinationPath = public_path('uploads/offer_banner/');
                 $filename = time() . '_' . uniqid() . '.' . $galleryImage->extension();
                 $imageName = $imageService->resizeAndOptimize($galleryImage, $destinationPath, $filename);
-                $image = 'uploads/offer_banner/' . $imageName;
+                $image = 'uploads/offer_banner/'.$imageName;
 
                 $imageGallery = new ImageGallery;
                 $imageGallery->offer_banner_id = $offerBanner->id;
@@ -196,35 +196,23 @@ class OfferBannerController extends Controller
     public function statusUpdate(Request $request, $id)
     {
         $banner = OfferBanner::findOrFail($id);
-        if ($banner->status == 0) {
-            $newStatus = 1;
+
+        if ($banner->cart_status == "Active") {
+
+            $banner->cart_status = "Inactive";
         } else {
-            $newStatus = 0;
+
+            OfferBanner::where('status', $banner->status)
+                ->where('id', '!=', $banner->id)
+                ->update(['cart_status' => 'Inactive']);
+
+        
+            $banner->cart_status = "Active";
         }
 
-        $banner->update([
-            'status' => $newStatus
-        ]);
-        return redirect()->back()->with('success', 'status changed successfully');
-        // dd($request->all());
-        // $banner = OfferBanner::where('id',$id)->where('status', $request->status)->first();
-        // if($banner->status == "0"){
-        //     $banner->update([
-        //         'status' => 1
-        //     ]);
-        //     return response()->json([
-        //         'status' => 200,
-        //         'message' => 'Banner active successful',
-        //     ]);
-        // } else {
-        //     $banner->update([
-        //         'status' => 0
-        //     ]);
-        //     return response()->json([
-        //         'status' => 500,
-        //         'message' => 'Banner Inactive successful',
-        //     ]);
-        // }
+        $banner->save();
+
+        return redirect()->back()->with('success', 'Status changed successfully');
     }
 
     public function viewAll()

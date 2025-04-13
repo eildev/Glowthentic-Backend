@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('categoryName', 100);
             $table->string('slug', 100);
-            $table->string('image', 100);
+            $table->string('image', 100)->nullable();
             $table->bigInteger('parent_id')->nullable();
             $table->bigInteger('approved_by')->nullable();
             $table->tinyInteger('status')->default(1);

@@ -26,6 +26,7 @@
                                     <th>Title</th>
                                     <th>Short Description</th>
                                     <th>image</th>
+                                    <th>Cart Type</th>
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
@@ -52,17 +53,18 @@
                                                     alt="banner Image">
                                                     @else
                                                     @foreach ($banner->images as $image )
-                                                    <img src="{{ asset($banner->image) }}"
+                                                    <img src="{{asset($image->image) }}"
                                                     style="height:100px;width:100px" class="img-fluid"
                                                     alt="banner Image">
                                                     @endforeach
                                                     @endif
                                             </td>
+                                            <td>{{$banner->status}}</td>
                                             <td>
                                                 <form action="{{ route('offerbanner.status', $banner->id) }}"
                                                     method="POST">
                                                     @csrf
-                                                    @if ($banner->status == 0)
+                                                    @if ($banner->cart_status =="Inactive")
                                                         <button class="btn btn-sm btn-danger"
                                                             value="{{ $banner->id }}">Inactive</button>
                                                     @else
