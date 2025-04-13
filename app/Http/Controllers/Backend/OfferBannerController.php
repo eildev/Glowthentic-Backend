@@ -23,13 +23,13 @@ class OfferBannerController extends Controller
     public function store(Request $request, ImageOptimizerService $imageService)
     {
         // @dd($request->all());
-        $request->validate([
-            'heading' => 'nullable|max:50',
-            'title' => 'nullable|max:100',
-            'short_description' => 'nullable|max:100',
-            'link' => 'nullable|max:200',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
-        ]);
+        // $request->validate([
+        //     'heading' => 'nullable|max:50',
+        //     'title' => 'nullable|max:100',
+        //     'short_description' => 'nullable|max:100',
+        //     'link' => 'nullable|max:200',
+        //     'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+        // ]);
 
 
         $offerbanerCount = OfferBanner::count();
