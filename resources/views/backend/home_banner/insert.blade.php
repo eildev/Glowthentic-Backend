@@ -211,13 +211,6 @@
                     errors.title = "Title is required!";
                 }
 
-                if (short_description === "") {
-                    errors.short_description = "Short Description is required!";
-                }
-
-                if (long_description === "") {
-                    errors.long_description = "Long Description is required!";
-                }
 
                 function validateImage(file, fieldName, errors) {
                     if (!file) {
@@ -246,17 +239,6 @@
                 if (!$.isEmptyObject(errors)) {
                     if (errors.title) {
                         $("input[name='title']").after(`<span class="text-danger">${errors.title}</span>`);
-                    }
-                    if (errors.short_description) {
-                        $("textarea[name='short_description']").after(
-                            `<span class="text-danger">${errors.short_description}</span>`);
-                    }
-                    if (errors.long_description) {
-                        $("textarea[name='long_description']").after(
-                            `<span class="text-danger">${errors.long_description}</span>`);
-                    }
-                    if (errors.link) {
-                        $("input[name='link']").after(`<span class="text-danger">${errors.link}</span>`);
                     }
                     if (errors.small_image) {
                         $("input[name='small_image']").after(
