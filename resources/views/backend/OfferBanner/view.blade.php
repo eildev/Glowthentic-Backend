@@ -46,13 +46,15 @@
                                             </td>
 
                                             <td>
-                                                @if(!$all_banner->images)
-                                                <img src="{{ asset('/uploads/offer_banner/' . $banner->image) }}"
-                                                    style="max-width: 300px; object-fit:contain;" class="img-fluid"
+                                                @if($banner->status!="cart1")
+                                                <img src="{{ asset($banner->image) }}"
+                                                    style="height:100px;width:100px" class="img-fluid"
                                                     alt="banner Image">
                                                     @else
-                                                    @foreach ( as )
-
+                                                    @foreach ($banner->images as $image )
+                                                    <img src="{{ asset($banner->image) }}"
+                                                    style="height:100px;width:100px" class="img-fluid"
+                                                    alt="banner Image">
                                                     @endforeach
                                                     @endif
                                             </td>
