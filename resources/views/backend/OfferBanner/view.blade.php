@@ -14,7 +14,7 @@
                         </a>
                      @endif
 
-                   
+
                     </div>
                     <hr>
                     <div class="table-responsive">
@@ -46,9 +46,15 @@
                                             </td>
 
                                             <td>
+                                                @if(!$all_banner->images)
                                                 <img src="{{ asset('/uploads/offer_banner/' . $banner->image) }}"
                                                     style="max-width: 300px; object-fit:contain;" class="img-fluid"
                                                     alt="banner Image">
+                                                    @else
+                                                    @foreach ( as )
+
+                                                    @endforeach
+                                                    @endif
                                             </td>
                                             <td>
                                                 <form action="{{ route('offerbanner.status', $banner->id) }}"

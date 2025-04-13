@@ -76,14 +76,14 @@
                                     <label class="col-sm-3 col-form-label">Gallery Images</label>
                                     <div class="col-sm-9">
                                         <input type="file" class="form-control" name="galleryimages[]" multiple>
-                                        <small class="text-danger">
+                                        <small class="">
                                             Note: Please provide 142x83 image for cart 1. It’s not applicable for others.
                                         </small>
                                     </div>
                                 </div>
 
                                 {{-- Thumbnail Image --}}
-                                <div class="row mb-3">
+                                <div class="row mb-3" id="thumbnailimage">
                                     <label class="col-sm-3 col-form-label">Banner Thumbnail</label>
                                     <div class="col-sm-9">
                                         <input type="file" class="form-control" name="image">
@@ -120,8 +120,12 @@
             $('.selectstatus').on('change', function() {
                 if ($(this).val() === 'cart1') {
                     $('.galleryimage').slideDown();
+                    $('#thumbnailimage').fadeOut();
                 } else {
+
                     $('.galleryimage').slideUp();
+                    $('#thumbnailimage').fadeIn();
+
                 }
             });
         });
@@ -155,6 +159,9 @@
                     }
                 }
 
+                if (status === "cart1" && galleryImages.length === 0) {
+                    errors.gallery = "Gallery images are required for cart 1!";
+                }
                 if (status === "cart1" && galleryImages.length > 0) {
                     for (let img of galleryImages) {
                         if (!["image/jpeg", "image/png", "image/jpg"].includes(img.type)) {
