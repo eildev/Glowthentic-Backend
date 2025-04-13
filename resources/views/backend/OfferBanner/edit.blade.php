@@ -101,6 +101,8 @@
                                 </div>
 
 
+
+
                                 @if ($bannerContent->status == 'cart1')
                                     <div class="row mb-3">
                                         <label for="image" class="col-sm-3 col-form-label">Gallery Images </label>
@@ -133,8 +135,18 @@
                                         </div>
 
                                     </div>
+
                                 @endif
 
+                                <div class="row mb-3 galleryimage" style="display: none;">
+                                    <label class="col-sm-3 col-form-label">Gallery Images</label>
+                                    <div class="col-sm-9">
+                                        <input type="file" class="form-control" name="galleryimages[]" multiple>
+                                        <small class="">
+                                            Note: Please provide 142x83 image for cart 1. It’s not applicable for others.
+                                        </small>
+                                    </div>
+                                </div>
 
 
 
@@ -182,6 +194,7 @@
         $(document).ready(function() {
             $('.galleryimage').hide();
 
+
             $(document).on('change', '.selectstatus', function() {
                 var cart = $(this).val();
                 console.log("Selected cart: ", cart);
@@ -197,84 +210,143 @@
 
 
     <script>
+        // $(document).ready(function() {
+        //     $("#submitBtn").on("click", function(e) {
+        //         e.preventDefault();
+
+        //         let form = $("#offerBannerForm");
+        //         let heading = $("input[name='heading']").val().trim();
+        //         let title = $("input[name='title']").val().trim();
+        //         let status = $("select[name='status']").val();
+        //         let link = $("input[name='link']").val().trim();
+        //         let short_description = $("textarea[name='short_description']").val().trim();
+        //         let imageInput = $("input[name='image']")[0].files[0];
+        //         let galleryImages = $("input[name='galleryimages[]']")[0].files;
+
+        //         // Clear previous error messages
+        //         $(".text-danger").remove();
+
+        //         let errors = {};
+
+        //         // Validation for fields
+
+        //         if (status === "") {
+        //             errors.status = "status is required!";
+        //         }
+
+
+        //         if (imageInput) {
+        //             let fileSize = imageInput.size / 1024; // Size in KB
+        //             let fileType = imageInput.type;
+
+        //             let allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+
+        //             if (!allowedTypes.includes(fileType)) {
+        //                 errors.image = "Only JPG, JPEG, and PNG files are allowed!";
+        //             } else if (fileSize > 5120) { // 5MB
+        //                 errors.image = "Image size must be less than 5MB!";
+        //             }
+        //         }
+
+        //         // Gallery Images Validation (if the gallery image input is used)
+        //         if (galleryImages.length > 0) {
+        //             let allowedGalleryTypes = ["image/jpeg", "image/png", "image/jpg"];
+        //             let maxGallerySize = 5120; // 5MB
+
+        //             for (let i = 0; i < galleryImages.length; i++) {
+        //                 let galleryFile = galleryImages[i];
+        //                 let galleryFileSize = galleryFile.size / 1024; // in KB
+
+        //                 if (!allowedGalleryTypes.includes(galleryFile.type)) {
+        //                     errors.galleryimages =
+        //                         "Only JPG, JPEG, and PNG files are allowed in gallery images!";
+        //                     break;
+        //                 }
+        //                 if (galleryFileSize > maxGallerySize) {
+        //                     errors.galleryimages = "Gallery image size must be less than 5MB!";
+        //                     break;
+        //                 }
+        //             }
+        //         }
+
+        //         // Show error messages if validation fails
+        //         if (!$.isEmptyObject(errors)) {
+
+
+        //             if (errors.status) {
+        //                 $("input[name='status']").after(
+        //                 `<span class="text-danger">${errors.status}</span>`);
+        //             }
+        //             if (errors.image) {
+        //                 $("input[name='image']").after(`<span class="text-danger">${errors.image}</span>`);
+        //             }
+        //             if (errors.galleryimages) {
+        //                 $("input[name='galleryimages[]']").after(
+        //                     `<span class="text-danger">${errors.galleryimages}</span>`);
+        //             }
+        //             return false; // Stop form submission if errors exist
+        //         }
+
+        //         // Submit the form if no errors
+        //         form.submit();
+        //     });
+        // });
         $(document).ready(function() {
             $("#submitBtn").on("click", function(e) {
                 e.preventDefault();
+                $(".text-danger").remove();
 
                 let form = $("#offerBannerForm");
-                let heading = $("input[name='heading']").val().trim();
-                let title = $("input[name='title']").val().trim();
                 let status = $("select[name='status']").val();
-                let link = $("input[name='link']").val().trim();
-                let short_description = $("textarea[name='short_description']").val().trim();
-                let imageInput = $("input[name='image']")[0].files[0];
+                let image = $("input[name='image']")[0].files[0];
                 let galleryImages = $("input[name='galleryimages[]']")[0].files;
-
-                // Clear previous error messages
-                $(".text-danger").remove();
 
                 let errors = {};
 
-                // Validation for fields
-
-                if (status === "") {
-                    errors.status = "status is required!";
+                if (!status) {
+                    errors.status = "Status is required!";
                 }
 
-
-                if (imageInput) {
-                    let fileSize = imageInput.size / 1024; // Size in KB
-                    let fileType = imageInput.type;
-
-                    let allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
-
-                    if (!allowedTypes.includes(fileType)) {
-                        errors.image = "Only JPG, JPEG, and PNG files are allowed!";
-                    } else if (fileSize > 5120) { // 5MB
-                        errors.image = "Image size must be less than 5MB!";
+                if (image) {
+                    let sizeKB = image.size / 1024;
+                    let type = image.type;
+                    if (!["image/jpeg", "image/png", "image/jpg"].includes(type)) {
+                        errors.image = "Only JPG, JPEG, PNG allowed!";
+                    } else if (sizeKB > 5120) {
+                        errors.image = "Thumbnail must be under 5MB!";
                     }
                 }
 
-                // Gallery Images Validation (if the gallery image input is used)
-                if (galleryImages.length > 0) {
-                    let allowedGalleryTypes = ["image/jpeg", "image/png", "image/jpg"];
-                    let maxGallerySize = 5120; // 5MB
-
-                    for (let i = 0; i < galleryImages.length; i++) {
-                        let galleryFile = galleryImages[i];
-                        let galleryFileSize = galleryFile.size / 1024; // in KB
-
-                        if (!allowedGalleryTypes.includes(galleryFile.type)) {
-                            errors.galleryimages =
-                                "Only JPG, JPEG, and PNG files are allowed in gallery images!";
+                if (status === "cart1" && galleryImages.length === 0) {
+                    errors.gallery = "Gallery images are required for cart 1!";
+                }
+                if (status === "cart1" && galleryImages.length > 0) {
+                    for (let img of galleryImages) {
+                        if (!["image/jpeg", "image/png", "image/jpg"].includes(img.type)) {
+                            errors.gallery = "Only JPG, JPEG, PNG allowed in gallery!";
                             break;
                         }
-                        if (galleryFileSize > maxGallerySize) {
-                            errors.galleryimages = "Gallery image size must be less than 5MB!";
+                        if (img.size / 1024 > 5120) {
+                            errors.gallery = "Each gallery image must be under 5MB!";
                             break;
                         }
                     }
                 }
 
-                // Show error messages if validation fails
-                if (!$.isEmptyObject(errors)) {
-
-
+                // Display Errors
+                if (Object.keys(errors).length > 0) {
                     if (errors.status) {
-                        $("input[name='status']").after(
-                        `<span class="text-danger">${errors.status}</span>`);
+                        $("select[name='status']").after(`<span class="text-danger">${errors.status}</span>`);
                     }
                     if (errors.image) {
                         $("input[name='image']").after(`<span class="text-danger">${errors.image}</span>`);
                     }
-                    if (errors.galleryimages) {
-                        $("input[name='galleryimages[]']").after(
-                            `<span class="text-danger">${errors.galleryimages}</span>`);
+                    if (errors.gallery) {
+                        $("input[name='galleryimages[]']").after(`<span class="text-danger">${errors.gallery}</span>`);
                     }
-                    return false; // Stop form submission if errors exist
+                    return;
                 }
 
-                // Submit the form if no errors
                 form.submit();
             });
         });
