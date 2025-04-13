@@ -71,7 +71,7 @@ class Product extends Model
 
     public function productdetails()
     {
-        return $this->hasMany(ProductDetails::class, 'product_id', 'id');
+        return $this->hasOne(ProductDetails::class, 'product_id', 'id');
     }
 
     public function product_attribute(){
