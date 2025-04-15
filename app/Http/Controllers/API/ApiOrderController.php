@@ -18,6 +18,7 @@ use App\Models\BillingInformation;
 use Auth;
 use App\Models\User;
 use App\Services\BillingInformationService;
+use App\Services\UserDetailsService;
 use Illuminate\Http\JsonResponse;
 use App\Models\Category;
 use App\Models\VariantPromotion;
@@ -25,9 +26,11 @@ class ApiOrderController extends Controller
 {
 
     protected $billingInformationService;
-    public function __construct(BillingInformationService $billingInformationService)
+    protected $userDetailsService;
+    public function __construct(BillingInformationService $billingInformationService, UserDetailsService $userDetailsService)
     {
         $this->billingInformationService = $billingInformationService;
+        $this->userDetailsService = $userDetailsService;
     }
     // public function stor1(Request $request)
     // {
@@ -238,10 +241,15 @@ class ApiOrderController extends Controller
     {
         try {
             $billingResponse = $this->billingInformationService->storeBillingInfo($request);
+            $userDetailsResponse = $this->userDetailsService->storeUserDetails($request);
 
             // If billing response is an error, return it
             if ($billingResponse instanceof JsonResponse && $billingResponse->getStatusCode() !== 201) {
                 return $billingResponse;
+            }
+
+            if ($userDetailsResponse instanceof JsonResponse && $userDetailsResponse->getStatusCode() !== 201) {
+                return $userDetailsResponse;
             }
 
             $variant_quantity = 0;
@@ -314,7 +322,7 @@ class ApiOrderController extends Controller
                     }
                 }
                 elseif ($variant_promotion_coupon) {
-                   
+
                     if ($variant_promotion_coupon->discount_type == 'fixed') {
                         $discount_amount = $variant_promotion_coupon->discount_value * $product['variant_quantity'];
                     } else {
@@ -329,6 +337,7 @@ class ApiOrderController extends Controller
                 $discount_price += $discount_amount??0;
 
                 $single_product_total = ($variant->regular_price * $product['variant_quantity']) - $discount_amount;
+                // dd( $single_product_total);
                 $variant_total_price += $single_product_total;
 
                 if (round($single_product_total, 2) != round($product['discount_cut_total_price'], 2)) {
@@ -539,7 +548,7 @@ class ApiOrderController extends Controller
             return response()->json([
                 'status' => 200,
                 'order' => $order,
-                'message' => 'Order Get Successfully',
+                'message' => 'All Order Get Successfully',
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -593,4 +602,5 @@ class ApiOrderController extends Controller
             ]);
         }
     }
+
 }

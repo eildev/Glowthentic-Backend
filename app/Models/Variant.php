@@ -46,6 +46,6 @@ class Variant extends Model
 
     public function productVariantPromotion()
     {
-        return $this->hasMany(VariantPromotion::class, 'variant_id', 'id');
+        return $this->hasOne(VariantPromotion::class, 'variant_id', 'id');
     }
 }

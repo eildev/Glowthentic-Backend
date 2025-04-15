@@ -156,7 +156,10 @@ class ApiProductController extends Controller
                 'product_tags',
                 'productStock',
                 'productdetails',
-                'variantImage'
+                'variantImage',
+                'category',
+                'subcategory',
+                'brand',
             )->where('status', 1)->get();
             // dd($products);
             return response()->json([
@@ -182,10 +185,13 @@ class ApiProductController extends Controller
                 'promotionproduct.coupon',
                 'variants.productVariantPromotion.coupon',
                 'variants.comboProduct',
-                'product_tags',
+                'product_tags.tag',
                 'productStock',
                 'productdetails',
-                'variantImage'
+                'variantImage',
+                'category',
+                'subcategory',
+                'brand',
             )->where('slug', $slug)->first();
             // Debug to check variants and their promotions
 

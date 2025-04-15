@@ -66,6 +66,7 @@ class ProductAttributeController extends Controller
 
       public function getExtraFieldInfoProductPageShow(){
         $extraField=Attribute::all();
+        // dd($extraField);
         return response()->json([
             'status'=>200,
             'extraField'=>$extraField

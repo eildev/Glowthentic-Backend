@@ -14,7 +14,7 @@
                         </a>
                      @endif
 
-                   
+
                     </div>
                     <hr>
                     <div class="table-responsive">
@@ -26,6 +26,7 @@
                                     <th>Title</th>
                                     <th>Short Description</th>
                                     <th>image</th>
+                                    <th>Cart Type</th>
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
@@ -46,15 +47,24 @@
                                             </td>
 
                                             <td>
-                                                <img src="{{ asset('/uploads/offer_banner/' . $banner->image) }}"
-                                                    style="max-width: 300px; object-fit:contain;" class="img-fluid"
+                                                @if($banner->status!="cart1")
+                                                <img src="{{ asset($banner->image) }}"
+                                                    style="height:100px;width:100px" class="img-fluid"
                                                     alt="banner Image">
+                                                    @else
+                                                    @foreach ($banner->images as $image )
+                                                    <img src="{{asset($image->image) }}"
+                                                    style="height:100px;width:100px" class="img-fluid"
+                                                    alt="banner Image">
+                                                    @endforeach
+                                                    @endif
                                             </td>
+                                            <td>{{$banner->status}}</td>
                                             <td>
                                                 <form action="{{ route('offerbanner.status', $banner->id) }}"
                                                     method="POST">
                                                     @csrf
-                                                    @if ($banner->status == 0)
+                                                    @if ($banner->cart_status =="Inactive")
                                                         <button class="btn btn-sm btn-danger"
                                                             value="{{ $banner->id }}">Inactive</button>
                                                     @else

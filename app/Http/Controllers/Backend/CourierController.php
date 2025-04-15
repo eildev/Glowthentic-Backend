@@ -14,13 +14,14 @@ class CourierController extends Controller
     }
 
     public function steadfastSend(Request $request){
+       
         $validator = Validator::make($request->all(), [
 
             'invoice' => 'required',
             'recipient_name' => 'required',
             'recipient_phone' => 'required',
             'cod_amount' => 'required',
-            'recipient_address' => 'required',
+            'recipient_address' => 'required|min:50',
 
        ]);
 

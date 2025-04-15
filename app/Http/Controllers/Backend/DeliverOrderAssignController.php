@@ -38,7 +38,7 @@ class DeliverOrderAssignController extends Controller
                     'recipient_name' => 'required',
                     'recipient_phone' => 'required',
                     'cod_amount' => 'required',
-                    'recipient_address' => 'required',
+                    'recipient_address' => 'required|min:50',
 
                ]);
 

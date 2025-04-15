@@ -59,8 +59,8 @@
 
                                                 <a href="{{ route('admin.shipping.order.change.transit',$delivering_orders->id) }}" class="btn btn-sm btn-info">In Transit</a>
                                                 <a href="{{ route('order.details', $delivering_orders->id) }}" class="btn btn-sm btn-success" >View</a>
-                                                <a href="{{ route('admin.denied.order', $order->invoice_number) }}"
-                                                    class="btn btn-sm btn-danger" id="delete">Cancel</a>
+                                                {{-- <a href="{{ route('admin.denied.order', $delivering_orders->order->invoice_number) }}"
+                                                    class="btn btn-sm btn-danger" id="delete">Cancel</a> --}}
                                             </td>
                                         </tr>
                                     @endforeach
