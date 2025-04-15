@@ -158,9 +158,10 @@ class OfferBannerController extends Controller
     {
         $banner = OfferBanner::findOrFail($id);
         $galleryImages = ImageGallery::where('offer_banner_id', $id)->get();
-        if (fileExists($banner->image)) {
+        if (!empty($banner->image) && file_exists(public_path($banner->image))) {
             unlink(public_path($banner->image));
         }
+
 
         foreach ($galleryImages as $galleryImage) {
             $imagePath = public_path($galleryImage->image);
@@ -206,7 +207,7 @@ class OfferBannerController extends Controller
                 ->where('id', '!=', $banner->id)
                 ->update(['cart_status' => 'Inactive']);
 
-        
+
             $banner->cart_status = "Active";
         }
 

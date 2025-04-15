@@ -17,6 +17,8 @@ return new class extends Migration
             $table->unsignedBigInteger('variant_id');
             $table->integer('StockQuantity')->nullable();
             $table->enum('status', ['Available', 'Stock Out', 'Low Stock']);
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
+            $table->foreign('variant_id')->references('id')->on('variants')->onDelete('cascade');
             $table->timestamps(0);
             $table->softDeletes();
         });

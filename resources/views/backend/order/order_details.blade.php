@@ -5,8 +5,14 @@
             @if ($orders->count() > 0)
 
                 @php
-                    $customers = App\Models\UserDetails::where('user_id', $orders->user_id)->orWhere('session_id',$orders->session_id)->first();
 
+
+                    if($orders->user_id!=null){
+                    $customers = App\Models\UserDetails::where('user_id', $orders->user_id)->first();
+                    }
+                   else{
+                    $customers = App\Models\UserDetails::where('session_id',$orders->session_id)->first();
+                   }
                     $first_name = $customers->full_name??'';
 
                     $email = $customers->user->email??'';

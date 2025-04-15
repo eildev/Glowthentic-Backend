@@ -294,7 +294,8 @@ class ProductController extends Controller
     // show all products function
     public function view()
     {
-        $products = Product::orderByDesc('id')->with('varient')->get();
+        $products = Product::with('varient')->orderBy('id', 'desc')->get();
+
 
 
         return view('backend.products.view', compact('products'));
@@ -330,6 +331,10 @@ class ProductController extends Controller
         $product = Product::findOrFail($id);
 
         $getVariants=Variant::where('product_id',$id)->get();
+        $stock=ProductStock::where('product_id',$id)->get();
+        foreach($stock as $stocks){
+            $stocks->delete();
+        }
         foreach($getVariants as $variant){
             if($variant->image){
                 $imagePath = public_path($variant->image);

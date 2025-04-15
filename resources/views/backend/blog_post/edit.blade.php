@@ -89,7 +89,7 @@
                                         @enderror
                                         <div class="mt-3">
                                             <img id="showImage" class="" height="150" width="200"
-                                                src="{{ asset('uploads/blog/blog_post/' . $blogPost->image) }}"
+                                                src="{{ asset($blogPost->image) }}"
                                                 alt="category image">
                                         </div>
                                     </div>

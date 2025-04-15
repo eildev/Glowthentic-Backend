@@ -80,8 +80,8 @@
                                                 $subcategory=App\Models\Category::find($product->subcategory_id);
                                             @endphp
                                             <td>{{ $subcategory->categoryName ?? '' }}</td>
-                                            <td>{{ $product->brand->BrandName }}</td>
-                                            <td>{{ $product->unit_id }}</td>
+                                            <td>{{ $product->brand->BrandName??'' }}</td>
+                                            <td>{{ $product->unit_id??'' }}</td>
                                             <td>
                                                 ৳{{ $product->varient[0]->regular_price ?? 0 }}
                                             </td>

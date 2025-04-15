@@ -19,26 +19,26 @@ class HomeBannerController extends Controller
     {
         return view('backend.home_banner.insert');
     }
-g
+
     // banner store function
     public function store(Request $request, ImageOptimizerService $imageService)
     {
-        $validator = Validator::make($request->all(), [
-            'title' => 'required|max:50',
-            'short_description' => 'required|max:100',
-            'long_description' => 'required|max:200',
-            'link' => 'required|max:200',
-            'small_image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
-            'medium_image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
-            'large_image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
-            'extra_large_image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
-        ]);
+        // $validator = Validator::make($request->all(), [
+        //     'title' => 'required|max:50',
+        //     'short_description' => 'required|max:100',
+        //     'long_description' => 'required|max:200',
+        //     'link' => 'required|max:200',
+        //     'small_image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+        //     'medium_image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+        //     'large_image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+        //     'extra_large_image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+        // ]);
 
-        if ($validator->fails()) {
-            session(['test' => 'session works']);
-            Log::info('Session before redirect', [session()->all()]);
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
+        // if ($validator->fails()) {
+        //     session(['test' => 'session works']);
+        //     Log::info('Session before redirect', [session()->all()]);
+        //     return redirect()->back()->withErrors($validator)->withInput();
+        // }
 
         // Define destination path
         $destinationPath = public_path('uploads/home_banner/');
@@ -74,6 +74,7 @@ g
     public function view()
     {
         $all_banner = HomeBanner::all();
+        //  dd($all_banner);
         return view('backend.home_banner.view', compact('all_banner'));
     }
 
@@ -132,59 +133,56 @@ g
     //     }
     // }
     public function update(Request $request, $id, ImageOptimizerService $imageService)
-    {
-        // Base validation rules for non-image fields
-        $rules = [
-            'title' => 'required|max:50',
-            'short_description' => 'required|max:100',
-            'long_description' => 'required|max:200',
-            'link' => 'required|max:200',
-        ];
+{
+    $banner = HomeBanner::findOrFail($id);
+    $destinationPath = public_path('uploads/home_banner/');
 
-        // Image fields (optional during update, but validated if provided)
-        $imageFields = ['small_image', 'medium_image', 'large_image', 'extra_large_image'];
-        foreach ($imageFields as $field) {
-            if ($request->hasFile($field)) {
-                $rules[$field] = 'image|mimes:jpeg,png,jpg,gif,webp|max:5120';
-            }
+    // Small Image
+    if ($request->hasFile('small_image')) {
+        if (file_exists(public_path($banner->small_image))) {
+            unlink(public_path($banner->small_image));
         }
-
-        // Validate the request
-        $request->validate($rules);
-
-        // Find the banner
-        $banner = HomeBanner::findOrFail($id);
-        $destinationPath = public_path('uploads/home_banner/');
-
-        // Process each image field with ImageOptimizerService
-        foreach ($imageFields as $field) {
-            if ($request->hasFile($field)) {
-                // Use ImageOptimizerService to resize and optimize the image
-                $imageName = $imageService->resizeAndOptimize($request->file($field), $destinationPath);
-                $imagePath = 'uploads/home_banner/' . $imageName;
-
-                // Delete the old image if it exists
-                if ($banner->$field && file_exists(public_path($banner->$field))) {
-                    unlink(public_path($banner->$field));
-                }
-
-                // Update the banner field with the new image path
-                $banner->$field = $imagePath;
-            }
-        }
-
-        // Update non-image fields
-        $banner->title = $request->title;
-        $banner->short_description = $request->short_description;
-        $banner->long_description = $request->long_description;
-        $banner->link = $request->link;
-
-        // Save the updated banner
-        $banner->save();
-
-        // Redirect with success message
-        return redirect()->route('banner.view')->with('success', 'Banner Successfully Updated');
+        $smallImageName = $imageService->resizeAndOptimize($request->file('small_image'), $destinationPath);
+        $banner->small_image = 'uploads/home_banner/' . $smallImageName;
     }
+
+    // Medium Image
+    if ($request->hasFile('medium_image')) {
+        if (file_exists(public_path($banner->medium_image))) {
+            unlink(public_path($banner->medium_image));
+        }
+        $mediumImageName = $imageService->resizeAndOptimize($request->file('medium_image'), $destinationPath);
+        $banner->medium_image = 'uploads/home_banner/' . $mediumImageName;
+    }
+
+    // Large Image
+    if ($request->hasFile('large_image')) {
+        if (file_exists(public_path($banner->large_image))) {
+            unlink(public_path($banner->large_image));
+        }
+        $largeImageName = $imageService->resizeAndOptimize($request->file('large_image'), $destinationPath);
+        $banner->large_image = 'uploads/home_banner/' . $largeImageName;
+    }
+
+    // Extra Large Image
+    if ($request->hasFile('extra_large_image')) {
+        if (file_exists(public_path($banner->extra_large_image))) {
+            unlink(public_path($banner->extra_large_image));
+        }
+        $extraLargeImageName = $imageService->resizeAndOptimize($request->file('extra_large_image'), $destinationPath);
+        $banner->extra_large_image = 'uploads/home_banner/' . $extraLargeImageName;
+    }
+
+    // Update text content
+    $banner->title = $request->title;
+    $banner->short_description = $request->short_description;
+    $banner->long_description = $request->long_description;
+    $banner->link = $request->link;
+    $banner->save();
+
+    return redirect()->route('banner.view')->with('success', 'Banner Successfully Updated');
+}
+
 
     // public function update(Request $request, $id)
     // {
@@ -247,8 +245,20 @@ g
     public function delete($id)
     {
         $banner = HomeBanner::findOrFail($id);
-        if (file_exists(public_path($banner->image))) {
-            unlink(public_path($banner->image));
+        if (file_exists(public_path($banner->small_image))) {
+            unlink(public_path($banner->small_image));
+        }
+
+        if (file_exists(public_path($banner->medium_image))) {
+            unlink(public_path($banner->medium_image));
+        }
+
+        if (file_exists(public_path($banner->large_image))) {
+            unlink(public_path($banner->large_image));
+        }
+
+        if (file_exists(public_path($banner->extra_large_image))) {
+            unlink(public_path($banner->extra_large_image));
         }
         $banner->delete();
         return back()->with('success', 'banner Successfully deleted');
