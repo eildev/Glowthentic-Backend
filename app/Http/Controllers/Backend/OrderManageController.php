@@ -52,7 +52,7 @@ class OrderManageController extends Controller
     }
     public function index(){
         $newOrders = Order::where("status", 'pending')->orWhere('status','mismatchOrder')->latest()->get();
-        
+
         return view('backend.order.new-order', compact('newOrders'));
     }
     public function approvedOrders(){
@@ -234,6 +234,7 @@ class OrderManageController extends Controller
 
     public function getOrderDetails(Request $request){
         $order_id = $request->order_id;
+
          $getorder= Order::where('id',$order_id)->first();
          $user_id = $getorder->user_id??$getorder->session_id;
 

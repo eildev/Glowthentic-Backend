@@ -548,7 +548,7 @@ class ApiOrderController extends Controller
             return response()->json([
                 'status' => 200,
                 'order' => $order,
-                'message' => 'Order Get Successfully',
+                'message' => 'All Order Get Successfully',
             ]);
         } catch (\Exception $e) {
             return response()->json([
