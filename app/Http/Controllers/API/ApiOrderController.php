@@ -544,7 +544,13 @@ class ApiOrderController extends Controller
     public function getOrder($user_idOrSesssion_id)
     {
         try {
+            // dd("hello");
             $order = Order::where('user_id', $user_idOrSesssion_id)->orWhere('session_id', $user_idOrSesssion_id)->with('orderDetails.variant.variantImage','orderDetails.product','orderDetails.product.category')->get();
+              $order=[
+                "order"=>$order,
+                  "order_status"=>"processing",
+              ];
+           
             return response()->json([
                 'status' => 200,
                 'order' => $order,
