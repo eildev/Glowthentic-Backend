@@ -216,7 +216,7 @@
 
 
 
-function validateCategoryForm() {
+        function validateCategoryForm() {
     $(".error-message").remove();
     $("input, select").removeClass("is-invalid");
 
@@ -225,6 +225,7 @@ function validateCategoryForm() {
     // Get form values
     let categoryName = $("input[name='categoryName']").val().trim();
     let imageInput = $("input[name='image']")[0].files[0];
+    let parentId = $("select[name='parent_id']").val();
 
     // Validation rules
     if (categoryName === "") {
@@ -233,40 +234,89 @@ function validateCategoryForm() {
         isValid = false;
     }
 
-    if (!imageInput) {
-        $("input[name='image']").addClass("is-invalid")
-        .after('<span class="text-danger error-message">Image is required</span>');
-        isValid = false;
+    // Only validate image if parent_id is not selected (i.e., root category)
+    if (!parentId) {
+        if (!imageInput) {
+            $("input[name='image']").addClass("is-invalid")
+                .after('<span class="text-danger error-message">Image is required</span>');
+            isValid = false;
+        } else {
+            let fileSize = imageInput.size / 1024;
+            let fileType = imageInput.type;
+            let allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+
+            if (!allowedTypes.includes(fileType)) {
+                $("input[name='image']").addClass("is-invalid")
+                    .after('<span class="text-danger error-message">Only JPG, JPEG, and PNG files are allowed!</span>');
+                isValid = false;
+            } else if (fileSize > 2048) {
+                $("input[name='image']").addClass("is-invalid")
+                    .after('<span class="text-danger error-message">Image size must be less than 2MB!</span>');
+                isValid = false;
+            }
+        }
     }
 
-        else{
-            let fileSize = imageInput.size / 1024;
-                            let fileType = imageInput.type;
-
-
-                            let allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
-
-                            if (!allowedTypes.includes(fileType)) {
-
-                                $("input[name='image']").addClass("is-invalid")
-                                .after('<span class="text-danger error-message">Only JPG, JPEG, and PNG files are allowed!</span>');
-                                isValid = false;
-                            } else if (fileSize > 2048) {
-                                $("input[name='image']").addClass("is-invalid")
-                                .after('<span class="text-danger error-message">Image size must be less than 2MB!</span>');
-                                isValid = false;
-                            }
-
-        }
-
-
-
-
-    return isValid; // Return true if valid, false otherwise
+    return isValid;
 }
 
 
 
+        //Add Category
+        $(document).on('click', '.save_category', function(e) {
+            e.preventDefault();
+
+
+            if (!validateCategoryForm()) return;
+
+
+            let formData = new FormData($('#AddCategoryForm')[0]);
+
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $('.error-message').remove();
+            $.ajax({
+                url: '/category/store',
+                type: "POST",
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    console.log(response);
+                    if (response.status == 200) {
+                        $('#AddCategoryForm')[0].reset();
+                        // $('#showImage')[0].reset();
+                        $('#categoryAddModal').modal('hide');
+                        $('#showImage').attr('src', "{{ asset('uploads/productempty.jpg') }}");
+                        toastr.success('Category Added Successfully');
+
+                        dataShow();
+                    }
+                },
+                error: function(xhr) {
+                    if (xhr.status === 422) {
+                        let errors = xhr.responseJSON.errors;
+
+                        $.each(errors, function(key, value) {
+                            let inputField = $('[name="' + key + '"]');
+                            inputField.after('<span class="text-danger error-message">' + value[
+                                0] + '</span>');
+                        });
+                    } else {
+                        alert("Something went wrong!");
+                    }
+                }
+            });
+        });
+
+
+
+
+
+////////edit form validation
 
 function validateCategoryEditForm() {
     // Clear any previous error messages
@@ -310,111 +360,62 @@ function validateCategoryEditForm() {
 
 
 
-
-
-
-
-
-
-
-
-
-
-        //Add Category
-        $(document).on('click', '.save_category', function(e) {
-            e.preventDefault();
-
-
-            if (!validateCategoryForm()) return;
-
-         
-            let formData = new FormData($('#AddCategoryForm')[0]);
-
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-            $('.error-message').remove();
-            $.ajax({
-                url: '/category/store',
-                type: "POST",
-                data: formData,
-                contentType: false,
-                processData: false,
-                success: function(response) {
-                    if (response.status == 200) {
-                        $('#AddCategoryForm')[0].reset();
-                        // $('#showImage')[0].reset();
-                        $('#categoryAddModal').modal('hide');
-                        $('#showImage').attr('src', "{{ asset('uploads/productempty.jpg') }}");
-                        toastr.success('Category Added Successfully');
-
-                        dataShow();
-                    }
-                },
-                error: function(xhr) {
-                    if (xhr.status === 422) {
-                        let errors = xhr.responseJSON.errors;
-
-                        $.each(errors, function(key, value) {
-                            let inputField = $('[name="' + key + '"]');
-                            inputField.after('<span class="text-danger error-message">' + value[
-                                0] + '</span>');
-                        });
-                    } else {
-                        alert("Something went wrong!");
-                    }
-                }
-            });
-        });
-
         //edit category
         $(document).on('click', '.Edit_category', function() {
 
 
 
-    if (!validateCategoryEditForm()) return;
+if (!validateCategoryEditForm()) return;
 
-            let formData = new FormData($('#EditCategoryForm')[0]);
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        let formData = new FormData($('#EditCategoryForm')[0]);
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $('.error-message').remove();
+        $.ajax({
+            url: '/category/update',
+            type: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                console.log(response);
+                $('#EditCategoryForm')[0].reset();
+                $('#categoryEditModal').modal('hide');
+                toastr.success('Category Updated Succesfully');
+
+                dataShow();
+            },
+
+            error: function(xhr) {
+                if (xhr.status === 422) {
+                    let errors = xhr.responseJSON.errors;
+
+                    $.each(errors, function(key, value) {
+                        let inputField = $('[name="' + key + '"]');
+                        inputField.after('<span class="text-danger error-message">' + value[
+                            0] + '</span>');
+                    });
+                } else {
+                    alert("Something went wrong!");
                 }
-            });
-            $('.error-message').remove();
-            $.ajax({
-                url: '/category/update',
-                type: "POST",
-                data: formData,
-                contentType: false,
-                processData: false,
-                success: function(response) {
-                    console.log(response);
-                    $('#EditCategoryForm')[0].reset();
-                    $('#categoryEditModal').modal('hide');
-                    toastr.success('Category Updated Succesfully');
-
-                    dataShow();
-                },
-
-                error: function(xhr) {
-                    if (xhr.status === 422) {
-                        let errors = xhr.responseJSON.errors;
-
-                        $.each(errors, function(key, value) {
-                            let inputField = $('[name="' + key + '"]');
-                            inputField.after('<span class="text-danger error-message">' + value[
-                                0] + '</span>');
-                        });
-                    } else {
-                        alert("Something went wrong!");
-                    }
-                }
-
-            });
+            }
 
         });
+
+    });
+
+
+
+
+
+
+
+
+
+
 
         //delete category
         $(document).on('click', '.delete', function() {

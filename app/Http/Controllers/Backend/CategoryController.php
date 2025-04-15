@@ -22,7 +22,7 @@ class CategoryController extends Controller
     public function store(Request $request, ImageOptimizerService $imageService)
     {
         try {
-            // dd($request->all());
+
             $validator = Validator::make($request->all(), [
                 'categoryName' => 'required|max:100',
                 // 'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp,svg|max:10240',
@@ -38,14 +38,17 @@ class CategoryController extends Controller
             }
 
 
-            if ($request->image) {
+            if ($request->categoryName) {
 
                 $category = new Category;
                 $category->categoryName = $request->categoryName;
                 $category->slug = Str::slug($request->categoryName);
-                $destinationPath = public_path('uploads/category/');
-                $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
-                $category->image = 'uploads/category/' . $imageName;
+                if($request->image) {
+                    $destinationPath = public_path('uploads/category/');
+                    $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
+                    $category->image = 'uploads/category/' . $imageName;
+                }
+
 
                 if ($request->parent_id) {
                     $category->parent_id = $request->parent_id;
