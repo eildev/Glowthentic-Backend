@@ -87,7 +87,7 @@ class ProductController extends Controller
 
     public function store(Request $request, ImageOptimizerService $imageService)
     {
-        //   dd($request->all());
+          dd($request->all());
         $validator = Validator::make($request->all(), [
             'category_id' => 'required',
             'brand_id' => 'required',
