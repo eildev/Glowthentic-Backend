@@ -222,7 +222,7 @@ class OrderManageController extends Controller
         return view('backend.order.order_details', compact('orders'));
         // $order_details->status = "Inactive";
         // $order_details->update();
-        return back();
+        // return back();
     }
      public function thank($id)
     {
@@ -246,5 +246,11 @@ class OrderManageController extends Controller
             'order' => $getorder
          ]);
 
+    }
+
+    public function MaximumOrderDetails($id){
+        $orders = Order::findOrFail($id);
+        // dd($orders);
+        return view('backend.order.order_details', compact('orders'));
     }
 }

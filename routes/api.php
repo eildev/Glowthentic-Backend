@@ -139,6 +139,7 @@ Route::controller(ApiOrderController::class)->group(function () {
     Route::post('order/tracking', 'trackingOrder');
     Route::get('/order/get/{user_idOrSesssion_id}', 'getOrder');
     Route::get('/order/processing/{user_idOrSesssion_id}', 'getProcessingOrder');
+    Route::get('/order/completed/{user_idOrSesssion_id}', 'getCompletedOrder');
 });
 
 
