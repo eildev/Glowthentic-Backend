@@ -60,12 +60,12 @@
 
                                         @if (!empty($product->varient[0]->unit))
                                             <dt class="col-sm-6">Unit</dt>
-                                            <dd class="col-sm-6">{{ $product->varient[0]->unit }}</dd>
+                                            <dd class="col-sm-6">{{ $product->varient[0]->unit ??''}}</dd>
                                         @endif
 
 
                                         <dt class="col-sm-6">Category</dt>
-                                        <dd class="col-sm-6">{{ $product->category->categoryName }}</dd>
+                                        <dd class="col-sm-6">{{ $product->category->categoryName??'' }}</dd>
 
 
                                     </dl>
@@ -80,19 +80,19 @@
                                         <dd class="col-sm-6">{{ $subcategory->categoryName??''}}</dd>
 
                                         <dt class="col-sm-6">Brand</dt>
-                                        <dd class="col-sm-6">{{ $product->brand->BrandName }}</dd>
+                                        <dd class="col-sm-6">{{ $product->brand->BrandName??'' }}</dd>
 
                                         <dt class="col-sm-6">Model/SKU</dt>
-                                        <dd class="col-sm-6">{{ $product->sku }}</dd>
+                                        <dd class="col-sm-6">{{ $product->sku ??''}}</dd>
 
                                         @if (!empty($product->varient[0]->color))
                                             <dt class="col-sm-6">Color</dt>
-                                            <dd class="col-sm-6">{{ $product->varient[0]->color }}</dd>
+                                            <dd class="col-sm-6">{{ $product->varient[0]->color??'' }}</dd>
                                         @endif
 
                                         @if (!empty($product->varient[0]->size))
                                             <dt class="col-sm-6">Size</dt>
-                                            <dd class="col-sm-6">{{ $product->varient[0]->size }}</dd>
+                                            <dd class="col-sm-6">{{ $product->varient[0]->size??'' }}</dd>
                                         @endif
 
 
@@ -103,7 +103,7 @@
                                                 $tag_name = App\Models\TagName::where('id',$tag->tag_id)->first();
                                             @endphp
 
-                                                <span class="badge bg-warning">#{{$tag_name->tagName }}</span>
+                                                <span class="badge bg-warning">#{{$tag_name->tagName??'' }}</span>
                                             @endforeach
                                         </dd>
                                     </dl>
@@ -158,13 +158,13 @@
                                 @foreach (  $variants as $variant)
                                 <tr>
                                     <td class="fw-bold">{{ $variant->variant_name }}</td>
-                                    <td class="text-success fw-semibold">৳{{ number_format($variant->regular_price, 2) }}</td>
+                                    <td class="text-success fw-semibold">৳{{ number_format($variant->regular_price, 2)??0 }}</td>
                                     <td>{{ $variant->size }}</td>
                                     <td>
-                                        <span class="badge bg-primary">{{ $variant->color }}</span>
+                                        <span class="badge bg-primary">{{ $variant->color??'' }}</span>
                                     </td>
-                                    <td>{{ $variant->weight }} kg</td>
-                                    <td>{{ $variant->flavor }}</td>
+                                    <td>{{ $variant->weight??'' }} kg</td>
+                                    <td>{{ $variant->flavor??'' }}</td>
                                     <td>
                                         @foreach ($variant->variantImage as $image)
                                         <img src="{{ asset($image->image) }}" alt="Variant Image" class="img-thumbnail rounded shadow-sm" width="50" height="50">
@@ -181,16 +181,7 @@
 
 
                             </tbody>
-                            <tfoot>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Position</th>
-                                    <th>Office</th>
-                                    <th>Age</th>
-                                    <th>Start date</th>
-                                    <th>Salary</th>
-                                </tr>
-                            </tfoot>
+
                         </table>
                     </div>
                 </div>

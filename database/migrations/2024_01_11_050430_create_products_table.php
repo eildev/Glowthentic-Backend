@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('slug', 200)->index();
             $table->bigInteger('created_by')->nullable();
             $table->string('sku');
+            $table->enum('shipping_charge',['free','paid'])->default('paid');
             $table->tinyInteger('status')->default(1)->index();
             $table->foreign('category_id')
                 ->references('id')

@@ -21,7 +21,10 @@
                                     <th>Title</th>
                                     <th>Short Description</th>
                                     <th>Long Description</th>
-                                    <th>image</th>
+                                    <th>Small Image</th>
+                                    <th>Medium Image</th>
+                                    <th>Large Image</th>
+                                    <th>Extra Large Image</th>
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
@@ -39,7 +42,22 @@
                                             <td>{{ Illuminate\Support\Str::limit($banner->long_description, 20) }}</td>
 
                                             <td>
-                                                <img src="{{ asset($banner->image) }}"
+                                                <img src="{{ asset($banner->small_image) }}"
+                                                    style="height: 100px; object-fit: contain;" class="img-fluid"
+                                                    alt="banner Image">
+                                            </td>
+                                            <td>
+                                                <img src="{{ asset($banner->medium_image) }}"
+                                                    style="height: 100px; object-fit: contain;" class="img-fluid"
+                                                    alt="banner Image">
+                                            </td>
+                                            <td>
+                                                <img src="{{ asset($banner->large_image) }}"
+                                                    style="height: 100px; object-fit: contain;" class="img-fluid"
+                                                    alt="banner Image">
+                                            </td>
+                                            <td>
+                                                <img src="{{ asset($banner->extra_large_image) }}"
                                                     style="height: 100px; object-fit: contain;" class="img-fluid"
                                                     alt="banner Image">
                                             </td>

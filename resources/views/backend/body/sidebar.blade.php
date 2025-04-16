@@ -241,10 +241,10 @@
                                 Order</a>
                         </li>
 
-                        <li>
+                        {{-- <li>
                             <a href="{{ route('order.delivered') }}"><i class="bx bx-right-arrow-alt"></i>Completed
                                 Order</a>
-                        </li>
+                        </li> --}}
                     </ul>
 
 
@@ -253,9 +253,10 @@
 
 
                 <li>
-                    <a href="{{ route('order.completed') }}"><i class="bx bx-right-arrow-alt"></i>Completed Order</a>
+                    <a href="{{ route('order.delivered') }}"><i class="bx bx-right-arrow-alt"></i>Completed
+                        Order</a>
                 </li>
-                <li>
+                {{-- <li>
                     <a href="{{ route('order.refunding') }}"><i class="bx bx-right-arrow-alt"></i>Refunding
                         Orders</a>
                 </li>
@@ -264,7 +265,7 @@
                 </li>
                 <li>
                     <a href="{{ route('order.canceled') }}"><i class="bx bx-right-arrow-alt"></i>Canceled Orders</a>
-                </li>
+                </li> --}}
                 <li>
                     <a href="{{ route('order.denied') }}"><i class="bx bx-right-arrow-alt"></i>Denied Orders</a>
                 </li>

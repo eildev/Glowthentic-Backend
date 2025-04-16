@@ -188,6 +188,26 @@
                                                     </div>
                                               </div>
 
+
+                                              <div class="col-md-6">
+
+                                                <div class="row">
+                                                    <label class="form-label col-12">Shipping Charge <span class="text-danger fw-bold"></span></label>
+                                                    <div class="col-12">
+                                                        <select class="form-select @error('shipping_charge') is-invalid  @enderror" name="shipping_charge">
+                                                            <option value="">Select Charge</option>
+                                                            <option {{$product->shipping_charge=="free"?"selected":''  }} value="free">Free</option>
+                                                            <option  {{$product->shipping_charge=="paid"?"selected":''  }} value="paid">Paid</option>
+
+
+                                                        </select>
+                                                        @error('shipping_charge')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                         </div>
 
 
@@ -228,6 +248,38 @@
                                                 </div>
                                             </div>
 
+
+
+
+
+                                            <div class="col-12 mt-2">
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <label for="" class="form-label">Short Description <span class="text-danger fw-bold"></span></label>
+                                                    </div>
+                                                    <div class="col-12">
+                                                      <textarea name="short_description" class="form-control @error('short_description') is-invalid  @enderror" id="" cols="30" rows="6">{{$product->productdetails->short_description??''}}</textarea>
+                                                         @error('short_description')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="col-12 mt-2">
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <label for="" class="form-label">Product Policy<span class="text-danger fw-bold"></span></label>
+                                                    </div>
+                                                    <div class="col-12">
+                                                      <textarea name="product_policy" class="form-control @error('product_policy') is-invalid  @enderror" id="" cols="30" rows="6">{{$product->productdetails->product_policy??''}}</textarea>
+                                                         @error('product_policy')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                            </div>
 
                                         </div>
 

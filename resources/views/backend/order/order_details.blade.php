@@ -3,9 +3,16 @@
     <div class="page-content">
         <div class="row py-1">
             @if ($orders->count() > 0)
+
                 @php
-                    $customers = App\Models\UserDetails::where('user_id', $orders->user_id)->orWhere('session_id',$orders->session_id)->first();
-                    // @dd($customers);
+
+
+                    if($orders->user_id!=null){
+                    $customers = App\Models\UserDetails::where('user_id', $orders->user_id)->first();
+                    }
+                   else{
+                    $customers = App\Models\UserDetails::where('session_id',$orders->session_id)->first();
+                   }
                     $first_name = $customers->full_name??'';
 
                     $email = $customers->user->email??'';
@@ -185,7 +192,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <table id="order_table" class="table table-striped table-bordered py-3" style="width:100%">
+                            {{-- <table id="order_table" class="table table-striped table-bordered py-3" style="width:100%">
                                 <thead>
                                     <tr>
                                         <th>SI</th>
@@ -238,7 +245,63 @@
 
                                 </tbody>
 
+                            </table> --}}
+
+                            <table id="order_table" class="table table-striped table-bordered py-3" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>SI</th>
+                                        <th>Product Image</th>
+                                        <th>Product Name</th>
+                                        <th>Quantity</th>
+                                        <th>Unit Price</th>
+                                        <th>Total Price</th>
+                                        <!--<th>Action</th>-->
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <strong><p><u>Order Details</u></p></strong>
+                                    @php
+                                        $serialNumber = 1;
+                                    @endphp
+
+                                    @foreach ($orders->orderDetails as $order)
+                                        @php
+                                            $originalDateString = $order->created_at;
+                                            $dateTime = new DateTime($originalDateString);
+                                            $formattedDate = $dateTime->format('Y-m-d');
+
+                                            $product = App\Models\Product::where('id', $order->product_id)->first();
+                                            $variantImage = $order->variant->variantImage[0]->image ?? null;
+                                        @endphp
+                                        <tr>
+                                            <td>{{ $serialNumber++ }}</td>
+                                            <td>
+                                                @if ($variantImage)
+                                                    <img src="{{ asset($variantImage) }}" style="height: 100px;" class="img-fluid" alt="Products Image">
+                                                @else
+                                                    <span>No Image</span>
+                                                @endif
+                                            </td>
+                                            <td>{{ $product->product_name ?? 'N/A' }}</td>
+                                            <td>{{ $order->product_quantity }}</td>
+                                            <td>{{ $order->variant->regular_price ?? 'N/A' }}</td>
+                                            <td>{{ $order->total_price ?? 'N/A' }}</td>
+                                            <!--<td>-->
+                                            <!--    <a href="#" class="btn btn-sm btn-info">Approve</a>-->
+                                            <!--    <a href="#" class="btn btn-sm btn-danger" id="delete">Denied</a>-->
+                                            <!--</td>-->
+                                        </tr>
+                                    @endforeach
+                                @else
+                                    <tr>
+                                        <td colspan="10" class="text-center text-warning">Data not Found</td>
+                                    </tr>
+                                </tbody>
                             </table>
+
+
+
 
                         </div>
 

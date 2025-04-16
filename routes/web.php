@@ -428,6 +428,7 @@ Route::middleware('auth')->group(function () {
     //Purchase Details All Route End
 
 
+  
     //Company Details All Route Start
     Route::controller(CompanyDetailsController::class)->group(function () {
         Route::get('/company-details', 'index')->name('company-details');

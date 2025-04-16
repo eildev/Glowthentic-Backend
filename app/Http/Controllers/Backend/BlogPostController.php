@@ -67,7 +67,11 @@ class BlogPostController extends Controller
             $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
             $image='uploads/blog/blog_post/'.$imageName;
             $blog = BlogPost::findOrFail($id);
-            unlink(public_path('uploads/blog/blog_post/'.$blog->image));
+            $file = public_path('uploads/blog/blog_post/' . $blog->image);
+            if (file_exists($file)) {
+                unlink($file);
+            }
+
             $blog->cat_id = $request->category;
             $blog->user_id = Auth::user()->id;
             $blog->title = $request->title;

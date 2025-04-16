@@ -48,7 +48,7 @@
                                             <td> {{ $blog->tags }}  </td>
 
                                             <td>
-                                                <img src="{{ asset('/uploads/blog/blog_post/'.$blog->image) }}"
+                                                <img src="{{ asset($blog->image) }}"
                                                     style="height: 50px;width:50px;" class="img-fluid" alt="banner Image">
                                             </td>
                                             <td>
