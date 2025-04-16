@@ -135,7 +135,6 @@
                                         </div>
 
                                     </div>
-
                                 @endif
 
                                 <div class="row mb-3 galleryimage" style="display: none;">
@@ -312,7 +311,7 @@
                     let type = image.type;
                     if (!["image/jpeg", "image/png", "image/jpg"].includes(type)) {
                         errors.image = "Only JPG, JPEG, PNG allowed!";
-                    } else if (sizeKB > 5120) {
+                    } else if (sizeKB > 20480) {
                         errors.image = "Thumbnail must be under 5MB!";
                     }
                 }
@@ -326,7 +325,7 @@
                             errors.gallery = "Only JPG, JPEG, PNG allowed in gallery!";
                             break;
                         }
-                        if (img.size / 1024 > 5120) {
+                        if (img.size / 1024 > 20480) {
                             errors.gallery = "Each gallery image must be under 5MB!";
                             break;
                         }
@@ -336,13 +335,15 @@
                 // Display Errors
                 if (Object.keys(errors).length > 0) {
                     if (errors.status) {
-                        $("select[name='status']").after(`<span class="text-danger">${errors.status}</span>`);
+                        $("select[name='status']").after(
+                            `<span class="text-danger">${errors.status}</span>`);
                     }
                     if (errors.image) {
                         $("input[name='image']").after(`<span class="text-danger">${errors.image}</span>`);
                     }
                     if (errors.gallery) {
-                        $("input[name='galleryimages[]']").after(`<span class="text-danger">${errors.gallery}</span>`);
+                        $("input[name='galleryimages[]']").after(
+                            `<span class="text-danger">${errors.gallery}</span>`);
                     }
                     return;
                 }
