@@ -504,8 +504,10 @@ class ApiOrderController extends Controller
             $order_details = OrderDetails::where('order_id', $order->id)->with('product', 'variant.variantImage')->get();
 
             if($order->user_id){
-                $userDetails=UserDetails::where('user_id',$order->user_id)->first();
-                $billingInfo=BillingInformation::where('user_id',$order->user_id)->first();
+
+                $userDetails=UserDetails::where('user_id',$order->user_id)->with('user')->first();
+                $billingInfo=BillingInformation::where('user_id',$order->user_id)->with('user')->first();
+                // dd($userDetails);
             }
             else if($order->session_id){
                 $userDetails=UserDetails::where('session_id',$order->session_id)->first();
@@ -537,6 +539,8 @@ class ApiOrderController extends Controller
                             'order_tracking_status' => "Shipped",
                             'order'=> $order,
                             'orderDetails' => $order_details,
+                            'userDetails' => $userDetails,
+                            'billingInfo' => $billingInfo,
                             'message' => 'Order tracking shipped Successfully',
                         ]);
                     } else if ($delivered_order->delivery_status == "delivered") {
@@ -545,6 +549,8 @@ class ApiOrderController extends Controller
                             'order_tracking_status' => "Completed",
                             'order'=> $order,
                             'orderDetails' => $order_details,
+                            'userDetails' => $userDetails,
+                            'billingInfo' => $billingInfo,
                             'message' => 'Order completed Successfully',
                         ]);
                     }
@@ -626,7 +632,13 @@ class ApiOrderController extends Controller
             })
             ->with(['deliveryOrder' => function ($query) {
                 $query->where('delivery_status', 'delivered');
-            }])
+            },
+               'orderDetails.variant.variantImage',
+               'orderDetails.product',
+               'orderDetails.product.category'
+
+
+            ])
             ->get();
              return response()->json([
                 'status' => 200,

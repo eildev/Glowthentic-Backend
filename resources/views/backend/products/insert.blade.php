@@ -924,7 +924,7 @@ function validationError() {
     if (product_name === "") errors.product_name = "Product Name is required!";
     if (galleryImages.length === 0) errors.galleryimages = "Gallery Images are required!";
 
-    let allowedGalleryTypes = ["image/jpeg", "image/png", "image/jpg"];
+    let allowedGalleryTypes = ["image/jpeg", "image/png", "image/jpg",'image/webp'];
     let maxGallerySize = 2048; // 2MB
 
     for (let i = 0; i < galleryImages.length; i++) {

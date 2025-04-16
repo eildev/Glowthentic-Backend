@@ -292,7 +292,7 @@
                                                     <div class="col-12">
                                                         <textarea class="form-control product_descriptions @error('description') is-invalid @enderror"
                                                                   name="description"
-                                                                  style="resize: none; height: 70px;">{!! $product->productdetails->first()->description ?? '' !!}</textarea>
+                                                                  style="resize: none; height: 70px;">{!! $product->productdetails->description ?? '' !!}</textarea>
 
                                                         @error('description')
                                                             <span class="text-danger">{{ $message }}</span>
@@ -308,8 +308,8 @@
                                                         <label for="" class="form-label">Ingredients</label>
                                                     </div>
                                                     <div class="col-12">
-                                                        <textarea class="form-control product_descriptions" name="ingredients" placeholder="Enter Ingredients"
-                                                            style="resize: none; height: 100px;" id="product_description" >{!! $product->productdetails->first()->ingredients??'' !!}</textarea>
+                                                        <textarea class="form-control ingrediantsedit" name="ingredients" placeholder="Enter Ingredients"
+                                                            style="resize: none; height: 100px;" id="ingrediants" >{!! $product->productdetails->ingredients??'NA' !!}</textarea>
 
 
                                                             @error('ingredients')
@@ -329,8 +329,8 @@
                                                         <label for="" class="form-label">Usage Instruction</label>
                                                     </div>
                                                     <div class="col-12">
-                                                        <textarea class="form-control product_descriptions" name="usage_instruction" placeholder="Enter Usage Instruction"
-                                                            style="resize: none; height: 100px;" id="">{!! $product->productdetails->first()->ingredients??'' !!}</textarea>
+                                                        <textarea class="form-control usage_instructionedit" name="usage_instruction" placeholder="Enter Usage Instruction"
+                                                            style="resize: none; height: 100px;" id="">{!! $product->productdetails->ingredients??'NA' !!}</textarea>
 
 
                                                             @error('usage_instruction')
@@ -842,7 +842,11 @@
 
 {{-- script start --}}
 <script>
-
+   $(document).ready(function(){
+        // $('.product_descriptions').summernote();
+        $('.ingrediantsedit').summernote();
+        $('.usage_instructionedit').summernote();
+    });
 
 ////////////////////////////////////////////validation error///////////////////////////////
 
