@@ -33,7 +33,8 @@
                                 @endphp
                                 @if ($newOrders->count() > 0)
                                     @foreach ($newOrders as $order)
-                                        @if ($order->product_quantity >= '20')
+                                    {{-- @dd( $order) --}}
+                                        @if ($order->total_quantity >='10')
                                             @php
                                                 $originalDateString = $order->created_at;
                                                 $dateTime = new DateTime($originalDateString);
@@ -56,7 +57,7 @@
                                                 <td>
                                                     <a href="{{ route('admin.approve.order',$order->id) }}"
                                                         class="btn btn-sm btn-info">Approve</a>
-                                                    <a href="{{ route('order.details', $order->id) }}"
+                                                    <a href="{{ route('order.details.maximum', $order->id) }}"
                                                         class="btn btn-sm btn-success">View</a>
                                                     <a href="{{ route('admin.denied.order', $order->invoice_number) }}"
                                                         class="btn btn-sm btn-danger" id="delete">Denied</a>

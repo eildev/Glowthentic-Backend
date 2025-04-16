@@ -318,6 +318,7 @@ Route::middleware('auth')->group(function () {
         Route::post('admin/order/get-order-details', 'getOrderDetails')->name('get.order.details');
 
         Route::get('/order/detailed-orders/{order_id}', 'DetailOrders')->name('order.details');
+        Route::get('order/details/maximum/{id}','MaximumOrderDetails')->name('order.details.maximum');
         // Route::post('/order/send-sms', 'SendSMS')->name('send.sms');
 
 
@@ -428,7 +429,7 @@ Route::middleware('auth')->group(function () {
     //Purchase Details All Route End
 
 
-  
+
     //Company Details All Route Start
     Route::controller(CompanyDetailsController::class)->group(function () {
         Route::get('/company-details', 'index')->name('company-details');

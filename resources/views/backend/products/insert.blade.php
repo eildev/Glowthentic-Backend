@@ -53,7 +53,7 @@
 
 
 
-                        <form method="POST" action="" enctype="multipart/form-data" id="productForm">
+                        <form method="POST" enctype="multipart/form-data" id="productForm">
                             @csrf
                             <div class="row g-3 mb-3">
                                 <div class="col-lg-8">
@@ -464,7 +464,7 @@
                                                         <label for="" class="form-label">Ingredients</label>
                                                     </div>
                                                     <div class="col-12">
-                                                        <textarea class="form-control product_descriptions" name="ingredients" placeholder="Enter Ingredients"
+                                                        <textarea class="form-control ingrediants" name="ingredients" placeholder="Enter Ingredients"
                                                             style="resize: none; height: 100px;" id="product_description"></textarea>
 
 
@@ -485,7 +485,7 @@
                                                         <label for="" class="form-label">Usage Instruction</label>
                                                     </div>
                                                     <div class="col-12">
-                                                        <textarea class="form-control product_descriptions" name="usage_instruction" placeholder="Enter Usage Instruction"
+                                                        <textarea class="form-control usage_instruction" name="usage_instruction" placeholder="Enter Usage Instruction"
                                                             style="resize: none; height: 100px;" id=""></textarea>
 
 
@@ -889,6 +889,12 @@
 
 {{-- script start --}}
 <script>
+    ////////////////////summernote//////////////////////
+    $(document).ready(function(){
+        // $('.product_descriptions').summernote();
+        $('.ingrediants').summernote();
+        $('.usage_instruction').summernote();
+    });
 ////////////////////////////////////show validation error //////////////////////////////////////
 function validationError() {
     $(".error-message").remove();
@@ -918,7 +924,7 @@ function validationError() {
     if (product_name === "") errors.product_name = "Product Name is required!";
     if (galleryImages.length === 0) errors.galleryimages = "Gallery Images are required!";
 
-    let allowedGalleryTypes = ["image/jpeg", "image/png", "image/jpg"];
+    let allowedGalleryTypes = ["image/jpeg", "image/png", "image/jpg",'image/webp'];
     let maxGallerySize = 2048; // 2MB
 
     for (let i = 0; i < galleryImages.length; i++) {
@@ -1556,81 +1562,158 @@ $(document).on("click", ".removeRow", function () {
             });
 
 
-  $(document).on("click",".variant_save",function(e){
+//   $(document).on("click",".variant_save",function(e){
+//     e.preventDefault();
+
+//     let isValid = true;
+//     $(".error-message").remove();
+//     $("#productTableBody tr").each(function () {
+//         let size = $(this).find('[name="size[]"]').val();
+//         let color = $(this).find('[name="color[]"]').val();
+//         // let image = $(this).find('[name="image[0][]"]')[0].files;
+
+
+//         if (!size && !color) {
+//         $(this).find('[name="size[]"]').after('<div class="text-danger error-message">Size or Color is required</div>');
+//         isValid = false;
+//     }
+
+//          var imageInput = $(this).find('[name="image[0][]"]')[0];
+//             var files = imageInput.files;
+
+//             if (files.length < 1) {
+//                 $(imageInput).after('<div class="text-danger error-message">Image is required</div>');
+//                 isValid = false;
+//             } else {
+//                 // Check size of each file
+//                 for (var i = 0; i < files.length; i++) {
+//                     if (files[i].size > 2 * 1024 * 1024) { // 2MB = 2*1024*1024 bytes
+//                         $(imageInput).after('<div class="text-danger error-message">Each image must be less than 2MB</div>');
+//                         isValid = false;
+//                         break;
+//                     }
+//                 }
+//             }
+
+
+//     });
+
+//     if (!isValid) {
+//         toastr.error("Please select at least one size and one color before saving.");
+//         return;
+//     }
+
+
+//     let formdata = new FormData($('#variant_form_submit')[0]);
+
+//     $.ajaxSetup({
+//                 headers: {
+//                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+//                 }
+//             });
+
+//             $.ajax({
+
+//                 url:"/product/variant/store",
+//                 type:"POST",
+//                 data:formdata,
+//                 contentType: false,
+//                 processData:false,
+//                 beforeSend: function () {
+//                             $('#loader').show(); // Show loader
+//                         },
+
+//                 success:function(res){
+//                     $('#loader').hide();
+//                     console.log(res);
+//                     toastr.success(res.message);
+//                     $('#variant_form_submit')[0].reset();
+//                     $('#productForm')[0].reset();
+//                      location.reload();
+//                 }
+//             });
+//   });
+
+
+
+
+
+$(document).on("click", ".variant_save", function (e) {
     e.preventDefault();
 
     let isValid = true;
-    $(".error-message").remove();
-    $("#productTableBody tr").each(function () {
+    $(".error-message").remove();  // Clear existing errors
+
+    $("#productTableBody tr").each(function (index) {
         let size = $(this).find('[name="size[]"]').val();
         let color = $(this).find('[name="color[]"]').val();
-        // let image = $(this).find('[name="image[0][]"]')[0].files;
 
-
+        // Validate size or color
         if (!size && !color) {
-        $(this).find('[name="size[]"]').after('<div class="text-danger error-message">Size or Color is required</div>');
-        isValid = false;
-    }
+            $(this).find('[name="size[]"]').after('<div class="text-danger error-message">Size or Color is required</div>');
+            isValid = false;
+        }
 
-         var imageInput = $(this).find('[name="image[0][]"]')[0];
-            var files = imageInput.files;
+        // Dynamically find the image input by index
+        let imageInput = $(this).find(`input[name="image[${index}][]"]`)[0];
 
-            if (files.length < 1) {
-                $(imageInput).after('<div class="text-danger error-message">Image is required</div>');
-                isValid = false;
-            } else {
-                // Check size of each file
-                for (var i = 0; i < files.length; i++) {
-                    if (files[i].size > 2 * 1024 * 1024) { // 2MB = 2*1024*1024 bytes
-                        $(imageInput).after('<div class="text-danger error-message">Each image must be less than 2MB</div>');
-                        isValid = false;
-                        break;
-                    }
+        if (!imageInput) {
+            $(this).find('[name="size[]"]').after('<div class="text-danger error-message">Image input not found</div>');
+            isValid = false;
+            return true; // continue to next row
+        }
+
+        let files = imageInput.files;
+
+        // if (files.length < 1) {
+        //     $(imageInput).after('<div class="text-danger error-message">Image is required</div>');
+        //     isValid = false;
+        // } else {
+        if(files.length >1){
+            for (let i = 0; i < files.length; i++) {
+                if (files[i].size > 2 * 1024 * 1024) { // 2MB limit
+                    $(imageInput).after('<div class="text-danger error-message">Each image must be less than 2MB</div>');
+                    isValid = false;
+                    break;
                 }
             }
-
-
+        }
     });
 
+    // Stop if invalid
     if (!isValid) {
-        toastr.error("Please select at least one size and one color before saving.");
+        toastr.error("Please select at least one size, one color, and a valid image before saving.");
         return;
     }
 
-
+    // Submit via AJAX
     let formdata = new FormData($('#variant_form_submit')[0]);
 
     $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
 
-            $.ajax({
-
-                url:"/product/variant/store",
-                type:"POST",
-                data:formdata,
-                contentType: false,
-                processData:false,
-                beforeSend: function () {
-                            $('#loader').show(); // Show loader
-                        },
-
-                success:function(res){
-                    $('#loader').hide();
-                    console.log(res);
-                    toastr.success(res.message);
-                    $('#variant_form_submit')[0].reset();
-                    $('#productForm')[0].reset();
-                     location.reload();
-                }
-            });
-  });
-
-
-
-
+    $.ajax({
+        url: "/product/variant/store",
+        type: "POST",
+        data: formdata,
+        contentType: false,
+        processData: false,
+        beforeSend: function () {
+            $('#loader').show(); // Show loader
+        },
+        success: function (res) {
+            $('#loader').hide();
+            console.log(res);
+            toastr.success(res.message);
+            $('#variant_form_submit')[0].reset();
+            $('#productForm')[0].reset();
+            location.reload();
+        }
+    });
+});
 
 
 
