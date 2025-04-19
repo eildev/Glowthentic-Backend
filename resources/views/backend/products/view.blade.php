@@ -75,7 +75,7 @@
                                                     alt="Products Image">
                                             </td> --}}
                                             <td>{{ Illuminate\Support\Str::limit($product->product_name, 29) }}</td>
-                                            <td>{{ $product->category->categoryName }}</td>
+                                            <td>{{ $product->category->categoryName??'' }}</td>
                                             @php
                                                 $subcategory=App\Models\Category::find($product->subcategory_id);
                                             @endphp

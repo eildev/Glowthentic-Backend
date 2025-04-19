@@ -5,9 +5,12 @@
             <div class="card">
                 <div class="row g-0">
                     <div class="col-md-5 border-end">
+                       
+                        @if($product->variantImage && $product->variantImage->whereNull('deleted_at')->first())
+                                <img src="{{ asset($product->variantImage->whereNull('deleted_at')->first()->image) }}" class="img-fluid" alt="product-image">
+                            @endif
 
-                        <img src="{{ asset($product->variantImage->whereNull('deleted_at')->first()->image) }}" class="img-fluid"
-                            alt="product-image">
+
                         <div class="row mb-3 row-cols-auto g-2 justify-content-center mt-3">
                             @foreach ($product->variantImage()->whereNull('deleted_at')->get() as $gallery)
 
@@ -26,7 +29,7 @@
                             @foreach ($features as $feature)
                                 <span class="badge bg-info text-capitalize">{{ $feature }}</span>
                             @endforeach
-
+                            @php use Illuminate\Support\Str; @endphp
                             {{-- <div class="d-flex gap-3 py-3">
                                 <div class="cursor-pointer">
                                     <i class='bx bxs-star text-warning'></i>
@@ -110,14 +113,18 @@
                                 </div>
                             </div>
 
-                            <p class="card-text fs-6 mb-3"><b>Short Description:
-
-                                </b>{!! $product->productdetails->first()->description??'' !!}</p>
-
-                                <p class="card-text fs-6 mb-3"><b>Usage Instructions:
-                                </b>{!! $product->productdetails->first()->usage_instruction??'' !!}</p>
-                            <p class="card-text fs-6"><b>Long Description:
-                                </b>{!! $product->productdetails->first()->ingrediants??'' !!}</p>
+                            <p class="card-text fs-6 mb-3"><b> Description:</b>
+                                {!! Str::words($product->productdetails->description ?? '', 20, '...') !!}
+                            </p>
+                            
+                            <p class="card-text fs-6 mb-3"><b>Usage Instructions:</b>
+                                {!! Str::words($product->productdetails->usage_instruction ?? '', 20, '...') !!}
+                            </p>
+                            
+                            <p class="card-text fs-6"><b>Ingredients:</b>
+                                {!! Str::words($product->productdetails->ingredients ?? '', 30, '...') !!}
+                            </p>
+                            
                             <hr>
 
                             <div class="d-flex gap-3 mt-3">

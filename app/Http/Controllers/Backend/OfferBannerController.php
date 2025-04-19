@@ -65,8 +65,8 @@ class OfferBannerController extends Controller
                         // Generate a unique filename
 
                         $destinationPath = public_path('uploads/offer_banner/');
-                        $filename = time() . '_' . uniqid() . '.' . $galleryImage->extension();
-                        $imageName = $imageService->resizeAndOptimize($galleryImage, $destinationPath, $filename);
+                        // $filename = time() . '_' . uniqid() . '.' . $galleryImage->extension();
+                        $imageName = $imageService->resizeAndOptimize($galleryImage, $destinationPath);
                         $image = 'uploads/offer_banner/' . $imageName;
 
                         // $path= 'uploads/banner/gallery/';
@@ -139,8 +139,8 @@ class OfferBannerController extends Controller
                 // $galleryImage->move(public_path($path), $imageName);
 
                 $destinationPath = public_path('uploads/offer_banner/');
-                $filename = time() . '_' . uniqid() . '.' . $galleryImage->extension();
-                $imageName = $imageService->resizeAndOptimize($galleryImage, $destinationPath, $filename);
+                // $filename = time() . '_' . uniqid() . '.' . $galleryImage->extension();
+                $imageName = $imageService->resizeAndOptimize($galleryImage, $destinationPath);
                 $image = 'uploads/offer_banner/' . $imageName;
 
                 $imageGallery = new ImageGallery;

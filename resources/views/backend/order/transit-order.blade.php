@@ -58,7 +58,7 @@
                                                 {{-- <a href="{{ route('admin.completed.order',$delivering_orders->order->invoice_number) }}" class="btn btn-sm btn-info">Complete</a> --}}
 
                                                 <a href="{{ route('admin.transit.order.change.completed',$transit_orders->id) }}" class="btn btn-sm btn-info">Delivered</a>
-                                                <a href="{{ route('order.details', $transit_orders->id) }}" class="btn btn-sm btn-success" >View</a>
+                                                <a href="{{ route('order.details', $transit_orders->order->id) }}" class="btn btn-sm btn-success" >View</a>
                                                 {{-- <a href="{{ route('admin.denied.order', $transit_orders->id) }}"
                                                     class="btn btn-sm btn-danger" id="delete">Cancel</a> --}}
                                             </td>

@@ -28,7 +28,7 @@ use App\Http\Controllers\Backend\PurchaseDetailsController;
 use App\Http\Controllers\Backend\historyController;
 use App\Http\Controllers\Backend\MarketingController;
 use App\Http\Controllers\Backend\ProductAttributeController;
-
+use App\Http\Controllers\Backend\SizeController;
 use App\Http\Controllers\Backend\ComboController;
 use App\Http\Controllers\Backend\CouponController;
 use App\Http\Controllers\Backend\ProductPromotionController;
@@ -36,6 +36,7 @@ use App\Http\Controllers\Backend\ProductStockManageController;
 use App\Http\Controllers\Backend\DeliverOrderAssignController;
 use App\Http\Controllers\Backend\FeatureController;
 use App\Http\Controllers\Backend\CourierController;
+use App\Http\Controllers\Backend\ColorController;
 
 // Route::get('/home', function () {
 //     return view('frontend.index');
@@ -337,12 +338,27 @@ Route::middleware('auth')->group(function () {
         Route::get('order/delivered', 'Delivered')->name('order.delivered');
     });
 
+          /////////////////////////////Product Size Add///////////////////////////
+          Route::controller(SizeController::class)->group(function () {
+            Route::get('/size/view', 'SizeView')->name('size.view');
+            Route::post('/size/store', 'SizeStore')->name('admin.products.addSize');
+            Route::get('/size/edit/{id}', 'SizeEdit')->name('size.edit');
+            Route::post('/size/update', 'SizeUpdate')->name('admin.products.updateSize');
+            Route::post('/size/delete', 'SizeDelete')->name('admin.products.deleteSize');
+            Route::get('admin/products/getSize', 'SizeGet')->name('admin.products.getSize');
+        });
 
 
+      /////////////////////////////Product Color Add///////////////////////////
 
-
-
-
+     Route::controller(ColorController::class)->group(function () {
+        Route::get('/color/view', 'ColorView')->name('color.view');
+        Route::get('/color/get', 'ColorGet')->name('admin.products.getColor');
+        Route::post('/color/store', 'ColorStore')->name('admin.products.addColor');
+        Route::get('/color/edit/{id}', 'ColorEdit')->name('color.edit');
+        Route::post('/color/update', 'ColorUpdate')->name('admin.products.updateColor');
+        Route::post('/color/delete', 'ColorDelete')->name('admin.products.deleteColor');
+    });
 
 
 
@@ -428,7 +444,7 @@ Route::middleware('auth')->group(function () {
     //Purchase Details All Route End
 
 
-  
+
     //Company Details All Route Start
     Route::controller(CompanyDetailsController::class)->group(function () {
         Route::get('/company-details', 'index')->name('company-details');

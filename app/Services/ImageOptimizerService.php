@@ -23,11 +23,13 @@ class ImageOptimizerService
 
     public function resizeAndOptimize($imageFile, $destinationPath, $quality = 85)
     {
+
+
         if (!File::exists($destinationPath)) {
             File::makeDirectory($destinationPath, 0755, true, true);
         }
 
-        $imageName = rand(000000,999999) . '.' . $imageFile->extension();
+        $imageName = rand(000000, 999999) . '.' . $imageFile->extension();
         $imagePath = $destinationPath . '/' . $imageName;
 
 

@@ -91,6 +91,7 @@ class OrderManageController extends Controller
     public function orderProcessing($invoice){
         // dd($invoice);
         $processing_Orders = Order::where("invoice_number",$invoice)->latest()->first();
+       
         // dd($processing_Orders);
         $processing_Orders->status = "processing";
         $processing_Orders->update();
@@ -99,7 +100,7 @@ class OrderManageController extends Controller
     public function orderDelivering($invoice){
         // dd($invoice);
         $orders_delivering = Order::where("invoice_number",$invoice)->latest()->first();
-        // dd($processing_Orders);
+      
         $orders_delivering->status = "delivering";
         $orders_delivering->update();
         return back()->with('success','Order Status Updated Sucessfully');
