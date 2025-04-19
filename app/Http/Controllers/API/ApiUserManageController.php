@@ -113,10 +113,6 @@ class ApiUserManageController extends Controller
 
     public function update($id, Request $request)
     {
-        // ডিবাগ করার জন্য
-        logger()->info('Request Data:', $request->all());
-        logger()->info('Request Files:', $request->file());
-
         try {
             $validator = Validator::make($request->all(), [
                 'full_name' => 'required|string',
