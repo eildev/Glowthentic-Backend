@@ -56,8 +56,8 @@
                                                 <td>Banasree</td>
                                             <td>
                                                 <span  class="btn btn-sm btn-info">Finished Process</span>
-                                                <a href="{{ route('order.details', $delivered_orders->id) }}" class="btn btn-sm btn-success" >View</a>
-                                                {{-- <a href="#" class="btn btn-sm btn-danger" id="delete">Cancel</a> --}}
+                                                <a href="{{ route('order.details', $delivered_orders->order->id) }}" class="btn btn-sm btn-success" >View</a>
+                                                
                                             </td>
                                         </tr>
                                     @endforeach

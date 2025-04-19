@@ -66,8 +66,6 @@
                                 @if ($products->count() > 0)
                                     @foreach ($products as $product)
 
-
-                                    {{-- @dd($product->category->categoryName) --}}
                                         <tr>
                                             <td>{{ $serialNumber++ }}</td>
 

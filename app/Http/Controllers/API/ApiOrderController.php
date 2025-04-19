@@ -504,10 +504,8 @@ class ApiOrderController extends Controller
             $order_details = OrderDetails::where('order_id', $order->id)->with('product', 'variant.variantImage')->get();
 
             if($order->user_id){
-
-                $userDetails=UserDetails::where('user_id',$order->user_id)->with('user')->first();
-                $billingInfo=BillingInformation::where('user_id',$order->user_id)->with('user')->first();
-                // dd($userDetails);
+                $userDetails=UserDetails::where('user_id',$order->user_id)->first();
+                $billingInfo=BillingInformation::where('user_id',$order->user_id)->first();
             }
             else if($order->session_id){
                 $userDetails=UserDetails::where('session_id',$order->session_id)->first();
@@ -622,38 +620,39 @@ class ApiOrderController extends Controller
 
 
     public function getCompletedOrder($user_idOrSesssion_id){
-          try{
-            $orders = Order::where(function ($query) use ($user_idOrSesssion_id) {
-                $query->where('user_id', $user_idOrSesssion_id)
-                      ->orWhere('session_id', $user_idOrSesssion_id);
-            })
-            ->whereHas('deliveryOrder', function ($query) {
-                $query->where('delivery_status', 'delivered');
-            })
-            ->with(['deliveryOrder' => function ($query) {
-                $query->where('delivery_status', 'delivered');
-            },
-               'orderDetails.variant.variantImage',
-               'orderDetails.product',
-               'orderDetails.product.category'
+        try{
+          $orders = Order::where(function ($query) use ($user_idOrSesssion_id) {
+              $query->where('user_id', $user_idOrSesssion_id)
+                    ->orWhere('session_id', $user_idOrSesssion_id);
+          })
+          ->whereHas('deliveryOrder', function ($query) {
+              $query->where('delivery_status', 'delivered');
+          })
+          ->with(['deliveryOrder' => function ($query) {
+              $query->where('delivery_status', 'delivered');
+          },
+             'orderDetails.variant.variantImage',
+             'orderDetails.product',
+             'orderDetails.product.category'
 
 
-            ])
-            ->get();
-             return response()->json([
-                'status' => 200,
-                'message' => 'All Order Get Successfully',
-                'data' => $orders,
-            ]);
+          ])
+          ->get();
+           return response()->json([
+              'status' => 200,
+              'message' => 'All Order Get Successfully',
+              'data' => $orders,
+          ]);
 
-          }
-          catch(\Exception $e){
-            return response()->json([
-                'status' => 500,
-                'message' => $e->getMessage(),
-            ]);
-          }
-    }
+        }
+        catch(\Exception $e){
+          return response()->json([
+              'status' => 500,
+              'message' => $e->getMessage(),
+          ]);
+        }
+  }
+
 
 
 }
