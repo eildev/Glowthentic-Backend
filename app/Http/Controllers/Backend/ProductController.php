@@ -19,6 +19,8 @@ use App\Models\AttributeManage;
 use App\Services\ImageOptimizerService;
 use Exception;
 use App\Models\ProductFeature;
+use App\Models\SizeModel;
+use App\Models\ColorModel;
 use File;
 // use App\Models\
 class ProductController extends Controller
@@ -87,7 +89,7 @@ class ProductController extends Controller
 
     public function store(Request $request, ImageOptimizerService $imageService)
     {
-          dd($request->all());
+        //   dd($request->all());
         $validator = Validator::make($request->all(), [
             'category_id' => 'required',
             'brand_id' => 'required',
@@ -122,7 +124,7 @@ class ProductController extends Controller
         $product->subcategory_id = $request->subcategory_id;
         $product->brand_id = $request->brand_id;
         $product->sub_subcategory_id = $request->sub_subcategory_id;
-        if($request->shipping_charge){
+        if ($request->shipping_charge) {
             $product->shipping_charge = $request->shipping_charge;
         }
 
@@ -218,8 +220,8 @@ class ProductController extends Controller
             }
         }
 
-        if($product && $request->product_feature){
-            foreach($request->product_feature as $feature){
+        if ($product && $request->product_feature) {
+            foreach ($request->product_feature as $feature) {
                 $productFeature = new ProductFeature();
                 $productFeature->product_id = $product->id;
                 $productFeature->feature_id = $feature;
@@ -258,8 +260,8 @@ class ProductController extends Controller
                 if ($request->hasFile('product_main_image')) {
                     foreach ($request->file('product_main_image') as $image) {
                         $destinationPath = public_path('uploads/products/variant/');
-                        $filename = time() . '_' . uniqid() . '.' . $image->extension();
-                        $imageName = $imageService->resizeAndOptimize($image, $destinationPath, $filename);
+                        // $filename = time() . '_' . uniqid() . '.' . $image->extension();
+                        $imageName = $imageService->resizeAndOptimize($image, $destinationPath);
                         $image = 'uploads/products/variant/' . $imageName;
 
                         $productGallery = new VariantImageGallery;
@@ -316,12 +318,14 @@ class ProductController extends Controller
 
         $attribute_manages = AttributeManage::where('product_id', $id)->get();
         $variants = Variant::where('product_id', $id)->get();
+        $size=SizeModel::select('size_name')->get();
+        $color= ColorModel::select('color_name')->get();
         $inserttag = Product_Tags::where('product_id', $id)->get();
         $extraFields = AttributeManage::where('product_id', $product->id)->get();
         // ->pluck('value', 'attribute_id')
         // ->toArray();
 
-        return view('backend.products.edit', compact('product', 'attribute_manages', 'variants', 'inserttag', 'extraFields'));
+        return view('backend.products.edit', compact('product', 'attribute_manages', 'variants', 'inserttag', 'extraFields','size','color'));
     }
 
 
@@ -330,13 +334,13 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
 
-        $getVariants=Variant::where('product_id',$id)->get();
-        $stock=ProductStock::where('product_id',$id)->get();
-        foreach($stock as $stocks){
+        $getVariants = Variant::where('product_id', $id)->get();
+        $stock = ProductStock::where('product_id', $id)->get();
+        foreach ($stock as $stocks) {
             $stocks->delete();
         }
-        foreach($getVariants as $variant){
-            if($variant->image){
+        foreach ($getVariants as $variant) {
+            if ($variant->image) {
                 $imagePath = public_path($variant->image);
                 if (file_exists($imagePath)) {
                     unlink($imagePath);
@@ -369,6 +373,8 @@ class ProductController extends Controller
     public function update(Request $request)
     {
 
+
+
         $product = Product::findOrFail($request->product_id);
         $product->category_id = $request->category_id;
         $product->subcategory_id = $request->subcategory_id;
@@ -380,7 +386,7 @@ class ProductController extends Controller
 
         $product->product_name = $request->product_name;
         $product->unit_id = $request->unit_id;
-        if($request->shipping_charge){
+        if ($request->shipping_charge) {
             $product->shipping_charge = $request->shipping_charge;
         }
         $product->slug = Str::slug($request->product_name);
@@ -399,6 +405,7 @@ class ProductController extends Controller
             $productDetails->ingredients = $request->ingredients;
             $productDetails->usage_instruction = $request->usage_instruction;
             $productDetails->created_by = Auth::user()->id;
+
             $productDetails->save();
         }
 
@@ -465,7 +472,7 @@ class ProductController extends Controller
         }
 
         if ($product && $request->tag) {
-           Product_Tags::where('product_id', $product->id)->delete();
+            Product_Tags::where('product_id', $product->id)->delete();
             foreach ($request->tag as $tag) {
                 $productTag = new Product_Tags();
                 $productTag->product_id = $product->id;
@@ -475,9 +482,9 @@ class ProductController extends Controller
         }
 
 
-        if($product && $request->product_feature){
+        if ($product && $request->product_feature) {
             ProductFeature::where('product_id', $product->id)->delete();
-            foreach($request->product_feature as $feature){
+            foreach ($request->product_feature as $feature) {
                 $productFeature = new ProductFeature();
                 $productFeature->product_id = $product->id;
                 $productFeature->feature_id = $feature;
@@ -756,6 +763,7 @@ class ProductController extends Controller
     public function variantProductStore(Request $request, ImageOptimizerService $imageService)
     {
         try {
+
             if (!empty($request->price ?? 0)) {
                 foreach ($request->price as $key => $price) {
 
@@ -764,6 +772,7 @@ class ProductController extends Controller
                     $variant = new Variant();
                     $variant->product_id = $request->product_id;
                     $variant->size = $request->size[$key];
+                    // dd( $variant->size );
                     $variant->color = $request->color[$key];
                     $variant->regular_price = $price;
                     $variant->weight = $request->weight[$key] ?? null;
@@ -784,8 +793,8 @@ class ProductController extends Controller
                             // $image->move($path, $filename);
 
                             $destinationPath = public_path('uploads/products/variant/');
-                            $filename = time() . '_' . uniqid() . '.' . $image->extension();
-                            $imageName = $imageService->resizeAndOptimize($image, $destinationPath, $filename);
+                            // $filename = time() . '_' . uniqid() . '.' . $image->extension();
+                            $imageName = $imageService->resizeAndOptimize($image, $destinationPath);
                             $image = 'uploads/products/variant/' . $imageName;
 
 
@@ -826,6 +835,7 @@ class ProductController extends Controller
     {
         try {
 
+            //  dd($request->all());
             $existingVariants = Variant::where('product_id', $request->product_id)->get()->keyBy('id');
 
             if (!empty($request->price)) {
@@ -863,8 +873,8 @@ class ProductController extends Controller
 
                         foreach ($request->file("image.$variant_id") as $image) {
                             $destinationPath = public_path('uploads/products/variant/');
-                            $filename = time() . '_' . uniqid() . '.' . $image->extension();
-                            $imageName = $imageService->resizeAndOptimize($image, $destinationPath, $filename);
+                            // $filename = time() . '_' . uniqid() . '.' . $image->extension();
+                            $imageName = $imageService->resizeAndOptimize($image, $destinationPath);
                             $image = 'uploads/products/variant/' . $imageName;
 
                             $variantImage = new VariantImageGallery();

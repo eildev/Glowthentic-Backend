@@ -10,6 +10,4 @@ class OrderBillingDetails extends Model
 {
     use HasFactory, SoftDeletes;
     protected $guarded = [];
-
-    
 }

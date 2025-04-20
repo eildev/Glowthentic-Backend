@@ -47,7 +47,7 @@
                 <div class="card border-top border-0 border-3 border-info col-md-12">
                     <div class="card-body">
                         <div class="card-title d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0 text-info">Order Details Table</h5>
+                            <h5 class="mb-0 text-info">Maximum Order Details Table</h5>
                            <div>
                                 <!--<button  class="btn btn-info btn-sm text-light">-->
                                 <!--       Order -->

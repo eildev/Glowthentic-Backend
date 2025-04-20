@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\Product_Tags;
 use App\Models\Brand;
 use App\Models\Product;
+use App\Models\ProductFeature;
 
 class ApiCategoryController extends Controller
 {
@@ -69,10 +70,23 @@ class ApiCategoryController extends Controller
                 ->where('parent_id', $category->id)
                 ->take(10)
                 ->get();
-            $product_feature = Product::select('id', 'slug', 'product_feature')
-                ->where('category_id', $category->id)
+
+            // $product_feature = Product::select('id', 'slug', 'product_feature')
+            //     ->where('category_id', $category->id)
+            //     ->take(10)
+            //     ->get();
+
+
+             $product_feature = ProductFeature::whereHas('product', function ($query) use ($category) {
+                $query->where('category_id', $category->id);
+            })
+                ->selectRaw('MIN(id) as id, feature_id')
+                ->groupBy('feature_id')
                 ->take(10)
                 ->get();
+
+
+
 
             $tags = Product_Tags::whereHas('product', function ($query) use ($category) {
                 $query->where('category_id', $category->id);
