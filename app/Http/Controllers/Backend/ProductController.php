@@ -89,7 +89,7 @@ class ProductController extends Controller
 
     public function store(Request $request, ImageOptimizerService $imageService)
     {
-          dd($request->all());
+        //   dd($request->all());
         $validator = Validator::make($request->all(), [
             'category_id' => 'required',
             'brand_id' => 'required',
@@ -318,8 +318,8 @@ class ProductController extends Controller
 
         $attribute_manages = AttributeManage::where('product_id', $id)->get();
         $variants = Variant::where('product_id', $id)->get();
-        $size=SizeModel::all();
-        $color=ColorModel::all();
+        $size=SizeModel::select('size_name')->get();
+        $color= ColorModel::select('color_name')->get();
         $inserttag = Product_Tags::where('product_id', $id)->get();
         $extraFields = AttributeManage::where('product_id', $product->id)->get();
         // ->pluck('value', 'attribute_id')
@@ -763,6 +763,7 @@ class ProductController extends Controller
     public function variantProductStore(Request $request, ImageOptimizerService $imageService)
     {
         try {
+
             if (!empty($request->price ?? 0)) {
                 foreach ($request->price as $key => $price) {
 
@@ -771,6 +772,7 @@ class ProductController extends Controller
                     $variant = new Variant();
                     $variant->product_id = $request->product_id;
                     $variant->size = $request->size[$key];
+                    // dd( $variant->size );
                     $variant->color = $request->color[$key];
                     $variant->regular_price = $price;
                     $variant->weight = $request->weight[$key] ?? null;
@@ -833,6 +835,7 @@ class ProductController extends Controller
     {
         try {
 
+            //  dd($request->all());
             $existingVariants = Variant::where('product_id', $request->product_id)->get()->keyBy('id');
 
             if (!empty($request->price)) {

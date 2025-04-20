@@ -540,22 +540,24 @@
                                                   <td><input type="text" class="form-control" name="variant_name[{{$variant->id}}]" value="{{ $variant->variant_name??'' }}"></td>
                                                  <td><input type="number" class="form-control" name="price[{{$variant->id}}]" value="{{ $variant->regular_price??0 }}"></td>
                                                  <td>
-                                                     <select class="form-select @error('size') is-invalid @enderror size" name="size[{{ $variant->id }}]">
+                                                    <select class="form-select @error('size') is-invalid @enderror size" name="size[{{ $variant->id }}]">
+                                                        @foreach ($size as $size_name)
+                                                        <option value="{{ $size_name->size_name }}" {{ $variant->size == $size_name->size_name ? 'selected' : '' }}>
+                                                            {{ $size_name->size_name }}
+                                                        </option>
+                                                        @endforeach
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <select class="form-select @error('color') is-invalid @enderror color" name="color[{{ $variant->id }}]">
+                                                        @foreach ($color as $color_name)
+                                                        <option value="{{ $color_name->color_name }}" {{ $variant->color == $color_name->color_name ? 'selected' : '' }}>
+                                                            {{ $color_name->color_name }}
+                                                        </option>
+                                                        @endforeach
+                                                    </select>
+                                                </td>
 
-                                                         @foreach ($size as $size_name)
-                                                         <option value="{{ $size_name }}" {{ $variant->size == $size_name->size_name ? 'selected' : '' }}>{{ $size_name->size_name }}</option>
-                                                         @endforeach
-
-                                                     </select>
-                                                 </td>
-                                                 <td>
-                                                     <select class="form-select @error('color') is-invalid @enderror color" name="color[{{ $variant->id }}]">
-
-                                                         @foreach ($color as $color_name)
-                                                         <option value="{{ $color_name }}" {{ $variant->color == $color_name->color_name ? 'selected' : '' }}>{{ $color_name->color_name }}</option>
-                                                         @endforeach
-                                                     </select>
-                                                 </td>
                                                  <td><input type="number" class="form-control" name="weight[{{ $variant->id }}]" value="{{ $variant->weight??'' }}"></td>
                                                  <td><input type="text" class="form-control" name="flavor[{{ $variant->id }}]" value="{{ $variant->flavor??'' }}"></td>
                                                  <td><input type="file" class="form-control" name="image[{{$variant->id}}][]" multiple>
