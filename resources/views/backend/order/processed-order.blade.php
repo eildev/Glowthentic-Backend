@@ -222,6 +222,7 @@
                         $('#deliverAssignForm')[0].reset();
                         $('#orderAssign').modal('hide');
                         toastr.success("Order Assign Successfully");
+                        location.reload();
                     }
                 },
 

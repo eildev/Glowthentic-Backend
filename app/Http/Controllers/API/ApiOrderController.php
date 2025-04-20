@@ -537,6 +537,8 @@ class ApiOrderController extends Controller
                             'order_tracking_status' => "Shipped",
                             'order'=> $order,
                             'orderDetails' => $order_details,
+                            'userDetails' => $userDetails,
+                            'billingInfo' => $billingInfo,
                             'message' => 'Order tracking shipped Successfully',
                         ]);
                     } else if ($delivered_order->delivery_status == "delivered") {
@@ -545,6 +547,8 @@ class ApiOrderController extends Controller
                             'order_tracking_status' => "Completed",
                             'order'=> $order,
                             'orderDetails' => $order_details,
+                            'userDetails' => $userDetails,
+                            'billingInfo' => $billingInfo,
                             'message' => 'Order completed Successfully',
                         ]);
                     }
@@ -616,32 +620,39 @@ class ApiOrderController extends Controller
 
 
     public function getCompletedOrder($user_idOrSesssion_id){
-          try{
-            $orders = Order::where(function ($query) use ($user_idOrSesssion_id) {
-                $query->where('user_id', $user_idOrSesssion_id)
-                      ->orWhere('session_id', $user_idOrSesssion_id);
-            })
-            ->whereHas('deliveryOrder', function ($query) {
-                $query->where('delivery_status', 'delivered');
-            })
-            ->with(['deliveryOrder' => function ($query) {
-                $query->where('delivery_status', 'delivered');
-            }])
-            ->get();
-             return response()->json([
-                'status' => 200,
-                'message' => 'All Order Get Successfully',
-                'data' => $orders,
-            ]);
+        try{
+          $orders = Order::where(function ($query) use ($user_idOrSesssion_id) {
+              $query->where('user_id', $user_idOrSesssion_id)
+                    ->orWhere('session_id', $user_idOrSesssion_id);
+          })
+          ->whereHas('deliveryOrder', function ($query) {
+              $query->where('delivery_status', 'delivered');
+          })
+          ->with(['deliveryOrder' => function ($query) {
+              $query->where('delivery_status', 'delivered');
+          },
+             'orderDetails.variant.variantImage',
+             'orderDetails.product',
+             'orderDetails.product.category'
 
-          }
-          catch(\Exception $e){
-            return response()->json([
-                'status' => 500,
-                'message' => $e->getMessage(),
-            ]);
-          }
-    }
+
+          ])
+          ->get();
+           return response()->json([
+              'status' => 200,
+              'message' => 'All Order Get Successfully',
+              'data' => $orders,
+          ]);
+
+        }
+        catch(\Exception $e){
+          return response()->json([
+              'status' => 500,
+              'message' => $e->getMessage(),
+          ]);
+        }
+  }
+
 
 
 }
