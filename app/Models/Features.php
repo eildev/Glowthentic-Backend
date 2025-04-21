@@ -10,7 +10,7 @@ class Features extends Model
 {
     use HasFactory, SoftDeletes;
     protected $guarded = [];
-
+  
 
     public function productFeatures(){
         return $this->hasMany(ProductFeature::class);

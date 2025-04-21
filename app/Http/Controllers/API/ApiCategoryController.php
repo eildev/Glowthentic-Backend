@@ -86,6 +86,7 @@ class ApiCategoryController extends Controller
 
 
 
+
             $tags = Product_Tags::whereHas('product', function ($query) use ($category) {
                 $query->where('category_id', $category->id);
             })
