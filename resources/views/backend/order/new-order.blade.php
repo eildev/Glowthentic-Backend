@@ -33,8 +33,16 @@
                                 @endphp
                                 @if ($newOrders->count() > 0)
                                     @foreach ($newOrders as $order)
-                                    {{-- @dd( $order) --}}
-                                        @if ($order->total_quantity >='10')
+
+                                    @php
+                                    if($order->user_id!=null){
+                                        $customers = App\Models\UserDetails::where('user_id', $order->user_id)->first();
+                                        }
+                                    else{
+                                        $customers = App\Models\UserDetails::where('session_id',$order->session_id)->first();
+                                    }
+                                    @endphp
+                                        @if ($order->product_quantity >= '20')
                                             @php
                                                 $originalDateString = $order->created_at;
                                                 $dateTime = new DateTime($originalDateString);
@@ -44,7 +52,7 @@
                                                 <td>{{ $serialNumber++ }}</td>
                                                 <td>{{ $formattedDate }}</td>
                                                 <td>{{ $order->invoice_number }}</td>
-                                                <td>{{$order->phone_number}}</td>
+                                                <td>{{$customers->phone_number}}</td>
                                                 <td>{{ $order->total_quantity }}</td>
                                                 <td>{{ $order->grand_total }}</td>
                                                 <td>{{ $order->payment_method }}</td>
@@ -53,11 +61,11 @@
                                                 <td>
                                                     <span class="text-warning text-capitalize">{{ $order->status }}</span>
                                                 </td>
-                                                <td>Banasree</td>
+                                                <td>{{$customers->address}}</td>
                                                 <td>
                                                     <a href="{{ route('admin.approve.order',$order->id) }}"
                                                         class="btn btn-sm btn-info">Approve</a>
-                                                    <a href="{{ route('order.details.maximum', $order->id) }}"
+                                                    <a href="{{ route('order.details', $order->id) }}"
                                                         class="btn btn-sm btn-success">View</a>
                                                     <a href="{{ route('admin.denied.order', $order->invoice_number) }}"
                                                         class="btn btn-sm btn-danger" id="delete">Denied</a>
@@ -137,6 +145,14 @@
                                     {{-- @dd($newOrders); --}}
                                     @foreach ($newOrders as $order)
 
+                                    @php
+                                    if($order->user_id!=null){
+                                        $customers = App\Models\UserDetails::where('user_id', $order->user_id)->first();
+                                        }
+                                    else{
+                                        $customers = App\Models\UserDetails::where('session_id',$order->session_id)->first();
+                                    }
+                                    @endphp
 
                                         @if ($order->product_quantity <= '20')
                                             @php
@@ -148,7 +164,7 @@
                                                 <td>{{ $serialNumber++ }}</td>
                                                 <td>{{ $formattedDate }}</td>
                                                 <td>{{ $order->invoice_number }}</td>
-                                                <td>{{$order->phone_number}}</td>
+                                                <td>{{$customers->phone_number}}</td>
                                                 <td>{{ $order->total_quantity }}</td>
                                                 <td>{{ $order->grand_total }}</td>
                                                 <td>{{ $order->payment_method }}</td>
@@ -159,7 +175,7 @@
                                                         {{ $order->status }}
                                                     </span>
                                                 </td>
-                                                <td>Banasree</td>
+                                                <td>{{$customers->address}}</td>
                                                 <td>
                                                     <a href="{{ route('admin.approve.order',$order->id) }}"
                                                         class="btn btn-sm btn-info">Approve</a>

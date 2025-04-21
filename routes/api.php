@@ -129,8 +129,8 @@ Route::controller(ApiBlogPostController::class)->group(function () {
 });
 
 Route::controller(ApiBlogCommentController::class)->group(function () {
-    Route::get('/blogPost', 'viewAll')->name('blogPost.view');
-    Route::get('/blogPost/{id}', 'show')->name('blogPost.show');
+    Route::get('/blogComment', 'viewAll')->name('blogComment.view');
+    Route::get('/blogComment/{id}', 'show')->name('blogComment.show');
 });
 
 Route::controller(ApiOrderController::class)->group(function () {
@@ -139,7 +139,6 @@ Route::controller(ApiOrderController::class)->group(function () {
     Route::post('order/tracking', 'trackingOrder');
     Route::get('/order/get/{user_idOrSesssion_id}', 'getOrder');
     Route::get('/order/processing/{user_idOrSesssion_id}', 'getProcessingOrder');
-    Route::get('/order/completed/{user_idOrSesssion_id}', 'getCompletedOrder');
 });
 
 

@@ -74,7 +74,7 @@
                     <a class="has-arrow" href="javascript:;">
                         <div class="parent-icon"><i class='bx bx-category-alt'></i>
                         </div></i>
-                        <div class="menu-title">Manage Category</div>
+                        <div class="menu-title">Shop By Concern (Category)</div>
                     </a>
                     <ul class="mm-collapse">
                         <li> <a href="{{ route('category') }}"><i class="bx bx-right-arrow-alt"></i>Manage Category</a>
@@ -141,6 +141,48 @@
 
                     </ul>
                 </li>
+
+                <li>
+                    <a href="javascript:;" class="has-arrow">
+                        <div class="parent-icon">
+                            <i class='bx bx-package'></i>
+                        </div>
+                        <div class="menu-title">Manage Size</div>
+                    </a>
+                    <ul>
+
+                        <li>
+                            <a href="{{ route('size.view') }}"><i class="bx bx-right-arrow-alt"></i>Size</a>
+                        </li>
+
+
+
+                    </ul>
+                </li>
+
+
+
+                <li>
+                    <a href="javascript:;" class="has-arrow">
+                        <div class="parent-icon">
+                            <i class='bx bx-package'></i>
+                        </div>
+                        <div class="menu-title">Manage Color</div>
+                    </a>
+                    <ul>
+                        <li>
+                            <a href="{{ route('color.view') }}"><i class="bx bx-right-arrow-alt"></i>Color</a>
+                        </li>
+
+
+                    </ul>
+                </li>
+
+
+
+
+
+
                 <li>
                     <a href="javascript:;" class="has-arrow">
                         <div class="parent-icon">

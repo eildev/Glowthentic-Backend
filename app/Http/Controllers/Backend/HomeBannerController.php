@@ -133,55 +133,55 @@ class HomeBannerController extends Controller
     //     }
     // }
     public function update(Request $request, $id, ImageOptimizerService $imageService)
-{
-    $banner = HomeBanner::findOrFail($id);
-    $destinationPath = public_path('uploads/home_banner/');
-
-    // Small Image
-    if ($request->hasFile('small_image')) {
-        if (file_exists(public_path($banner->small_image))) {
-            unlink(public_path($banner->small_image));
+    {
+        $banner = HomeBanner::findOrFail($id);
+        $destinationPath = public_path('uploads/home_banner/');
+    
+        // Small Image
+        if ($request->hasFile('small_image')) {
+            if (file_exists(public_path($banner->small_image))) {
+                unlink(public_path($banner->small_image));
+            }
+            $smallImageName = $imageService->resizeAndOptimize($request->file('small_image'), $destinationPath);
+            $banner->small_image = 'uploads/home_banner/' . $smallImageName;
         }
-        $smallImageName = $imageService->resizeAndOptimize($request->file('small_image'), $destinationPath);
-        $banner->small_image = 'uploads/home_banner/' . $smallImageName;
-    }
-
-    // Medium Image
-    if ($request->hasFile('medium_image')) {
-        if (file_exists(public_path($banner->medium_image))) {
-            unlink(public_path($banner->medium_image));
+    
+        // Medium Image
+        if ($request->hasFile('medium_image')) {
+            if (file_exists(public_path($banner->medium_image))) {
+                unlink(public_path($banner->medium_image));
+            }
+            $mediumImageName = $imageService->resizeAndOptimize($request->file('medium_image'), $destinationPath);
+            $banner->medium_image = 'uploads/home_banner/' . $mediumImageName;
         }
-        $mediumImageName = $imageService->resizeAndOptimize($request->file('medium_image'), $destinationPath);
-        $banner->medium_image = 'uploads/home_banner/' . $mediumImageName;
-    }
-
-    // Large Image
-    if ($request->hasFile('large_image')) {
-        if (file_exists(public_path($banner->large_image))) {
-            unlink(public_path($banner->large_image));
+    
+        // Large Image
+        if ($request->hasFile('large_image')) {
+            if (file_exists(public_path($banner->large_image))) {
+                unlink(public_path($banner->large_image));
+            }
+            $largeImageName = $imageService->resizeAndOptimize($request->file('large_image'), $destinationPath);
+            $banner->large_image = 'uploads/home_banner/' . $largeImageName;
         }
-        $largeImageName = $imageService->resizeAndOptimize($request->file('large_image'), $destinationPath);
-        $banner->large_image = 'uploads/home_banner/' . $largeImageName;
-    }
-
-    // Extra Large Image
-    if ($request->hasFile('extra_large_image')) {
-        if (file_exists(public_path($banner->extra_large_image))) {
-            unlink(public_path($banner->extra_large_image));
+    
+        // Extra Large Image
+        if ($request->hasFile('extra_large_image')) {
+            if (file_exists(public_path($banner->extra_large_image))) {
+                unlink(public_path($banner->extra_large_image));
+            }
+            $extraLargeImageName = $imageService->resizeAndOptimize($request->file('extra_large_image'), $destinationPath);
+            $banner->extra_large_image = 'uploads/home_banner/' . $extraLargeImageName;
         }
-        $extraLargeImageName = $imageService->resizeAndOptimize($request->file('extra_large_image'), $destinationPath);
-        $banner->extra_large_image = 'uploads/home_banner/' . $extraLargeImageName;
+    
+        // Update text content
+        $banner->title = $request->title;
+        $banner->short_description = $request->short_description;
+        $banner->long_description = $request->long_description;
+        $banner->link = $request->link;
+        $banner->save();
+    
+        return redirect()->route('banner.view')->with('success', 'Banner Successfully Updated');
     }
-
-    // Update text content
-    $banner->title = $request->title;
-    $banner->short_description = $request->short_description;
-    $banner->long_description = $request->long_description;
-    $banner->link = $request->link;
-    $banner->save();
-
-    return redirect()->route('banner.view')->with('success', 'Banner Successfully Updated');
-}
 
 
     // public function update(Request $request, $id)

@@ -540,53 +540,24 @@
                                                   <td><input type="text" class="form-control" name="variant_name[{{$variant->id}}]" value="{{ $variant->variant_name??'' }}"></td>
                                                  <td><input type="number" class="form-control" name="price[{{$variant->id}}]" value="{{ $variant->regular_price??0 }}"></td>
                                                  <td>
-                                                     <select class="form-select @error('size') is-invalid @enderror size" name="size[{{ $variant->id }}]">
-                                                         <option value="">Select Size</option>
-                                                         <option value="s" {{ $variant->size=="s"?"selected":'' }}>Small (S)</option>
-                                                         <option value="m" {{ $variant->size=="m"?"selected":'' }}>Medium (M)</option>
-                                                         <option value="l" {{ $variant->size=="l"?"selected":'' }}>Large (L)</option>
-                                                         <option value="xl" {{ $variant->size=="xl"?"selected":'' }}>X-Large (XL)</option>
-                                                         <option value="xxl" {{ $variant->size=="xxl"?"selected":'' }}>XX-Large (XXL)</option>
-                                                         <option value="6" {{ $variant->size=="6"?"selected":'' }}>Size 6</option>
-                                                         <option value="7" {{ $variant->size=="7"?"selected":'' }}>Size 7</option>
-                                                         <option value="8" {{ $variant->size=="8"?"selected":'' }}>Size 8</option>
-                                                         <option value="9" {{ $variant->size=="9"?"selected":'' }}>Size 9</option>
-                                                         <option value="10" {{ $variant->size=="10"?"selected":'' }}>Size 10</option>
-                                                         <option value="500g" {{ $variant->size=="500g"?"selected":'' }}>500g</option>
-                                                         <option value="1kg" {{ $variant->size=="1kg"?"selected":'' }}>1kg</option>
-                                                         <option value="500ml" {{ $variant->size=="500ml"?"selected":'' }}>500ml</option>
-                                                         <option value="1l" {{ $variant->size=="11"?"selected":'' }}>1L</option>
-                                                     </select>
-                                                 </td>
-                                                 <td>
-                                                     <select class="form-select @error('color') is-invalid @enderror color" name="color[{{ $variant->id }}]">
-                                                         <option value="">Select Color</option>
-                                                         <option value="black"{{ $variant->color=="black"?"selected":'' }}>Black</option>
-                                                         <option value="white"{{ $variant->color=="white"?"selected":'' }}>White</option>
-                                                         <option value="red"{{ $variant->color=="red"?"selected":'' }}>Red</option>
-                                                         <option value="blue"{{ $variant->color=="blue"?"selected":'' }}>Blue</option>
-                                                         <option value="green"{{ $variant->color=="green"?"selected":'' }}>Green</option>
-                                                         <option value="yellow"{{ $variant->color=="yellow"?"selected":'' }}>Yellow</option>
-                                                         <option value="orange"{{ $variant->color=="orange"?"selected":'' }}>Orange</option>
-                                                         <option value="purple"{{ $variant->color=="purple"?"selected":'' }}>Purple</option>
-                                                         <option value="pink"{{ $variant->color=="pink"?"selected":'' }}>Pink</option>
-                                                         <option value="brown"{{ $variant->color=="brown"?"selected":'' }}>Brown</option>
-                                                         <option value="gray"{{ $variant->color=="gray"?"selected":'' }}>Gray</option>
-                                                         <option value="silver"{{ $variant->color==""?"selected":'' }}>Silver</option>
-                                                         <option value="gold"{{ $variant->color=="gold"?"selected":'' }}>Gold</option>
-                                                         <option value="navy"{{ $variant->color=="navy"?"selected":'' }}>Navy</option>
-                                                         <option value="maroon"{{ $variant->color=="maroon"?"selected":'' }}>Maroon</option>
-                                                         <option value="beige"{{ $variant->color=="beige"?"selected":'' }}>Beige</option>
-                                                         <option value="teal"{{ $variant->color=="teal"?"selected":'' }}>Teal</option>
-                                                         <option value="cyan"{{ $variant->color=="cyan"?"selected":'' }}>Cyan</option>
-                                                         <option value="magenta"{{ $variant->color=="magenta"?"selected":'' }}>Magenta</option>
-                                                         <option value="olive"{{ $variant->color=="olive"?"selected":'' }}>Olive</option>
-                                                         <option value="violet"{{ $variant->color=="violet"?"selected":'' }}>Violet</option>
-                                                         <option value="indigo"{{ $variant->color=="indigo"?"selected":'' }}>Indigo</option>
-                                                         <option value="turquoise"{{ $variant->color=="turquoise"?"selected":'' }}>Turquoise</option>
-                                                         <option value="charcoal"{{ $variant->color=="charcoal"?"selected":'' }}>Charcoal</option>
-                                                     </select>
-                                                 </td>
+                                                    <select class="form-select @error('size') is-invalid @enderror size" name="size[{{ $variant->id }}]">
+                                                        @foreach ($size as $size_name)
+                                                        <option value="{{ $size_name->size_name }}" {{ $variant->size == $size_name->size_name ? 'selected' : '' }}>
+                                                            {{ $size_name->size_name }}
+                                                        </option>
+                                                        @endforeach
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <select class="form-select @error('color') is-invalid @enderror color" name="color[{{ $variant->id }}]">
+                                                        @foreach ($color as $color_name)
+                                                        <option value="{{ $color_name->color_name }}" {{ $variant->color == $color_name->color_name ? 'selected' : '' }}>
+                                                            {{ $color_name->color_name }}
+                                                        </option>
+                                                        @endforeach
+                                                    </select>
+                                                </td>
+
                                                  <td><input type="number" class="form-control" name="weight[{{ $variant->id }}]" value="{{ $variant->weight??'' }}"></td>
                                                  <td><input type="text" class="form-control" name="flavor[{{ $variant->id }}]" value="{{ $variant->flavor??'' }}"></td>
                                                  <td><input type="file" class="form-control" name="image[{{$variant->id}}][]" multiple>
@@ -842,11 +813,43 @@
 
 {{-- script start --}}
 <script>
-   $(document).ready(function(){
-        // $('.product_descriptions').summernote();
-        $('.ingrediantsedit').summernote();
-        $('.usage_instructionedit').summernote();
+  $(document).ready(function() {
+    // প্রথম এডিটর
+    $('.product_descriptions_on').summernote({
+        height: 300,
+        callbacks: {
+            onPaste: function(e) {
+                var bufferText = ((e.originalEvent || e).clipboardData || window.clipboardData).getData('Text');
+                e.preventDefault();
+                document.execCommand('insertText', false, bufferText);
+            }
+        }
     });
+
+    // দ্বিতীয় এডিটর
+    $('.ingredients').summernote({
+        height: 300,
+        callbacks: {
+            onPaste: function(e) {
+                var bufferText = ((e.originalEvent || e).clipboardData || window.clipboardData).getData('Text');
+                e.preventDefault();
+                document.execCommand('insertText', false, bufferText);
+            }
+        }
+    });
+
+    // তৃতীয় এডিটর
+    $('.usage_instruction').summernote({
+        height: 300,
+        callbacks: {
+            onPaste: function(e) {
+                var bufferText = ((e.originalEvent || e).clipboardData || window.clipboardData).getData('Text');
+                e.preventDefault();
+                document.execCommand('insertText', false, bufferText);
+            }
+        }
+    });
+});
 
 ////////////////////////////////////////////validation error///////////////////////////////
 
@@ -864,7 +867,19 @@ function validationError() {
 
     let gender = $('select[name="gender"]').val()?.trim() || "";
     let product_name = $('input[name="product_name"]').val()?.trim() || "";
+    let short_description = $('textarea[name="short_description"]').val()?.trim() || "";
+    let product_policy = $('textarea[name="product_policy"]').val()?.trim() || "";
 
+    // Validate short description and product policy length
+    if (short_description.length >220) {
+        errors.short_description = "Short Description must be less than 220 characters!";
+        isValid = false;
+    }
+
+    if (product_policy.length >220) {
+        errors.product_policy = "Product Policy must be less than 220 characters!";
+        isValid = false;
+    }
 
     if (category_id === "") errors.category_id = "Category is required!";
     if (brand_id === "") errors.brand_id = "Brand is required!";
@@ -883,7 +898,8 @@ function validationError() {
 
         if (errors.gender) $("select[name='gender']").after(`<span class="text-danger">${errors.gender}</span>`);
         if (errors.product_name) $("input[name='product_name']").after(`<span class="text-danger">${errors.product_name}</span>`);
-
+        if (errors.short_description) $("textarea[name='short_description']").after(`<span class="text-danger">${errors.short_description}</span>`);
+        if (errors.product_policy) $("textarea[name='product_policy']").after(`<span class="text-danger">${errors.product_policy}</span>`);
     }
 
     return isValid;
@@ -940,6 +956,7 @@ $(document).on("click", ".variant_update", function (e) {
         let priceInput = row.find('input[name^="price"]');
         let sizeSelect = row.find('select[name^="size"]');
         let colorSelect = row.find('select[name^="color"]');
+        let weightInput = row.find('input[name^="weight"]');
         // let galleryImages = $("input[name^='image[][]']")[0].files;
 
 
@@ -947,6 +964,11 @@ $(document).on("click", ".variant_update", function (e) {
         let price = priceInput.val()?.trim();
         let size = sizeSelect.val()?.trim();
         let color = colorSelect.val()?.trim();
+        let weight = weightInput.val()?.trim();
+
+        if(!weight){
+            weightInput.after(`<span class="text-danger">Weight is required</span>`);
+        }
 
         if (!size) {
             sizeSelect.after(`<span class="text-danger">Size is required</span>`);
@@ -1006,69 +1028,81 @@ $(document).on("click", ".variant_update", function (e) {
 
 
 $(document).on("click", ".addRow", function () {
-          let rowCount = $("#productTableBody tr").length;
-        let row = `<tr>
-            <td></td>
-            <td><input type="text" class="form-control" name="variant_name[]"></td>
-            <td><input type="number" class="form-control" name="price[]"></td>
-            <td>
-                <select class="form-select" name="size[]">
-                    <option value="">Select Size</option>
-                    <option value="s">Small (S)</option>
-                    <option value="m">Medium (M)</option>
-                    <option value="l">Large (L)</option>
-                    <option value="xl">X-Large (XL)</option>
-                    <option value="xxl">XX-Large (XXL)</option>
-                    <option value="6">Size 6</option>
-                    <option value="7">Size 7</option>
-                    <option value="8">Size 8</option>
-                    <option value="9">Size 9</option>
-                    <option value="10">Size 10</option>
-                    <option value="500g">500g</option>
-                    <option value="1kg">1kg</option>
-                    <option value="500ml">500ml</option>
-                    <option value="1l">1L</option>
-                </select>
-            </td>
-            <td>
-                <select class="form-select" name="color[]">
-                    <option value="">Select Color</option>
-                    <option value="black">Black</option>
-                    <option value="white">White</option>
-                    <option value="red">Red</option>
-                    <option value="blue">Blue</option>
-                    <option value="green">Green</option>
-                    <option value="yellow">Yellow</option>
-                    <option value="orange">Orange</option>
-                    <option value="purple">Purple</option>
-                    <option value="pink">Pink</option>
-                    <option value="brown">Brown</option>
-                    <option value="gray">Gray</option>
-                    <option value="silver">Silver</option>
-                    <option value="gold">Gold</option>
-                    <option value="navy">Navy</option>
-                    <option value="maroon">Maroon</option>
-                    <option value="beige">Beige</option>
-                    <option value="teal">Teal</option>
-                    <option value="cyan">Cyan</option>
-                    <option value="magenta">Magenta</option>
-                    <option value="olive">Olive</option>
-                    <option value="violet">Violet</option>
-                    <option value="indigo">Indigo</option>
-                    <option value="turquoise">Turquoise</option>
-                    <option value="charcoal">Charcoal</option>
-                </select>
-            </td>
-            <td><input type="number" class="form-control" name="weight[]"></td>
-            <td><input type="text" class="form-control" name="flavor[]"></td>
-            <td><input type="file" class="form-control" name="image[][]" multiple></td>
-            <td><input type="number" class="form-control" name="stock_quantity[]"></td>
-            <td>
-                <button type="button" class="btn btn-danger removeRow">✖</button>
-            </td>
-        </tr>`;
+    let rowCount = $("#productTableBody tr").length;
+
+    let row = `<tr>
+        <td></td>
+        <td><input type="text" class="form-control" name="variant_name[]"></td>
+        <td><input type="number" class="form-control" name="price[]"></td>
+        <td>
+            <select class="form-select size" name="size[]"></select>
+        </td>
+        <td>
+            <select class="form-select color" name="color[]"></select>
+        </td>
+        <td><input type="number" class="form-control" name="weight[]"></td>
+        <td><input type="text" class="form-control" name="flavor[]"></td>
+        <td><input type="file" class="form-control" name="image[${rowCount}][]" multiple></td>
+        <td><input type="number" class="form-control" name="stock_quantity[]"></td>
+        <td>
+            <button type="button" class="btn btn-danger removeRow">✖</button>
+        </td>
+    </tr>`;
+
     $("#productTableBody").append(row);
+
+    // Get the latest added row's dropdowns
+    let lastSize = $("#productTableBody .size").last();
+    let lastColor = $("#productTableBody .color").last();
+
+    getSize(lastSize);
+    getColor(lastColor);
 });
+
+
+
+function getColor(targetElement = '.color') {
+    $.ajax({
+        url: "{{ route('admin.products.getColor') }}",
+        type: "GET",
+        success: function(response) {
+            if (response.status == 200) {
+                let color = response.color;
+                let options = '<option value="">Select Color</option>';
+                color.forEach(function(c) {
+                    options += '<option value="' + c.color_name + '">' + c.color_name + '</option>';
+                });
+
+                // Apply only to the given element(s)
+                $(targetElement).append(options);
+            }
+        }
+    });
+}
+function getSize(targetElement = '.size') {
+    $.ajax({
+        url: "{{ route('admin.products.getSize') }}",
+        type: "GET",
+        success: function(response) {
+            console.log(response);
+            if (response.status == 200) {
+                let size = response.size;
+                let options = '<option value="">Select Size</option>';
+                size.forEach(function(s) {
+                    options += '<option value="' + s.size_name + '">' + s.size_name + '</option>';
+                });
+                // Apply only to the given element(s)
+                $(targetElement).append(options);
+            }
+        }
+    });
+}
+
+
+// getColor();
+// getSize();
+
+
 
 $(document).on("click", ".removeRow", function () {
     $(this).closest("tr").remove();

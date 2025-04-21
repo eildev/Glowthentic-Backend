@@ -46,8 +46,9 @@
                             <thead>
                                 <tr>
                                     <th>SI</th>
-                                    {{-- <th>Image</th> --}}
+                                   
                                     <th>Product name</th>
+                                     <th>Image</th>
                                     <th>Category</th>
                                     <th>Sub Category</th>
                                     <th>Brand</th>
@@ -66,8 +67,6 @@
                                 @if ($products->count() > 0)
                                     @foreach ($products as $product)
 
-
-                                    {{-- @dd($product->category->categoryName) --}}
                                         <tr>
                                             <td>{{ $serialNumber++ }}</td>
 
@@ -77,6 +76,9 @@
                                                     alt="Products Image">
                                             </td> --}}
                                             <td>{{ Illuminate\Support\Str::limit($product->product_name, 29) }}</td>
+                                            <td>  @if($product->variantImage && $product->variantImage->whereNull('deleted_at')->first())
+                                                <img src="{{ asset($product->variantImage->whereNull('deleted_at')->first()->image) }}" class="img-fluid" alt="product-image" style="height:80px;">
+                                            @endif</td>
                                             <td>{{ $product->category->categoryName??'' }}</td>
                                             @php
                                                 $subcategory=App\Models\Category::find($product->subcategory_id);

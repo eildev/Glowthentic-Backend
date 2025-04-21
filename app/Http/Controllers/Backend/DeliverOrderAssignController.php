@@ -25,7 +25,7 @@ class DeliverOrderAssignController extends Controller
             if ($validator->fails()) {
                 return response()->json(['errors' => $validator->errors()], 422);
             }
-
+    
             $deliver_order_assign = new DeliveryOrder();
             $deliver_order_assign->order_id = $request->order_id;
             $deliver_order_assign->delivery_method = $request->delivery_method;
@@ -96,6 +96,15 @@ class DeliverOrderAssignController extends Controller
             }
             $deliver_order_assign->assign_to = $request->assign_to;
             $order = Order::where('id', $request->order_id)->first();
+          
+            if($order){
+                foreach($order->orderDetails as $orderDetails){
+                   $QuantityUpdate= $orderDetails->variant->productStock->StockQuantity - $orderDetails->product_quantity;
+                   $orderDetails->variant->productStock->StockQuantity = $QuantityUpdate;
+                   $orderDetails->variant->productStock->save();
+                 
+                }
+            }
             $order->status = "Delivering";
             $order->save();
             $deliver_order_assign->save();
@@ -118,6 +127,8 @@ class DeliverOrderAssignController extends Controller
     public function shippingChangeTransit($id){
          $DeliveryOrder = DeliveryOrder::where('id', $id)->first();
          $DeliveryOrder->delivery_status = "In Transit";
+         $DeliveryOrder->order->status = "In Transit";
+         $DeliveryOrder->order->save();
          $DeliveryOrder->save();
 
         //  Toastr::success('Delivery Status Change To In Transit');
@@ -132,6 +143,11 @@ class DeliverOrderAssignController extends Controller
     public function TransitChangeCompleted($id){
         $DeliveryOrder = DeliveryOrder::where('id', $id)->first();
         $DeliveryOrder->delivery_status = "delivered";
+        $order = Order::where('id', $DeliveryOrder->order_id)->first();
+        $order->status = "completed";
+         $order->payment_status = "paid";
+         $order->save();
+
         $DeliveryOrder->save();
         // Toastr::success('Delivery Status Change To Delivered');
         return back()->with('success', 'Delivery Status Change To Delivered');
@@ -139,6 +155,7 @@ class DeliverOrderAssignController extends Controller
 
     public function Delivered(){
         $delivered_orders = DeliveryOrder::where("delivery_status", 'delivered')->with('order')->latest()->get();
+
         return view('backend.order.delivered-order', compact('delivered_orders'));
     }
 }

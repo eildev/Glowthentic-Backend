@@ -5,7 +5,7 @@
             <div class="card">
                 <div class="row g-0">
                     <div class="col-md-5 border-end">
-
+                       
                         @if($product->variantImage && $product->variantImage->whereNull('deleted_at')->first())
                                 <img src="{{ asset($product->variantImage->whereNull('deleted_at')->first()->image) }}" class="img-fluid" alt="product-image">
                             @endif
@@ -116,15 +116,15 @@
                             <p class="card-text fs-6 mb-3"><b> Description:</b>
                                 {!! Str::words($product->productdetails->description ?? '', 20, '...') !!}
                             </p>
-
+                            
                             <p class="card-text fs-6 mb-3"><b>Usage Instructions:</b>
                                 {!! Str::words($product->productdetails->usage_instruction ?? '', 20, '...') !!}
                             </p>
-
+                            
                             <p class="card-text fs-6"><b>Ingredients:</b>
                                 {!! Str::words($product->productdetails->ingredients ?? '', 30, '...') !!}
                             </p>
-
+                            
                             <hr>
 
                             <div class="d-flex gap-3 mt-3">
@@ -163,10 +163,11 @@
                             @endphp
                             <tbody>
                                 @foreach (  $variants as $variant)
+                                {{-- @dd($variant->size) --}}
                                 <tr>
                                     <td class="fw-bold">{{ $variant->variant_name }}</td>
                                     <td class="text-success fw-semibold">৳{{ number_format($variant->regular_price, 2)??0 }}</td>
-                                    <td>{{ $variant->size }}</td>
+                                    <td>{{ $variant->size??''}}</td>
                                     <td>
                                         <span class="badge bg-primary">{{ $variant->color??'' }}</span>
                                     </td>
