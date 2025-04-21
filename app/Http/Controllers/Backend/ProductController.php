@@ -124,7 +124,7 @@ class ProductController extends Controller
         $product->subcategory_id = $request->subcategory_id;
         $product->brand_id = $request->brand_id;
         $product->sub_subcategory_id = $request->sub_subcategory_id;
-        if ($request->shipping_charge) {
+        if($request->shipping_charge){
             $product->shipping_charge = $request->shipping_charge;
         }
 
@@ -220,8 +220,8 @@ class ProductController extends Controller
             }
         }
 
-        if ($product && $request->product_feature) {
-            foreach ($request->product_feature as $feature) {
+        if($product && $request->product_feature){
+            foreach($request->product_feature as $feature){
                 $productFeature = new ProductFeature();
                 $productFeature->product_id = $product->id;
                 $productFeature->feature_id = $feature;
@@ -334,13 +334,13 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
 
-        $getVariants = Variant::where('product_id', $id)->get();
-        $stock = ProductStock::where('product_id', $id)->get();
-        foreach ($stock as $stocks) {
+        $getVariants=Variant::where('product_id',$id)->get();
+        $stock=ProductStock::where('product_id',$id)->get();
+        foreach($stock as $stocks){
             $stocks->delete();
         }
-        foreach ($getVariants as $variant) {
-            if ($variant->image) {
+        foreach($getVariants as $variant){
+            if($variant->image){
                 $imagePath = public_path($variant->image);
                 if (file_exists($imagePath)) {
                     unlink($imagePath);
@@ -386,7 +386,7 @@ class ProductController extends Controller
 
         $product->product_name = $request->product_name;
         $product->unit_id = $request->unit_id;
-        if ($request->shipping_charge) {
+        if($request->shipping_charge){
             $product->shipping_charge = $request->shipping_charge;
         }
         $product->slug = Str::slug($request->product_name);
@@ -472,7 +472,7 @@ class ProductController extends Controller
         }
 
         if ($product && $request->tag) {
-            Product_Tags::where('product_id', $product->id)->delete();
+           Product_Tags::where('product_id', $product->id)->delete();
             foreach ($request->tag as $tag) {
                 $productTag = new Product_Tags();
                 $productTag->product_id = $product->id;
@@ -482,9 +482,9 @@ class ProductController extends Controller
         }
 
 
-        if ($product && $request->product_feature) {
+        if($product && $request->product_feature){
             ProductFeature::where('product_id', $product->id)->delete();
-            foreach ($request->product_feature as $feature) {
+            foreach($request->product_feature as $feature){
                 $productFeature = new ProductFeature();
                 $productFeature->product_id = $product->id;
                 $productFeature->feature_id = $feature;

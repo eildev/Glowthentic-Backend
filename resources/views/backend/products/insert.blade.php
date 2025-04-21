@@ -215,6 +215,9 @@
                                                     </div>
                                                 </div>
                                             </div>
+
+
+
                                         </div>
 
 
@@ -228,7 +231,7 @@
                                             <div class="col-md-6">
                                                 <div class="row">
                                                     <label class="form-label col-12">
-                                                        Select Color <span class="text-danger fw-bold">*</span>
+                                                        Select Color
                                                     </label>
                                                     <div class="col-10">
                                                         <select
@@ -1155,7 +1158,7 @@
             let brand_id = $('select[name="brand_id"]').val()?.trim() || "";
             let unit_id = $('select[name="unit_id"]').val()?.trim() || "";
             let size = $('select[name="size"]').val()?.trim() || "";
-            let color = $('select[name="color"]').val()?.trim() || "";
+            //let color = $('select[name="color"]').val()?.trim() || "";
             let price = $('input[name="price"]').val()?.trim() || "";
             let gender = $('select[name="gender"]').val()?.trim() || "";
             let product_name = $('input[name="product_name"]').val()?.trim() || "";
@@ -1181,7 +1184,7 @@
             if (brand_id === "") errors.brand_id = "Brand is required!";
             if (unit_id === "") errors.unit_id = "Unit is required!";
             if (size === "") errors.size = "Size is required!";
-            if (color === "") errors.color = "Color is required!";
+            // if (color === "") errors.color = "Color is required!";
             if (price === "") errors.price = "Price is required!";
             if (gender === "") errors.gender = "Gender is required!";
             if (product_name === "") errors.product_name = "Product Name is required!";
@@ -1220,7 +1223,7 @@
                 if (errors.weight) $("input[name='weight']").after(`<span class="text-danger">${errors.weight}</span>`);
 
                 if (errors.size) $("select[name='size']").after(`<span class="text-danger">${errors.size}</span>`);
-                if (errors.color) $("select[name='color']").after(`<span class="text-danger">${errors.color}</span>`);
+                // if (errors.color) $("select[name='color']").after(`<span class="text-danger">${errors.color}</span>`);
                 if (errors.price) $("input[name='price']").after(`<span class="text-danger">${errors.price}</span>`);
                 if (errors.gender) $("select[name='gender']").after(`<span class="text-danger">${errors.gender}</span>`);
                 if (errors.product_name) $("input[name='product_name']").after(
@@ -1641,15 +1644,15 @@
 
 
         $(document).on("click", ".add_variant", function() {
-        $('#variant_form').fadeIn(1000);
-        this.disabled = true;
-        this.innerText = "Variant Added";
+            $('#variant_form').fadeIn(1000);
+            this.disabled = true;
+            this.innerText = "Variant Added";
 
-        $.ajax({
-        url: '/product/get_variant_data',
-        type: 'GET',
-        success: function(res) {
-            $('#variant_form').append(`
+            $.ajax({
+                url: '/product/get_variant_data',
+                type: 'GET',
+                success: function(res) {
+                    $('#variant_form').append(`
                 <form id="variant_form_submit" enctype="multipart/form-data">
                     <div class="col-md-12 col-sm-12">
                         <h5 class="mb-3 fw-bold text-primary border-bottom pb-2">Variation Product Name:  ${res.product_name}</h5>
@@ -1705,19 +1708,12 @@
                 </form>
             `);
 
-            <<
-            << << < HEAD
-            // Call the function after form is added
-            getSize();
-            getColor();
-        }
+                    // Call the function after form is added
+                    getSize();
+                    getColor();
+                }
+            });
         });
-        }); ===
-        === =
-
-        });
-        }); >>>
-        >>> > 6 f015099b370c176d99bf9bf73c187ed5e9da270
 
 
 

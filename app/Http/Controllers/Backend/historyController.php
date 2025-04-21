@@ -111,14 +111,11 @@ class historyController extends Controller
 
     public function categoryStockChart(){
         $data = DB::table('categories')
-            ->join('products', 'categories.id', '=', 'products.category_id')
-            ->join('product_stocks', 'products.id', '=', 'product_stocks.product_id')
-            ->select('categories.categoryName', DB::raw('SUM(product_stocks.StockQuantity) as total_stock'))
-            ->whereNull('categories.deleted_at') // Filter soft-deleted categories
-            ->whereNull('products.deleted_at')   // Filter soft-deleted products
-            ->whereNull('product_stocks.deleted_at') // Filter soft-deleted stocks
-            ->groupBy('categories.categoryName')
-            ->get();
+        ->join('products', 'categories.id', '=', 'products.category_id')
+        ->join('product_stocks', 'products.id', '=', 'product_stocks.product_id')
+        ->select('categories.categoryName', DB::raw('SUM(product_stocks.StockQuantity) as total_stock'))
+        ->groupBy('categories.categoryName')
+        ->get();
 
        return response()->json($data);
     }
