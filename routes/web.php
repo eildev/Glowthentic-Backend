@@ -71,6 +71,10 @@ Route::middleware('auth')->group(function () {
     });
     Route::controller(historyController::class)->group(function () {
         Route::get('/current-history/{value}', 'CurrentHistory');
+        Route::get('order/chart', 'OrderChart')->name('order.chart.data');
+        Route::get('stock/category/chart', 'categoryStockChart')->name('chart.category.stock');
+        Route::get('monthly/chart/data','monthlyChartData')->name('monthly.chart.data');
+
     });
     // Marketing for SMS Marketing Routes
     Route::controller(MarketingController::class)->group(function () {

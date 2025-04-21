@@ -215,9 +215,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-
-
-
                                         </div>
 
 
@@ -942,6 +939,8 @@
                         Field</a>
                 </div>
             </div>
+
+            <!--end row-->
         </div>
     </div>
 
@@ -1642,15 +1641,15 @@
 
 
         $(document).on("click", ".add_variant", function() {
-            $('#variant_form').fadeIn(1000);
-            this.disabled = true;
-            this.innerText = "Variant Added";
+        $('#variant_form').fadeIn(1000);
+        this.disabled = true;
+        this.innerText = "Variant Added";
 
-            $.ajax({
-                url: '/product/get_variant_data',
-                type: 'GET',
-                success: function(res) {
-                    $('#variant_form').append(`
+        $.ajax({
+        url: '/product/get_variant_data',
+        type: 'GET',
+        success: function(res) {
+            $('#variant_form').append(`
                 <form id="variant_form_submit" enctype="multipart/form-data">
                     <div class="col-md-12 col-sm-12">
                         <h5 class="mb-3 fw-bold text-primary border-bottom pb-2">Variation Product Name:  ${res.product_name}</h5>
@@ -1706,12 +1705,19 @@
                 </form>
             `);
 
-                    // Call the function after form is added
-                    getSize();
-                    getColor();
-                }
-            });
+            <<
+            << << < HEAD
+            // Call the function after form is added
+            getSize();
+            getColor();
+        }
         });
+        }); ===
+        === =
+
+        });
+        }); >>>
+        >>> > 6 f015099b370c176d99bf9bf73c187ed5e9da270
 
 
 

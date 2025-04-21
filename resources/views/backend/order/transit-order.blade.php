@@ -35,6 +35,21 @@
                                 @endphp
                                 @if ($transit_orders->count() > 0)
                                     @foreach ($transit_orders as $transit_orders)
+
+
+                                    @php
+                                    if($transit_orders->order->user_id!=null){
+                                        $customers = App\Models\UserDetails::where('user_id', $transit_orders->order->user_id)->first();
+                                        }
+                                    else{
+                                        $customers = App\Models\UserDetails::where('session_id',$transit_orders->order->session_id)->first();
+                                    }
+                                    @endphp
+
+
+
+
+
                                     @php
                                     $originalDateString = $transit_orders->order->created_at;
                                     $dateTime = new DateTime($originalDateString);
@@ -44,7 +59,7 @@
                                             <td>{{ $serialNumber++ }}</td>
                                                 <td>{{ $formattedDate }}</td>
                                                 <td>{{ $transit_orders->order->invoice_number }}</td>
-                                                <td>{{$transit_orders->order->phone_number}}</td>
+                                                <td>{{$customers->phone_number}}</td>
                                                 <td>{{ $transit_orders->order->total_quantity }}</td>
                                                 <td>{{ $transit_orders->order->grand_total }}</td>
                                                 <td>{{ $transit_orders->order->payment_method }}</td>
@@ -53,7 +68,7 @@
                                                 <td>
                                                     <span class="text-warning text-capitalize">{{$transit_orders->delivery_status}}</span>
                                                 </td>
-                                                <td>Banasree</td>
+                                                <td>{{$customers->address}}</td>
                                             <td>
                                                 {{-- <a href="{{ route('admin.completed.order',$delivering_orders->order->invoice_number) }}" class="btn btn-sm btn-info">Complete</a> --}}
 

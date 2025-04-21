@@ -23,7 +23,7 @@ class ApiUserManageController extends Controller
     }
     public function UserDetailsStore(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
         try {
 
             $validator = Validator::make($request->all(), [

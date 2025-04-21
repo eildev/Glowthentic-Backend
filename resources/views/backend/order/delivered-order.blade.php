@@ -35,6 +35,22 @@
                                 @endphp
                                 @if ($delivered_orders->count() > 0)
                                     @foreach ($delivered_orders as $delivered_orders)
+
+
+
+                                    @php
+                                    if($delivered_orders->order->user_id!=null){
+                                        $customers = App\Models\UserDetails::where('user_id', $delivered_orders->order->user_id)->first();
+                                        }
+                                    else{
+                                        $customers = App\Models\UserDetails::where('session_id',$delivered_orders->order->session_id)->first();
+                                    }
+                                    @endphp
+
+
+
+
+
                                     @php
                                     $originalDateString = $delivered_orders->order->created_at;
                                     $dateTime = new DateTime($originalDateString);
@@ -44,7 +60,7 @@
                                             <td>{{ $serialNumber++ }}</td>
                                                 <td>{{ $formattedDate }}</td>
                                                 <td>{{ $delivered_orders->order->invoice_number }}</td>
-                                                <td>{{$delivered_orders->order->phone_number}}</td>
+                                                <td>{{$customers->phone_number}}</td>
                                                 <td>{{ $delivered_orders->order->total_quantity }}</td>
                                                 <td>{{ $delivered_orders->order->grand_total }}</td>
                                                 <td>{{ $delivered_orders->order->payment_method }}</td>
@@ -53,7 +69,7 @@
                                                 <td>
                                                     <span class="text-warning text-capitalize">{{$delivered_orders->delivery_status}}</span>
                                                 </td>
-                                                <td>Banasree</td>
+                                                <td>{{$customers->address}}</td>
                                             <td>
                                                 <span  class="btn btn-sm btn-info">Finished Process</span>
                                                 <a href="{{ route('order.details', $delivered_orders->order->id) }}" class="btn btn-sm btn-success" >View</a>

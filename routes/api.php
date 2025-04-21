@@ -22,12 +22,17 @@ use App\Http\Controllers\API\ApiSimpleDataController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\ApiWishListController;
 use App\Http\Controllers\API\ApiUserManageController;
-
+use App\Http\Controllers\API\ForgotPasswordController;
 use Illuminate\Http\Request;
 // Open Routes
 
 Route::post('/register', [AuthController::class, "register"]);
 Route::post('/login', [AuthController::class, "login"]);
+
+Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
+Route::post('/reset-password', [ForgotPasswordController::class, 'reset']);
+
+
 Route::get('/sanctum/csrf-cookie', function () {
     return response()->noContent();
 });
@@ -132,8 +137,10 @@ Route::controller(ApiBlogPostController::class)->group(function () {
 });
 
 Route::controller(ApiBlogCommentController::class)->group(function () {
-    Route::get('/blogPost', 'viewAll')->name('blogPost.view');
-    Route::get('/blogPost/{id}', 'show')->name('blogPost.show');
+    Route::get('/blogComment', 'viewAll')->name('blogComment.view');
+    Route::get('/blogComment/{id}', 'show')->name('blogComment.show');
+    Route::post('/blogComments/create', 'store')->name('blogComment.store');
+    Route::get('/blogComments/get/{id}', 'userBlogGet')->name('blogComment.user.get');
 });
 
 Route::controller(ApiOrderController::class)->group(function () {

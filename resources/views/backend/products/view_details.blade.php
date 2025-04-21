@@ -163,10 +163,11 @@
                             @endphp
                             <tbody>
                                 @foreach (  $variants as $variant)
+                                {{-- @dd($variant->size) --}}
                                 <tr>
                                     <td class="fw-bold">{{ $variant->variant_name }}</td>
                                     <td class="text-success fw-semibold">৳{{ number_format($variant->regular_price, 2)??0 }}</td>
-                                    <td>{{ $variant->size }}</td>
+                                    <td>{{ $variant->size??''}}</td>
                                     <td>
                                         <span class="badge bg-primary">{{ $variant->color??'' }}</span>
                                     </td>
