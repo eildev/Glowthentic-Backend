@@ -11,7 +11,7 @@ class ApiSimpleDataController extends Controller
 {
     public function updateUser(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
         try {
             $validator = Validator::make($request->all(), [
                 'full_name' => 'required|string',

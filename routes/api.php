@@ -25,12 +25,14 @@ use App\Http\Controllers\API\ApiUserManageController;
 
 use Illuminate\Http\Request;
 // Open Routes
-Route::post("/details/update", [ApiSimpleDataController::class, 'updateUser']);
+
 Route::post('/register', [AuthController::class, "register"]);
 Route::post('/login', [AuthController::class, "login"]);
 Route::get('/sanctum/csrf-cookie', function () {
     return response()->noContent();
 });
+
+Route::post("/track-user", [ApiSimpleDataController::class, 'trackUser']);
 // Protected Routes
 Route::group([
     "middleware" => ["auth:sanctum"]
@@ -44,7 +46,7 @@ Route::group([
     });
 
     Route::controller(ApiUserManageController::class)->group(function () {
-        // Route::post("user/details/update/{id}", [ApiUserManageController::class, 'update']);
+        Route::post("user/details/update/{id}", [ApiUserManageController::class, 'update']);
         Route::get("/user/details/show/{id}", [ApiUserManageController::class, 'userDetailsShow']);
     });
 
