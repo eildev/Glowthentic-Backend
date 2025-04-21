@@ -18,19 +18,25 @@ use App\Http\Controllers\API\ApiProductPromotionController;
 use App\Http\Controllers\API\ApiSubscribeController;
 use App\Http\Controllers\API\ApiTagNameController;
 use App\Http\Controllers\API\ApiProductController;
+use App\Http\Controllers\API\ApiSimpleDataController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\ApiWishListController;
 use App\Http\Controllers\API\ApiUserManageController;
-
+use App\Http\Controllers\API\ForgotPasswordController;
 use Illuminate\Http\Request;
 // Open Routes
+Route::post("/details/update", [ApiSimpleDataController::class, 'updateUser']);
 Route::post('/register', [AuthController::class, "register"]);
 Route::post('/login', [AuthController::class, "login"]);
+
+Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
+Route::post('/reset-password', [ForgotPasswordController::class, 'reset']);
+
+
 Route::get('/sanctum/csrf-cookie', function () {
     return response()->noContent();
 });
 // Protected Routes
-
 Route::group([
     "middleware" => ["auth:sanctum"]
 ], function () {
@@ -43,7 +49,7 @@ Route::group([
     });
 
     Route::controller(ApiUserManageController::class)->group(function () {
-        Route::post("user/details/update/{id}", [ApiUserManageController::class, 'update']);
+        // Route::post("user/details/update/{id}", [ApiUserManageController::class, 'update']);
         Route::get("/user/details/show/{id}", [ApiUserManageController::class, 'userDetailsShow']);
     });
 

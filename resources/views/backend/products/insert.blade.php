@@ -193,31 +193,31 @@
 
                                             <div class="col-md-6">
                                                 <div class="row">
-                                                    <label class="form-label col-12">
-                                                        Select Size
-                                                        <span class="text-danger fw-bold">*</span>
-                                                    </label>
-                                                    <div class="col-10">
-                                                        <select
-                                                            class="form-select @error('size') is-invalid @enderror size"
-                                                            name="size" id="size-select">
-
+                                                    <label class="form-label col-12">Select Size <span class="text-danger fw-bold">*</span></label>
+                                                    <div class="col-12">
+                                                        <select class="form-select @error('size') is-invalid  @enderror" name="size">
+                                                            <option value="">Select Size</option>
+                                                            <option value="s">Small (S)</option>
+                                                            <option value="m">Medium (M)</option>
+                                                            <option value="l">Large (L)</option>
+                                                            <option value="xl">X-Large (XL)</option>
+                                                            <option value="xxl">XX-Large (XXL)</option>
+                                                            <option value="6">Size 6</option>
+                                                            <option value="7">Size 7</option>
+                                                            <option value="8">Size 8</option>
+                                                            <option value="9">Size 9</option>
+                                                            <option value="10">Size 10</option>
+                                                            <option value="500g">500g</option>
+                                                            <option value="1kg">1kg</option>
+                                                            <option value="500ml">500ml</option>
+                                                            <option value="1l">1L</option>
                                                         </select>
                                                         @error('size')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                     </div>
-                                                    <div class="col-2 p-0">
-                                                        <button type="button" class="btn btn-outline-primary w-100"
-                                                            data-bs-toggle="modal" data-bs-target="#addSizeModal">
-                                                            +
-                                                        </button>
-                                                    </div>
                                                 </div>
                                             </div>
-
-
-
                                         </div>
 
 
@@ -230,25 +230,15 @@
 
                                             <div class="col-md-6">
                                                 <div class="row">
-                                                    <label class="form-label col-12">
-                                                        Select Color 
-                                                    </label>
-                                                    <div class="col-10">
-                                                        <select
-                                                            class="form-select @error('color') is-invalid @enderror color"
-                                                            name="color" id="color-select">
+                                                    <label class="form-label col-12">Select Color <span class="text-danger fw-bold">*</span></label>
+                                                    <div class="col-12">
+                                                        <select class="form-select @error('color') is-invalid  @enderror" name="color">
                                                             <option value="">Select Color</option>
 
                                                         </select>
                                                         @error('color')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
-                                                    </div>
-                                                    <div class="col-2 p-0">
-                                                        <button type="button" class="btn btn-outline-primary w-100"
-                                                            data-bs-toggle="modal" data-bs-target="#addColorModal">
-                                                            +
-                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -259,14 +249,13 @@
 
                                                 <div class="row">
                                                     <div class="col-12">
-                                                        <label for="" class="form-label">Product Weight (is for
-                                                            Shipping) <span class="text-danger">*</span></label>
+                                                        <label for="" class="form-label">Product Weight</label>
                                                     </div>
                                                     <div class="col-12">
                                                         <input type="number" name="weight"
-                                                            class="form-control @error('weight') is-invalid  @enderror"
-                                                            id="inputEnterYourName" placeholder="Enter Product Weight">
-                                                        @error('weight')
+                                                            class="form-control @error('weight') is-invalid  @enderror" id="inputEnterYourName"
+                                                            placeholder="Enter Product Weight" min="0" value="0">
+                                                         @error('weight')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                     </div>
@@ -457,9 +446,8 @@
                                                         <label for="" class="form-label"> Description</label>
                                                     </div>
                                                     <div class="col-12">
-                                                        <textarea class="form-control product_descriptions_on @error('description') is-invalid  @enderror" name="description"
-                                                            placeholder="Enter Product Description" style="resize: none; height: 70px;"></textarea>
-                                                        @error('description')
+                                                        <textarea class="form-control  product_descriptions @error('description') is-invalid  @enderror" name="description" placeholder="Enter Product Description" style="resize: none; height: 70px;"></textarea>
+                                                         @error('description')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                     </div>
@@ -851,52 +839,9 @@
         </div>
     </div>
     </div>
-    {{-- //////////////////////////////////size modal//////////////////////////////////// --}}
 
-    <!-- Modal -->
-    <div class="modal fade" id="addSizeModal" tabindex="-1" aria-labelledby="addSizeModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <form id="addsizeform">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Add New Size</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <label for="new-size" class="form-label">Size Name</label>
-                        <input type="text" id="new-size" name="size_name" class="form-control"
-                            placeholder="e.g., 3XL, 2kg, etc.">
-                    </div>
-                    <div class="modal-footer">
-                        <a class="btn btn-primary addSize">Add Size</a>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-    {{-- //////////////////////////////////////////////////////add color modal////////////////////////// --}}
-    <!-- Modal for Adding New Color -->
-    <div class="modal fade" id="addColorModal" tabindex="-1" aria-labelledby="addColorModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <form id="addcolorform">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Add New Color</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <label for="new-color" class="form-label">Color Name</label>
-                        <input type="text" name="color_name"id="new-color" class="form-control"
-                            placeholder="e.g., Peach, Sky Blue">
-                    </div>
-                    <div class="modal-footer">
-                        <a class="btn btn-primary addColor">Add Color</a>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-    {{-- //////////////////////////////////////////////// add extra field modal //////////////////////////////////////////////////////// --}}
+
+  {{-- //////////////////////////////////////////////// add extra field modal //////////////////////////////////////////////////////// --}}
 
 
     <div class="modal fade" id="addFieldModal" tabindex="-1" aria-labelledby="addFieldModalLabel" aria-hidden="true">
@@ -946,293 +891,75 @@
     </div>
 
 
-    {{-- script start --}}
-    <script>
-        $(document).ready(function() {
-            // প্রথম এডিটর
-            $('.product_descriptions_on').summernote({
-                height: 300,
-                callbacks: {
-                    onPaste: function(e) {
-                        var bufferText = ((e.originalEvent || e).clipboardData || window.clipboardData)
-                            .getData('Text');
-                        e.preventDefault();
-                        document.execCommand('insertText', false, bufferText);
-                    }
-                }
-            });
-
-            // দ্বিতীয় এডিটর
-            $('.ingredients').summernote({
-                height: 300,
-                callbacks: {
-                    onPaste: function(e) {
-                        var bufferText = ((e.originalEvent || e).clipboardData || window.clipboardData)
-                            .getData('Text');
-                        e.preventDefault();
-                        document.execCommand('insertText', false, bufferText);
-                    }
-                }
-            });
-
-            // তৃতীয় এডিটর
-            $('.usage_instruction').summernote({
-                height: 300,
-                callbacks: {
-                    onPaste: function(e) {
-                        var bufferText = ((e.originalEvent || e).clipboardData || window.clipboardData)
-                            .getData('Text');
-                        e.preventDefault();
-                        document.execCommand('insertText', false, bufferText);
-                    }
-                }
-            });
-        });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        //////////////////////////////////////// addSizeSave ////////////////////////
-        $(document).on('click', '.addSize', function() {
-
-            let size = $('input[name="size_name"]').val();
-            $('input[name="size_name"]').next('.text-danger').remove();
-            if (size == '') {
-                $('input[name="size_name"]').after('<span class="text-danger">Size Name is required</span>');
-                return;
-            }
-            let formdata = new FormData($('#addsizeform')[0]);
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-
-            $.ajax({
-                url: "{{ route('admin.products.addSize') }}",
-                type: "POST",
-                data: formdata,
-                contentType: false,
-                processData: false,
-                success: function(response) {
-                    if (response.status == 200) {
-                        $('#addsizeform')[0].reset();
-                        $('#addSizeModal').modal('hide');
-                        toastr.success("Size Added Successfully");
-                        getSize();
-                    } else {
-                        toastr.error("Something Went Wrong");
-                    }
-                },
-            });
-        });
-
-        //////////////////////////////////////// colorSave ////////////////////////
-        $(document).on('click', '.addColor', function() {
-
-            let color = $('input[name="color_name"]').val();
-            $('input[name="color_name"]').next('.text-danger').remove();
-            if (color == '') {
-                $('input[name="color_name"]').after('<span class="text-danger">Color Name is required</span>');
-                return;
-            }
-            let formdata = new FormData($('#addcolorform')[0]);
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-
-            $.ajax({
-                url: "{{ route('admin.products.addColor') }}",
-                type: "POST",
-                data: formdata,
-                contentType: false,
-                processData: false,
-                success: function(response) {
-                    if (response.status == 200) {
-                        $('#addcolorform')[0].reset();
-                        $('#addColorModal').modal('hide');
-                        toastr.success("Color Added Successfully");
-                        getColor();
-                    } else {
-                        toastr.error("Something Went Wrong");
-                    }
-                },
-            });
-        });
-        ///////////////////////////////////////get color/////////////////////
-
-        // function getColor(){
-        //     $.ajax({
-        //         url: "{{ route('admin.products.getColor') }}",
-        //         type: "GET",
-        //         success: function(response) {
-        //             console.log(response);
-        //             if(response.status == 200){
-        //                 let color=response.color;
-        //                 console.log(color);
-        //                 let option='';
-        //                 color.forEach(function(color){
-        //                     option += '<option value="'+color.color_name+'">'+color.color_name+'</option>';
-        //                 });
-        //                  $('.color').append(option);
-        //             }
-        //         }
-        //     });
-        // }
-
-
-        function getColor(targetElement = '.color') {
-            $.ajax({
-                url: "{{ route('admin.products.getColor') }}",
-                type: "GET",
-                success: function(response) {
-                    if (response.status == 200) {
-                        let color = response.color;
-                        let options = '<option value="">Select Color</option>';
-                        color.forEach(function(c) {
-                            options += '<option value="' + c.color_name + '">' + c.color_name +
-                                '</option>';
-                        });
-
-                        // Apply only to the given element(s)
-                        $(targetElement).html(options);
-                    }
-                }
-            });
-        }
-
-        function getSize(targetElement = '.size') {
-            $.ajax({
-                url: "{{ route('admin.products.getSize') }}",
-                type: "GET",
-                success: function(response) {
-                    console.log(response);
-                    if (response.status == 200) {
-                        let size = response.size;
-                        let options = '<option value="">Select Size</option>';
-                        size.forEach(function(s) {
-                            options += '<option value="' + s.size_name + '">' + s.size_name +
-                                '</option>';
-                        });
-                        // Apply only to the given element(s)
-                        $(targetElement).html(options);
-                    }
-                }
-            });
-        }
-
-        ////////////////////summernote//////////////////////
-        $(document).ready(function() {
-            // $('.product_descriptions').summernote();
-            $('.ingrediants').summernote();
-            $('.usage_instruction').summernote();
-        });
-        ////////////////////////////////////show validation error //////////////////////////////////////
-        function validationError() {
-            $(".error-message").remove();
-            $("input, select, textarea").removeClass("is-invalid");
-            $(".text-danger").remove(); // ensure old errors are cleared
+{{-- script start --}}
+<script>
+    ////////////////////summernote//////////////////////
+    $(document).ready(function(){
+        // $('.product_descriptions').summernote();
+        $('.ingrediants').summernote();
+        $('.usage_instruction').summernote();
+    });
+////////////////////////////////////show validation error //////////////////////////////////////
+function validationError() {
+    $(".error-message").remove();
+    $("input, select").removeClass("is-invalid");
+    $(".text-danger").remove(); // ensure old errors are cleared
 
             let isValid = true;
             let errors = {};
 
-            let category_id = $('select[name="category_id"]').val()?.trim() || "";
-            let brand_id = $('select[name="brand_id"]').val()?.trim() || "";
-            let unit_id = $('select[name="unit_id"]').val()?.trim() || "";
-            let size = $('select[name="size"]').val()?.trim() || "";
-            //let color = $('select[name="color"]').val()?.trim() || "";
-            let price = $('input[name="price"]').val()?.trim() || "";
-            let gender = $('select[name="gender"]').val()?.trim() || "";
-            let product_name = $('input[name="product_name"]').val()?.trim() || "";
-            let galleryImages = $("input[name='product_main_image[]']")[0]?.files || [];
-            let short_description = $('textarea[name="short_description"]').val()?.trim() || "";
-            let product_policy = $('textarea[name="product_policy"]').val()?.trim() || "";
-            let weight = $('input[name="weight"]').val()?.trim() || "";
+    let category_id = $('select[name="category_id"]').val()?.trim() || "";
+    let brand_id = $('select[name="brand_id"]').val()?.trim() || "";
+    let unit_id = $('select[name="unit_id"]').val()?.trim() || "";
+    let size = $('select[name="size"]').val()?.trim() || "";
+    let color = $('select[name="color"]').val()?.trim() || "";
+    let price = $('input[name="price"]').val()?.trim() || "";
+    let gender = $('select[name="gender"]').val()?.trim() || "";
+    let product_name = $('input[name="product_name"]').val()?.trim() || "";
+    let galleryImages = $("input[name='product_main_image[]']")[0]?.files || [];
 
-            // Validate short description and product policy length
-            if (short_description.length > 220) {
-                errors.short_description = "Short Description must be less than 220 characters!";
-                isValid = false;
-            }
+    if (category_id === "") errors.category_id = "Category is required!";
+    if (brand_id === "") errors.brand_id = "Brand is required!";
+    if (unit_id === "") errors.unit_id = "Unit is required!";
+    if (size === "") errors.size = "Size is required!";
+    if (color === "") errors.color = "Color is required!";
+    if (price === "") errors.price = "Price is required!";
+    if (gender === "") errors.gender = "Gender is required!";
+    if (product_name === "") errors.product_name = "Product Name is required!";
+    if (galleryImages.length === 0) errors.galleryimages = "Gallery Images are required!";
 
-            if (product_policy.length > 220) {
-                errors.product_policy = "Product Policy must be less than 220 characters!";
-                isValid = false;
-            }
-
-            // Validate required fields
-            if (category_id === "") errors.category_id = "Category is required!";
-            if (weight === "") errors.weight = "weight is required!";
-            if (brand_id === "") errors.brand_id = "Brand is required!";
-            if (unit_id === "") errors.unit_id = "Unit is required!";
-            if (size === "") errors.size = "Size is required!";
-            // if (color === "") errors.color = "Color is required!";
-            if (price === "") errors.price = "Price is required!";
-            if (gender === "") errors.gender = "Gender is required!";
-            if (product_name === "") errors.product_name = "Product Name is required!";
-            if (galleryImages.length === 0) errors.galleryimages = "Gallery Images are required!";
-
-            // Validate gallery images
-            let allowedGalleryTypes = ["image/jpeg", "image/png", "image/jpg", "image/gif", "image/webp"];
-            let maxGallerySize = 2048; // 2MB
+    let allowedGalleryTypes = ["image/jpeg", "image/png", "image/jpg",'image/webp'];
+    let maxGallerySize = 2048; // 2MB
 
             for (let i = 0; i < galleryImages.length; i++) {
                 let galleryFile = galleryImages[i];
                 let galleryFileSize = galleryFile.size / 1024;
 
-                if (!allowedGalleryTypes.includes(galleryFile.type)) {
-                    errors.galleryimages = "Only JPG, JPEG, PNG, GIF and WEBP files are allowed!";
-                    isValid = false;
-                    break;
-                }
-                if (galleryFileSize > maxGallerySize) {
-                    errors.galleryimages = "Gallery image size must be less than 2MB!";
-                    isValid = false;
-                    break;
-                }
-            }
+        if (!allowedGalleryTypes.includes(galleryFile.type)) {
+            errors.galleryimages = "Only JPG, JPEG, and PNG files are allowed!";
+            isValid = false;
+            break;
+        }
+        if (galleryFileSize > maxGallerySize) {
+            errors.galleryimages = "Gallery image size must be less than 2MB!";
+            isValid = false;
+            break;
+        }
+    }
 
-            // Show errors
-            if (!$.isEmptyObject(errors)) {
-                isValid = false;
+    if (!$.isEmptyObject(errors)) {
+        isValid = false;
 
-                if (errors.category_id) $("select[name='category_id']").after(
-                    `<span class="text-danger">${errors.category_id}</span>`);
-                if (errors.brand_id) $("select[name='brand_id']").after(
-                    `<span class="text-danger">${errors.brand_id}</span>`);
-                if (errors.unit_id) $("select[name='unit_id']").after(`<span class="text-danger">${errors.unit_id}</span>`);
-
-                if (errors.weight) $("input[name='weight']").after(`<span class="text-danger">${errors.weight}</span>`);
-
-                if (errors.size) $("select[name='size']").after(`<span class="text-danger">${errors.size}</span>`);
-                // if (errors.color) $("select[name='color']").after(`<span class="text-danger">${errors.color}</span>`);
-                if (errors.price) $("input[name='price']").after(`<span class="text-danger">${errors.price}</span>`);
-                if (errors.gender) $("select[name='gender']").after(`<span class="text-danger">${errors.gender}</span>`);
-                if (errors.product_name) $("input[name='product_name']").after(
-                    `<span class="text-danger">${errors.product_name}</span>`);
-                if (errors.galleryimages) $("input[name='product_main_image[]']").after(
-                    `<span class="text-danger">${errors.galleryimages}</span>`);
-                if (errors.short_description) $("textarea[name='short_description']").after(
-                    `<span class="text-danger">${errors.short_description}</span>`);
-                if (errors.product_policy) $("textarea[name='product_policy']").after(
-                    `<span class="text-danger">${errors.product_policy}</span>`);
-            }
+        if (errors.category_id) $("select[name='category_id']").after(`<span class="text-danger">${errors.category_id}</span>`);
+        if (errors.brand_id) $("select[name='brand_id']").after(`<span class="text-danger">${errors.brand_id}</span>`);
+        if (errors.unit_id) $("select[name='unit_id']").after(`<span class="text-danger">${errors.unit_id}</span>`);
+        if (errors.size) $("select[name='size']").after(`<span class="text-danger">${errors.size}</span>`);
+        if (errors.color) $("select[name='color']").after(`<span class="text-danger">${errors.color}</span>`);
+        if (errors.price) $("input[name='price']").after(`<span class="text-danger">${errors.price}</span>`);
+        if (errors.gender) $("select[name='gender']").after(`<span class="text-danger">${errors.gender}</span>`);
+        if (errors.product_name) $("input[name='product_name']").after(`<span class="text-danger">${errors.product_name}</span>`);
+        if (errors.galleryimages) $("input[name='product_main_image[]']").after(`<span class="text-danger">${errors.galleryimages}</span>`);
+    }
 
             return isValid;
         }
@@ -1627,11 +1354,8 @@
                 <button type="button" class="btn btn-danger removeRow">✖</button>
             </td>
         </tr>`;
-            $("#productTableBody").append(row);
-            // Call the function after form is added
-            getSize();
-            getColor();
-        });
+    $("#productTableBody").append(row);
+});
 
         $(document).on("click", ".removeRow", function() {
             $(this).closest("tr").remove();
@@ -1639,21 +1363,18 @@
 
 
 
-
-
-        $(document).on("click", ".add_variant", function() {
-            $('#variant_form').fadeIn(1000);
-            this.disabled = true;
-            this.innerText = "Variant Added";
-
-            $.ajax({
-                url: '/product/get_variant_data',
-                type: 'GET',
-                success: function(res) {
-                    $('#variant_form').append(`
-                <form id="variant_form_submit" enctype="multipart/form-data">
-                    <div class="col-md-12 col-sm-12">
-                        <h5 class="mb-3 fw-bold text-primary border-bottom pb-2">Variation Product Name:  ${res.product_name}</h5>
+        $('#variant_form').fadeIn(1000);
+        this.disabled = true;
+        this.innerText = "Variant Added";
+        $.ajax({
+            url:'/product/get_variant_data',
+            type:'Get',
+            success:function(res){
+              $('#variant_form').append(
+                `
+                    <form id="variant_form_submit"  enctype="multipart/form-data">
+                           <div class="col-md-12 col-sm-12">
+                             <h5 class="mb-3 fw-bold  text-primary border-bottom pb-2">Variation Product Name:  ${res.product_name}</h5>
 
                         <div class="table-responsive">
                             <table class="table table-bordered">
@@ -1706,12 +1427,10 @@
                 </form>
             `);
 
-                    // Call the function after form is added
-                    getSize();
-                    getColor();
-                }
-            });
+
         });
+    });
+
 
 
 
@@ -1768,14 +1487,84 @@
         });
 
 
+//   $(document).on("click",".variant_save",function(e){
+//     e.preventDefault();
+
+//     let isValid = true;
+//     $(".error-message").remove();
+//     $("#productTableBody tr").each(function () {
+//         let size = $(this).find('[name="size[]"]').val();
+//         let color = $(this).find('[name="color[]"]').val();
+//         // let image = $(this).find('[name="image[0][]"]')[0].files;
+
+
+//         if (!size && !color) {
+//         $(this).find('[name="size[]"]').after('<div class="text-danger error-message">Size or Color is required</div>');
+//         isValid = false;
+//     }
+
+//          var imageInput = $(this).find('[name="image[0][]"]')[0];
+//             var files = imageInput.files;
+
+//             if (files.length < 1) {
+//                 $(imageInput).after('<div class="text-danger error-message">Image is required</div>');
+//                 isValid = false;
+//             } else {
+//                 // Check size of each file
+//                 for (var i = 0; i < files.length; i++) {
+//                     if (files[i].size > 2 * 1024 * 1024) { // 2MB = 2*1024*1024 bytes
+//                         $(imageInput).after('<div class="text-danger error-message">Each image must be less than 2MB</div>');
+//                         isValid = false;
+//                         break;
+//                     }
+//                 }
+//             }
+
+
+//     });
+
+//     if (!isValid) {
+//         toastr.error("Please select at least one size and one color before saving.");
+//         return;
+//     }
+
+
+//     let formdata = new FormData($('#variant_form_submit')[0]);
+
+//     $.ajaxSetup({
+//                 headers: {
+//                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+//                 }
+//             });
+
+//             $.ajax({
+
+//                 url:"/product/variant/store",
+//                 type:"POST",
+//                 data:formdata,
+//                 contentType: false,
+//                 processData:false,
+//                 beforeSend: function () {
+//                             $('#loader').show(); // Show loader
+//                         },
+
+//                 success:function(res){
+//                     $('#loader').hide();
+//                     console.log(res);
+//                     toastr.success(res.message);
+//                     $('#variant_form_submit')[0].reset();
+//                     $('#productForm')[0].reset();
+//                      location.reload();
+//                 }
+//             });
+//   });
 
 
 
 
 
-
-        $(document).on("click", ".variant_save", function(e) {
-            e.preventDefault();
+$(document).on("click", ".variant_save", function (e) {
+    e.preventDefault();
 
             let isValid = true;
             $(".error-message").remove(); // Clear existing errors
@@ -1858,10 +1647,9 @@
 
 
 
-        // Call it
-        getColor();
 
-        getSize();
+
+
 
 
 

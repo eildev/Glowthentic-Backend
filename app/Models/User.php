@@ -58,4 +58,12 @@ class User extends Authenticatable
     public function reviewRating(){
         return $this->hasMany(ReviewRating::class,'user_id','id');
     }
+
+    // Customize the password reset notification
+    public function sendPasswordResetNotification($token)
+    {
+        $url = env('FRONTEND_URL', 'http://127.0.0.1:5173') . '/reset-password?token=' . $token . '&email=' . urlencode($this->email);
+
+        $this->notify(new \App\Notifications\ResetPasswordNotification($url));
+    }
 }

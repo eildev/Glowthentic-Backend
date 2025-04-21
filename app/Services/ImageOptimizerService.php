@@ -29,8 +29,7 @@ class ImageOptimizerService
             File::makeDirectory($destinationPath, 0755, true, true);
         }
 
-
-        $imageName = rand(000000,999999) . '.' . $imageFile->extension();
+        $imageName = rand(000000, 999999) . '.' . $imageFile->extension();
         $imagePath = $destinationPath . '/' . $imageName;
 
 
