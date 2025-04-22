@@ -848,6 +848,7 @@ class ProductController extends Controller
                         $variant = new Variant();
                         $variant->product_id = $request->product_id;
                         $variant->variant_name = $request->variant_name[$variant_id];
+                        
                         $variant->save();
                     }
 

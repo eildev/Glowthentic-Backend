@@ -38,7 +38,7 @@ class SizeController extends Controller
 
     public function SizeGet(){
         try{
-            $sizes = SizeModel::select('size_name')->get(); // Only send what you need
+            $sizes = SizeModel::select('id','size_name')->get(); // Only send what you need
 
             return response()->json([
                 'status' => 200,
