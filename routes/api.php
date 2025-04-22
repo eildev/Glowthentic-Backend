@@ -21,6 +21,7 @@ use App\Http\Controllers\API\ApiProductController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\ApiWishListController;
 use App\Http\Controllers\API\ApiUserManageController;
+use App\Http\Controllers\API\ApiPostReactController;
 use App\Http\Controllers\API\SocialAuthController;
 use Illuminate\Http\Request;
 // Open Routes
@@ -30,7 +31,7 @@ Route::get('/sanctum/csrf-cookie', function () {
     return response()->noContent();
 });
 
-// Social login 
+// Social login
 Route::controller(SocialAuthController::class)->group(function () {
     Route::get('/auth/google',  'redirectToGoogle');
     Route::get('/auth/google/callback',  'handleGoogleCallback');
@@ -140,6 +141,8 @@ Route::controller(ApiBlogPostController::class)->group(function () {
 Route::controller(ApiBlogCommentController::class)->group(function () {
     Route::get('/blogComment', 'viewAll')->name('blogComment.view');
     Route::get('/blogComment/{id}', 'show')->name('blogComment.show');
+    Route::post('/blogComments/create', 'store')->name('blogComment.store');
+    Route::get('/blogComments/get/{id}', 'userBlogGet')->name('blogComment.user.get');
 });
 
 Route::controller(ApiOrderController::class)->group(function () {
@@ -150,6 +153,11 @@ Route::controller(ApiOrderController::class)->group(function () {
     Route::get('/order/processing/{user_idOrSesssion_id}', 'getProcessingOrder');
 });
 
+
+Route::controller(ApiPostReactController::class)->group(function () {
+    Route::post('/post/react', 'store');
+    Route::get('/post/react/{id}', 'show');
+});
 
 Route::controller(ApiSubscribeController::class)->group(function () {
     Route::post('/subscribe/store', 'store');
