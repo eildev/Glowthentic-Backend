@@ -21,7 +21,7 @@ use App\Http\Controllers\API\ApiProductController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\ApiWishListController;
 use App\Http\Controllers\API\ApiUserManageController;
-
+use App\Http\Controllers\API\ApiPostReactController;
 use Illuminate\Http\Request;
 // Open Routes
 Route::post('/register', [AuthController::class, "register"]);
@@ -142,6 +142,11 @@ Route::controller(ApiOrderController::class)->group(function () {
     Route::get('/order/processing/{user_idOrSesssion_id}', 'getProcessingOrder');
 });
 
+
+Route::controller(ApiPostReactController::class)->group(function () {
+    Route::post('/post/react', 'store');
+    Route::get('/post/react/{id}', 'show');
+});
 
 Route::controller(ApiSubscribeController::class)->group(function () {
     Route::post('/subscribe/store', 'store');
