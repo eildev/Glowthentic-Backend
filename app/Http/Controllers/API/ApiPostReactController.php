@@ -33,11 +33,33 @@ class ApiPostReactController extends Controller
             $blogReact->user_id = $request->user_id;
             $blogReact->blog_id = $request->blog_id;
             $blogReact->like = $request->like;
-            $blogReact->dislike = $request->dislike;
+            if($request->like == 1){
+                $blogReact->dislike = 0;
+            }
+            else{
+                $blogReact->like = 0;
+                $blogReact->dislike = $request->dislike;
+            }
+
+
             $blogReact->save();
             return response()->json([
                 'status' => 200,
                 'message' => 'Blog React Added Successfully',
+                'data' => $blogReact
+            ]);
+        }
+        catch(\Exception $e){
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function show($id){
+        try{
+            $blogReact = BlogReact::with('user')->where('blog_id',$id)->first();
+            return response()->json([
+                'status' => 200,
+                'message' => 'Blog React Get Successfully',
                 'data' => $blogReact
             ]);
         }
