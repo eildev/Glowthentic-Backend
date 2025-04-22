@@ -22,12 +22,21 @@ use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\ApiWishListController;
 use App\Http\Controllers\API\ApiUserManageController;
 use App\Http\Controllers\API\ApiPostReactController;
+use App\Http\Controllers\API\SocialAuthController;
 use Illuminate\Http\Request;
 // Open Routes
 Route::post('/register', [AuthController::class, "register"]);
 Route::post('/login', [AuthController::class, "login"]);
 Route::get('/sanctum/csrf-cookie', function () {
     return response()->noContent();
+});
+
+// Social login
+Route::controller(SocialAuthController::class)->group(function () {
+    Route::get('/auth/google',  'redirectToGoogle');
+    Route::get('/auth/google/callback',  'handleGoogleCallback');
+    Route::get('/auth/facebook', 'redirectToFacebook');
+    Route::get('/auth/facebook/callback',  'handleFacebookCallback');
 });
 
 
