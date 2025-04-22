@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <!--favicon-->
-    <link rel="icon" href="{{ asset('backend') }}/assets/images/logo.svg" type="image/png" />
+    <link rel="icon" href="{{ asset('backend') }}/assets/images/glowthentic.svg" type="image/png" />
     <!--plugins-->
     <link href="{{ asset('backend') }}/assets/plugins/input-tags/css/tagsinput.css" rel="stylesheet" />
     <link href="{{ asset('backend') }}/assets/plugins/vectormap/jquery-jvectormap-2.0.2.css" rel="stylesheet" />
@@ -23,7 +23,7 @@
     <link href="{{ asset('backend') }}/assets/css/pace.min.css" rel="stylesheet" />
     <script src="{{ asset('backend') }}/assets/js/pace.min.js"></script>
     {{-- select 2 tag --}}
-     <link href="{{ asset('backend') }}/assets/plugins/select2/css/select2.min.css" rel="stylesheet" />
+    <link href="{{ asset('backend') }}/assets/plugins/select2/css/select2.min.css" rel="stylesheet" />
     <link href="{{ asset('backend') }}/assets/plugins/select2/css/select2-bootstrap4.css" rel="stylesheet" />
     <!-- Bootstrap CSS -->
     <link href="{{ asset('backend') }}/assets/css/bootstrap.min.css" rel="stylesheet">
@@ -616,21 +616,21 @@
     </script>
 
 
-<script src="{{ asset('backend') }}/assets/plugins/select2/js/select2.min.js"></script>
-<script>
-    $('.single-select').select2({
-        theme: 'bootstrap4',
-        width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
-        placeholder: $(this).data('placeholder'),
-        allowClear: Boolean($(this).data('allow-clear')),
-    });
-    $('.multiple-select').select2({
-        theme: 'bootstrap4',
-        width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
-        placeholder: $(this).data('placeholder'),
-        allowClear: Boolean($(this).data('allow-clear')),
-    });
-</script>
+    <script src="{{ asset('backend') }}/assets/plugins/select2/js/select2.min.js"></script>
+    <script>
+        $('.single-select').select2({
+            theme: 'bootstrap4',
+            width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+            placeholder: $(this).data('placeholder'),
+            allowClear: Boolean($(this).data('allow-clear')),
+        });
+        $('.multiple-select').select2({
+            theme: 'bootstrap4',
+            width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+            placeholder: $(this).data('placeholder'),
+            allowClear: Boolean($(this).data('allow-clear')),
+        });
+    </script>
 
 </body>
 
