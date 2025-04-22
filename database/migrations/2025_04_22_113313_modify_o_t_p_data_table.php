@@ -6,24 +6,25 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::table('o_t_p_data', function (Blueprint $table) {
-            $table->string('email')->nullable()->index()->after('phone');
+            if (!Schema::hasColumn('o_t_p_data', 'email')) {
+                $table->string('email')->nullable()->index()->after('phone');
+            }
             $table->timestamp('expire_at')->nullable()->change();
-            $table->string('phone')->nullable()->index()->change();
+            $table->string('phone')->nullable()->change();
         });
     }
 
     public function down(): void
     {
         Schema::table('o_t_p_data', function (Blueprint $table) {
-            $table->dropColumn('email');
+            if (Schema::hasColumn('o_t_p_data', 'email')) {
+                $table->dropColumn('email');
+            }
             $table->string('expire_at')->nullable()->change();
-            $table->string('phone')->change();
+            $table->string('phone')->nullable()->change();
         });
     }
 };
