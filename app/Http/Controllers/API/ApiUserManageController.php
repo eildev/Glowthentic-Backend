@@ -200,6 +200,7 @@ class ApiUserManageController extends Controller
     public function update($id, Request $request)
     {
         // dd($request->all());
+        // dd($request->hasFile('image'));
         try {
             $validator = Validator::make($request->all(), [
                 'full_name' => 'required|string',
@@ -216,7 +217,7 @@ class ApiUserManageController extends Controller
                     'status' => 422,
                     'errors' => $validator->errors(),
                     'message' => 'Validation Failed',
-                ], 422);
+                ]);
             }
 
             $userDetails = UserDetails::where('user_id', $id)->first();
@@ -226,7 +227,7 @@ class ApiUserManageController extends Controller
                 return response()->json([
                     'status' => 404,
                     'message' => 'User not found',
-                ], 404);
+                ]);
             }
 
             $user->email = $request->email;
@@ -241,6 +242,7 @@ class ApiUserManageController extends Controller
                 $userDetails->police_station = $request->police_station;
                 $userDetails->postal_code = $request->postal_code;
                 $userDetails->country = $request->country;
+
 
                 if ($request->hasFile('image')) {
                     if ($userDetails->image && file_exists($userDetails->image)) {
@@ -282,12 +284,12 @@ class ApiUserManageController extends Controller
                 'status' => 200,
                 'user' => $userDetails,
                 'message' => 'User Details Updated Successfully'
-            ], 200);
+            ]);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 500,
                 'message' => $e->getMessage()
-            ], 500);
+            ]);
         }
     }
 

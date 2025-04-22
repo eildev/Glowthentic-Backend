@@ -29,7 +29,8 @@ Route::post('/login', [AuthController::class, "login"]);
 Route::get('/sanctum/csrf-cookie', function () {
     return response()->noContent();
 });
-// Protected Routes
+
+
 
 Route::group([
     "middleware" => ["auth:sanctum"]

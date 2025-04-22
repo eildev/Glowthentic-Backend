@@ -231,7 +231,7 @@
                                             <div class="col-md-6">
                                                 <div class="row">
                                                     <label class="form-label col-12">
-                                                        Select Color 
+                                                        Select Color
                                                     </label>
                                                     <div class="col-10">
                                                         <select
@@ -942,6 +942,8 @@
                         Field</a>
                 </div>
             </div>
+
+            <!--end row-->
         </div>
     </div>
 
@@ -1782,12 +1784,12 @@
 
             $("#productTableBody tr").each(function(index) {
                 let size = $(this).find('[name="size[]"]').val();
-                // let color = $(this).find('[name="color[]"]').val();
+                let color = $(this).find('[name="color[]"]').val();
 
                 // Validate size or color
-                if (!size) {
+                if (!size && !color) {
                     $(this).find('[name="size[]"]').after(
-                        '<div class="text-danger error-message">Size  is required</div>');
+                        '<div class="text-danger error-message">Size or Color is required</div>');
                     isValid = false;
                 }
 
