@@ -66,7 +66,7 @@ class User extends Authenticatable
 
     public function sendPasswordResetNotification($token)
     {
-        $url = env('FRONTEND_URL', 'http://glowthentic.store') . '/reset-password?token=' . $token . '&email=' . urlencode($this->email);
+        $url = env('FRONTEND_URL', 'http://127.0.0.1:5173') . '/reset-password?token=' . $token . '&email=' . urlencode($this->email);
         $this->notify(new \App\Notifications\ResetPasswordNotification($url));
     }
 }

@@ -32,6 +32,7 @@ Route::get('/sanctum/csrf-cookie', function () {
     return response()->noContent();
 });
 
+// reset password 
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
 Route::post('/reset-password', [ForgotPasswordController::class, 'reset']);
 
