@@ -1032,18 +1032,14 @@ $(document).on("click", ".addRow", function () {
 
     let row = `<tr>
         <td></td>
-        <td><input type="text" class="form-control" name="variant_name[]"></td>
-        <td><input type="number" class="form-control" name="price[]"></td>
-        <td>
-            <select class="form-select size" name="size[]"></select>
-        </td>
-        <td>
-            <select class="form-select color" name="color[]"></select>
-        </td>
-        <td><input type="number" class="form-control" name="weight[]"></td>
-        <td><input type="text" class="form-control" name="flavor[]"></td>
+        <td><input type="text" class="form-control" name="variant_name[${rowCount}]"></td>
+        <td><input type="number" class="form-control" name="price[${rowCount}]"></td>
+        <td><select class="form-select size" name="size[${rowCount}]"></select></td>
+        <td><select class="form-select color" name="color[${rowCount}]"></select></td>
+        <td><input type="number" class="form-control" name="weight[${rowCount}]"></td>
+        <td><input type="text" class="form-control" name="flavor[${rowCount}]"></td>
         <td><input type="file" class="form-control" name="image[${rowCount}][]" multiple></td>
-        <td><input type="number" class="form-control" name="stock_quantity[]"></td>
+        <td><input type="number" class="form-control" name="stock_quantity[${rowCount}]"></td>
         <td>
             <button type="button" class="btn btn-danger removeRow">✖</button>
         </td>
