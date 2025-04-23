@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('o_t_p_data', function (Blueprint $table) {
             $table->id();
-            $table->string('phone');
+            $table->string('phone')->nullable()->index();
+            $table->string('email')->nullable()->index();
             $table->string('otp');
             $table->string('expire_at')->nullable();
             $table->timestamps(0);

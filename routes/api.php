@@ -22,6 +22,7 @@ use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\ApiWishListController;
 use App\Http\Controllers\API\ApiUserManageController;
 use App\Http\Controllers\API\ApiPostReactController;
+use App\Http\Controllers\API\ForgotPasswordController;
 use App\Http\Controllers\API\SocialAuthController;
 use Illuminate\Http\Request;
 // Open Routes
@@ -30,6 +31,10 @@ Route::post('/login', [AuthController::class, "login"]);
 Route::get('/sanctum/csrf-cookie', function () {
     return response()->noContent();
 });
+
+// reset password 
+Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
+Route::post('/reset-password', [ForgotPasswordController::class, 'reset']);
 
 // Social login
 Route::controller(SocialAuthController::class)->group(function () {

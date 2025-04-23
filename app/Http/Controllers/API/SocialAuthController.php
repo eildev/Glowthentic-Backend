@@ -17,7 +17,6 @@ class SocialAuthController extends Controller
             'url' => Socialite::driver('google')->stateless()->redirect()->getTargetUrl(),
         ]);
     }
-
     public function handleGoogleCallback()
     {
         try {
@@ -36,13 +35,12 @@ class SocialAuthController extends Controller
 
             $token = $user->createToken('auth_token')->plainTextToken;
 
-            return response()->json([
-                'access_token' => $token,
-                'token_type' => 'Bearer',
-                'user' => $user,
-            ]);
+            // ফ্রন্টএন্ডে রিডাইরেক্ট URL
+            $redirectUrl = "http://127.0.0.1:5173/auth/callback?access_token={$token}&user=" . urlencode(json_encode($user));
+            return redirect($redirectUrl);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Google login failed: ' . $e->getMessage()], 500);
+            $redirectUrl = "http://127.0.0.1:5173/auth/callback?error=" . urlencode('Google login failed: ' . $e->getMessage());
+            return redirect($redirectUrl);
         }
     }
 
@@ -63,7 +61,7 @@ class SocialAuthController extends Controller
                 [
                     'name' => $socialUser->getName(),
                     'password' => null,
-                    'facebook_id' => $socialUser->getId(),
+                    'google_id' => $socialUser->getId(),
                     'email_verified_at' => Carbon::now(),
                     'role' => 'user',
                     'status' => 'active',
@@ -72,13 +70,12 @@ class SocialAuthController extends Controller
 
             $token = $user->createToken('auth_token')->plainTextToken;
 
-            return response()->json([
-                'access_token' => $token,
-                'token_type' => 'Bearer',
-                'user' => $user,
-            ]);
+            // ফ্রন্টএন্ডে রিডাইরেক্ট URL
+            $redirectUrl = "http://127.0.0.1:5173/auth/callback?access_token={$token}&user=" . urlencode(json_encode($user));
+            return redirect($redirectUrl);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Facebook login failed: ' . $e->getMessage()], 500);
+            $redirectUrl = "http://127.0.0.1:5173/auth/callback?error=" . urlencode('Google login failed: ' . $e->getMessage());
+            return redirect($redirectUrl);
         }
     }
 }
