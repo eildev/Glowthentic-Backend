@@ -290,7 +290,7 @@ $(document).on('click', '.remove-row', function () {
                 $('.promotion-table-body').empty();
                 $('.promotionTable').fadeOut();
                 toastr.success('Promotion Created Successfully');
-
+                 location.reload();
 
             }
         }

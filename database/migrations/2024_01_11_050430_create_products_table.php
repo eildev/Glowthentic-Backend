@@ -20,7 +20,7 @@ return new class extends Migration
             $table->json('product_feature')->nullable();
             $table->string('product_name');
             $table->string('unit_id')->nullable();
-            $table->string('slug', 200)->index();
+            $table->string('slug', 200)->unique();
             $table->bigInteger('created_by')->nullable();
             $table->string('sku');
             $table->enum('shipping_charge',['free','paid'])->default('paid');

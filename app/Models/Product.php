@@ -78,6 +78,8 @@ class Product extends Model
         return $this->hasMany(AttributeManage::class,'product_id','id');
     }
 
+
+
     public function productVarinatPromotion(){
         return $this->hasMany(VariantPromotion::class,'product_id','id');
     }

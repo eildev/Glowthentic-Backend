@@ -290,7 +290,7 @@
                                                         <label for="" class="form-label"> Description</label>
                                                     </div>
                                                     <div class="col-12">
-                                                        <textarea class="form-control product_descriptions @error('description') is-invalid @enderror"
+                                                        <textarea class="form-control product_descriptions_on @error('description') is-invalid @enderror"
                                                                   name="description"
                                                                   style="resize: none; height: 70px;">{!! $product->productdetails->description ?? '' !!}</textarea>
 
@@ -827,7 +827,7 @@
     });
 
     // দ্বিতীয় এডিটর
-    $('.ingredients').summernote({
+    $('.ingrediantsedit').summernote({
         height: 300,
         callbacks: {
             onPaste: function(e) {
@@ -839,7 +839,7 @@
     });
 
     // তৃতীয় এডিটর
-    $('.usage_instruction').summernote({
+    $('.usage_instructionedit').summernote({
         height: 300,
         callbacks: {
             onPaste: function(e) {
