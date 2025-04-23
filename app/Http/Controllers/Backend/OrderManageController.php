@@ -12,6 +12,9 @@ use App\Models\User;
 use App\Models\Variant;
 use App\Models\DeliveryOrder;
 use App\Models\UserDetails;
+use App\Mail\OrderConformationMail;
+use Database\Seeders\UserSeed;
+
 class OrderManageController extends Controller
 {
     public function allUser(){
@@ -91,7 +94,7 @@ class OrderManageController extends Controller
     public function orderProcessing($invoice){
         // dd($invoice);
         $processing_Orders = Order::where("invoice_number",$invoice)->latest()->first();
-       
+
         // dd($processing_Orders);
         $processing_Orders->status = "processing";
         $processing_Orders->update();
@@ -100,7 +103,7 @@ class OrderManageController extends Controller
     public function orderDelivering($invoice){
         // dd($invoice);
         $orders_delivering = Order::where("invoice_number",$invoice)->latest()->first();
-      
+
         $orders_delivering->status = "delivering";
         $orders_delivering->update();
         return back()->with('success','Order Status Updated Sucessfully');
@@ -167,6 +170,33 @@ class OrderManageController extends Controller
         $newOrders->status="approve";
         $newOrders->update();
 
+    if($newOrders->user_id){
+
+       $user=UserDetails::where("user_id",$newOrders->user_id)->latest()->first();
+
+
+       if($user->secondary_email){
+
+        $orderMail = UserDetails::where("user_id",$newOrders->user_id)->latest()->first();
+        Mail::to($orderMail->secondary_email)->send(new OrderConformationMail($newOrders));
+       }else{
+        $orderMail = User::where("id",$newOrders->user_id)->latest()->first();
+        Mail::to($orderMail->email)->send(new OrderConformationMail($newOrders));
+       }
+    }
+
+    else{
+        $orderMail = UserDetails::where("session_id",$newOrders->session_id)->latest()->first();
+    
+        Mail::to($orderMail->secondary_email)->send(new OrderConformationMail($newOrders));
+    }
+
+
+
+
+
+
+
         $trackingUrl = 'https://sobrokom.store/order-tracking';
         $number = $newOrders->user_identity;
         $api_key = "0yRu5BkB8tK927YQBA8u";
@@ -194,9 +224,9 @@ class OrderManageController extends Controller
             'invoiceNumber' => $newOrders->invoice_number,
             'trackingURL'=> $url
         ];
-        if(!empty($email->email)){
-            Mail::to($email->email)->send(new OrderMail($data));
-        }
+        // if(!empty($email->email)){
+        //     Mail::to($email->email)->send(new OrderMail($data));
+        // }
 
 
         $response = json_decode($response, true);

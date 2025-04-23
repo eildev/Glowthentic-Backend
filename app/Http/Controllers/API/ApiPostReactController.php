@@ -54,9 +54,9 @@ class ApiPostReactController extends Controller
         }
     }
 
-    public function show($id){
+    public function show($blog_id){
         try{
-            $blogReact = BlogReact::with('user')->where('blog_id',$id)->first();
+            $blogReact = BlogReact::with('user')->where('blog_id',$blog_id)->first();
             return response()->json([
                 'status' => 200,
                 'message' => 'Blog React Get Successfully',

@@ -156,7 +156,7 @@ Route::controller(ApiOrderController::class)->group(function () {
 
 Route::controller(ApiPostReactController::class)->group(function () {
     Route::post('/post/react', 'store');
-    Route::get('/post/react/{id}', 'show');
+    Route::get('/post/react/{blog_id}', 'show');
 });
 
 Route::controller(ApiSubscribeController::class)->group(function () {

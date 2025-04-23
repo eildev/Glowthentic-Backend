@@ -42,12 +42,14 @@ class ApiProductController extends Controller
                 'variants.product',
                 'variants.productStock',
                 // 'variants.promotionproduct',
+                'promotionproduct.coupon',
                 'variants.productVariantPromotion.coupon',
                 'variants.comboProduct',
                 'product_tags.tag',
                 'promotionproduct.coupon',
                 'productStock',
                 'productdetails',
+                'category.productPromotions.coupon',
                 'variantImage'
             ])
                 ->where('product_name', 'like', "%{$searchTerm}%")
@@ -149,15 +151,16 @@ class ApiProductController extends Controller
                 'variants.variantImage',
                 'variants.product',
                 'variants.productStock',
-                'promotionproduct.coupon',
+
                 // 'variants.promotionproduct.coupon',
                 'variants.productVariantPromotion.coupon',
+                'promotionproduct.coupon',
                 'variants.comboProduct',
                 'product_tags',
                 'productStock',
                 'productdetails',
                 'variantImage',
-                'category',
+                'category.productPromotions.coupon',
                 'subcategory',
                 'brand',
             )->where('status', 1)->get();
@@ -189,7 +192,7 @@ class ApiProductController extends Controller
                 'productStock',
                 'productdetails',
                 'variantImage',
-                'category',
+                'category.productPromotions.coupon',
                 'subcategory',
                 'brand',
             )->where('slug', $slug)->first();
