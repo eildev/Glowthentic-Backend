@@ -39,22 +39,30 @@ class ProductPromotionController extends Controller
                                         ->unique()
                                         ->values()
                                         ->toArray();
-                $productsWithoutVariantPromotion = DB::table('product_promotions as pp')
-                                        ->whereNotNull('pp.product_id')
-                                        ->whereIn('pp.promotion_id', $ActivePromotion)
-                                        ->whereNotExists(function ($query) {
-                                            $query->select(DB::raw(1))
-                                                ->from('variant_promotions as vp')
-                                                ->whereColumn('vp.product_id', 'pp.product_id')
-                                                ->whereColumn('vp.promotion_id', 'pp.promotion_id');
-                                        })
-                                        ->join('products as p', 'p.id', '=', 'pp.product_id')
-                                        ->where('p.status', 1)
-                                        ->select('p.*')
-                                        ->distinct()
-                                        ->get();
 
-                                        $productsWithoutVariantPromotionIds = collect($productsWithoutVariantPromotion)->pluck('id')->toArray();
+
+                         $productsWithoutVariantPromotionIds= $categoryPromotion->pluck('product_id')
+                         ->filter()
+                         ->unique()
+                         ->values()
+                         ->toArray();
+                // $productsWithoutVariantPromotion = DB::table('product_promotions as pp')
+                //                         ->whereNotNull('pp.product_id')
+                //                         ->whereIn('pp.promotion_id', $ActivePromotion)
+                //                         ->whereNotExists(function ($query) {
+                //                             $query->select(DB::raw(1))
+                //                                 ->from('variant_promotions as vp')
+                //                                 ->whereColumn('vp.product_id', 'pp.product_id')
+                //                                 ->whereColumn('vp.promotion_id', 'pp.promotion_id');
+                //                         })
+                //                         ->join('products as p', 'p.id', '=', 'pp.product_id')
+                //                         ->where('p.status', 1)
+                //                         ->select('p.*')
+                //                         ->distinct()
+                //                         ->get();
+
+
+                                        // $productsWithoutVariantPromotionIds = collect($productsWithoutVariantPromotion)->pluck('id')->toArray();
                         $product = Product::where('status', 1)
                         ->whereNotIn('category_id', $categoryPromotionIds)
                         ->whereNotIn('id', $productsWithoutVariantPromotionIds)
