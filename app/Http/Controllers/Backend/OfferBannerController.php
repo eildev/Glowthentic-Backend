@@ -65,8 +65,8 @@ class OfferBannerController extends Controller
                             // Generate a unique filename
 
                             $destinationPath = public_path('uploads/offer_banner/');
-                            $filename = time() . '_' . uniqid() . '.' . $galleryImage->extension();
-                            $imageName = $imageService->resizeAndOptimize($galleryImage, $destinationPath, $filename);
+                            // $filename = time() . '_' . uniqid() . '.' . $galleryImage->extension();
+                            $imageName = $imageService->resizeAndOptimize($galleryImage, $destinationPath);
                             $image = 'uploads/offer_banner/'.$imageName;
 
                             // $path= 'uploads/banner/gallery/';
@@ -139,8 +139,8 @@ class OfferBannerController extends Controller
                 // $galleryImage->move(public_path($path), $imageName);
 
                 $destinationPath = public_path('uploads/offer_banner/');
-                $filename = time() . '_' . uniqid() . '.' . $galleryImage->extension();
-                $imageName = $imageService->resizeAndOptimize($galleryImage, $destinationPath, $filename);
+                // $filename = time() . '_' . uniqid() . '.' . $galleryImage->extension();
+                $imageName = $imageService->resizeAndOptimize($galleryImage, $destinationPath);
                 $image = 'uploads/offer_banner/'.$imageName;
 
                 $imageGallery = new ImageGallery;
@@ -158,9 +158,10 @@ class OfferBannerController extends Controller
     {
         $banner = OfferBanner::findOrFail($id);
         $galleryImages = ImageGallery::where('offer_banner_id', $id)->get();
-        if (fileExists($banner->image)) {
+        if (!empty($banner->image) && file_exists(public_path($banner->image))) {
             unlink(public_path($banner->image));
         }
+
 
         foreach ($galleryImages as $galleryImage) {
             $imagePath = public_path($galleryImage->image);
@@ -206,7 +207,7 @@ class OfferBannerController extends Controller
                 ->where('id', '!=', $banner->id)
                 ->update(['cart_status' => 'Inactive']);
 
-        
+
             $banner->cart_status = "Active";
         }
 

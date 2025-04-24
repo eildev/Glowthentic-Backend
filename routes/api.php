@@ -21,7 +21,9 @@ use App\Http\Controllers\API\ApiProductController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\ApiWishListController;
 use App\Http\Controllers\API\ApiUserManageController;
-
+use App\Http\Controllers\API\ApiPostReactController;
+use App\Http\Controllers\API\ForgotPasswordController;
+use App\Http\Controllers\API\SocialAuthController;
 use Illuminate\Http\Request;
 // Open Routes
 Route::post('/register', [AuthController::class, "register"]);
@@ -29,7 +31,20 @@ Route::post('/login', [AuthController::class, "login"]);
 Route::get('/sanctum/csrf-cookie', function () {
     return response()->noContent();
 });
-// Protected Routes
+
+// reset password 
+Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
+Route::post('/reset-password', [ForgotPasswordController::class, 'reset']);
+
+// Social login
+Route::controller(SocialAuthController::class)->group(function () {
+    Route::get('/auth/google',  'redirectToGoogle');
+    Route::get('/auth/google/callback',  'handleGoogleCallback');
+    Route::get('/auth/facebook', 'redirectToFacebook');
+    Route::get('/auth/facebook/callback',  'handleFacebookCallback');
+});
+
+
 
 Route::group([
     "middleware" => ["auth:sanctum"]
@@ -129,8 +144,10 @@ Route::controller(ApiBlogPostController::class)->group(function () {
 });
 
 Route::controller(ApiBlogCommentController::class)->group(function () {
-    Route::get('/blogPost', 'viewAll')->name('blogPost.view');
-    Route::get('/blogPost/{id}', 'show')->name('blogPost.show');
+    Route::get('/blogComment', 'viewAll')->name('blogComment.view');
+    Route::get('/blogComment/{id}', 'show')->name('blogComment.show');
+    Route::post('/blogComments/create', 'store')->name('blogComment.store');
+    Route::get('/blogComments/get/{id}', 'userBlogGet')->name('blogComment.user.get');
 });
 
 Route::controller(ApiOrderController::class)->group(function () {
@@ -141,6 +158,11 @@ Route::controller(ApiOrderController::class)->group(function () {
     Route::get('/order/processing/{user_idOrSesssion_id}', 'getProcessingOrder');
 });
 
+
+Route::controller(ApiPostReactController::class)->group(function () {
+    Route::post('/post/react', 'store');
+    Route::get('/post/react/{blog_id}', 'show');
+});
 
 Route::controller(ApiSubscribeController::class)->group(function () {
     Route::post('/subscribe/store', 'store');

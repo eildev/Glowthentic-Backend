@@ -11,39 +11,37 @@ use App\Models\BlogCategory;
 class ApiBlogPostController extends Controller
 {
 
-    public function viewAll(){
-        try{
-            $blogPost = BlogPost::all();
+    public function viewAll()
+    {
+        try {
+            $blogPost = BlogPost::with('comments.user', 'likes.user')->get();
             return response()->json([
                 'blogPost' => $blogPost,
-                'status'=>200,
+                'status' => 200,
                 'messege' => 'Blog Post Get Successfully'
             ]);
-        }
-        catch(\Exception $e){
+        } catch (\Exception $e) {
             return response()->json([
-                'status'=>500,
+                'status' => 500,
                 'messege' => 'Something Went Wrong'
             ]);
         }
-
-}
-
-public function show($id){
-    try{
-        $blogPost = BlogPost::findOrFail($id);
-        return response()->json([
-            'blogPost' => $blogPost,
-            'status'=>200,
-            'messege' => 'Blog Post Get Successfully'
-        ]);
-    }
-    catch(\Exception $e){
-        return response()->json([
-            'status'=>500,
-            'messege' => 'Something Went Wrong'
-        ]);
     }
 
-}
+    public function show($id)
+    {
+        try {
+            $blogPost = BlogPost::with('comments.user', 'likes.user')->findOrFail($id);
+            return response()->json([
+                'blogPost' => $blogPost,
+                'status' => 200,
+                'messege' => 'Blog Post Get Successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 500,
+                'messege' => 'Something Went Wrong'
+            ]);
+        }
+    }
 }

@@ -22,6 +22,8 @@ use App\Services\UserDetailsService;
 use Illuminate\Http\JsonResponse;
 use App\Models\Category;
 use App\Models\VariantPromotion;
+use App\Models\UserDetails;
+
 class ApiOrderController extends Controller
 {
 
@@ -239,6 +241,8 @@ class ApiOrderController extends Controller
 
     public function store(Request $request)
     {
+
+        // dd($request->all());
         try {
             $billingResponse = $this->billingInformationService->storeBillingInfo($request);
             $userDetailsResponse = $this->userDetailsService->storeUserDetails($request);
@@ -501,6 +505,20 @@ class ApiOrderController extends Controller
             $order = Order::where('invoice_number', $order_id)->with('orderDetails')->first();
             $order_details = OrderDetails::where('order_id', $order->id)->with('product', 'variant.variantImage')->get();
 
+            if($order->user_id){
+                $userDetails=UserDetails::where('user_id',$order->user_id)->first();
+                $billingInfo=BillingInformation::where('user_id',$order->user_id)->first();
+            }
+            else if($order->session_id){
+                $userDetails=UserDetails::where('session_id',$order->session_id)->first();
+                $billingInfo=BillingInformation::where('session_id',$order->session_id)->first();
+            }
+            else{
+                $userDetails=null;
+                $billingInfo=null;
+            }
+
+
             if ($order) {
                 if ($order->status != "Delivering") {
                     return response()->json([
@@ -508,6 +526,8 @@ class ApiOrderController extends Controller
                         'order_tracking_status' => "Ordered",
                         'order'=> $order,
                         'orderDetails' => $order_details,
+                        'userDetails' => $userDetails,
+                        'billingInfo' => $billingInfo,
                         'message' => 'Order Tracking Successfully',
                     ]);
                 } else {
@@ -519,6 +539,8 @@ class ApiOrderController extends Controller
                             'order_tracking_status' => "Shipped",
                             'order'=> $order,
                             'orderDetails' => $order_details,
+                            'userDetails' => $userDetails,
+                            'billingInfo' => $billingInfo,
                             'message' => 'Order tracking shipped Successfully',
                         ]);
                     } else if ($delivered_order->delivery_status == "delivered") {
@@ -527,6 +549,8 @@ class ApiOrderController extends Controller
                             'order_tracking_status' => "Completed",
                             'order'=> $order,
                             'orderDetails' => $order_details,
+                            'userDetails' => $userDetails,
+                            'billingInfo' => $billingInfo,
                             'message' => 'Order completed Successfully',
                         ]);
                     }
@@ -541,14 +565,22 @@ class ApiOrderController extends Controller
     }
 
 
+
+
+
+
+
     public function getOrder($user_idOrSesssion_id)
     {
         try {
+            // dd("hello");
             $order = Order::where('user_id', $user_idOrSesssion_id)->orWhere('session_id', $user_idOrSesssion_id)->with('orderDetails.variant.variantImage','orderDetails.product','orderDetails.product.category')->get();
+
+
             return response()->json([
                 'status' => 200,
                 'order' => $order,
-                'message' => 'Order Get Successfully',
+                'message' => 'All Order Get Successfully',
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -561,39 +593,24 @@ class ApiOrderController extends Controller
     public function getProcessingOrder($user_idOrSesssion_id)
     {
         try {
-            $order = Order::where('user_id', $user_idOrSesssion_id)->orWhere('session_id', $user_idOrSesssion_id)->with('orderDetails.variant.variantImage','orderDetails.product','orderDetails.product.category')->get();
+            $orders = Order::where(function ($query) use ($user_idOrSesssion_id) {
+                    $query->where('user_id', $user_idOrSesssion_id)
+                          ->orWhere('session_id', $user_idOrSesssion_id);
+                })
+                ->whereIn('status', ['pending', 'approve', 'processing'])
+                ->with('orderDetails.variant.variantImage', 'orderDetails.product', 'orderDetails.product.category')
+                ->get();
 
-            $ongoing_order = [];
-            foreach ($order as $order_data) {
-
-                if($order_data->status != "Delivering"){
-                    continue;
-                }
-                if ($order_data->status == "Delivering") {
-
-                    $ongoing_order[] = $order_data;
-
-                }
-
-                else {
-                    $delivered_order = DeliveryOrder::where('order_id', $order_data->id)->first();
-
-                    if ($delivered_order->delivery_status != "delivered") {
-                        $ongoing_order[] = $order_data;
-                    }
-                }
-            }
-
+            // Add order_status = "Processing" for each order
+            $ordersWithStatus = $orders->map(function ($order) {
+                $order->order_status = "Processing";
+                return $order;
+            });
 
             return response()->json([
                 'status' => 200,
-                'order' => $ongoing_order,
-                'message' => 'Order Get Successfully',
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 500,
-                'message' => $e->getMessage(),
+                'message' => 'All Order Get Successfully',
+                'data' => $ordersWithStatus,
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -602,5 +619,42 @@ class ApiOrderController extends Controller
             ]);
         }
     }
+
+
+    public function getCompletedOrder($user_idOrSesssion_id){
+        try{
+          $orders = Order::where(function ($query) use ($user_idOrSesssion_id) {
+              $query->where('user_id', $user_idOrSesssion_id)
+                    ->orWhere('session_id', $user_idOrSesssion_id);
+          })
+          ->whereHas('deliveryOrder', function ($query) {
+              $query->where('delivery_status', 'delivered');
+          })
+          ->with(['deliveryOrder' => function ($query) {
+              $query->where('delivery_status', 'delivered');
+          },
+             'orderDetails.variant.variantImage',
+             'orderDetails.product',
+             'orderDetails.product.category'
+
+
+          ])
+          ->get();
+           return response()->json([
+              'status' => 200,
+              'message' => 'All Order Get Successfully',
+              'data' => $orders,
+          ]);
+
+        }
+        catch(\Exception $e){
+          return response()->json([
+              'status' => 500,
+              'message' => $e->getMessage(),
+          ]);
+        }
+  }
+
+
 
 }

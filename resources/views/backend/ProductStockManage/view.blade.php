@@ -60,6 +60,7 @@
                             <tbody>
                                 @if ($productStock->count() > 0)
                                     @foreach ($productStock as $key => $productStock)
+
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $productStock->product->product_name ?? 'N/A' }}</td>
@@ -68,16 +69,30 @@
                                             {{-- <td>{{ $productStock->product->subcategory->name ?? 'N/A' }}</td> --}}
                                             <td>{{ $productStock->variant->size ?? 'N/A' }}</td>
                                             <td>{{ $productStock->variant->color ?? 'N/A' }}</td>
-                                            <td>৳{{ number_format($productStock->variant->regular_price, 2) }}</td>
+
+                                            @if($productStock->variant)
+                                            <td>৳{{ number_format($productStock->variant->regular_price, 2)??0}}</td>
+
+                                            @else
+                                            <td>N/A</td>
+                                            @endif
                                             <td>
-                                                <span class="badge bg-primary fs-6">{{ $productStock->StockQuantity }}</span>
+                                                <span class="badge bg-primary fs-6">{{ $productStock->StockQuantity??'' }}</span>
                                             </td>
+                                            @if($productStock->variant)
                                             @php
                                                 $sellingPrice = $productStock->variant->regular_price* $productStock->StockQuantity;
                                             @endphp
+
+                                            @if($sellingPrice)
                                             <td>
-                                                <span class="badge bg-primary fs-6">৳{{ number_format($sellingPrice, 2) }}</span>
+                                                <span class="badge bg-primary fs-6">৳{{ number_format($sellingPrice, 2) ??''}}</span>
                                             </td>
+                                            @endif
+                                            @else
+                                            <td></td>
+                                            <td></td>
+                                            @endif
                                         </tr>
                                     @endforeach
                                 @else

@@ -22,6 +22,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'google_id',
+        'facebook_id',
     ];
 
     /**
@@ -47,15 +49,24 @@ class User extends Authenticatable
         ];
     }
 
-    public function userDetails(){
-        return $this->hasOne(UserDetails::class,'user_id','id');
+    public function userDetails()
+    {
+        return $this->hasOne(UserDetails::class, 'user_id', 'id');
     }
 
-    public function billingInfo(){
-        return $this->hasMany(BillingInformation::class,'user_id','id');
+    public function billingInfo()
+    {
+        return $this->hasMany(BillingInformation::class, 'user_id', 'id');
     }
 
-    public function reviewRating(){
-        return $this->hasMany(ReviewRating::class,'user_id','id');
+    public function reviewRating()
+    {
+        return $this->hasMany(ReviewRating::class, 'user_id', 'id');
+    }
+
+    public function sendPasswordResetNotification($token)
+    {
+        $url = env('FRONTEND_URL', 'https://glowthentic.store') . '/reset-password?token=' . $token . '&email=' . urlencode($this->email);
+        $this->notify(new \App\Notifications\ResetPasswordNotification($url));
     }
 }

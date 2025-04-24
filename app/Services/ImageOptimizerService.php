@@ -23,24 +23,25 @@ class ImageOptimizerService
 
     public function resizeAndOptimize($imageFile, $destinationPath, $quality = 85)
     {
-        // ডিরেক্টরি তৈরি করা
+
+
         if (!File::exists($destinationPath)) {
             File::makeDirectory($destinationPath, 0755, true, true);
         }
 
-        // ইউনিক ইমেজ নাম তৈরি
-        $imageName = rand() . '.' . $imageFile->extension();
+
+        $imageName = rand(000000,999999) . '.' . $imageFile->extension();
         $imagePath = $destinationPath . '/' . $imageName;
 
-        // রিসাইজ ছাড়া ইমেজ সেভ করা
+
         $this->imageManager->read($imageFile)
-            ->toJpeg($quality, true) // প্রোগ্রেসিভ JPEG, কোয়ালিটি ৮৫
+            ->toJpeg($quality, true)
             ->save($imagePath);
 
-        // Spatie দিয়ে অপটিমাইজেশন
+
         $optimizer = (new OptimizerChain())
             ->addOptimizer(new Jpegoptim([
-                '--max=90', // সর্বোচ্চ কোয়ালিটি ৯০
+                '--max=90',
                 '--strip-all',
                 '--all-progressive',
             ]))
@@ -50,6 +51,31 @@ class ImageOptimizerService
             ]))
             ->optimize($imagePath);
 
-        return $imageName; // ডাটাবেসে সেভ করার জন্য নাম রিটার্ন
+        return $imageName;
     }
+    // public function resizeAndOptimize($imageFile, $destinationPath, $width = 800, $height = 600, $quality = 100)
+    // {
+
+    //     $width = (int) $width;
+    //     $height = (int) $height;
+
+    //     if (!File::exists($destinationPath)) {
+    //         File::makeDirectory($destinationPath, 0755, true, true);
+    //     }
+
+    //     // Generate unique image name
+    //     $imageName = rand() . '.' . $imageFile->extension();
+    //     $imagePath = $destinationPath . '/' . $imageName;
+
+    //     // Resize and save image using Intervention Image v3
+    //     $this->imageManager->read($imageFile)
+    //         ->scale($width, $height)
+    //         ->save($imagePath, $quality);
+
+    //     // Optimize the resized image using Spatie
+    //     $optimizer = OptimizerChainFactory::create();
+    //     $optimizer->optimize($imagePath);
+
+    //     return $imageName; // Return image name to save in the database
+    // }
 }

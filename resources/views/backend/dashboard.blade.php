@@ -1,5 +1,41 @@
 @extends('backend.master')
 @section('admin')
+
+<style>
+ .card.bg-white {
+    background-color: #ffffff;
+}
+.card.text-black {
+    color: #19c0d6dc;
+}
+.card.border-black {
+    border: 1px solid #5eb7eb;
+}
+.card.shadow {
+    box-shadow: 0 4px 12px rgba(104, 171, 202, 0.1);
+}
+.card:hover {
+    transform: translateY(-5px);
+    transition: transform 0.3s ease;
+    box-shadow: 0 6px 16px rgba(5, 181, 212, 0.15);
+}
+.progress-bar.bg-black {
+    background-color: #54dce0;
+}
+
+.icon-visitors {
+    color: #007bff;
+}
+.icon-products {
+    color: #28a745;
+}
+.icon-orders {
+    color: #ffc107;
+}
+.icon-users {
+    color: #6f42c1;
+}
+</style>
     @php
         $products = App\Models\Product::whereHas('varient')->count();
         $users = App\Models\User::where('role', 'user')->count();
@@ -15,343 +51,172 @@
         $visitors = App\Models\UserTracker::all()->count();
         use Carbon\Carbon;
         $visitorsToday = App\Models\UserTracker::whereDate('created_at', Carbon::today())->count();
-        $purchases = App\Models\PurchaseDetails::all();
+          $total_stock = App\Models\ProductStock::sum('StockQuantity');
     @endphp
-    <div class="page-content">
-        <div class="col-12 mb-3">
-            <span class="badge bg-info p-2">All Time History</span>
-        </div>
-        <div class="row">
-            <div class="col">
-                <div class="card radius-10 bg-gradient-ibiza">
-                    <a href="{{ route('user-tracker.show') }}">
-                        <div class="card-body">
-                            <p class="mb-0 text-white pb-2"> Visitor </p>
-                            <div class="d-flex align-items-center">
-                                <h6 class="mb-0 text-white">Today</h6>
-                                <div class="ms-auto">
-                                    <h6 class="mb-0 text-white"> {{ $visitorsToday }}</h6>
-                                </div>
-                            </div>
-                            <div class="progress my-3 bg-light-transparent" style="height:3px;">
-                                <div class="progress-bar bg-white" role="progressbar" style="width: 100%" aria-valuenow="25"
-                                    aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                            <div class="d-flex align-items-center text-white">
-                                <h6 class="mb-0 text-white">Total</h6>
-                                <h6 class="mb-0 ms-auto text-white">{{ $visitors }}</h6>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card radius-10 bg-gradient-deepblue">
-                    <a href="{{ route('product.view') }}">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center">
-                                <h5 class="mb-0 text-white">{{ $products }}</h5>
-                                <div class="ms-auto">
-                                    <i class='bx bx-cart fs-3 text-white'></i>
-                                </div>
-                            </div>
-                            <div class="progress my-3 bg-light-transparent" style="height:3px;">
-                                <div class="progress-bar bg-white" role="progressbar" style="width: 55%" aria-valuenow="25"
-                                    aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                            <div class="d-flex align-items-center text-white">
-                                <p class="mb-0">Total Products</p>
-                                <p class="mb-0 ms-auto"></p>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card radius-10 bg-gradient-orange">
-                    <a href="{{ route('new.order') }}">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center">
-                                <h5 class="mb-0 text-white">{{ $new_orders }}</h5>
-                                <div class="ms-auto">
-                                    <i class='bx bx-package fs-3 text-white'></i>
-                                </div>
-                            </div>
-                            <div class="progress my-3 bg-light-transparent" style="height:3px;">
-                                <div class="progress-bar bg-white" role="progressbar" style="width: 55%" aria-valuenow="25"
-                                    aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                            <div class="d-flex align-items-center text-white">
-                                <p class="mb-0">New Order</p>
-                                <p class="mb-0 ms-auto"></p>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card radius-10 bg-gradient-ohhappiness">
-                    <a href="{{ route('all.users') }}">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center">
-                                <h5 class="mb-0 text-white">{{ $users }}</h5>
-                                <div class="ms-auto">
-                                    <i class='bx bx-group fs-3 text-white'></i>
-                                </div>
-                            </div>
-                            <div class="progress my-3 bg-light-transparent" style="height:3px;">
-                                <div class="progress-bar bg-white" role="progressbar" style="width: 55%" aria-valuenow="25"
-                                    aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                            <div class="d-flex align-items-center text-white">
-                                <p class="mb-0">Users</p>
-                                <p class="mb-0 ms-auto"></p>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card radius-10 bg-gradient-ibiza">
-                    <a href="{{ route('order.refunded') }}">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center">
-                                <h5 class="mb-0 text-white">{{ $refund ?? 0 }}</h5>
-                                <div class="ms-auto">
-                                    <i class='bx bx-envelope fs-3 text-white'></i>
-                                </div>
-                            </div>
-                            <div class="progress my-3 bg-light-transparent" style="height:3px;">
-                                <div class="progress-bar bg-white" role="progressbar" style="width: 55%" aria-valuenow="25"
-                                    aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                            <div class="d-flex align-items-center text-white">
-                                <p class="mb-0">Total Refund</p>
-                                <p class="mb-0 ms-auto"></p>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-            </div>
-        </div>
-        <hr>
-        <div class="row">
-            <div class="col-12 mb-3 d-flex">
-                <button class="btn btn-sm btn-info me-1 toDayHistory" onclick="historyFunction(this)"
-                    value="today">Today</button>
-                <button class="btn btn-sm btn-info me-1" onclick="historyFunction(this)" value="currentWeekly">Current
-                    Weekly</button>
-                <button class="btn btn-sm btn-info me-1" onclick="historyFunction(this)" value="currentMonthly">Current
-                    Monthly</button>
-                <button class="btn btn-sm btn-info me-1" onclick="historyFunction(this)" value="currentYearly">Current
-                    Yearly</button>
-                <input type="month" class="bg-info border-0 rounded ps-2 monthandyear">
-                <div class="ms-1">
-                    <button class="btn btn-sm btn-info dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                        aria-expanded="false">Select Year</button>
-                    <ul class="dropdown-menu" style="margin: 0px;">
-                        <li><a class="dropdown-item" href="#">2024</a></li>
-                        <li><a class="dropdown-item" href="#">2025</a></li>
-                        <li><a class="dropdown-item" href="#">2026</a></li>
-                        <li><a class="dropdown-item" href="#">2027</a></li>
-                        <li><a class="dropdown-item" href="#">2028</a></li>
-                        <li><a class="dropdown-item" href="#">2029</a></li>
-                        <li><a class="dropdown-item" href="#">2030</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card radius-10 bg-gradient-ohhappiness">
-                    <div class="card-body">
-                        <div class="text-center text-white">
-                            <label style="text-decoration: underline">Date: <span class="order_date"></span></label>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <p class="mb-0 text-white">Total Order </p>
-                            <div class="ms-auto">
-                                <p class="mb-0 text-white total_order"> 0</p>
-                            </div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <p class="mb-0 text-white">Quantity </p>
-                            <div class="ms-auto">
-                                <p class="mb-0 text-white order_quantity"> 0 </p>
-                            </div>
-                        </div>
-                        <div class="progress my-3 bg-light-transparent" style="height:3px;">
-                            <div class="progress-bar bg-white" role="progressbar" style="width: 100%" aria-valuenow="25"
-                                aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                        <div class="d-flex align-items-center text-white">
-                            <h6 class="mb-0">Amount</h6>
-                            <p class="mb-0 ms-auto order_amount">0 </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card radius-10 bg-gradient-ohhappiness">
-                    <div class="card-body">
-                        <div class="text-center text-white">
-                            <label style="text-decoration: underline">Date: <span class="purchase_date"></span></label>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <p class="mb-0 text-white">Total Purchase </p>
-                            <div class="ms-auto">
-                                <p class="mb-0 text-white purchase_quantity">0</p>
-                            </div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <p class="mb-0 text-white">Quantity </p>
-                            <div class="ms-auto">
-                                <p class="mb-0 text-white total_purchase">0</p>
-                            </div>
-                        </div>
-                        <div class="progress my-3 bg-light-transparent" style="height:3px;">
-                            <div class="progress-bar bg-white" role="progressbar" style="width: 100%" aria-valuenow="25"
-                                aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                        <div class="d-flex align-items-center text-white">
-                            <h6 class="mb-0">Amount</h6>
-                            <p class="mb-0 ms-auto purchase_amount">0</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card radius-10 bg-gradient-ohhappiness">
-                    <div class="card-body">
-                        <div class="text-center text-white">
-                            <label style="text-decoration: underline ">Date: <span class="refund_date"></span></label>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <p class="mb-0 text-white">Total Refund </p>
-                            <div class="ms-auto">
-                                <p class="mb-0 text-white total_refund"> 0</p>
-                            </div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <p class="mb-0 text-white">Total Quantity </p>
-                            <div class="ms-auto">
-                                <p class="mb-0 text-white refund_quantity"> 0 </p>
-                            </div>
-                        </div>
-                        <div class="progress my-3 bg-light-transparent" style="height:3px;">
-                            <div class="progress-bar bg-white" role="progressbar" style="width: 100%" aria-valuenow="25"
-                                aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                        <div class="d-flex align-items-center text-white">
-                            <h6 class="mb-0">Amount</h6>
-                            <p class="mb-0 ms-auto refund_amount"></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <hr>
-        <div class="row">
-            <div class="col">
-                <div class="card radius-10 bg-gradient-ohhappiness">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center">
-                            <p class="mb-0 text-white">Total Order</p>
-                            <div class="ms-auto">
-                                <p class="mb-0 text-white"> {{ $total_orders }} Nos</p>
-                            </div>
-                        </div>
+  <div class="container-fluid page-content py-4">
+    <!-- Title -->
+    <div class="mb-4">
+        <h4 class="fw-bold">Dashboard Overview</h4>
+        <span class="badge bg-info p-2">All Time History</span>
+    </div>
 
-                        <div class="progress my-3 bg-light-transparent" style="height:3px;">
-                            <div class="progress-bar bg-white" role="progressbar" style="width: 100%" aria-valuenow="25"
-                                aria-valuemin="0" aria-valuemax="100"></div>
+   <!-- Top Statistics -->
+<div class="row g-3 mb-4">
+    <!-- Visitors -->
+    <div class="col-md-3">
+        <div class="card bg-white text-black h-100 shadow border-black">
+            <a href="{{ route('user-tracker.show') }}" class="text-black text-decoration-none">
+                <div class="card-body d-flex align-items-center">
+                    <i class="fas fa-chart-line fa-2x me-3" style="color: #007bff;"></i>
+                    <div class="flex-grow-1">
+                        <p class="mb-1 fw-bold">Visitors</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>Today</span>
+                            <span class="fw-bold">{{ $visitorsToday }}</span>
                         </div>
-                        <table class="table" id="order_table">
-                            <thead>
+                        <div class="progress my-2" style="height: 5px;">
+                            <div class="progress-bar bg-black" style="width: 100%; opacity: 0.5;"></div>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <small>Total</small>
+                            <small class="fw-bold">{{ $visitors }}</small>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Products -->
+    <div class="col-md-3">
+        <div class="card bg-white text-black h-100 shadow border-black">
+            <a href="{{ route('product.view') }}" class="text-black text-decoration-none">
+                <div class="card-body d-flex align-items-center">
+                    <i class="fas fa-shopping-cart fa-2x me-3" style="color: #28a745;"></i>
+                    <div class="flex-grow-1">
+                        <p class="mb-1 fw-bold">Total Products</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0 fw-bold">{{ $products }}</h5>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- New Orders -->
+    <div class="col-md-2">
+        <div class="card bg-white text-black h-100 shadow border-black">
+            <a href="{{ route('new.order') }}" class="text-black text-decoration-none">
+                <div class="card-body d-flex align-items-center">
+                    <i class="fas fa-box fa-2x me-3" style="color: #ffc107;"></i>
+                    <div class="flex-grow-1">
+                        <p class="mb-1 fw-bold">New Orders</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0 fw-bold">{{ $new_orders }}</h5>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Users -->
+    <div class="col-md-2">
+        <div class="card bg-white text-black h-100 shadow border-black">
+            <a href="{{ route('all.users') }}" class="text-black text-decoration-none">
+                <div class="card-body d-flex align-items-center">
+                    <i class="fas fa-users fa-2x me-3" style="color: #6f42c1;"></i>
+                    <div class="flex-grow-1">
+                        <p class="mb-1 fw-bold">Users</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0 fw-bold">{{ $users }}</h5>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Total Stock -->
+    <div class="col-md-2">
+        <div class="card bg-white text-black h-100 shadow border-black">
+            <a href="{{ route('stock.view') }}" class="text-black text-decoration-none">
+                <div class="card-body d-flex align-items-center">
+                    <i class="fas fa-warehouse fa-2x me-3" style="color: #dc3545;"></i>
+                    <div class="flex-grow-1">
+                        <p class="mb-1 fw-bold">Total Stock</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0 fw-bold">{{ $total_stock }}</h5>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+
+
+            <!-- Order Chart -->
+            <div class="row g-3 mb-4">
+                <div class="col-6">
+                    <div class="card shadow h-100">
+                        <div class="card-body">
+                            <h6 class="card-title mb-3">Last Week Order History</h6>
+                            <canvas id="orderChart" height="100"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+        <div class="col-6">
+            <div class="card shadow h-100">
+                <div class="card-body">
+                    <h6 class="card-title mb-3">Monthly Sales Income</h6>
+                    <canvas id="monthlySalesChart" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+
+
+
+
+    </div>
+
+    <!-- Order Summary Table + Categorywise Chart -->
+    <div class="row g-3">
+        <!-- Order Table -->
+        <div class="col-md-6">
+            <div class="card shadow h-100">
+                <div class="card-body">
+                    <h6 class="card-title mb-3">Order Summary</h6>
+                    <p class="mb-2">Total Orders: <strong>{{ $total_orders }} Nos</strong></p>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-sm">
+                            <thead class="table-light">
                                 <tr>
-                                    <th>Order Status</th>
+                                    <th>Status</th>
                                     <th>Total</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>New </td>
-                                    <td>{{ $new_orders }}</td>
-                                    <td><a href="{{ route('new.order') }}">View Details</a></td>
-                                </tr>
-                                <tr>
-                                    <td>Confirm</td>
-                                    <td>{{ $approve_orders }}</td>
-                                    <td><a href="{{ route('order.confirmed') }}">View Details</a></td>
-                                </tr>
-                                <tr>
-                                    <td>Proccess</td>
-                                    <td>{{ $processing_orders }}</td>
-                                    <td><a href="{{ route('order.processed') }}">View Details</a></td>
-                                </tr>
-                                <tr>
-                                    <td>Delivery</td>
-                                    <td>{{ $delivering_orders }}</td>
-                                    <td><a href="{{ route('order.delivering') }}">View Details</a></td>
-                                </tr>
-                                <tr>
-                                    <td>Completed</td>
-                                    <td>{{ $completed_order }}</td>
-                                    <td><a href="{{ route('order.completed') }}">View Details</a></td>
-                                </tr>
-                                <tr>
-                                    <td>Refunding</td>
-                                    <td>{{ $refunding_order }}</td>
-                                    <td><a href="{{ route('order.refunding') }}">View Details</a></td>
-                                </tr>
-                                <tr>
-                                    <td>Refunded</td>
-                                    <td>{{ $refunded_order }}</td>
-                                    <td><a href="{{ route('order.refunded') }}">View Details</a></td>
-                                </tr>
-                                <tr>
-                                    <td>Canceled</td>
-                                    <td>{{ $canceled_order }}</td>
-                                    <td><a href="{{ route('order.canceled') }}">View Details</a></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card radius-10 bg-gradient-orange">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center">
-                            <p class="mb-0 text-white">Total Purchase </p>
-                            <div class="ms-auto">
-                                <p class="mb-0 text-white"> {{ $purchases->count() }} </p>
-                            </div>
-                        </div>
-                        <div class="progress my-3 bg-light-transparent" style="height:3px;">
-                            <div class="progress-bar bg-white" role="progressbar" style="width: 100%" aria-valuenow="25"
-                                aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                        <table class="table" id="genarel">
-                            <thead>
-                                <tr>
-                                    <th>Purchse Data</th>
-                                    <th>Quantity</th>
-                                    <th>Amount</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($purchases as $purchase)
-                                    @php
-                                        $originalDateString = $purchase->created_at;
-                                        $date = new DateTime($originalDateString);
-                                        $formattedDate = $date->format('d-m-Y');
-                                    @endphp
+                                @php
+                                    $statuses = [
+                                        'New' => ['count' => $new_orders, 'route' => 'new.order'],
+                                        'Confirm' => ['count' => $approve_orders, 'route' => 'order.confirmed'],
+                                        'Process' => ['count' => $processing_orders, 'route' => 'order.processed'],
+                                        'Delivery' => ['count' => $delivering_orders, 'route' => 'order.delivering'],
+                                        'Completed' => ['count' => $completed_order, 'route' => 'order.completed'],
+
+                                        'Canceled' => ['count' => $canceled_order, 'route' => 'order.canceled'],
+                                    ];
+                                @endphp
+                                @foreach($statuses as $status => $data)
                                     <tr>
-                                        <td>{{ $formattedDate }}</td>
-                                        <td>{{ $purchase->quantity }}</td>
-                                        <td>{{ $purchase->grand_total }}</td>
-                                        <td><a href="{{ route('purchase.view') }}">View Details</a></td>
+                                        <td>{{ $status }}</td>
+                                        <td>{{ $data['count'] }}</td>
+                                        <td><a href="{{ route($data['route']) }}" class="btn btn-sm btn-outline-primary">View</a></td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -361,10 +226,192 @@
             </div>
         </div>
 
-
-        <!--end row-->
+        <!-- Category Stock Pie Chart -->
+        <div class="col-md-6">
+            <div class="card shadow h-100">
+                <div class="card-body">
+                    <h6 class="card-title mb-3">Categorywise Product Stock</h6>
+                    <canvas id="categoryPieChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
     </div>
+</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <script>
+
+document.addEventListener("DOMContentLoaded", function () {
+    $.ajax({
+        url: "{{ route('order.chart.data') }}",
+        type: "GET",
+        success: function (data) {
+            const labels = data.map(item => item.date);
+            const newOrders = data.map(item => item.new_orders);
+            const completedOrders = data.map(item => item.completed_orders);
+            const deliveredOrders = data.map(item => item.delivered_orders);
+
+            const ctx = document.getElementById("orderChart").getContext("2d");
+            new Chart(ctx, {
+                type: "line", // Line chart
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: "New Orders",
+                            data: newOrders,
+                            borderColor: "#007bff",
+                            backgroundColor: "rgba(0, 123, 255, 0.1)",
+                            fill: true,
+                            tension: 0.4
+                        },
+                        {
+                            label: "Completed Orders",
+                            data: completedOrders,
+                            borderColor: "#28a745",
+                            backgroundColor: "rgba(40, 167, 69, 0.1)",
+                            fill: true,
+                            tension: 0.4
+                        },
+                        {
+                            label: "Delivered Orders",
+                            data: deliveredOrders,
+                            borderColor: "#ffc107",
+                            backgroundColor: "rgba(255, 193, 7, 0.1)",
+                            fill: true,
+                            tension: 0.4
+                        }
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: "bottom",
+                        },
+                        tooltip: {
+                            mode: "index",
+                            intersect: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Orders'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Date'
+                            }
+                        }
+                    }
+                }
+            });
+        },
+        error: function () {
+            alert("Chart data load করতে সমস্যা হচ্ছে!");
+        }
+    });
+});
+
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    $.ajax({
+        url: "{{ route('monthly.chart.data') }}",
+        type: "GET",
+        success: function (res) {
+            const ctx = document.getElementById('monthlySalesChart').getContext('2d');
+            const chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: res.labels,
+                    datasets: [{
+                        label: 'Monthly Sales Income',
+                        data: res.sales,
+                        backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function (value) {
+                                    return '৳' + value; // Bangladeshi Taka symbol
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    });
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    $.ajax({
+        url: "{{ route('chart.category.stock') }}",
+        type: "GET",
+        success: function (data) {
+            const labels = data.map(item => item.categoryName);
+            const stockData = data.map(item => item.total_stock);
+
+            const colors = [
+                '#007bff', '#28a745', '#ffc107', '#dc3545', '#6f42c1',
+                '#17a2b8', '#fd7e14', '#6610f2', '#20c997', '#e83e8c'
+            ];
+
+            const ctx = document.getElementById("categoryPieChart").getContext("2d");
+            new Chart(ctx, {
+                type: "pie",
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: "Total Stock",
+                        data: stockData,
+                        backgroundColor: colors.slice(0, labels.length),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                        }
+                    }
+                }
+            });
+        },
+        error: function () {
+            alert("ডেটা লোড করতে সমস্যা হচ্ছে!");
+        }
+    });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         const monthandyear = document.querySelector('.monthandyear');
         monthandyear.addEventListener('change', function(e) {
             alert(this.value)
