@@ -478,9 +478,9 @@ Route::controller(UserTrackerController::class)->group(function () {
     // Route::post('/company-details/status/{id}', 'status')->name('company-details.status');
 });
 
-Route::controller(VariantController::class)->group(function () {
-    Route::get('/check-mail-template/{id}', 'checkMail');
-});
+// Route::controller(VariantController::class)->group(function () {
+//     Route::get('/check-mail-template/{id}', 'checkMail');
+// });
 //User Tracker All Route End
 
 // require __DIR__ . '/auth.php';
