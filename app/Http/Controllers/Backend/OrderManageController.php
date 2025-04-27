@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Backend;
+
 use App\Mail\OrderMail;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Controller;
@@ -17,14 +18,16 @@ use Database\Seeders\UserSeed;
 
 class OrderManageController extends Controller
 {
-    public function allUser(){
+    public function allUser()
+    {
         $allUsers = User::all();
         return response()->json([
             'status' => 200,
             'allusers' => $allUsers
-            ]);
+        ]);
     }
-    public function SendSMS(Request $request){
+    public function SendSMS(Request $request)
+    {
         // dd($request->all());
         $number = $request->phone;
         $api_key = "0yRu5BkB8tK927YQBA8u";
@@ -33,7 +36,7 @@ class OrderManageController extends Controller
         $url = "http://bulksmsbd.net/api/smsapi";
         $data = [
             "api_key" => $api_key,
-            'number' =>$number,
+            'number' => $number,
             'senderid' => $senderid,
             'message' => $message
         ];
@@ -46,71 +49,82 @@ class OrderManageController extends Controller
         $response = curl_exec($ch);
         curl_close($ch);
         $response = json_decode($response, true);
-        if($response['response_code'] == 202){
-            return back()->with('success','Message Successfully Send');
-        }
-        else{
-            return back()->with('warring','Something went wrong Message not Send');
+        if ($response['response_code'] == 202) {
+            return back()->with('success', 'Message Successfully Send');
+        } else {
+            return back()->with('warring', 'Something went wrong Message not Send');
         }
     }
-    public function index(){
-        $newOrders = Order::where("status", 'pending')->orWhere('status','mismatchOrder')->latest()->get();
+    public function index()
+    {
+        $newOrders = Order::where("status", 'pending')->orWhere('status', 'mismatchOrder')->latest()->get();
 
         return view('backend.order.new-order', compact('newOrders'));
     }
-    public function approvedOrders(){
+    public function approvedOrders()
+    {
         $approved_orders = Order::where("status", 'approve')->latest()->get();
         return view('backend.order.approved-order', compact('approved_orders'));
     }
-    public function processedOrders(){
+    public function processedOrders()
+    {
         $processed_orders = Order::where("status", 'processing')->latest()->get();
         return view('backend.order.processed-order', compact('processed_orders'));
     }
-    public function deliveringOrders(){
+    public function deliveringOrders()
+    {
         $delivering_orders = DeliveryOrder::where("delivery_status", 'shipping')->with('order')->latest()->get();
         // dd($delivering_orders);
         return view('backend.order.logistics', compact('delivering_orders'));
     }
-    public function completedOrders(){
+    public function completedOrders()
+    {
         $completed_orders = Order::where("status", 'completed')->latest()->get();
         return view('backend.order.completed-order', compact('completed_orders'));
     }
-    public function refundOrders(){
+    public function refundOrders()
+    {
         $refunding_orders = Order::where("status", 'refunding')->latest()->get();
         return view('backend.order.refunding-order', compact('refunding_orders'));
     }
-    public function refundedOrders(){
+    public function refundedOrders()
+    {
         $refunded_orders = Order::where("status", 'refunded')->latest()->get();
         return view('backend.order.refunded-orders', compact('refunded_orders'));
     }
-    public function canceledOrders(){
+    public function canceledOrders()
+    {
         $canceled_orders = Order::where("status", 'canceled')->latest()->get();
         return view('backend.order.canceled-orders', compact('canceled_orders'));
     }
-    public function deniedOrders(){
+    public function deniedOrders()
+    {
         $denied_orders = Order::where("status", 'denied')->latest()->get();
         return view('backend.order.denied-orders', compact('denied_orders'));
     }
-    public function orderProcessing($invoice){
+    public function orderProcessing($invoice)
+    {
         // dd($invoice);
-        $processing_Orders = Order::where("invoice_number",$invoice)->latest()->first();
+        $processing_Orders = Order::where("invoice_number", $invoice)->latest()->first();
 
         // dd($processing_Orders);
         $processing_Orders->status = "processing";
         $processing_Orders->update();
-        return back()->with('success','Order Status Updated Sucessfully');
+        return back()->with('success', 'Order Status Updated Sucessfully');
     }
-    public function orderDelivering($invoice){
+    public function orderDelivering($invoice)
+    {
         // dd($invoice);
-        $orders_delivering = Order::where("invoice_number",$invoice)->latest()->first();
+        $orders_delivering = Order::where("invoice_number", $invoice)->latest()->first();
 
         $orders_delivering->status = "delivering";
         $orders_delivering->update();
-        return back()->with('success','Order Status Updated Sucessfully');
+        return back()->with('success', 'Order Status Updated Sucessfully');
     }
 
-    public function orderCompleted($invoice){
-        $completed_Orders = Order::where("invoice_number",$invoice)->latest()->first();
+    public function orderCompleted($invoice)
+    {
+        $completed_Orders = Order::where("invoice_number", $invoice)->latest()->first();
         // dd($completed_Orders);
         $completed_Orders->status = "completed";
         $completed_Orders->update();
@@ -119,7 +133,7 @@ class OrderManageController extends Controller
         // dd($orderId);
         $orders = OrderDetails::where("order_id", $orderId)->get();
 
-        foreach($orders as $order){
+        foreach ($orders as $order) {
             // dd($order);
             $variant_id = $order->variant_id;
             // $product_id = $order->product_id;
@@ -135,61 +149,64 @@ class OrderManageController extends Controller
             // dd($variant->stock_quantity);
             $variant->update();
         }
-        return back()->with('success','Order Status Updated Sucessfully');
+        return back()->with('success', 'Order Status Updated Sucessfully');
     }
-    public function orderRefund($invoice){
-        $refund_orders = Order::where("invoice_number",$invoice)->latest()->first();
+    public function orderRefund($invoice)
+    {
+        $refund_orders = Order::where("invoice_number", $invoice)->latest()->first();
         $refund_orders->status = "refunding";
         $refund_orders->update();
-        return back()->with('success','Order Status Updated Sucessfully');
+        return back()->with('success', 'Order Status Updated Sucessfully');
     }
-    public function orderRefunded($invoice){
-        $refunded_orders = Order::where("invoice_number",$invoice)->latest()->first();
+    public function orderRefunded($invoice)
+    {
+        $refunded_orders = Order::where("invoice_number", $invoice)->latest()->first();
         $refunded_orders->status = "refunded";
         $refunded_orders->update();
-        return back()->with('success','Order Status Updated Sucessfully');
+        return back()->with('success', 'Order Status Updated Sucessfully');
     }
-    public function orderCancel($invoice){
-        $canceled_order = Order::where("invoice_number",$invoice)->latest()->first();
+    public function orderCancel($invoice)
+    {
+        $canceled_order = Order::where("invoice_number", $invoice)->latest()->first();
         $canceled_order->status = "canceled";
         $canceled_order->update();
-        return back()->with('success','Order Status Updated Sucessfully');
+        return back()->with('success', 'Order Status Updated Sucessfully');
     }
-    public function adminDenied($invoice){
+    public function adminDenied($invoice)
+    {
 
-        $denied_order = Order::where("invoice_number",$invoice)->latest()->first();
+        $denied_order = Order::where("invoice_number", $invoice)->latest()->first();
 
         $denied_order->status = "denied";
         $denied_order->update();
-        return back()->with('success','Order Status Denied Sucessfully');
+        return back()->with('success', 'Order Status Denied Sucessfully');
     }
-    public function adminApprove($id){
+    public function adminApprove($id)
+    {
 
-        $newOrders = Order::where("id",$id)->latest()->first();
+        $newOrders = Order::where("id", $id)->latest()->first();
 
-        $newOrders->status="approve";
+        $newOrders->status = "approve";
         $newOrders->update();
 
-    if($newOrders->user_id){
+        if ($newOrders->user_id) {
 
-       $user=UserDetails::where("user_id",$newOrders->user_id)->latest()->first();
+            $user = UserDetails::where("user_id", $newOrders->user_id)->latest()->first();
 
 
-       if($user->secondary_email){
+            if ($user->secondary_email) {
 
-        $orderMail = UserDetails::where("user_id",$newOrders->user_id)->latest()->first();
-        Mail::to($orderMail->secondary_email)->send(new OrderConformationMail($newOrders));
-       }else{
-        $orderMail = User::where("id",$newOrders->user_id)->latest()->first();
-        Mail::to($orderMail->email)->send(new OrderConformationMail($newOrders));
-       }
-    }
+                $orderMail = UserDetails::where("user_id", $newOrders->user_id)->latest()->first();
+                Mail::to($orderMail->secondary_email)->send(new OrderConformationMail($newOrders));
+            } else {
+                $orderMail = User::where("id", $newOrders->user_id)->latest()->first();
+                Mail::to($orderMail->email)->send(new OrderConformationMail($newOrders));
+            }
+        } else {
+            $orderMail = UserDetails::where("session_id", $newOrders->session_id)->latest()->first();
 
-    else{
-        $orderMail = UserDetails::where("session_id",$newOrders->session_id)->latest()->first();
-    
-        Mail::to($orderMail->secondary_email)->send(new OrderConformationMail($newOrders));
-    }
+            Mail::to($orderMail->secondary_email)->send(new OrderConformationMail($newOrders));
+        }
 
 
 
@@ -201,11 +218,11 @@ class OrderManageController extends Controller
         $number = $newOrders->user_identity;
         $api_key = "0yRu5BkB8tK927YQBA8u";
         $senderid = "8809617615171";
-        $message = "Your order has been confirmed. your invoice number is : ".$newOrders->invoice_number." you find your product using this invoice Number in here: ".$trackingUrl;
+        $message = "Your order has been confirmed. your invoice number is : " . $newOrders->invoice_number . " you find your product using this invoice Number in here: " . $trackingUrl;
         $url = "http://bulksmsbd.net/api/smsapi";
         $data = [
             "api_key" => $api_key,
-            'number' =>$number,
+            'number' => $number,
             'senderid' => $senderid,
             'message' => $message
         ];
@@ -217,12 +234,12 @@ class OrderManageController extends Controller
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         $response = curl_exec($ch);
         curl_close($ch);
-        $email = OrderBillingDetails::where('order_id',$newOrders->id)->first();
+        $email = OrderBillingDetails::where('order_id', $newOrders->id)->first();
         $url = 'https://sobrokom.store/order-tracking/invoice';
         $data = [
             'name' => $newOrders->first_name,
             'invoiceNumber' => $newOrders->invoice_number,
-            'trackingURL'=> $url
+            'trackingURL' => $url
         ];
         // if(!empty($email->email)){
         //     Mail::to($email->email)->send(new OrderMail($data));
@@ -230,23 +247,25 @@ class OrderManageController extends Controller
 
 
         $response = json_decode($response, true);
-        if($response['response_code'] == 202){
-            return back()->with('success','Order Successfully Approved');
-        }
-        else{
-            return back()->with('warring','Something went wrong Order Not Approved');
+        if ($response['response_code'] == 202) {
+            return back()->with('success', 'Order Successfully Approved');
+        } else {
+            return back()->with('warring', 'Something went wrong Order Not Approved');
         }
     }
-    public function orderTracking(){
+    public function orderTracking()
+    {
         return view('frontend/e-com/tracking-product');
     }
-    public function orderTrackingInvoice(Request $request){
+    public function orderTrackingInvoice(Request $request)
+    {
         $searchTag = $request->search;
         $trackes = Order::where('invoice_number', $request->search)->get();
-        return view('frontend/e-com/tracking-product', compact('trackes','searchTag'));
+        return view('frontend/e-com/tracking-product', compact('trackes', 'searchTag'));
     }
 
-    public function DetailOrders($order_id){
+    public function DetailOrders($order_id)
+    {
 
         $orders = Order::findOrFail($order_id);
         // dd($orders);
@@ -255,7 +274,7 @@ class OrderManageController extends Controller
         // $order_details->update();
         return back();
     }
-     public function thank($id)
+    public function thank($id)
     {
         $order = Order::where('invoice_number', $id)->first();
         $order_details = OrderDetails::where('order_id', $order->id)->get();
@@ -263,19 +282,19 @@ class OrderManageController extends Controller
         return view('frontend.e-com.thank-you', compact('order', 'order_details', 'billing'));
     }
 
-    public function getOrderDetails(Request $request){
+    public function getOrderDetails(Request $request)
+    {
         $order_id = $request->order_id;
 
-         $getorder= Order::where('id',$order_id)->first();
-         $user_id = $getorder->user_id??$getorder->session_id;
+        $getorder = Order::where('id', $order_id)->first();
+        $user_id = $getorder->user_id ?? $getorder->session_id;
 
-         $userInfo = UserDetails::where('user_id',$user_id)->orWhere('session_id',$user_id)->first();
+        $userInfo = UserDetails::where('user_id', $user_id)->orWhere('session_id', $user_id)->first();
 
-         return response()->json([
+        return response()->json([
             'status' => 200,
             'userInfo' => $userInfo,
             'order' => $getorder
-         ]);
-
+        ]);
     }
 }

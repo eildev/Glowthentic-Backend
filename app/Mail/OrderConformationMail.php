@@ -22,7 +22,8 @@ class OrderConformationMail extends Mailable
         $this->newOrders = $newOrders;
     }
 
-    public function build(){
-        return  $this->subject('Order Conformation Mail')->view('backend.order.orderConformMail')->with('order',$this->newOrders);
+    public function build()
+    {
+        return  $this->subject('Order Conformation Mail')->view('backend.order.mail-templete')->with('order', $this->newOrders);
     }
 }
