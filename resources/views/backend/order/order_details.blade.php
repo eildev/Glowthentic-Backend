@@ -13,7 +13,7 @@
                     $first_name = $customers->full_name ?? '';
 
                     $email = $customers->user->email ?? '';
-                    $phone = $customers->phone_number ?? '';
+                    $phone = $customers?->phone_number ? (substr($customers?->phone_number, 0, 1) === '0' ? $customers?->phone_number : '0' . $customers?->phone_number) : '0';
                     $address_1 = $customers->address ?? '';
 
                     $city = $customers->city ?? '';

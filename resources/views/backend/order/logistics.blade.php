@@ -62,7 +62,9 @@
                                             <td>{{ $formattedDate }}</td>
                                             <td>{{ $delivering_orders->order->invoice_number ?? '' }}</td>
                                             <td>{{ $customers->full_name ?? '' }}</td>
-                                            <td>{{ $customers->phone_number ?? '' }}</td>
+                                            <td>
+                                                {{ $customers->phone_number ? (substr($customers->phone_number, 0, 1) === '0' ? $customers->phone_number : '0' . $customers->phone_number) : '0' }}
+                                            </td>
                                             <td>{{ $delivering_orders->order->total_quantity ?? 0 }}</td>
                                             <td>{{ $delivering_orders->order->grand_total ?? 0 }}</td>
                                             <td>{{ $delivering_orders->order->payment_method ?? '' }}</td>

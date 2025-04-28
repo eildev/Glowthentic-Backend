@@ -64,15 +64,18 @@
                                             <td>{{ $formattedDate }}</td>
                                             <td>{{ $transit_orders->order->invoice_number ?? '' }}</td>
                                             <td>{{ $customers->name ?? '' }}</td>
-                                            <td>{{ $customers->phone_number ?? '' }}</td>
+                                            <td>
+                                                {{ $customers?->phone_number ? (substr($customers?->phone_number, 0, 1) === '0' ? $customers?->phone_number : '0' . $customers?->phone_number) : '0' }}
+                                            </td>
                                             <td>{{ $transit_orders->order->total_quantity ?? 0 }}</td>
                                             <td>{{ $transit_orders->order->grand_total ?? 0 }}</td>
                                             <td>{{ $transit_orders->order->payment_method ?? '' }}</td>
                                             <td>{{ $transit_orders->order->payment_status ?? '' }}</td>
                                             <td>
-                                                <span class="text-warning text-capitalize">{{ $transit_orders->delivery_status ?? "" }}</span>
+                                                <span
+                                                    class="text-warning text-capitalize">{{ $transit_orders->delivery_status ?? '' }}</span>
                                             </td>
-                                            <td>{{ $customers->address ?? "" }}</td>
+                                            <td>{{ $customers->address ?? '' }}</td>
                                             <td>
                                                 {{-- <a href="{{ route('admin.completed.order',$delivering_orders->order->invoice_number) }}" class="btn btn-sm btn-info">Complete</a> --}}
 

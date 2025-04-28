@@ -58,7 +58,9 @@
                                                 <td>{{ $formattedDate }}</td>
                                                 <td>{{ $order->invoice_number ?? 0 }}</td>
                                                 <td>{{ $customers->full_name ?? '' }}</td>
-                                                <td>{{ $customers->phone_number ?? '' }}</td>
+                                                <td>
+                                                    {{ $customers->phone_number ? (substr($customers->phone_number, 0, 1) === '0' ? $customers->phone_number : '0' . $customers->phone_number) : '0' }}
+                                                </td>
                                                 <td>{{ $order->total_quantity ?? 0 }}</td>
                                                 <td>{{ $order->grand_total ?? 0 }}</td>
                                                 <td>{{ $order->payment_method ?? '' }}</td>
@@ -177,7 +179,9 @@
                                                 <td>{{ $formattedDate }}</td>
                                                 <td>{{ $order->invoice_number ?? 0 }}</td>
                                                 <td>{{ $customers->full_name ?? '' }}</td>
-                                                <td>{{ $customers->phone_number ?? 0 }}</td>
+                                                <td>
+                                                    {{ $customers->phone_number ? (substr($customers->phone_number, 0, 1) === '0' ? $customers->phone_number : '0' . $customers->phone_number) : '0' }}
+                                                </td>
                                                 <td>{{ $order->total_quantity ?? 0 }}</td>
                                                 <td>{{ $order->grand_total ?? 0 }}</td>
                                                 <td>{{ $order->payment_method ?? '' }}</td>
@@ -214,45 +218,5 @@
         </div>
         <!--end row-->
     </div>
-
-
-    <style>
-        /* Ensure text in the address column wraps */
-        /* .address-cell {
-                        max-width: 400px !important;
-                       
-                        min-width: 150px !important;
-                       
-                        overflow-wrap: break-word !important;
-                        white-space: normal !important;
-                       
-                        word-break: break-all !important;
-                     
-                        overflow: hidden;
-                      
-                        text-overflow: ellipsis;
-                      
-                        vertical-align: top;
-                    
-                    } */
-
-        /* Ensure table cells respect max-width and align properly */
-        /* #order_table td,
-                    #order_table th {
-                        max-width: 350px !important;
-                   
-                        overflow: hidden;
-                       
-                        vertical-align: middle;
-                   
-                    } */
-
-        /* Override DataTables default nowrap */
-        #order_table td:nth-child(11) {
-            max-width: 350px !important;
-            white-space: normal !important;
-
-        }
-    </style>
 
 @endsection
