@@ -153,7 +153,8 @@ Route::controller(ApiBlogCommentController::class)->group(function () {
 Route::controller(ApiOrderController::class)->group(function () {
     Route::post('/order/create', 'store')->name('order.store');
     Route::get('/order/{id}', 'show')->name('order.show');
-    Route::post('order/tracking', 'trackingOrder');
+    Route::post('/order/tracking', 'trackingOrder');
+    Route::get('/get-order/tracking/{id}', 'getTrackingOrder');
     Route::get('/order/get/{user_idOrSesssion_id}', 'getOrder');
     Route::get('/order/processing/{user_idOrSesssion_id}', 'getProcessingOrder');
 });
