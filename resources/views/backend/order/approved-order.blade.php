@@ -56,9 +56,9 @@
                                             <td>{{ $order->invoice_number ?? 0 }}</td>
                                             <td>{{ $customers->name ?? '' }}</td>
                                             <td>{{ $customers->phone_number ?? '' }}</td>
-                                            <td>{{ $order->total_quantity ?? '' }}</td>
-                                            <td>{{ $order->grand_total ?? '' }}</td>
-                                            <td>{{ $order->payment_method ?? '' }}</td>
+                                            <td>{{ $order->total_quantity ?? 0 }}</td>
+                                            <td>{{ $order->grand_total ?? 0 }}</td>
+                                            <td>{{ $order->payment_method ?? 0 }}</td>
                                             <td>{{ $order->payment_status ?? '' }}</td>
 
                                             <td>
@@ -79,7 +79,7 @@
                                     @endforeach
                                 @else
                                     <tr>
-                                        <td colspan="10" class="text-center text-warning">Data not Found</td>
+                                        <td colspan="12" class="text-center text-warning">Data not Found</td>
                                     </tr>
                                 @endif
                             </tbody>

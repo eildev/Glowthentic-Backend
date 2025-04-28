@@ -69,7 +69,7 @@
                                                         {{ $order->status ?? '' }}
                                                     </span>
                                                 </td>
-                                                <td>{{ $customers->address ?? '' }}</td>
+                                                <td class="address-cell">{{ $customers->address ?? '' }}</td>
                                                 <td>
                                                     <a href="{{ route('admin.approve.order', $order->id) }}"
                                                         class="btn btn-sm btn-info">Approve</a>
@@ -214,5 +214,45 @@
         </div>
         <!--end row-->
     </div>
+
+
+    <style>
+        /* Ensure text in the address column wraps */
+        /* .address-cell {
+                        max-width: 400px !important;
+                       
+                        min-width: 150px !important;
+                       
+                        overflow-wrap: break-word !important;
+                        white-space: normal !important;
+                       
+                        word-break: break-all !important;
+                     
+                        overflow: hidden;
+                      
+                        text-overflow: ellipsis;
+                      
+                        vertical-align: top;
+                    
+                    } */
+
+        /* Ensure table cells respect max-width and align properly */
+        /* #order_table td,
+                    #order_table th {
+                        max-width: 350px !important;
+                   
+                        overflow: hidden;
+                       
+                        vertical-align: middle;
+                   
+                    } */
+
+        /* Override DataTables default nowrap */
+        #order_table td:nth-child(11) {
+            max-width: 350px !important;
+            white-space: normal !important;
+
+        }
+    </style>
 
 @endsection

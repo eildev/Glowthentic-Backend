@@ -19,6 +19,7 @@
                                     <th>SI</th>
                                         <th>Date</th>
                                         <th>Invoice no</th>
+                                        <th>User Name</th>
                                         <th>User Phone Number</th>
                                         <th>Product Qty</th>
                                         <th>Amount</th>
@@ -52,19 +53,20 @@
                                         <tr>
                                             <td>{{ $serialNumber++ }}</td>
                                             <td>{{ $formattedDate }}</td>
-                                            <td>{{ $order->invoice_number }}</td>
-                                            <td>{{$customers->phone_number}}</td>
-                                            <td>{{ $order->total_quantity }}</td>
-                                            <td>{{ $order->grand_total }}</td>
-                                            <td>{{ $order->payment_method }}</td>
-                                            <td>{{ $order->payment_status }}</td>
+                                            <td>{{ $order->invoice_number ?? 0 }}</td>
+                                            <td>{{ $customers->full_name ?? '' }}</td>
+                                            <td>{{ $customers->phone_number ?? '' }}</td>
+                                            <td>{{ $order->total_quantity ?? 0 }}</td>
+                                            <td>{{ $order->grand_total ?? 0 }}</td>
+                                            <td>{{ $order->payment_method ?? 0 }}</td>
+                                            <td>{{ $order->payment_status ?? '' }}</td>
 
                                             <td>
                                                 <span class="text-warning text-capitalize">
-                                                    {{ $order->status }}
+                                                    {{ $order->status ?? '' }}
                                                 </span>
                                             </td>
-                                            <td>{{$customers->address}}</td>
+                                            <td>{{ $customers->address ?? '' }}</td>
                                             <td>
                                                 <a href="#" class="btn btn-info btn-sm text-light send_data_id" data-id="{{$order->id}}" data-bs-toggle="modal"
                                                 data-bs-target="#orderAssign">
@@ -78,7 +80,7 @@
                                     @endforeach
                                 @else
                                     <tr>
-                                        <td colspan="10" class="text-center text-warning">Data not Found</td>
+                                        <td colspan="12" class="text-center text-warning">Data not Found</td>
                                     </tr>
                                 @endif
                             </tbody>
