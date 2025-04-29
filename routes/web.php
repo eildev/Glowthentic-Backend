@@ -37,6 +37,7 @@ use App\Http\Controllers\Backend\DeliverOrderAssignController;
 use App\Http\Controllers\Backend\FeatureController;
 use App\Http\Controllers\Backend\CourierController;
 use App\Http\Controllers\Backend\ColorController;
+use App\Http\Controllers\Backend\VariantController;
 
 // Route::get('/home', function () {
 //     return view('frontend.index');
@@ -73,8 +74,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/current-history/{value}', 'CurrentHistory');
         Route::get('order/chart', 'OrderChart')->name('order.chart.data');
         Route::get('stock/category/chart', 'categoryStockChart')->name('chart.category.stock');
-        Route::get('monthly/chart/data','monthlyChartData')->name('monthly.chart.data');
-
+        Route::get('monthly/chart/data', 'monthlyChartData')->name('monthly.chart.data');
     });
     // Marketing for SMS Marketing Routes
     Route::controller(MarketingController::class)->group(function () {
@@ -250,14 +250,14 @@ Route::middleware('auth')->group(function () {
 
         Route::post('/promotion/product/store', 'store')->name('promotion.store');
         Route::post('product/promotion/add/variant', 'productPromotionVariantShow')->name('product.promotion.add.variant');
-       Route::post('promotion/update','update')->name('promotion.update');
-       Route::post('/promotion/product/delete/', 'delete')->name('promotion.delete');
+        Route::post('promotion/update', 'update')->name('promotion.update');
+        Route::post('/promotion/product/delete/', 'delete')->name('promotion.delete');
 
         Route::post('product/promotion/add/category', 'productPromotionCategoryShow')->name('product.promotion.add.category');
         Route::get('admin/product/promotion/edit/{id}', 'edit')->name('admin.product.promotion.edit');
         Route::post('/product/promotion/variant/delete/', 'variantDelete')->name('promotion.variant.delete');
-        Route::post('promotion/delete','Promotiondelete')->name('product.promotion.delete');
-         Route::get('product/promotion/view/{promotion_id}','PromotionView')->name('product.promotion.view');
+        Route::post('promotion/delete', 'Promotiondelete')->name('product.promotion.delete');
+        Route::get('product/promotion/view/{promotion_id}', 'PromotionView')->name('product.promotion.view');
 
         Route::post('/product/promotion/status/{id}', 'statusUpdate')->name('product.promotion.status');
         Route::get('/get/product/and/promotion', 'getProductPromotion');
@@ -278,12 +278,11 @@ Route::middleware('auth')->group(function () {
 
 
 
-  Route::controller(CourierController::class)->group(function(){
-   Route::get('steadFast/courier', 'steadfast')->name('Courier.steadfast');
-   Route::post('steadFast/courier/store', 'steadfastSend')->name('steadfast.send');
-   Route::get('Courier/Manage/steadfast/order','All')->name('Courier.Manage.steadfast.order');
-
-  });
+    Route::controller(CourierController::class)->group(function () {
+        Route::get('steadFast/courier', 'steadfast')->name('Courier.steadfast');
+        Route::post('steadFast/courier/store', 'steadfastSend')->name('steadfast.send');
+        Route::get('Courier/Manage/steadfast/order', 'All')->name('Courier.Manage.steadfast.order');
+    });
 
     //All Routes for Global Coupons Start
     Route::controller(GlobalCouponController::class)->group(function () {
@@ -342,20 +341,20 @@ Route::middleware('auth')->group(function () {
         Route::get('order/delivered', 'Delivered')->name('order.delivered');
     });
 
-          /////////////////////////////Product Size Add///////////////////////////
-          Route::controller(SizeController::class)->group(function () {
-            Route::get('/size/view', 'SizeView')->name('size.view');
-            Route::post('/size/store', 'SizeStore')->name('admin.products.addSize');
-            Route::get('/size/edit/{id}', 'SizeEdit')->name('size.edit');
-            Route::post('/size/update', 'SizeUpdate')->name('admin.products.updateSize');
-            Route::post('/size/delete', 'SizeDelete')->name('admin.products.deleteSize');
-            Route::get('admin/products/getSize', 'SizeGet')->name('admin.products.getSize');
-        });
+    /////////////////////////////Product Size Add///////////////////////////
+    Route::controller(SizeController::class)->group(function () {
+        Route::get('/size/view', 'SizeView')->name('size.view');
+        Route::post('/size/store', 'SizeStore')->name('admin.products.addSize');
+        Route::get('/size/edit/{id}', 'SizeEdit')->name('size.edit');
+        Route::post('/size/update', 'SizeUpdate')->name('admin.products.updateSize');
+        Route::post('/size/delete', 'SizeDelete')->name('admin.products.deleteSize');
+        Route::get('admin/products/getSize', 'SizeGet')->name('admin.products.getSize');
+    });
 
 
-      /////////////////////////////Product Color Add///////////////////////////
+    /////////////////////////////Product Color Add///////////////////////////
 
-     Route::controller(ColorController::class)->group(function () {
+    Route::controller(ColorController::class)->group(function () {
         Route::get('/color/view', 'ColorView')->name('color.view');
         Route::get('/color/get', 'ColorGet')->name('admin.products.getColor');
         Route::post('/color/store', 'ColorStore')->name('admin.products.addColor');
@@ -478,6 +477,10 @@ Route::controller(UserTrackerController::class)->group(function () {
     // Route::get('/company-details/delete/{id}', 'delete')->name('company-details.delete');
     // Route::post('/company-details/status/{id}', 'status')->name('company-details.status');
 });
+
+// Route::controller(VariantController::class)->group(function () {
+//     Route::get('/check-mail-template/{id}', 'checkMail');
+// });
 //User Tracker All Route End
 
 // require __DIR__ . '/auth.php';

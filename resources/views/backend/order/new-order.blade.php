@@ -16,6 +16,7 @@
                                     <th>SI</th>
                                     <th>Date</th>
                                     <th>Invoice no</th>
+                                    <th>User Name</th>
                                     <th>User Phone Number</th>
                                     <th>Product Qty</th>
                                     <th>Amount</th>
@@ -33,15 +34,19 @@
                                 @endphp
                                 @if ($newOrders->count() > 0)
                                     @foreach ($newOrders as $order)
-
-                                    @php
-                                    if($order->user_id!=null){
-                                        $customers = App\Models\UserDetails::where('user_id', $order->user_id)->first();
-                                        }
-                                    else{
-                                        $customers = App\Models\UserDetails::where('session_id',$order->session_id)->first();
-                                    }
-                                    @endphp
+                                        @php
+                                            if ($order->user_id != null) {
+                                                $customers = App\Models\UserDetails::where(
+                                                    'user_id',
+                                                    $order->user_id,
+                                                )->first();
+                                            } else {
+                                                $customers = App\Models\UserDetails::where(
+                                                    'session_id',
+                                                    $order->session_id,
+                                                )->first();
+                                            }
+                                        @endphp
                                         @if ($order->product_quantity >= '20')
                                             @php
                                                 $originalDateString = $order->created_at;
@@ -51,19 +56,24 @@
                                             <tr>
                                                 <td>{{ $serialNumber++ }}</td>
                                                 <td>{{ $formattedDate }}</td>
-                                                <td>{{ $order->invoice_number }}</td>
-                                                <td>{{$customers->phone_number}}</td>
-                                                <td>{{ $order->total_quantity }}</td>
-                                                <td>{{ $order->grand_total }}</td>
-                                                <td>{{ $order->payment_method }}</td>
-                                                <td>{{ $order->payment_status }}</td>
+                                                <td>{{ $order->invoice_number ?? 0 }}</td>
+                                                <td>{{ $customers->full_name ?? '' }}</td>
+                                                <td>
+                                                    {{ $customers->phone_number ? (substr($customers->phone_number, 0, 1) === '0' ? $customers->phone_number : '0' . $customers->phone_number) : '0' }}
+                                                </td>
+                                                <td>{{ $order->total_quantity ?? 0 }}</td>
+                                                <td>{{ $order->grand_total ?? 0 }}</td>
+                                                <td>{{ $order->payment_method ?? '' }}</td>
+                                                <td>{{ $order->payment_status ?? '' }}</td>
 
                                                 <td>
-                                                    <span class="text-warning text-capitalize">{{ $order->status }}</span>
+                                                    <span class="text-warning text-capitalize">
+                                                        {{ $order->status ?? '' }}
+                                                    </span>
                                                 </td>
-                                                <td>{{$customers->address}}</td>
+                                                <td class="address-cell">{{ $customers->address ?? '' }}</td>
                                                 <td>
-                                                    <a href="{{ route('admin.approve.order',$order->id) }}"
+                                                    <a href="{{ route('admin.approve.order', $order->id) }}"
                                                         class="btn btn-sm btn-info">Approve</a>
                                                     <a href="{{ route('order.details', $order->id) }}"
                                                         class="btn btn-sm btn-success">View</a>
@@ -71,7 +81,6 @@
                                                         class="btn btn-sm btn-danger" id="delete">Denied</a>
                                                 </td>
                                             </tr>
-
                                         @endif
                                         <!-- Modal -->
                                         <div class="modal fade" id="sms{{ $order->id }}" tabindex="-1"
@@ -107,7 +116,7 @@
                                     @endforeach
                                 @else
                                     <tr>
-                                        <td colspan="10" class="text-center text-warning">Data not Found</td>
+                                        <td colspan="12" class="text-center text-warning">Data not Found</td>
                                     </tr>
                                 @endif
                             </tbody>
@@ -127,6 +136,7 @@
                                     <th>SI</th>
                                     <th>Date</th>
                                     <th>Invoice no</th>
+                                    <th>User Name</th>
                                     <th>User Phone Number</th>
                                     <th>Product Qty</th>
                                     <th>Amount</th>
@@ -144,15 +154,19 @@
                                 @if ($newOrders->count() > 0)
                                     {{-- @dd($newOrders); --}}
                                     @foreach ($newOrders as $order)
-
-                                    @php
-                                    if($order->user_id!=null){
-                                        $customers = App\Models\UserDetails::where('user_id', $order->user_id)->first();
-                                        }
-                                    else{
-                                        $customers = App\Models\UserDetails::where('session_id',$order->session_id)->first();
-                                    }
-                                    @endphp
+                                        @php
+                                            if ($order->user_id != null) {
+                                                $customers = App\Models\UserDetails::where(
+                                                    'user_id',
+                                                    $order->user_id,
+                                                )->first();
+                                            } else {
+                                                $customers = App\Models\UserDetails::where(
+                                                    'session_id',
+                                                    $order->session_id,
+                                                )->first();
+                                            }
+                                        @endphp
 
                                         @if ($order->product_quantity <= '20')
                                             @php
@@ -163,21 +177,24 @@
                                             <tr>
                                                 <td>{{ $serialNumber++ }}</td>
                                                 <td>{{ $formattedDate }}</td>
-                                                <td>{{ $order->invoice_number }}</td>
-                                                <td>{{$customers->phone_number}}</td>
-                                                <td>{{ $order->total_quantity }}</td>
-                                                <td>{{ $order->grand_total }}</td>
-                                                <td>{{ $order->payment_method }}</td>
-                                                <td>{{ $order->payment_status }}</td>
+                                                <td>{{ $order->invoice_number ?? 0 }}</td>
+                                                <td>{{ $customers->full_name ?? '' }}</td>
+                                                <td>
+                                                    {{ $customers->phone_number ? (substr($customers->phone_number, 0, 1) === '0' ? $customers->phone_number : '0' . $customers->phone_number) : '0' }}
+                                                </td>
+                                                <td>{{ $order->total_quantity ?? 0 }}</td>
+                                                <td>{{ $order->grand_total ?? 0 }}</td>
+                                                <td>{{ $order->payment_method ?? '' }}</td>
+                                                <td>{{ $order->payment_status ?? '' }}</td>
 
                                                 <td>
                                                     <span class="text-warning text-capitalize">
-                                                        {{ $order->status }}
+                                                        {{ $order->status ?? '' }}
                                                     </span>
                                                 </td>
-                                                <td>{{$customers->address}}</td>
+                                                <td>{{ $customers->address ?? '' }}</td>
                                                 <td>
-                                                    <a href="{{ route('admin.approve.order',$order->id) }}"
+                                                    <a href="{{ route('admin.approve.order', $order->id) }}"
                                                         class="btn btn-sm btn-info">Approve</a>
                                                     <a href="{{ route('order.details', $order->id) }}"
                                                         class="btn btn-sm btn-success">View</a>
@@ -189,7 +206,7 @@
                                     @endforeach
                                 @else
                                     <tr>
-                                        <td colspan="10" class="text-center text-warning">Data not Found</td>
+                                        <td colspan="12" class="text-center text-warning">Data not Found</td>
                                     </tr>
                                 @endif
                             </tbody>

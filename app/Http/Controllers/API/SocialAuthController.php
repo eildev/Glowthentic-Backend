@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\UserDetails;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
@@ -21,6 +22,7 @@ class SocialAuthController extends Controller
     {
         try {
             $socialUser = Socialite::driver('google')->stateless()->user();
+            // dd($socialUser);
             $user = User::firstOrCreate(
                 ['email' => $socialUser->getEmail()],
                 [
@@ -30,6 +32,14 @@ class SocialAuthController extends Controller
                     'email_verified_at' => Carbon::now(),
                     'role' => 'user',
                     'status' => 'active',
+                ]
+            );
+            UserDetails::firstOrCreate(
+                ['secondary_email' => $socialUser->getEmail()],
+                [
+                    'user_id' => $user->id,
+                    'full_name' => $socialUser->getName(),
+                    'image'  => $socialUser->getAvatar()
                 ]
             );
 

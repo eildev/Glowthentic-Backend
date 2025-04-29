@@ -17,9 +17,9 @@ return new class extends Migration
             $table->string('session_id')->nullable();
             $table->string('full_name');
             $table->string('secondary_email')->nullable();
-            $table->longText('address');
-            $table->string('phone_number');
-            $table->string('city');
+            $table->longText('address')->nullable();
+            $table->string('phone_number')->nullable();
+            $table->string('city')->nullable();
             $table->string('postal_code')->nullable();
             $table->string('police_station')->nullable();
             $table->string('image')->nullable();

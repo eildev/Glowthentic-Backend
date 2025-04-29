@@ -291,23 +291,23 @@ class ApiOrderController extends Controller
 
                 $category_promotion_coupon = $category_promotion
                     ? Coupon::where('id', $category_promotion->promotion_id)
-                        ->where('is_global', 0)
-                        ->where('end_date', '>=', Carbon::today())
-                        ->first()
+                    ->where('is_global', 0)
+                    ->where('end_date', '>=', Carbon::today())
+                    ->first()
                     : null;
 
                 $product_promotion_coupon = $product_promotion
                     ? Coupon::where('id', $product_promotion->promotion_id)
-                        ->where('is_global', 0)
-                        ->where('end_date', '>=', Carbon::today())
-                        ->first()
+                    ->where('is_global', 0)
+                    ->where('end_date', '>=', Carbon::today())
+                    ->first()
                     : null;
 
                 $variant_promotion_coupon = $variant_promotion
                     ? Coupon::where('id', $variant_promotion->promotion_id)
-                        ->where('is_global', 0)
-                        ->where('end_date', '>=', Carbon::today())
-                        ->first()
+                    ->where('is_global', 0)
+                    ->where('end_date', '>=', Carbon::today())
+                    ->first()
                     : null;
 
                 $discount_amount = 0;
@@ -324,21 +324,19 @@ class ApiOrderController extends Controller
                     } else {
                         $discount_amount = ($variant->regular_price * $product_promotion_coupon->discount_value / 100) * $product['variant_quantity'];
                     }
-                }
-                elseif ($variant_promotion_coupon) {
+                } elseif ($variant_promotion_coupon) {
 
                     if ($variant_promotion_coupon->discount_type == 'fixed') {
                         $discount_amount = $variant_promotion_coupon->discount_value * $product['variant_quantity'];
                     } else {
                         $discount_amount = ($variant->regular_price * $variant_promotion_coupon->discount_value / 100) * $product['variant_quantity'];
                     }
-
                 }
 
                 // Total values
                 $variant_quantity += $product['variant_quantity'];
                 $variant_price += $variant->price * $product['variant_quantity'];
-                $discount_price += $discount_amount??0;
+                $discount_price += $discount_amount ?? 0;
 
                 $single_product_total = ($variant->regular_price * $product['variant_quantity']) - $discount_amount;
                 // dd( $single_product_total);
@@ -348,7 +346,6 @@ class ApiOrderController extends Controller
 
                     $error_messages[] = 'Variant price is not matching with total price for variant ID: ' . $product['variant_id'];
                 }
-
             }
 
 
@@ -376,104 +373,104 @@ class ApiOrderController extends Controller
 
 
 
-              // Create order
-              $order = new Order();
-              $order->total_amount = $total_price;
-              $order->total_quantity = $total_quantity;
-              $order->payment_method = $request->payment_method;
-              $order->shipping_method = $request->shipping_method;
-              $order->shipping_charge = $request->shipping_charge;
-              $order->discount_amount=$total_discount;
-              if ($request->payment_method == 'COD') {
-                  $order->payment_status = 'due';
-              } else {
-                  $order->payment_status = 'paid';
-              }
-              $order->status = 'pending';
-              $order->order_note = $request->order_note;
-              $order->invoice_number = rand(100000, 999999);
+            // Create order
+            $order = new Order();
+            $order->total_amount = $total_price;
+            $order->total_quantity = $total_quantity;
+            $order->payment_method = $request->payment_method;
+            $order->shipping_method = $request->shipping_method;
+            $order->shipping_charge = $request->shipping_charge;
+            $order->discount_amount = $total_discount;
+            if ($request->payment_method == 'COD') {
+                $order->payment_status = 'due';
+            } else {
+                $order->payment_status = 'paid';
+            }
+            $order->status = 'pending';
+            $order->order_note = $request->order_note;
+            $order->invoice_number = rand(100000, 999999);
 
-              if ($request->user_id) {
-                  $order->user_id = $request->user_id;
-              } else if ($request->session_id) {
-                  $order->session_id = $request->session_id;
-              }
+            if ($request->user_id) {
+                $order->user_id = $request->user_id;
+            } else if ($request->session_id) {
+                $order->session_id = $request->session_id;
+            }
 
-              $verified_phone = BillingInformation::where(function ($query) use ($request) {
-                  $query->where('user_id', $request->user_id)
-                      ->orWhere('session_id', $request->session_id);
-              })->first();
-              if ($verified_phone) {
-                  $order->phone_number = $verified_phone->phone;
-              } else {
-                  $order->phone_number = $request->phone_number;
-              }
+            $verified_phone = BillingInformation::where(function ($query) use ($request) {
+                $query->where('user_id', $request->user_id)
+                    ->orWhere('session_id', $request->session_id);
+            })->first();
+            if ($verified_phone) {
+                $order->phone_number = $verified_phone->phone;
+            } else {
+                $order->phone_number = $request->phone_number;
+            }
 
-              // Coupon Validation
-              if ($request->coupon_code) {
-                  $coupon = Coupon::where('cupon_code', $request->coupon_code)
-                      ->where('is_global', 1)
-                      ->where('end_date', '>=', Carbon::today())
-                      ->first();
-                  if (!$coupon) {
-                      $error_messages[] = 'Invalid Coupon Code: ' . $request->coupon_code;
-                      $order->sub_total = $total_price;
-                      $order->grand_total = $total_price + $request->shipping_charge;
-                  } else {
-                      $order->global_coupon_id = $coupon->id;
-                      if ($coupon->discount_type == 'fixed') {
-                          $order->sub_total = $total_price - $coupon->discount_value;
-                          $order->grand_total = $total_price + $request->shipping_charge - $coupon->discount_value + $request->tax;
-                      } else {
-                          $order->sub_total = $total_price - ($total_price * $coupon->discount_value) / 100;
-                          $order->grand_total = $total_price + $request->shipping_charge - ($total_price * $coupon->discount_value) / 100+$request->tax;
-                      }
-                  }
-              } else {
+            // Coupon Validation
+            if ($request->coupon_code) {
+                $coupon = Coupon::where('cupon_code', $request->coupon_code)
+                    ->where('is_global', 1)
+                    ->where('end_date', '>=', Carbon::today())
+                    ->first();
+                if (!$coupon) {
+                    $error_messages[] = 'Invalid Coupon Code: ' . $request->coupon_code;
+                    $order->sub_total = $total_price;
+                    $order->grand_total = $total_price + $request->shipping_charge;
+                } else {
+                    $order->global_coupon_id = $coupon->id;
+                    if ($coupon->discount_type == 'fixed') {
+                        $order->sub_total = $total_price - $coupon->discount_value;
+                        $order->grand_total = $total_price + $request->shipping_charge - $coupon->discount_value + $request->tax;
+                    } else {
+                        $order->sub_total = $total_price - ($total_price * $coupon->discount_value) / 100;
+                        $order->grand_total = $total_price + $request->shipping_charge - ($total_price * $coupon->discount_value) / 100 + $request->tax;
+                    }
+                }
+            } else {
 
-                  $order->sub_total = $total_price;
-                  $order->grand_total = $total_price + $request->shipping_charge+$request->tax;
-              }
+                $order->sub_total = $total_price;
+                $order->grand_total = $total_price + $request->shipping_charge + $request->tax;
+            }
 
 
 
-              if(count( $error_messages)){
-                $order->status='mismatchOrder';
-              }
-              $order->save();
+            if (count($error_messages)) {
+                $order->status = 'mismatchOrder';
+            }
+            $order->save();
 
-              // Save order details
-              if ($order->id) {
-                  if ($request->products) {
-                      foreach ($request->products as $product) {
-                          $order_details = new OrderDetails();
-                          $order_details->order_id = $order->id;
-                          $order_details->product_id = $product['product_id'];
-                          $order_details->variant_id = $product['variant_id'];
-                          $order_details->product_quantity = $product['variant_quantity'];
-                          $order_details->unit_price = $product['variant_price'];
-                          $order_details->total_price = $product['variant_price'] * $product['variant_quantity'];
-                          $order_details->save();
-                      }
-                  }
+            // Save order details
+            if ($order->id) {
+                if ($request->products) {
+                    foreach ($request->products as $product) {
+                        $order_details = new OrderDetails();
+                        $order_details->order_id = $order->id;
+                        $order_details->product_id = $product['product_id'];
+                        $order_details->variant_id = $product['variant_id'];
+                        $order_details->product_quantity = $product['variant_quantity'];
+                        $order_details->unit_price = $product['variant_price'];
+                        $order_details->total_price = $product['variant_price'] * $product['variant_quantity'];
+                        $order_details->save();
+                    }
+                }
 
-                  if ($request->combo) {
-                      foreach ($request->combo as $combo) {
-                          $single_combo = Combo::where('id', $combo['combo_id'])->where('status', 'active')->first();
-                          if ($single_combo) {
-                              $order_details = new OrderDetails();
-                              $order_details->order_id = $order->id;
-                              $order_details->combo_id = $combo['combo_id'];
-                              $order_details->product_quantity = $combo['combo_quantity'];
-                              $order_details->unit_price = $single_combo->offerd_price;
-                              $order_details->total_price = $single_combo->offerd_price * ($combo['combo_quantity'] ?? 1);
-                              $order_details->save();
-                          }
-                      }
-                  }
-              }
+                if ($request->combo) {
+                    foreach ($request->combo as $combo) {
+                        $single_combo = Combo::where('id', $combo['combo_id'])->where('status', 'active')->first();
+                        if ($single_combo) {
+                            $order_details = new OrderDetails();
+                            $order_details->order_id = $order->id;
+                            $order_details->combo_id = $combo['combo_id'];
+                            $order_details->product_quantity = $combo['combo_quantity'];
+                            $order_details->unit_price = $single_combo->offerd_price;
+                            $order_details->total_price = $single_combo->offerd_price * ($combo['combo_quantity'] ?? 1);
+                            $order_details->save();
+                        }
+                    }
+                }
+            }
 
-              return response()->json([
+            return response()->json([
                 'status' => 200,
                 'order' => $order,
                 'order_details' => $order->orderDetails,
@@ -505,17 +502,15 @@ class ApiOrderController extends Controller
             $order = Order::where('invoice_number', $order_id)->with('orderDetails')->first();
             $order_details = OrderDetails::where('order_id', $order->id)->with('product', 'variant.variantImage')->get();
 
-            if($order->user_id){
-                $userDetails=UserDetails::where('user_id',$order->user_id)->first();
-                $billingInfo=BillingInformation::where('user_id',$order->user_id)->first();
-            }
-            else if($order->session_id){
-                $userDetails=UserDetails::where('session_id',$order->session_id)->first();
-                $billingInfo=BillingInformation::where('session_id',$order->session_id)->first();
-            }
-            else{
-                $userDetails=null;
-                $billingInfo=null;
+            if ($order->user_id) {
+                $userDetails = UserDetails::where('user_id', $order->user_id)->first();
+                $billingInfo = BillingInformation::where('user_id', $order->user_id)->first();
+            } else if ($order->session_id) {
+                $userDetails = UserDetails::where('session_id', $order->session_id)->first();
+                $billingInfo = BillingInformation::where('session_id', $order->session_id)->first();
+            } else {
+                $userDetails = null;
+                $billingInfo = null;
             }
 
 
@@ -524,7 +519,7 @@ class ApiOrderController extends Controller
                     return response()->json([
                         'status' => 200,
                         'order_tracking_status' => "Ordered",
-                        'order'=> $order,
+                        'order' => $order,
                         'orderDetails' => $order_details,
                         'userDetails' => $userDetails,
                         'billingInfo' => $billingInfo,
@@ -537,7 +532,7 @@ class ApiOrderController extends Controller
                         return response()->json([
                             'status' => 200,
                             'order_tracking_status' => "Shipped",
-                            'order'=> $order,
+                            'order' => $order,
                             'orderDetails' => $order_details,
                             'userDetails' => $userDetails,
                             'billingInfo' => $billingInfo,
@@ -547,7 +542,71 @@ class ApiOrderController extends Controller
                         return response()->json([
                             'status' => 200,
                             'order_tracking_status' => "Completed",
-                            'order'=> $order,
+                            'order' => $order,
+                            'orderDetails' => $order_details,
+                            'userDetails' => $userDetails,
+                            'billingInfo' => $billingInfo,
+                            'message' => 'Order completed Successfully',
+                        ]);
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 500,
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function getTrackingOrder($id)
+    {
+        try {
+            $order_id = $id;
+            $order = Order::where('invoice_number', $order_id)->with('orderDetails')->first();
+            $order_details = OrderDetails::where('order_id', $order->id)->with('product', 'variant.variantImage')->get();
+
+            if ($order->user_id) {
+                $userDetails = UserDetails::where('user_id', $order->user_id)->first();
+                $billingInfo = BillingInformation::where('user_id', $order->user_id)->first();
+            } else if ($order->session_id) {
+                $userDetails = UserDetails::where('session_id', $order->session_id)->first();
+                $billingInfo = BillingInformation::where('session_id', $order->session_id)->first();
+            } else {
+                $userDetails = null;
+                $billingInfo = null;
+            }
+
+
+            if ($order) {
+                if ($order->status != "Delivering") {
+                    return response()->json([
+                        'status' => 200,
+                        'order_tracking_status' => "Ordered",
+                        'order' => $order,
+                        'orderDetails' => $order_details,
+                        'userDetails' => $userDetails,
+                        'billingInfo' => $billingInfo,
+                        'message' => 'Order Tracking Successfully',
+                    ]);
+                } else {
+                    $delivered_order = DeliveryOrder::where('order_id', $order->id)->first();
+
+                    if ($delivered_order->delivery_status != "delivered") {
+                        return response()->json([
+                            'status' => 200,
+                            'order_tracking_status' => "Shipped",
+                            'order' => $order,
+                            'orderDetails' => $order_details,
+                            'userDetails' => $userDetails,
+                            'billingInfo' => $billingInfo,
+                            'message' => 'Order tracking shipped Successfully',
+                        ]);
+                    } else if ($delivered_order->delivery_status == "delivered") {
+                        return response()->json([
+                            'status' => 200,
+                            'order_tracking_status' => "Completed",
+                            'order' => $order,
                             'orderDetails' => $order_details,
                             'userDetails' => $userDetails,
                             'billingInfo' => $billingInfo,
@@ -574,7 +633,7 @@ class ApiOrderController extends Controller
     {
         try {
             // dd("hello");
-            $order = Order::where('user_id', $user_idOrSesssion_id)->orWhere('session_id', $user_idOrSesssion_id)->with('orderDetails.variant.variantImage','orderDetails.product','orderDetails.product.category')->get();
+            $order = Order::where('user_id', $user_idOrSesssion_id)->orWhere('session_id', $user_idOrSesssion_id)->with('orderDetails.variant.variantImage', 'orderDetails.product', 'orderDetails.product.category')->get();
 
 
             return response()->json([
@@ -594,9 +653,9 @@ class ApiOrderController extends Controller
     {
         try {
             $orders = Order::where(function ($query) use ($user_idOrSesssion_id) {
-                    $query->where('user_id', $user_idOrSesssion_id)
-                          ->orWhere('session_id', $user_idOrSesssion_id);
-                })
+                $query->where('user_id', $user_idOrSesssion_id)
+                    ->orWhere('session_id', $user_idOrSesssion_id);
+            })
                 ->whereIn('status', ['pending', 'approve', 'processing'])
                 ->with('orderDetails.variant.variantImage', 'orderDetails.product', 'orderDetails.product.category')
                 ->get();
@@ -621,40 +680,37 @@ class ApiOrderController extends Controller
     }
 
 
-    public function getCompletedOrder($user_idOrSesssion_id){
-        try{
-          $orders = Order::where(function ($query) use ($user_idOrSesssion_id) {
-              $query->where('user_id', $user_idOrSesssion_id)
+    public function getCompletedOrder($user_idOrSesssion_id)
+    {
+        try {
+            $orders = Order::where(function ($query) use ($user_idOrSesssion_id) {
+                $query->where('user_id', $user_idOrSesssion_id)
                     ->orWhere('session_id', $user_idOrSesssion_id);
-          })
-          ->whereHas('deliveryOrder', function ($query) {
-              $query->where('delivery_status', 'delivered');
-          })
-          ->with(['deliveryOrder' => function ($query) {
-              $query->where('delivery_status', 'delivered');
-          },
-             'orderDetails.variant.variantImage',
-             'orderDetails.product',
-             'orderDetails.product.category'
+            })
+                ->whereHas('deliveryOrder', function ($query) {
+                    $query->where('delivery_status', 'delivered');
+                })
+                ->with([
+                    'deliveryOrder' => function ($query) {
+                        $query->where('delivery_status', 'delivered');
+                    },
+                    'orderDetails.variant.variantImage',
+                    'orderDetails.product',
+                    'orderDetails.product.category'
 
 
-          ])
-          ->get();
-           return response()->json([
-              'status' => 200,
-              'message' => 'All Order Get Successfully',
-              'data' => $orders,
-          ]);
-
+                ])
+                ->get();
+            return response()->json([
+                'status' => 200,
+                'message' => 'All Order Get Successfully',
+                'data' => $orders,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 500,
+                'message' => $e->getMessage(),
+            ]);
         }
-        catch(\Exception $e){
-          return response()->json([
-              'status' => 500,
-              'message' => $e->getMessage(),
-          ]);
-        }
-  }
-
-
-
+    }
 }
