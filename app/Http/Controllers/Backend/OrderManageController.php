@@ -188,24 +188,28 @@ class OrderManageController extends Controller
 
         $newOrders->status = "approve";
         $newOrders->update();
-
         if ($newOrders->user_id) {
 
-            $user = UserDetails::where("user_id", $newOrders->user_id)->latest()->first();
+            $userDetails = UserDetails::where("user_id", $newOrders->user_id)->latest()->first();
 
+            if ($userDetails && $userDetails->secondary_email) {
 
-            if ($user->secondary_email) {
-
-                $orderMail = UserDetails::where("user_id", $newOrders->user_id)->latest()->first();
-                Mail::to($orderMail->secondary_email)->send(new OrderConformationMail($newOrders));
+                Mail::to($userDetails->secondary_email)->send(new OrderConformationMail($newOrders));
             } else {
-                $orderMail = User::where("id", $newOrders->user_id)->latest()->first();
-                Mail::to($orderMail->email)->send(new OrderConformationMail($newOrders));
-            }
-        } else {
-            $orderMail = UserDetails::where("session_id", $newOrders->session_id)->latest()->first();
+                $user = User::find($newOrders->user_id);
+                if ($user && $user->email) {
 
-            Mail::to($orderMail->secondary_email)->send(new OrderConformationMail($newOrders));
+                    Mail::to($user->email)->send(new OrderConformationMail($newOrders));
+                }
+            }
+
+        } else {
+            $userDetails = UserDetails::where("session_id", $newOrders->session_id)->latest()->first();
+
+            if ($userDetails && $userDetails->secondary_email) {
+             
+                Mail::to($userDetails->secondary_email)->send(new OrderConformationMail($newOrders));
+            }
         }
 
 
