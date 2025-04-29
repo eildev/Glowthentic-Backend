@@ -290,9 +290,9 @@
                                                         <label for="" class="form-label"> Description</label>
                                                     </div>
                                                     <div class="col-12">
-                                                        <textarea class="form-control product_descriptions_on @error('description') is-invalid @enderror"
+                                                        <textarea class="form-control description_product"
                                                                   name="description"
-                                                                  style="resize: none; height: 70px;">{!! $product->productdetails->description ?? '' !!}</textarea>
+                                                                  style="resize: none; height: 70px;">{!!$product->productdetails->description ?? '' !!}</textarea>
 
                                                         @error('description')
                                                             <span class="text-danger">{{ $message }}</span>
@@ -309,7 +309,7 @@
                                                     </div>
                                                     <div class="col-12">
                                                         <textarea class="form-control ingrediantsedit" name="ingredients" placeholder="Enter Ingredients"
-                                                            style="resize: none; height: 100px;" id="ingrediants" >{!! $product->productdetails->ingredients??'NA' !!}</textarea>
+                                                            style="resize: none; height: 100px;" id="ingrediants" >{!! $product->productdetails->ingredients ?? 'NA' !!}</textarea>
 
 
                                                             @error('ingredients')
@@ -330,7 +330,7 @@
                                                     </div>
                                                     <div class="col-12">
                                                         <textarea class="form-control usage_instructionedit" name="usage_instruction" placeholder="Enter Usage Instruction"
-                                                            style="resize: none; height: 100px;" id="">{!! $product->productdetails->ingredients??'NA' !!}</textarea>
+                                                            style="resize: none; height: 100px;" id="">{!! $product->productdetails->usage_instruction ?? 'NA' !!}</textarea>
 
 
                                                             @error('usage_instruction')
@@ -815,7 +815,7 @@
 <script>
   $(document).ready(function() {
     // প্রথম এডিটর
-    $('.product_descriptions_on').summernote({
+    $('.description_product').summernote({
         height: 300,
         callbacks: {
             onPaste: function(e) {
@@ -1054,6 +1054,7 @@ $(document).on("click", ".addRow", function () {
     getSize(lastSize);
     getColor(lastColor);
 });
+
 
 
 
