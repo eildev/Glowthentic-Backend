@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('assign_to')->nullable();
             $table->string('tracking_number')->nullable();
             $table->string('status')->nullable();
+            $table->string('courier_id')->nullable();
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
             $table->timestamps(0);
             $table->softDeletes();
