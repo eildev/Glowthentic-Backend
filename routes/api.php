@@ -24,6 +24,7 @@ use App\Http\Controllers\API\ApiUserManageController;
 use App\Http\Controllers\API\ApiPostReactController;
 use App\Http\Controllers\API\ForgotPasswordController;
 use App\Http\Controllers\API\SocialAuthController;
+use App\Http\Controllers\API\UserTrackerController;
 use Illuminate\Http\Request;
 // Open Routes
 Route::post('/register', [AuthController::class, "register"]);
@@ -192,4 +193,6 @@ Route::controller(ApiReviewController::class)->group(function () {
     Route::get('/review/{product_id}', 'getReview');
     Route::delete('/review/delete/{id}', 'deleteReview');
 });
-// Route::get('/product', [App\Http\Controllers\Backend\ProductController::class, 'index']);
+Route::controller(UserTrackerController::class)->group(function () {
+    Route::post('/user-tracker', 'store');
+});
