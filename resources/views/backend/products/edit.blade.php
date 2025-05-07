@@ -575,7 +575,7 @@
 
                                                 </td>
 
-                                                 <td><input type="number" class="form-control" name="stock_quantity[{{ $variant->id }}]" value="{{ $variant->productStock->StockQuantity??0 }}"></td>
+                                                 <td><input type="number" class="form-control" name="stock_quantity[{{ $variant->id }}]" value="{{ $variant->productStock->StockQuantity??0 }}"   min="0" ></td>
                                                  <td>
 
                                                      <button type="button" class="btn btn-success addRow">+</button>

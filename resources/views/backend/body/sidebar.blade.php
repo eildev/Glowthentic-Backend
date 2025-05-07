@@ -311,6 +311,10 @@
                 <li>
                     <a href="{{ route('order.denied') }}"><i class="bx bx-right-arrow-alt"></i>Denied Orders</a>
                 </li>
+
+                <li>
+                    <a href="{{ route('custom.order.create') }}"><i class="bx bx-right-arrow-alt"></i>Custom Order Create</a>
+                </li>
             </ul>
         </li>
 

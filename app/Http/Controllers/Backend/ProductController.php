@@ -280,6 +280,7 @@ class ProductController extends Controller
                 $stock->product_id = $product->id;
                 $stock->variant_id = $variant->id;
                 $stock->StockQuantity = $request->stock_quantity;
+                
                 $stock->status = 'Available';
                 $stock->save();
             }
@@ -848,7 +849,7 @@ class ProductController extends Controller
                         $variant = new Variant();
                         $variant->product_id = $request->product_id;
                         $variant->variant_name = $request->variant_name[$variant_id];
-                        
+
                         $variant->save();
                     }
 
@@ -887,7 +888,10 @@ class ProductController extends Controller
                     }
 
 
-                    if (!empty($request->stock_quantity[$variant_id])) {
+
+
+                    if (isset($request->stock_quantity[$variant_id])) {
+
                         ProductStock::updateOrCreate(
                             ['product_id' => $request->product_id, 'variant_id' => $variant->id],
                             ['StockQuantity' => $request->stock_quantity[$variant_id], 'status' => 'Available']
