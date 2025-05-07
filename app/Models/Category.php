@@ -23,7 +23,7 @@ class Category extends Model
     {
         return $this->hasMany(Product::class, 'category_id', 'id');
     }
-    public function productPromotions(){
+    public function productpromotions(){
         return $this->hasMany(ProductPromotion::class,'category_id','id');
     }
 }

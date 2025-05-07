@@ -26,6 +26,7 @@
                                     <th>Pay to</th>
                                     <th>Payment Status</th>
                                     <th>Order Status</th>
+                                    <th>Courier Data</th>
                                     <th>Address</th>
                                     <th>Action</th>
                                 </tr>
@@ -75,6 +76,15 @@
                                                 <span
                                                     class="text-warning text-capitalize">{{ $delivered_orders->delivery_status ?? '' }}</span>
                                             </td>
+
+
+                                            <td>
+                                                <span>Courier Id:{{ $delivered_orders->courier_id??'' }}</span></br>
+                                                <span>Tracking Number:{{ $delivered_orders->tracking_number ?? '' }}</span>
+                                            </td>
+
+
+
                                             <td>{{ $customers->address ?? '' }}</td>
                                             <td>
                                                 <span class="btn btn-sm btn-info">Finished Process</span>

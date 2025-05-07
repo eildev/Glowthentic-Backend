@@ -14,10 +14,38 @@ use App\Models\Variant;
 use App\Models\DeliveryOrder;
 use App\Models\UserDetails;
 use App\Mail\OrderConformationMail;
-use Database\Seeders\UserSeed;
-
+use App\Models\Product;
+use Carbon\Carbon;
+use App\Models\ProductPromotion;
+use App\Models\VariantPromotion;
+use Illuminate\Support\Collection;
+use App\Services\BillingInformationService;
+use App\Services\UserDetailsService;
+use App\Models\BillingInformation;
+use App\Models\Combo;
+use App\Models\ComboProduct;
+use Illuminate\Http\JsonResponse;
 class OrderManageController extends Controller
 {
+
+
+
+
+
+    protected $billingInformationService;
+    protected $userDetailsService;
+    public function __construct(BillingInformationService $billingInformationService, UserDetailsService $userDetailsService)
+    {
+        $this->billingInformationService = $billingInformationService;
+        $this->userDetailsService = $userDetailsService;
+    }
+
+
+
+
+
+
+
     public function allUser()
     {
         $allUsers = User::all();
@@ -207,7 +235,7 @@ class OrderManageController extends Controller
             $userDetails = UserDetails::where("session_id", $newOrders->session_id)->latest()->first();
 
             if ($userDetails && $userDetails->secondary_email) {
-             
+
                 Mail::to($userDetails->secondary_email)->send(new OrderConformationMail($newOrders));
             }
         }
@@ -272,11 +300,12 @@ class OrderManageController extends Controller
     {
 
         $orders = Order::findOrFail($order_id);
+
         // dd($orders);
         return view('backend.order.order_details', compact('orders'));
         // $order_details->status = "Inactive";
         // $order_details->update();
-        return back();
+        // return back();
     }
     public function thank($id)
     {
@@ -294,6 +323,7 @@ class OrderManageController extends Controller
         $user_id = $getorder->user_id ?? $getorder->session_id;
 
         $userInfo = UserDetails::where('user_id', $user_id)->orWhere('session_id', $user_id)->first();
+        // dd($userInfo);
 
         return response()->json([
             'status' => 200,
@@ -301,4 +331,420 @@ class OrderManageController extends Controller
             'order' => $getorder
         ]);
     }
+
+
+
+    public function customOrderCreate(){
+
+        $allproduct = Product::where('status', 1)
+        ->get()
+        ->map(function ($item) {
+
+            return[
+                'id' => $item->id,
+                'name' => $item->product_name,
+                'type' => 'product',
+            ];
+        });
+
+
+    $comboProducts = Combo::where('status', 'active')
+        ->whereIn('id', function ($query) {
+            $query->select('combo_id')
+                  ->from('combo_products')
+                  ->distinct();
+        })
+        ->get()
+        ->map(function ($item) {
+            $item->type = 'combo';
+            return [
+                'id' => $item->id,
+                'name' => $item->name,
+                'type' => 'combo',
+            ];
+        });
+
+
+    $product = $allproduct->concat($comboProducts);
+
+
+        $user = User::where('role', 'user')->get()->map(function ($u) {
+            return [
+                'id' => $u->id,
+                'name' => $u->name,
+                'source' => 'user',
+            ];
+        });
+
+
+        $user_details = UserDetails::whereNull('user_id')->get()->map(function ($u) {
+            return [
+                'id' =>  $u->id,
+                'name' => $u->full_name,
+                'source' => 'user_detail',
+            ];
+        });
+
+
+        $custom_user = $user->merge($user_details);
+
+        return view('backend.order.custom_order', compact('product', 'custom_user'));
+    }
+
+    public function getCustomUserDetails(Request $request){
+        try{
+            if($request->source == 'user'){
+                $user = User::findOrFail($request->id);
+                $user_details = UserDetails::where('user_id', $request->id)->first();
+                if( $user_details){
+                  $user_data=$user_details;
+                }
+                else{
+                    $user_data = $user;
+                }
+
+            }
+            else{
+                $user = UserDetails::findOrFail($request->id);
+                $user_data = UserDetails::where('id', $request->id)->first();
+            }
+            return response()->json([
+                'status' => 200,
+                'user_data' => $user_data
+            ]);
+        }
+        catch(\Exception $e){
+            return response()->json([
+                'status' => 400,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
+
+    public function getVariantCustomOrderInfo($id){
+        try {
+            $today = Carbon::today();
+
+
+            $variant = Variant::with([
+                'product',
+                'product.category',
+                'productStock'
+            ])->findOrFail($id);
+
+
+            $checkCategoryPromotion = ProductPromotion::with('coupon')
+                ->where('category_id', $variant->product->category_id)
+                ->first();
+
+
+            $checkProductPromotion = ProductPromotion::with('coupon')
+                ->where('product_id', $variant->product_id)
+                ->first();
+
+
+            $variantPromotion = VariantPromotion::with('coupon')
+                ->where('variant_id', $id)
+                ->first();
+
+
+            $activePromotion = null;
+            $promotionSource = null;
+             $activePromotioncal=0;
+
+            if ($checkCategoryPromotion && $checkCategoryPromotion->coupon &&
+                $today->between(Carbon::parse($checkCategoryPromotion->coupon->start_date), Carbon::parse($checkCategoryPromotion->coupon->end_date))) {
+
+                $promotionId = $checkCategoryPromotion->promotion_id;
+
+                if (
+                    (!$checkProductPromotion || ($checkProductPromotion->promotion_id == $promotionId)) &&
+                    (!$variantPromotion || ($variantPromotion->promotion_id == $promotionId))
+                ) {
+                    $activePromotion = $checkCategoryPromotion;
+                    $promotionSource = 'category';
+                }
+            }
+
+
+            if (!$activePromotion && $checkProductPromotion && $checkProductPromotion->coupon &&
+                $today->between(Carbon::parse($checkProductPromotion->coupon->start_date), Carbon::parse($checkProductPromotion->coupon->end_date))) {
+
+                $promotionId = $checkProductPromotion->promotion_id;
+
+                if (!$variantPromotion || $variantPromotion->promotion_id != $promotionId) {
+                    $activePromotion = $checkProductPromotion;
+                    $promotionSource = 'product';
+                }
+            }
+
+
+            if (!$activePromotion && $variantPromotion && $variantPromotion->coupon &&
+                $today->between(Carbon::parse($variantPromotion->coupon->start_date), Carbon::parse($variantPromotion->coupon->end_date))) {
+
+                $activePromotion = $variantPromotion;
+                $promotionSource = 'variant';
+            }
+          if($activePromotion && $activePromotion->coupon->discount_type == 'percentage'){
+
+            $activePromotioncal= $variant->regular_price * $activePromotion->coupon->discount_value / 100;
+
+
+            }
+            if($activePromotion && $activePromotion->coupon->discount_type == 'fixed'){
+                $activePromotioncal= $activePromotion->coupon->discount_value;
+            }
+
+
+            return response()->json([
+                'status' => 200,
+                'variant' => $variant,
+                'promotion' => $activePromotioncal,
+                'promotion_source' => $promotionSource,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 500,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
+
+    public function createCustomOrder(Request $request){
+        try{
+            // dd($request->all());
+            if($request->source == "user"){
+                $user_data = User::findOrFail($request->custom_user_id);
+                $user_details = UserDetails::where('user_id', $request->custom_user_id)->first();
+                if ($user_details) {
+                    $user_data = $user_details;
+                } else {
+                    $user_data = new UserDetails();
+                }
+                $user_data->user_id = $user_data->id;
+                $user_data->full_name = $request->full_name;
+                $user_data->secondary_email = $request->secondary_email;
+                $user_data->phone_number = $request->phone_number;
+                $user_data->address = $request->address;
+
+                $user_data->city = $request->district;
+                $user_data->postal_code = $request->postal_code;
+                $user_data->police_station = $request->police_station;
+                $user_data->country = $request->country ?? '';
+                $user_data->save();
+
+                // Billing Information
+                $billingInfo = new BillingInformation();
+                $billingInfo->user_id = $request->user_id;
+                $existingBillingInfo = BillingInformation::where('user_id', $request->user_id)->first();
+                $billingInfo->is_default = $existingBillingInfo ? 1 : 0;
+                $billingInfo->status = "saved";
+                $billingInfo->active_payment_method = $request->active_payment_method;
+
+                // Store payment details based on method
+                if ($request->active_payment_method == 'card') {
+                    $billingInfo->card_number = $request->card_number;
+                    $billingInfo->cvc_code = $request->cvc_code;
+                    $billingInfo->card_expiry_date = $request->card_expiry_date;
+                } elseif ($request->active_payment_method == 'mobile_banking') {
+                    $billingInfo->mobile_banking_id = $request->mobile_banking_id;
+                    $billingInfo->verified_mobile = $request->verified_mobile;
+                    $billingInfo->verified_mobile_number = $request->verified_mobile_number;
+                }
+
+                $billingInfo->save();
+            }
+            else if ($request->source == "user_detail"){
+                $user_details = UserDetails::where('id', $request->custom_user_id)->first();
+
+                if ($user_details) {
+                    $user_data = $user_details;
+                } else {
+                    $user_data = new UserDetails();
+                }
+                if($user_details->customer_id==null){
+                    $cust_id = UserDetails::latest()->first();
+                    $user_data->customer_id = $cust_id ? $cust_id->id + 1 : 1;
+                }
+                $user_data->full_name = $request->full_name;
+                $user_data->secondary_email = $request->secondary_email;
+                $user_data->phone_number = $request->phone_number;
+                $user_data->address = $request->address;
+
+                $user_data->city = $request->district;
+                $user_data->postal_code = $request->postal_code;
+                $user_data->police_station = $request->police_station;
+                $user_data->country = $request->country ?? '';
+                $user_data->save();
+
+                // Billing Information
+                $billingInfo = new BillingInformation();
+                $billingInfo->session_id = $user_data->session_id;
+                $existingBillingInfo = BillingInformation::where('user_id', $request->user_id)->first();
+                $billingInfo->is_default = $existingBillingInfo ? 1 : 0;
+                $billingInfo->status = "saved";
+                $billingInfo->active_payment_method = $request->active_payment_method;
+
+                // Store payment details based on method
+                if ($request->active_payment_method == 'card') {
+                    $billingInfo->card_number = $request->card_number;
+                    $billingInfo->cvc_code = $request->cvc_code;
+                    $billingInfo->card_expiry_date = $request->card_expiry_date;
+                } elseif ($request->active_payment_method == 'mobile_banking') {
+                    $billingInfo->mobile_banking_id = $request->mobile_banking_id;
+                    $billingInfo->verified_mobile = $request->verified_mobile;
+                    $billingInfo->verified_mobile_number = $request->verified_mobile_number;
+                }
+
+                $billingInfo->save();
+            }
+            else{
+
+                $user_data = new UserDetails();
+
+                $user_data->full_name = $request->full_name;
+                $cust_id = UserDetails::latest()->first();
+                $user_data->customer_id = $cust_id ? $cust_id->id + 1 : 1;
+
+                $user_data->secondary_email = $request->secondary_email;
+                $user_data->phone_number = $request->phone_number;
+                $user_data->address = $request->address;
+
+                $user_data->city = $request->district;
+                $user_data->postal_code = $request->postal_code;
+                $user_data->police_station = $request->police_station;
+                $user_data->country = $request->country ?? '';
+                $user_data->save();
+
+                // Billing Information
+                $billingInfo = new BillingInformation();
+                $billingInfo->customer_id = $user_data->customer_id;
+
+                $existingBillingInfo = BillingInformation::where('user_id', $request->user_id)->first();
+                $billingInfo->is_default = $existingBillingInfo ? 1 : 0;
+                $billingInfo->status = "saved";
+                $billingInfo->active_payment_method = $request->active_payment_method;
+
+                // Store payment details based on method
+                if ($request->active_payment_method == 'card') {
+                    $billingInfo->card_number = $request->card_number;
+                    $billingInfo->cvc_code = $request->cvc_code;
+                    $billingInfo->card_expiry_date = $request->card_expiry_date;
+                } elseif ($request->active_payment_method == 'mobile_banking') {
+                    $billingInfo->mobile_banking_id = $request->mobile_banking_id;
+                    $billingInfo->verified_mobile = $request->verified_mobile;
+                    $billingInfo->verified_mobile_number = $request->verified_mobile_number;
+                }
+
+                $billingInfo->save();
+            }
+
+            $order = new Order();
+            if ($request->source == "user"){
+                $order->user_id = $user_data->user_id;
+            }
+            elseif ($request->source == "user_detail"){
+                $order->session_id = $user_data->session_id;
+            }
+            else{
+
+                $order->customer_id = $user_data->customer_id;
+            }
+
+            $total_discount = 0;
+            $total_amount = 0;
+            $total_quantity = 0;
+
+            foreach ((array) ($request->total_discount ?? []) as $key => $value) {
+                $total_discount += $value;
+            }
+
+            foreach ((array) ($request->quantity ?? []) as $key => $value) {
+                $total_quantity += $value;
+            }
+
+            foreach ((array) ($request->combo_quantity ?? []) as $key => $value) {
+                $total_quantity += $value;
+            }
+
+            $total_amount = (float) ($request->subtotal ?? 0) + $total_discount;
+
+            $order->discount_amount = $total_discount+$request->discount;
+          
+            $order->total_amount = $total_amount;
+            $order->total_quantity = $total_quantity;
+            $order->sub_total = $request->subtotal;
+            $order->status = "Approve";
+            $order->grand_total = $request->grand_total;
+            $order->payment_method = $request->active_payment_method;
+            $order->shipping_charge= $request->shipping_charge;
+            $order->invoice_number = rand(100000, 999999);
+            $order->save();
+
+            if ($order->id) {
+                if (isset($request->variant_id) && is_array($request->variant_id)) {
+                    foreach ($request->variant_id as $key => $variant_id) {
+                        $order_details = new OrderDetails();
+                        $order_details->order_id = $order->id;
+                        $order_details->variant_id = $variant_id;
+                        $order_details->product_id = $request->product_id[$key] ?? null;
+                        $order_details->product_quantity = $request->quantity[$key] ?? 0;
+                        $order_details->unit_price = $request->price[$key] ?? 0;
+                        $order_details->total_price = $request->variant_total_price[$key] ?? 0;
+                        $order_details->save();
+                    }
+                }
+
+                if (isset($request->combo_id) && is_array($request->combo_id)) {
+                    foreach ($request->combo_id as $key => $combo_id) {
+                        $order_details = new OrderDetails();
+                        $order_details->order_id = $order->id;
+                        $order_details->combo_id = $combo_id;
+                        $order_details->product_quantity = $request->combo_quantity[$key] ?? 0;
+                        $order_details->unit_price = $request->combo_price[$key] ?? 0;
+                        $order_details->total_price = $request->combo_total_price[$key] ?? 0;
+                        $order_details->save();
+                    }
+                }
+            }
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Order placed successfully',
+                'order_id' => $order->id
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 400,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
+// custom order end
+
+public function getComboCustom($id){
+    try{
+        $combo = Combo::findOrFail($id);
+        return response()->json([
+            'status' => 200,
+            'combo' => $combo
+        ]);
+    }
+    catch(\Exception $e){
+        return response()->json([
+            'status' => 400,
+            'message' => $e->getMessage()
+        ]);
+    }
+
+}
+
+
+
+
+
 }

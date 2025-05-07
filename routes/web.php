@@ -322,6 +322,12 @@ Route::middleware('auth')->group(function () {
         Route::post('admin/order/get-order-details', 'getOrderDetails')->name('get.order.details');
 
         Route::get('/order/detailed-orders/{order_id}', 'DetailOrders')->name('order.details');
+        Route::get('/custom/order/create', 'customOrderCreate')->name('custom.order.create');
+        Route::get('get/variant/custom/order_info/{id}', 'getVariantCustomOrderInfo')->name('get.variant.custom.order.info');
+        Route::post('get/custom/user/details', 'getCustomUserDetails')->name('get.user.data');
+        Route::post('create/custom/user/address', 'createCustomUserAddress')->name('create.custom.order.customer');
+        Route::post('create/custom/order', 'createCustomOrder')->name('custom.order.store');
+        Route::get('get/combo/custom/order/{id}', 'getComboCustom')->name('get.custom.combo.product.order');
         // Route::post('/order/send-sms', 'SendSMS')->name('send.sms');
 
 
