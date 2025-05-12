@@ -33,7 +33,10 @@ class BillingInformationService
 
             $existingBillingInfo = BillingInformation::where('session_id', $request->session_id)->first();
             $billingInfo->is_default = $existingBillingInfo ? 1 : 0;
-        } else {
+        }
+
+
+        else {
             return response()->json([
                 'status' => 400,
                 'message' => 'Invalid request: user_id or session_id required'
@@ -43,7 +46,7 @@ class BillingInformationService
         // Store common details
         $billingInfo->status = $request->status;
         $billingInfo->active_payment_method = $request->payment_method;
-      
+
         // Store payment details based on method
         if ($request->active_payment_method =='card') {
             $billingInfo->card_number = $request->card_number;

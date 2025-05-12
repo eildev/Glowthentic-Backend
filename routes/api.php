@@ -24,6 +24,7 @@ use App\Http\Controllers\API\ApiUserManageController;
 use App\Http\Controllers\API\ApiPostReactController;
 use App\Http\Controllers\API\ForgotPasswordController;
 use App\Http\Controllers\API\SocialAuthController;
+use App\Http\Controllers\API\UserTrackerController;
 use Illuminate\Http\Request;
 // Open Routes
 Route::post('/register', [AuthController::class, "register"]);
@@ -32,7 +33,9 @@ Route::get('/sanctum/csrf-cookie', function () {
     return response()->noContent();
 });
 
+// reset password 
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
+Route::post('/verify-otp', [ForgotPasswordController::class, 'verifyOTP']);
 Route::post('/reset-password', [ForgotPasswordController::class, 'reset']);
 
 // Social login
@@ -152,7 +155,8 @@ Route::controller(ApiBlogCommentController::class)->group(function () {
 Route::controller(ApiOrderController::class)->group(function () {
     Route::post('/order/create', 'store')->name('order.store');
     Route::get('/order/{id}', 'show')->name('order.show');
-    Route::post('order/tracking', 'trackingOrder');
+    Route::post('/order/tracking', 'trackingOrder');
+    Route::get('/get-order/tracking/{id}', 'getTrackingOrder');
     Route::get('/order/get/{user_idOrSesssion_id}', 'getOrder');
     Route::get('/order/processing/{user_idOrSesssion_id}', 'getProcessingOrder');
 });
@@ -160,7 +164,7 @@ Route::controller(ApiOrderController::class)->group(function () {
 
 Route::controller(ApiPostReactController::class)->group(function () {
     Route::post('/post/react', 'store');
-    Route::get('/post/react/{id}', 'show');
+    Route::get('/post/react/{blog_id}', 'show');
 });
 
 Route::controller(ApiSubscribeController::class)->group(function () {
@@ -189,4 +193,6 @@ Route::controller(ApiReviewController::class)->group(function () {
     Route::get('/review/{product_id}', 'getReview');
     Route::delete('/review/delete/{id}', 'deleteReview');
 });
-// Route::get('/product', [App\Http\Controllers\Backend\ProductController::class, 'index']);
+Route::controller(UserTrackerController::class)->group(function () {
+    Route::post('/user-tracker', 'store');
+});

@@ -113,10 +113,10 @@ $(document).on('change','.variant',function(){
                     <td class="fw-bold text-primary">${variant.product.product_name}</td>
                     <td class="fw-bold text-primary">${variant.variant_name}</td>
                     <td class="text-center">
-                        <span class="badge  bg-primary fs-6 px-3 py-2 stock-update">${stockQuantity}</span>
+                        <span class="badge  bg-primary fs-6 px-3 py-2 stock-update" >${stockQuantity}</span>
                     </td>
                     <td>
-                        <input type="number" name="quantity[]" class="form-control text-center fw-semibold border-primary" style="width: 100px;">
+                        <input type="number" name="quantity[]" class="form-control text-center fw-semibold border-primary" style="width: 100px;" min="0">
                     </td>
                     <td>
                         <button type="button" class="btn btn-sm btn-outline-danger remove-row">

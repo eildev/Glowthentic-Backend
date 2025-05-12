@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->bigInteger('invoice_number');
             $table->unsignedBigInteger('user_id')->nullable();
+            $table->bigInteger('customer_id')->nullable();
             $table->string('session_id')->nullable();
             $table->unsignedBigInteger('phone_number')->nullable();
             $table->unsignedBigInteger('combo_id')->nullable();

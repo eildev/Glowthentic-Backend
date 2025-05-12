@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\UserDetails;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
@@ -21,6 +22,7 @@ class SocialAuthController extends Controller
     {
         try {
             $socialUser = Socialite::driver('google')->stateless()->user();
+            // dd($socialUser);
             $user = User::firstOrCreate(
                 ['email' => $socialUser->getEmail()],
                 [
@@ -32,14 +34,22 @@ class SocialAuthController extends Controller
                     'status' => 'active',
                 ]
             );
+            UserDetails::firstOrCreate(
+                ['secondary_email' => $socialUser->getEmail()],
+                [
+                    'user_id' => $user->id,
+                    'full_name' => $socialUser->getName(),
+                    'image'  => $socialUser->getAvatar()
+                ]
+            );
 
             $token = $user->createToken('auth_token')->plainTextToken;
 
             // ফ্রন্টএন্ডে রিডাইরেক্ট URL
-            $redirectUrl = "http://127.0.0.1:5173/auth/callback?access_token={$token}&user=" . urlencode(json_encode($user));
+            $redirectUrl = "https://glowthentic.store/auth/callback?access_token={$token}&user=" . urlencode(json_encode($user));
             return redirect($redirectUrl);
         } catch (\Exception $e) {
-            $redirectUrl = "http://127.0.0.1:5173/auth/callback?error=" . urlencode('Google login failed: ' . $e->getMessage());
+            $redirectUrl = "https://glowthentic.store/auth/callback?error=" . urlencode('Google login failed: ' . $e->getMessage());
             return redirect($redirectUrl);
         }
     }
@@ -71,10 +81,10 @@ class SocialAuthController extends Controller
             $token = $user->createToken('auth_token')->plainTextToken;
 
             // ফ্রন্টএন্ডে রিডাইরেক্ট URL
-            $redirectUrl = "http://127.0.0.1:5173/auth/callback?access_token={$token}&user=" . urlencode(json_encode($user));
+            $redirectUrl = "https://glowthentic.store/auth/callback?access_token={$token}&user=" . urlencode(json_encode($user));
             return redirect($redirectUrl);
         } catch (\Exception $e) {
-            $redirectUrl = "http://127.0.0.1:5173/auth/callback?error=" . urlencode('Google login failed: ' . $e->getMessage());
+            $redirectUrl = "https://glowthentic.store/auth/callback?error=" . urlencode('Google login failed: ' . $e->getMessage());
             return redirect($redirectUrl);
         }
     }

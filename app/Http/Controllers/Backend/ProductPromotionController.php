@@ -12,6 +12,8 @@ use App\Models\Category;
 use Validator;
 use App\Models\VariantPromotion;
 use Exception;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 class ProductPromotionController extends Controller
 {
 
@@ -26,10 +28,48 @@ class ProductPromotionController extends Controller
     }
 
     public function create(){
-        $product = Product::where('status', 1)->get();
-        $category=Category::where('status', 1)->get();
-        $promotion = Coupon::where('type','promotion')->get();
-        // $variant=Variant::all();
+        $ActivePromotion=Coupon::where('type','promotion')
+                  ->where('end_date','>=',Carbon::now()->format('Y-m-d'))
+                  ->where('status','Active')
+                  ->pluck('id')
+                  ->toArray();
+                  $categoryPromotion=ProductPromotion::whereIn('promotion_id',$ActivePromotion)->get();
+                  $categoryPromotionIds = $categoryPromotion->pluck('category_id')
+                                        ->filter()
+                                        ->unique()
+                                        ->values()
+                                        ->toArray();
+
+
+                         $productsWithoutVariantPromotionIds= $categoryPromotion->pluck('product_id')
+                         ->filter()
+                         ->unique()
+                         ->values()
+                         ->toArray();
+                // $productsWithoutVariantPromotion = DB::table('product_promotions as pp')
+                //                         ->whereNotNull('pp.product_id')
+                //                         ->whereIn('pp.promotion_id', $ActivePromotion)
+                //                         ->whereNotExists(function ($query) {
+                //                             $query->select(DB::raw(1))
+                //                                 ->from('variant_promotions as vp')
+                //                                 ->whereColumn('vp.product_id', 'pp.product_id')
+                //                                 ->whereColumn('vp.promotion_id', 'pp.promotion_id');
+                //                         })
+                //                         ->join('products as p', 'p.id', '=', 'pp.product_id')
+                //                         ->where('p.status', 1)
+                //                         ->select('p.*')
+                //                         ->distinct()
+                //                         ->get();
+
+
+                                        // $productsWithoutVariantPromotionIds = collect($productsWithoutVariantPromotion)->pluck('id')->toArray();
+                        $product = Product::where('status', 1)
+                        ->whereNotIn('category_id', $categoryPromotionIds)
+                        ->whereNotIn('id', $productsWithoutVariantPromotionIds)
+                                ->get();
+                $category=Category::where('status', 1)->whereNotIn('id',$categoryPromotionIds)->get();
+                $promotion = Coupon::where('type','promotion')->get();
+                // $variant=Variant::all();
         return view('backend.promotionProduct.create',compact('product','category','promotion'));
     }
     public function getProductPromotion(){
@@ -43,6 +83,8 @@ class ProductPromotionController extends Controller
             'variant'=>$variant
         ]);
     }
+
+
 
     public function store(Request $request){
 
@@ -100,6 +142,10 @@ class ProductPromotionController extends Controller
         }
 
     }
+
+
+
+
 
     public function view(){
         $productPromotion = ProductPromotion::with('product','coupon','variant')->get();

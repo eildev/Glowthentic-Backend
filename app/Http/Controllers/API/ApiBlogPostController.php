@@ -14,7 +14,7 @@ class ApiBlogPostController extends Controller
     public function viewAll()
     {
         try {
-            $blogPost = BlogPost::with('comments', 'likes')->get();
+            $blogPost = BlogPost::with('comments.user', 'likes.user')->get();
             return response()->json([
                 'blogPost' => $blogPost,
                 'status' => 200,
@@ -31,7 +31,7 @@ class ApiBlogPostController extends Controller
     public function show($id)
     {
         try {
-            $blogPost = BlogPost::with('comments', 'likes')->findOrFail($id);
+            $blogPost = BlogPost::with('comments.user', 'likes.user')->findOrFail($id);
             return response()->json([
                 'blogPost' => $blogPost,
                 'status' => 200,

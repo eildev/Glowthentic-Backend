@@ -17,16 +17,17 @@
                             <thead>
                                 <tr>
                                     <th>SI</th>
-                                        <th>Date</th>
-                                        <th>Invoice no</th>
-                                        <th>User Phone Number</th>
-                                        <th>Product Qty</th>
-                                        <th>Amount</th>
-                                        <th>Pay to</th>
-                                        <th>Payment Status</th>
-                                        <th>Order Status</th>
-                                        <th>Address</th>
-                                        <th>Action</th>
+                                    <th>Date</th>
+                                    <th>Invoice no</th>
+                                    <th>User Name</th>
+                                    <th>User Phone Number</th>
+                                    <th>Product Qty</th>
+                                    <th>Amount</th>
+                                    <th>Pay to</th>
+                                    <th>Payment Status</th>
+                                    <th>Order Status</th>
+                                    <th>Address</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -35,42 +36,51 @@
                                 @endphp
                                 @if ($processed_orders->count() > 0)
                                     @foreach ($processed_orders as $order)
-
-                                    @php
-                                    if($order->user_id!=null){
-                                        $customers = App\Models\UserDetails::where('user_id', $order->user_id)->first();
-                                        }
-                                    else{
-                                        $customers = App\Models\UserDetails::where('session_id',$order->session_id)->first();
-                                    }
-                                    @endphp
-                                    @php
-                                    $originalDateString = $order->created_at;
-                                    $dateTime = new DateTime($originalDateString);
-                                    $formattedDate = $dateTime->format('Y-m-d');
-                                    @endphp
+                                        @php
+                                            if ($order->user_id != null) {
+                                                $customers = App\Models\UserDetails::where(
+                                                    'user_id',
+                                                    $order->user_id,
+                                                )->first();
+                                            } else {
+                                                $customers = App\Models\UserDetails::where(
+                                                    'session_id',
+                                                    $order->session_id,
+                                                )->first();
+                                            }
+                                        @endphp
+                                        @php
+                                            $originalDateString = $order->created_at;
+                                            $dateTime = new DateTime($originalDateString);
+                                            $formattedDate = $dateTime->format('Y-m-d');
+                                        @endphp
                                         <tr>
                                             <td>{{ $serialNumber++ }}</td>
                                             <td>{{ $formattedDate }}</td>
-                                            <td>{{ $order->invoice_number }}</td>
-                                            <td>{{$customers->phone_number}}</td>
-                                            <td>{{ $order->total_quantity }}</td>
-                                            <td>{{ $order->grand_total }}</td>
-                                            <td>{{ $order->payment_method }}</td>
-                                            <td>{{ $order->payment_status }}</td>
+                                            <td>{{ $order->invoice_number ?? 0 }}</td>
+                                            <td>{{ $customers->full_name ?? '' }}</td>
+                                            <td>
+                                                {{ $customers->phone_number ? (substr($customers->phone_number, 0, 1) === '0' ? $customers->phone_number : '0' . $customers->phone_number) : '0' }}
+                                            </td>
+                                            <td>{{ $order->total_quantity ?? 0 }}</td>
+                                            <td>{{ $order->grand_total ?? 0 }}</td>
+                                            <td>{{ $order->payment_method ?? 0 }}</td>
+                                            <td>{{ $order->payment_status ?? '' }}</td>
 
                                             <td>
                                                 <span class="text-warning text-capitalize">
-                                                    {{ $order->status }}
+                                                    {{ $order->status ?? '' }}
                                                 </span>
                                             </td>
-                                            <td>{{$customers->address}}</td>
+                                            <td>{{ $customers->address ?? '' }}</td>
                                             <td>
-                                                <a href="#" class="btn btn-info btn-sm text-light send_data_id" data-id="{{$order->id}}" data-bs-toggle="modal"
-                                                data-bs-target="#orderAssign">
-                                               Assign Order
-                                            </a>
-                                                <a href="{{ route('order.details', $order->id) }}" class="btn btn-sm btn-success">View</a>
+                                                <a href="#" class="btn btn-info btn-sm text-light send_data_id"
+                                                    data-id="{{ $order->id }}" data-bs-toggle="modal"
+                                                    data-bs-target="#orderAssign">
+                                                    Assign Order
+                                                </a>
+                                                <a href="{{ route('order.details', $order->id) }}"
+                                                    class="btn btn-sm btn-success">View</a>
                                                 <a href="{{ route('admin.denied.order', $order->invoice_number) }}"
                                                     class="btn btn-sm btn-danger" id="delete">Cancel</a>
                                             </td>
@@ -78,7 +88,7 @@
                                     @endforeach
                                 @else
                                     <tr>
-                                        <td colspan="10" class="text-center text-warning">Data not Found</td>
+                                        <td colspan="12" class="text-center text-warning">Data not Found</td>
                                     </tr>
                                 @endif
                             </tbody>
@@ -107,7 +117,7 @@
                             <div class="border p-4 rounded">
                                 <hr>
 
-                              <input type="hidden" class="order_id" name="order_id" id="order_id">
+                                <input type="hidden" class="order_id" name="order_id" id="order_id">
                                 <!-- Discount Type -->
                                 <div class="row mb-3">
                                     <label class="col-sm-3 col-form-label">Assign To</label>
@@ -135,9 +145,9 @@
                                 <div class="row mb-3" id="courier" style="display: none;">
                                     <label class="col-sm-3 col-form-label">Courier</label>
                                     <div class="col-sm-9">
-                                        <select name="courier_service" class="form-select courier_service" required >
+                                        <select name="courier_service" class="form-select courier_service" required>
                                             <option value="">Choose...</option>
-                                            <option value="SteadFast" >Stead Fast</option>
+                                            <option value="SteadFast">Stead Fast</option>
                                             <option value="Pathao">Pathao</option>
                                         </select>
                                     </div>
@@ -151,34 +161,39 @@
                                         <div class="row mb-3" id="" style="">
                                             <label class="col-sm-3 col-form-label">Invoice Number</label>
                                             <div class="col-sm-9">
-                                               <input type="text" class="form-control" name="invoice" placeholder="Invoice Number" id="invoice_number">
+                                                <input type="text" class="form-control" name="invoice"
+                                                    placeholder="Invoice Number" id="invoice_number">
                                             </div>
                                         </div>
 
                                         <div class="row mb-3" id="" style="">
                                             <label class="col-sm-3 col-form-label">Recipent Name</label>
                                             <div class="col-sm-9">
-                                               <input type="text" class="form-control" name="recipient_name" placeholder="Enter Recipent Name" id="recipient_name">
+                                                <input type="text" class="form-control" name="recipient_name"
+                                                    placeholder="Enter Recipent Name" id="recipient_name">
                                             </div>
                                         </div>
 
                                         <div class="row mb-3" id="" style="">
                                             <label class="col-sm-3 col-form-label">Recipient Phone No:</label>
                                             <div class="col-sm-9">
-                                               <input type="text" class="form-control" name="recipient_phone" placeholder="Enter Recipent Phone No" id="recipient_phone">
+                                                <input type="text" class="form-control" name="recipient_phone"
+                                                    placeholder="Enter Recipent Phone No" id="recipient_phone">
                                             </div>
                                         </div>
                                         <div class="row mb-3" id="" style="">
                                             <label class="col-sm-3 col-form-label">COD Amount</label>
                                             <div class="col-sm-9">
-                                               <input type="text" class="form-control" name="cod_amount" placeholder="Enter COD Amount" id="cod_amount">
+                                                <input type="text" class="form-control" name="cod_amount"
+                                                    placeholder="Enter COD Amount" id="cod_amount">
                                             </div>
                                         </div>
 
                                         <div class="row mb-3" id="" style="">
                                             <label class="col-sm-3 col-form-label">Receipent Address</label>
                                             <div class="col-sm-9">
-                                               <textarea cols="5" rows="5" type="text" class="form-control" name="recipient_address" placeholder="Enter Recipent Address" id="recipient_address"></textarea>
+                                                <textarea cols="5" rows="5" type="text" class="form-control" name="recipient_address"
+                                                    placeholder="Enter Recipent Address" id="recipient_address"></textarea>
                                             </div>
                                         </div>
 
@@ -187,7 +202,7 @@
                                         <div class="row mb-3" id="" style="">
                                             <label class="col-sm-3 col-form-label">Note(Optional)</label>
                                             <div class="col-sm-9">
-                                               <textarea cols="5" rows="5" type="text" class="form-control" name="note" placeholder="Note"></textarea>
+                                                <textarea cols="5" rows="5" type="text" class="form-control" name="note" placeholder="Note"></textarea>
                                             </div>
                                         </div>
 
@@ -211,10 +226,9 @@
     </div>
 
     <script>
-
-    $(document).on('click','.assign_deliver',function(){
-        let formData = new FormData($('#deliverAssignForm')[0]);
-        $.ajaxSetup({
+        $(document).on('click', '.assign_deliver', function() {
+            let formData = new FormData($('#deliverAssignForm')[0]);
+            $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
@@ -222,13 +236,13 @@
             $('.error-message').remove();
             $.ajax({
 
-                url:"{{url('admin/order/assign-deliver')}}",
-                type:"POST",
-                data:formData,
+                url: "{{ url('admin/order/assign-deliver') }}",
+                type: "POST",
+                data: formData,
                 processData: false,
                 contentType: false,
-                success:function(response){
-                    if(response.status == 200){
+                success: function(response) {
+                    if (response.status == 200) {
 
                         $('#deliverAssignForm')[0].reset();
                         $('#orderAssign').modal('hide');
@@ -243,7 +257,8 @@
 
                         $.each(errors, function(key, value) {
                             let inputField = $('[name="' + key + '"]');
-                            inputField.after('<span class="text-danger error-message">' + value[0] + '</span>');
+                            inputField.after('<span class="text-danger error-message">' + value[
+                                0] + '</span>');
                         });
                     } else {
                         alert("Something went wrong!");
@@ -253,46 +268,44 @@
             });
 
 
-      });
+        });
 
 
 
-       $(document).on('change','.courier_service',function(){
-        let courier_service = $(this).val();
-        if(courier_service ==='SteadFast'){
-           $('#steadfast_courier_info').fadeIn();
-        }
-       });
+        $(document).on('change', '.courier_service', function() {
+            let courier_service = $(this).val();
+            if (courier_service === 'SteadFast') {
+                $('#steadfast_courier_info').fadeIn();
+            }
+        });
 
 
 
-        $(document).on('change','.assign_type',function(){
-             let assign_type = $(this).val();
-             if(assign_type ==='third-party'){
+        $(document).on('change', '.assign_type', function() {
+            let assign_type = $(this).val();
+            if (assign_type === 'third-party') {
                 $('#delivery_man').fadeOut();
                 $('#courier').fadeIn();
-             }
-
-             else{
+            } else {
 
                 $('#courier').fadeOut();
                 $('#delivery_man').fadeIn();
-             }
+            }
         });
 
-        $(document).on('click','.send_data_id',function(){
+        $(document).on('click', '.send_data_id', function() {
             let order_id = $(this).data('id');
             // $('.order_id').val(order_id);
 
             $.ajax({
-                url:"{{url('admin/order/get-order-details')}}",
-                type:"POST",
-                data:{
-                    _token:"{{csrf_token()}}",
-                    order_id:order_id
+                url: "{{ url('admin/order/get-order-details') }}",
+                type: "POST",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    order_id: order_id
                 },
-                success:function(response){
-                    if(response.status == 200){
+                success: function(response) {
+                    if (response.status == 200) {
                         $('#order_id').val(response.order.id);
                         $('#invoice_number').val(response.order.invoice_number);
                         $('#cod_amount').val(response.order.grand_total);
@@ -310,43 +323,41 @@
 
 
 
-  document.addEventListener("DOMContentLoaded", function () {
-    const form = document.getElementById("steadfastCourierForm");
+        document.addEventListener("DOMContentLoaded", function() {
+            const form = document.getElementById("steadfastCourierForm");
 
-    form.addEventListener("submit", function (event) {
-        let isValid = true;
+            form.addEventListener("submit", function(event) {
+                let isValid = true;
 
-        // Get input values
-        let invoice = document.querySelector("input[name='invoice']");
-        let recipientName = document.querySelector("input[name='recipient_name']");
-        let recipientPhone = document.querySelector("input[name='recipient_phone']");
-        let codAmount = document.querySelector("input[name='cod_amount']");
-        let recipientAddress = document.querySelector("textarea[name='recipient_address']");
+                // Get input values
+                let invoice = document.querySelector("input[name='invoice']");
+                let recipientName = document.querySelector("input[name='recipient_name']");
+                let recipientPhone = document.querySelector("input[name='recipient_phone']");
+                let codAmount = document.querySelector("input[name='cod_amount']");
+                let recipientAddress = document.querySelector("textarea[name='recipient_address']");
 
-        // Function to check if a field is empty and show error
-        function validateField(field) {
-            if (!field.value.trim()) {
-                field.classList.add("is-invalid");
-                isValid = false;
-            } else {
-                field.classList.remove("is-invalid");
-            }
-        }
+                // Function to check if a field is empty and show error
+                function validateField(field) {
+                    if (!field.value.trim()) {
+                        field.classList.add("is-invalid");
+                        isValid = false;
+                    } else {
+                        field.classList.remove("is-invalid");
+                    }
+                }
 
-        // Apply validation to required fields
-        validateField(invoice);
-        validateField(recipientName);
-        validateField(recipientPhone);
-        validateField(codAmount);
-        validateField(recipientAddress);
+                // Apply validation to required fields
+                validateField(invoice);
+                validateField(recipientName);
+                validateField(recipientPhone);
+                validateField(codAmount);
+                validateField(recipientAddress);
 
-        // Prevent form submission if invalid
-        if (!isValid) {
-            event.preventDefault();
-        }
-    });
-});
-
-
+                // Prevent form submission if invalid
+                if (!isValid) {
+                    event.preventDefault();
+                }
+            });
+        });
     </script>
 @endsection

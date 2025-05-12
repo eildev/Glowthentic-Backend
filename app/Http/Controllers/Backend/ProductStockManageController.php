@@ -45,7 +45,17 @@ class ProductStockManageController extends Controller
                $productStock = ProductStock::where('variant_id', $variant_id)->where('product_id',$request->product_id[$key])->first();
 
                if($productStock){
+
+
+                 if($request->quantity[$key] == 0){
+                    $productStock->StockQuantity =$request->quantity[$key];
+                 }
+
+              else{
                 $productStock->StockQuantity =$productStock->StockQuantity + $request->quantity[$key];
+              }
+
+
                 $productStock->save();
                }
 
@@ -78,4 +88,6 @@ class ProductStockManageController extends Controller
         $productStock = ProductStock::with('variant','product')->get();
         return view('backend.ProductStockManage.view',compact('productStock'));
     }
+
+
 }
