@@ -61,7 +61,7 @@ class ProductSeeder extends Seeder
 
         // Create 10 Men's Products
         Product::factory()
-            ->count(10)
+            ->count(5)
             ->state([
                 'category_id' => $menCategory->id,
                 'subcategory_id' => SubCategory::where('categoryId', $menCategory->id)->inRandomOrder()->first()->id,
@@ -69,7 +69,7 @@ class ProductSeeder extends Seeder
             ->has(ProductDetails::factory()->state(['gender' => 'male']), 'productDetails')
             ->has(
                 Variant::factory()
-                    ->count(3)
+                    ->count(2)
                     ->has(VariantImageGallery::factory()->count(4), 'variantImage'), // Each Variant has 4 images
                 'variants'
             )
@@ -77,7 +77,7 @@ class ProductSeeder extends Seeder
 
         // Create 10 Women's Products
         Product::factory()
-            ->count(10)
+            ->count(5)
             ->state([
                 'category_id' => $womenCategory->id,
                 'subcategory_id' => SubCategory::where('categoryId', $womenCategory->id)->inRandomOrder()->first()->id,
@@ -85,7 +85,7 @@ class ProductSeeder extends Seeder
             ->has(ProductDetails::factory()->state(['gender' => 'female']), 'productDetails')
             ->has(
                 Variant::factory()
-                    ->count(3)
+                    ->count(2)
                     ->has(VariantImageGallery::factory()->count(4), 'variantImage'), // Each Variant has 4 images
                 'variants'
             )
@@ -93,7 +93,7 @@ class ProductSeeder extends Seeder
 
         // Create 5 Unisex Products
         Product::factory()
-            ->count(5)
+            ->count(3)
             ->state([
                 'category_id' => $unisexCategory->id,
                 'subcategory_id' => SubCategory::where('categoryId', $unisexCategory->id)->inRandomOrder()->first()->id,
@@ -101,7 +101,7 @@ class ProductSeeder extends Seeder
             ->has(ProductDetails::factory()->state(['gender' => 'unisex']), 'productDetails')
             ->has(
                 Variant::factory()
-                    ->count(3)
+                    ->count(2)
                     ->has(VariantImageGallery::factory()->count(4), 'variantImage'), // Each Variant has 4 images
                 'variants'
             )
