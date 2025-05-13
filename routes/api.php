@@ -33,7 +33,7 @@ Route::get('/sanctum/csrf-cookie', function () {
     return response()->noContent();
 });
 
-// reset password 
+// reset password
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
 Route::post('/verify-otp', [ForgotPasswordController::class, 'verifyOTP']);
 Route::post('/reset-password', [ForgotPasswordController::class, 'reset']);
@@ -196,3 +196,8 @@ Route::controller(ApiReviewController::class)->group(function () {
 Route::controller(UserTrackerController::class)->group(function () {
     Route::post('/user-tracker', 'store');
 });
+
+
+Route::get('/{any}', function () {
+    return view('errors.404'); // or return view('welcome') if you are using welcome.blade.php
+})->where('any', '.*');

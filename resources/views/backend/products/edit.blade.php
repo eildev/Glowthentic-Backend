@@ -283,63 +283,74 @@
 
                                         </div>
 
-                                        <div class="row mb-3">
-                                            <div class="col-12">
-                                                <div class="row">
-                                                    <div class="col-12">
-                                                        <label for="" class="form-label"> Description</label>
-                                                    </div>
-                                                    <div class="col-12">
-                                                        <textarea class="form-control description_product"
-                                                                  name="description"
-                                                                  style="resize: none; height: 70px;">{!!$product->productdetails->description ?? '' !!}</textarea>
-
-                                                        @error('description')
-                                                            <span class="text-danger">{{ $message }}</span>
-                                                        @enderror
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row mb-3">
-                                            <div class="col-12">
-                                                <div class="row">
-                                                    <div class="col-12">
-                                                        <label for="" class="form-label">Ingredients</label>
-                                                    </div>
-                                                    <div class="col-12">
-                                                        <textarea class="form-control ingrediantsedit" name="ingredients" placeholder="Enter Ingredients"
-                                                            style="resize: none; height: 100px;" id="ingrediants" >{!! $product->productdetails->ingredients ?? 'NA' !!}</textarea>
-
-
-                                                            @error('ingredients')
-                                                            <span class="text-danger">{{ $message }}</span>
-                                                        @enderror
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
 
 
 
-                                        <div class="row mb-3">
-                                            <div class="col-12">
-                                                <div class="row">
-                                                    <div class="col-12">
-                                                        <label for="" class="form-label">Usage Instruction</label>
-                                                    </div>
-                                                    <div class="col-12">
-                                                        <textarea class="form-control usage_instructionedit" name="usage_instruction" placeholder="Enter Usage Instruction"
-                                                            style="resize: none; height: 100px;" id="">{!! $product->productdetails->usage_instruction ?? 'NA' !!}</textarea>
 
 
-                                                            @error('usage_instruction')
-                                                            <span class="text-danger">{{ $message }}</span>
-                                                        @enderror
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+
+
+
+
+                                       <div class="row mb-3">
+                        <div class="col-12">
+                            <div class="row">
+                                <div class="col-12">
+                                    <label for="" class="form-label">Description</label>
+                                </div>
+                                <div class="col-12">
+                                    <textarea class="form-control no-bg product_descriptions_onedit @error('description') is-invalid @enderror"
+                                            name="description"
+                                            style="resize: none; height: 70px;">{!! $product->productdetails->description ?? '' !!}</textarea>
+
+                                    @error('description')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <div class="row">
+                                <div class="col-12">
+                                    <label for="" class="form-label">Ingredients</label>
+                                </div>
+                                <div class="col-12">
+                                    <textarea class="form-control no-bg ingrediantsedit @error('ingredients') is-invalid @enderror"
+                                            name="ingredients"
+                                            placeholder="Enter Ingredients"
+                                            style="resize: none; height: 100px;" id="ingrediants">{!! $product->productdetails->ingredients ?? 'NA' !!}</textarea>
+
+                                    @error('ingredients')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <div class="row">
+                                <div class="col-12">
+                                    <label for="" class="form-label">Usage Instruction</label>
+                                </div>
+                                <div class="col-12">
+                                    <textarea class="form-control no-bg usage_instructionedit @error('usage_instruction') is-invalid @enderror"
+                                            name="usage_instruction"
+                                            placeholder="Enter Usage Instruction"
+                                            style="resize: none; height: 100px;">{!! $product->productdetails->usage_instruction ?? 'NA' !!}</textarea>
+
+                                    @error('usage_instruction')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
 
 
 
@@ -575,7 +586,7 @@
 
                                                 </td>
 
-                                                 <td><input type="number" class="form-control" name="stock_quantity[{{ $variant->id }}]" value="{{ $variant->productStock->StockQuantity??0 }}"   min="0" ></td>
+                                                 <td><input type="number" class="form-control" name="stock_quantity[{{ $variant->id }}]" value="{{ $variant->productStock->StockQuantity??0 }}"></td>
                                                  <td>
 
                                                      <button type="button" class="btn btn-success addRow">+</button>
@@ -607,150 +618,7 @@
 
 
 
-                        {{-- style="display: none"
-                        <div class="row variant_section">
-                            <div class="card-title d-flex">
-                                <h5 class="mb-0 text-info">Add Variants</h5>
-                            </div>
-                            <form method="POST" id="productVariant">
-                                @csrf
-                                <div class="col-12">
-                                    <div class="border border-3 p-4 rounded">
-                                        <div class="row g-3 mb-4">
-                                            <div class="col-lg-3 col-md-6">
-                                                <label for="inputPrice" class="form-label">Regular Price</label>
-                                                <input type="number" class="form-control regular_price" id="inputPrice"
-                                                    placeholder="00.00" name="regular_price">
-                                                <input type="hidden" class="product_id" name="product_id">
-                                                <input type="hidden" class="variant_id" name="variant_id"
-                                                    value="">
-                                                <span class="regular_price_error text-danger"></span>
-                                            </div>
-                                            <div class="col-lg-3 col-md-6">
-                                                <label for="inputPrice" class="form-label">Discount Price</label>
-                                                <input type="number" class="form-control discount_amount"
-                                                    id="inputPrice" placeholder="00.00" name="discount_amount">
-                                                <span class="discount_amount_error text-danger"></span>
-                                            </div>
-                                            <div class="col-lg-3 col-md-6">
-                                                <label class="form-label col-12">Discount</label>
-                                                <select class="form-select discount" name="discount">
-                                                    <option value="0">discount</option>
-                                                    <option value="0">0</option>
-                                                    <option value="10">10%</option>
-                                                    <option value="20">20%</option>
-                                                    <option value="30">30%</option>
-                                                    <option value="40">40%</option>
 
-                                                </select>
-                                                <span class="discount_error text-danger"></span>
-                                            </div>
-
-                                            <div class="col-lg-3 col-md-6">
-                                                <label for="inputPrice" class="form-label">Stock Quantity</label>
-                                                <input type="number" class="form-control" id="stock"
-                                                    placeholder="00.00" name="stock_quantity">
-                                                <span class="stock_quantity_error text-danger"></span>
-                                            </div>
-                                            <div class="col-lg-3 col-md-6">
-                                                <label class="form-label col-12">Unit</label>
-                                                <select class="form-select unit" name="unit">
-                                                    <option value="">Unit</option>
-                                                    <option value="kg">KG</option>
-                                                    <option value="liter">Liter</option>
-                                                    <option value="piece">Piece</option>
-                                                    <option value="dozon">Dozon</option>
-                                                    <option value="inch">Inch</option>
-                                                    <option value="gm">GM</option>
-                                                    <option value="ml">ML</option>
-                                                    <option value="packet">Packet</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-lg-3 col-md-6">
-                                                <label class="form-label">Weight</label> <br>
-                                                <input type="text" class="form-control weight" id="inputPrice"
-                                                    placeholder="Weight" name="weight">
-                                            </div>
-                                            <div class="col-lg-3 col-md-6">
-                                                <label class="form-label col-12">Color</label>
-                                                <select class="form-select color" name="color">
-                                                    <option value="">Color</option>
-                                                    <option value="black">Black</option>
-                                                    <option value="white">White</option>
-                                                    <option value="red">Red</option>
-                                                    <option value="blue">Blue</option>
-                                                    <option value="green">Green</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-lg-3 col-md-6">
-                                                <label class="form-label col-12">Size</label>
-                                                <select class="form-select size" name="size">
-                                                    <option value="">Size</option>
-                                                    <option value="M">M</option>
-                                                    <option value="L">L</option>
-                                                    <option value="XL">XL</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-lg-3 col-md-6">
-                                                <label class="form-label">Barcode Generator</label> <br>
-                                                <input type="text" class="form-control barcode" id="inputPrice"
-                                                    placeholder="Barcode" name="barcode">
-                                            </div>
-                                            <div class="col-lg-3 col-md-6">
-                                                <label class="form-label">Manufacture Date</label> <br>
-                                                <input type="date" class="form-control" id="inputPrice"
-                                                    placeholder="" name="manufacture_date">
-                                            </div>
-                                            <div class="col-lg-3 col-md-6">
-                                                <label class="form-label">Expire Date</label> <br>
-                                                <input type="date" class="form-control" id="inputPrice"
-                                                    placeholder="" name="expire_date">
-                                            </div>
-                                            <div class="col-md-3">
-                                                <div class="d-flex justify-content-center align-items-center h-100">
-                                                    <button type="button" class="btn btn-primary add_varient">Add
-                                                        Varients</button>
-                                                    <button type="button" class="btn btn-primary update_varient"
-                                                        style="display: none;">Update
-                                                        Varients</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-
-
-                            <div class="row mt-3">
-                                <div class="col-12">
-                                    <div class="table-responsive">
-                                        <table id="example" class="table table-striped table-bordered"
-                                            style="width:100%">
-                                            <thead>
-                                                <tr>
-                                                    <th>Regular Price</th>
-                                                    <th>Discount</th>
-                                                    <th>Discount Price</th>
-                                                    <th>Stock Quantity</th>
-                                                    <th>Unit</th>
-                                                    <th>Weight</th>
-                                                    <th>color</th>
-                                                    <th>Size</th>
-                                                    <th>Manufacture Date</th>
-                                                    <th>Expire Date</th>
-                                                    <th>Action</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="varient_container">
-
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                        </div> --}}
                     </div>
 
                 </div>
@@ -814,8 +682,11 @@
 {{-- script start --}}
 <script>
   $(document).ready(function() {
+
+
+
     // প্রথম এডিটর
-    $('.description_product').summernote({
+    $('.product_descriptions_onedit').summernote({
         height: 300,
         callbacks: {
             onPaste: function(e) {
@@ -1054,7 +925,6 @@ $(document).on("click", ".addRow", function () {
     getSize(lastSize);
     getColor(lastColor);
 });
-
 
 
 

@@ -37,7 +37,8 @@ use App\Http\Controllers\Backend\DeliverOrderAssignController;
 use App\Http\Controllers\Backend\FeatureController;
 use App\Http\Controllers\Backend\CourierController;
 use App\Http\Controllers\Backend\ColorController;
-use App\Http\Controllers\Backend\VariantController;
+use App\Http\Controllers\Backend\userProfileController;
+
 
 // Route::get('/home', function () {
 //     return view('frontend.index');
@@ -52,6 +53,8 @@ Route::controller(AllMail::class)->group(function () {
     Route::post('/reply/mail', 'replyMail')->name('reply.mail');
 });
 Route::middleware('auth')->group(function () {
+
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -86,6 +89,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/disable-user/{user_id}', 'DisableUser')->name('admin.disable-user');
         Route::get('/admin/enable-user/{user_id}', 'EnableUser')->name('admin.enable-user');
     });
+
+
+
+
+
 
     //All Routes for Category End
 
@@ -452,6 +460,10 @@ Route::middleware('auth')->group(function () {
     });
     //Purchase Details All Route End
 
+    Route::controller(userProfileController::class)->group(function () {
+        Route::get('/user/profile', 'index')->name('user.profile');
+        Route::post('/user/profile', 'update')->name('user.password.update');
+   });
 
 
     //Company Details All Route Start
@@ -484,6 +496,7 @@ Route::controller(UserTrackerController::class)->group(function () {
     // Route::post('/company-details/status/{id}', 'status')->name('company-details.status');
 });
 
+
 // Route::controller(VariantController::class)->group(function () {
 //     Route::get('/check-mail-template/{id}', 'checkMail');
 // });
@@ -491,5 +504,7 @@ Route::controller(UserTrackerController::class)->group(function () {
 
 // require __DIR__ . '/auth.php';
 // require __DIR__ . '/frontend.php';
-
 Route::group([], base_path('routes/frontend.php'));
+Route::get('/{any}', function () {
+    return view('errors.404'); // or return view('welcome') if you are using welcome.blade.php
+})->where('any', '.*');

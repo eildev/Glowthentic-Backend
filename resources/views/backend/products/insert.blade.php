@@ -457,7 +457,7 @@
                                                         <label for="" class="form-label"> Description</label>
                                                     </div>
                                                     <div class="col-12">
-                                                        <textarea class="form-control product_descriptions_on @error('description') is-invalid  @enderror" name="description"
+                                                        <textarea class="form-control product_descriptions_on no-bg @error('description') is-invalid  @enderror" name="description"
                                                             placeholder="Enter Product Description" style="resize: none; height: 70px;"></textarea>
                                                         @error('description')
                                                             <span class="text-danger">{{ $message }}</span>
@@ -473,8 +473,8 @@
                                                         <label for="" class="form-label">Ingredients</label>
                                                     </div>
                                                     <div class="col-12">
-                                                        <textarea class="form-control ingrediants" name="ingredients" placeholder="Enter Ingredients"
-                                                            style="resize: none; height: 100px;" id="product_description"></textarea>
+                                                        <textarea class="form-control ingrediants no-bg" name="ingredients" placeholder="Enter Ingredients"
+                                                            style="resize: none; height: 100px;" id=""></textarea>
 
 
                                                         @error('ingredients')
@@ -494,7 +494,7 @@
                                                         <label for="" class="form-label">Usage Instruction</label>
                                                     </div>
                                                     <div class="col-12">
-                                                        <textarea class="form-control usage_instruction" name="usage_instruction" placeholder="Enter Usage Instruction"
+                                                        <textarea class="form-control usage_instruction no-bg" name="usage_instruction" placeholder="Enter Usage Instruction"
                                                             style="resize: none; height: 100px;" id=""></textarea>
 
 
@@ -965,7 +965,7 @@
             });
 
             // দ্বিতীয় এডিটর
-            $('.ingredients').summernote({
+            $('.ingrediants').summernote({
                 height: 300,
                 callbacks: {
                     onPaste: function(e) {
@@ -1140,11 +1140,7 @@
         }
 
         ////////////////////summernote//////////////////////
-        $(document).ready(function() {
-            // $('.product_descriptions').summernote();
-            $('.ingrediants').summernote();
-            $('.usage_instruction').summernote();
-        });
+
         ////////////////////////////////////show validation error //////////////////////////////////////
         function validationError() {
             $(".error-message").remove();
