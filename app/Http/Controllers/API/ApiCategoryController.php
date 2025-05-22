@@ -196,7 +196,7 @@ class ApiCategoryController extends Controller
                 $tagName = $t->tag->tagName;
                 if (!isset($uniqueTags[$tagName])) {
                     $uniqueTags[$tagName] = [
-                        'id' => $t->id,
+                        'id' => $t->tag->id,
                         'tagName' => $tagName
                     ];
                 }
