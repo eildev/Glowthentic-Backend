@@ -25,7 +25,7 @@ class DeliverOrderAssignController extends Controller
             if ($validator->fails()) {
                 return response()->json(['errors' => $validator->errors()], 422);
             }
-    
+
             $deliver_order_assign = new DeliveryOrder();
             $deliver_order_assign->order_id = $request->order_id;
             $deliver_order_assign->delivery_method = $request->delivery_method;
@@ -49,8 +49,8 @@ class DeliverOrderAssignController extends Controller
 
                $endPoint ="https://portal.packzy.com/api/v1/create_order";
 
-               $appKey="lgx16toeschl9fmulen1rwbdqfluhrin";
-               $secretKey="kswetbgjpcuz7nwbqgj4vp8z";
+               $appKey="wb67wzfzpfhb5nozj9i624wrdryug1wm";
+               $secretKey="gw7wrur1kgdms3pfff6nxddi";
 
                $invoice = $request->invoice;
                $recipient_name = $request->recipient_name;
@@ -77,11 +77,12 @@ class DeliverOrderAssignController extends Controller
 
               $response=Http::withHeaders($header)->post($endPoint,$data);
               $responseData = $response->json();
-            //   dump($responseData);
+            //  dump($responseData);
 
             if($responseData['status']==200){
 
                 $deliver_order_assign->tracking_number = $responseData['consignment']['tracking_code'];
+                $deliver_order_assign->courier_id = $responseData['consignment']['consignment_id'];
                 $deliver_order_assign->status = $responseData['consignment']['status'];
                 // $deliver_order_assign->tracking_url = $responseData['data']['tracking_url'];
             }
@@ -96,16 +97,16 @@ class DeliverOrderAssignController extends Controller
             }
             $deliver_order_assign->assign_to = $request->assign_to;
             $order = Order::where('id', $request->order_id)->first();
-          
+
             if($order){
                 foreach($order->orderDetails as $orderDetails){
                    $QuantityUpdate= $orderDetails->variant->productStock->StockQuantity - $orderDetails->product_quantity;
                    $orderDetails->variant->productStock->StockQuantity = $QuantityUpdate;
                    $orderDetails->variant->productStock->save();
-                 
+
                 }
             }
-            $order->status = "Delivering";
+             $order->status = "Delivering";
             $order->save();
             $deliver_order_assign->save();
 

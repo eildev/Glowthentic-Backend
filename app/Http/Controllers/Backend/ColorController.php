@@ -31,7 +31,8 @@ class ColorController extends Controller
 
     public function ColorGet(){
         try{
-            $colors = ColorModel::all();
+
+            $colors = ColorModel::select('id','color_name')->get(); // Only send what you need
 
             return response()->json([
                 'status' => 200,

@@ -17,13 +17,8 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreignId('blog_id');
             $table->foreign('blog_id')->references('id')->on('blog_posts')->onDelete('cascade');
-            $table->integer('like')->default(0);
-            $table->integer('dislike')->default(0);
-            $table->integer('love')->default(0);
-            $table->integer('sad')->default(0);
-            $table->integer('angry')->default(0);
-            $table->integer('haha')->default(0);
-
+            $table->tinyInteger('like')->default(0);
+            $table->tinyInteger('dislike')->default(0);
             $table->timestamps(0);
             $table->softDeletes();
         });

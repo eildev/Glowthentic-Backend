@@ -1,7 +1,7 @@
 @extends('backend.master')
 @section('admin')
-<link href="{{ asset('backend') }}/assets/plugins/select2/css/select2.min.css" rel="stylesheet" />
-<link href="{{ asset('backend') }}/assets/plugins/select2/css/select2-bootstrap4.css" rel="stylesheet" />
+    <link href="{{ asset('backend') }}/assets/plugins/select2/css/select2.min.css" rel="stylesheet" />
+    <link href="{{ asset('backend') }}/assets/plugins/select2/css/select2-bootstrap4.css" rel="stylesheet" />
     <div class="page-content">
 
         <div class="row">
@@ -24,7 +24,8 @@
 
 
                             <div class="my-3 ml-2">
-                                <a href="#" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#addFieldModal">
+                                <a href="#" class="btn btn-warning" data-bs-toggle="modal"
+                                    data-bs-target="#addFieldModal">
                                     <i class="fas fa-plus"></i> Add Extra Field
                                 </a>
                             </div>
@@ -35,15 +36,15 @@
                     <div class="form-body mt-4">
 
 
-                  <!-- Loader -->
+                        <!-- Loader -->
                         <div id="loader"
-                        style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.7); z-index:9999; display:none;">
+                            style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.7); z-index:9999; display:none;">
 
-                        <div style="width:100%; height:100%; display:flex; justify-content:center; align-items:center;">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="sr-only">Loading...</span>
-                        </div>
-                        </div>
+                            <div style="width:100%; height:100%; display:flex; justify-content:center; align-items:center;">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                            </div>
 
                         </div>
 
@@ -64,9 +65,12 @@
                                                     $categories = App\Models\Category::whereNull('parent_id')->get();
                                                 @endphp
                                                 <div class="row">
-                                                    <label class="form-label col-12">Select Category<span class="text-danger fw-bold">*</span></label>
+                                                    <label class="form-label col-12">Select Category<span
+                                                            class="text-danger fw-bold">*</span></label>
                                                     <div class="col-12">
-                                                        <select class="form-select category_select @error('category_id') is-invalid  @enderror" name="category_id">
+                                                        <select
+                                                            class="form-select category_select @error('category_id') is-invalid  @enderror"
+                                                            name="category_id">
                                                             <option value="">Select Category</option>
                                                             @foreach ($categories as $category)
                                                                 <option value="{{ $category->id }}">
@@ -84,7 +88,9 @@
                                                 <div class="row">
                                                     <label class="form-label col-12">Select Subcategory</label>
                                                     <div class="col-12">
-                                                        <select class="form-select subcategory_select @error('subcategory_id') is-invalid  @enderror" name="subcategory_id">
+                                                        <select
+                                                            class="form-select subcategory_select @error('subcategory_id') is-invalid  @enderror"
+                                                            name="subcategory_id">
                                                             <option value="">Select Subcategory</option>
                                                         </select>
                                                         @error('category_id')
@@ -118,9 +124,11 @@
                                                     $brands = App\Models\Brand::all();
                                                 @endphp
                                                 <div class="row">
-                                                    <label class="form-label col-12">Select Brand <span class="text-danger fw-bold">*</span></label>
+                                                    <label class="form-label col-12">Select Brand <span
+                                                            class="text-danger fw-bold">*</span></label>
                                                     <div class="col-12">
-                                                        <select class="form-select @error('brand_id') is-invalid  @enderror" name="brand_id">
+                                                        <select class="form-select @error('brand_id') is-invalid  @enderror"
+                                                            name="brand_id">
                                                             <option value="">Select Brand</option>
                                                             @foreach ($brands as $brand)
                                                                 <option value="{{ $brand->id }}">
@@ -148,30 +156,32 @@
 
 
                                                 <div class="row">
-                                                    <label class="form-label col-12">Select Unit <span class="text-danger fw-bold">*</span></label>
+                                                    <label class="form-label col-12">Select Unit <span
+                                                            class="text-danger fw-bold">*</span></label>
                                                     <div class="col-12">
-                                                        <select class="form-select @error('unit_id') is-invalid  @enderror" name="unit_id">
+                                                        <select class="form-select @error('unit_id') is-invalid  @enderror"
+                                                            name="unit_id">
                                                             <option value="">Select Unit</option>
-                                                                <option value="pcs">Piece</option>
-                                                                <option value="set">Set</option>
-                                                                <option value="pair">Pair</option>
-                                                                <option value="dozen">Dozen</option>
-                                                                <option value="kg">Kilogram (kg)</option>
-                                                                <option value="g">Gram (g)</option>
-                                                                <option value="mg">Milligram (mg)</option>
-                                                                <option value="lb">Pound (lb)</option>
-                                                                <option value="oz">Ounce (oz)</option>
-                                                                <option value="l">Liter (L)</option>
-                                                                <option value="ml">Milliliter (ml)</option>
-                                                                <option value="fl_oz">Fluid Ounce (fl oz)</option>
-                                                                <option value="gal">Gallon (gal)</option>
-                                                                <option value="m">Meter (m)</option>
-                                                                <option value="cm">Centimeter (cm)</option>
-                                                                <option value="inch">Inch (in)</option>
-                                                                <option value="ft">Foot (ft)</option>
-                                                                <option value="yd">Yard (yd)</option>
-                                                                <option value="pack">Pack</option>
-                                                                <option value="box">Box</option>
+                                                            <option value="pcs">Piece</option>
+                                                            <option value="set">Set</option>
+                                                            <option value="pair">Pair</option>
+                                                            <option value="dozen">Dozen</option>
+                                                            <option value="kg">Kilogram (kg)</option>
+                                                            <option value="g">Gram (g)</option>
+                                                            <option value="mg">Milligram (mg)</option>
+                                                            <option value="lb">Pound (lb)</option>
+                                                            <option value="oz">Ounce (oz)</option>
+                                                            <option value="l">Liter (L)</option>
+                                                            <option value="ml">Milliliter (ml)</option>
+                                                            <option value="fl_oz">Fluid Ounce (fl oz)</option>
+                                                            <option value="gal">Gallon (gal)</option>
+                                                            <option value="m">Meter (m)</option>
+                                                            <option value="cm">Centimeter (cm)</option>
+                                                            <option value="inch">Inch (in)</option>
+                                                            <option value="ft">Foot (ft)</option>
+                                                            <option value="yd">Yard (yd)</option>
+                                                            <option value="pack">Pack</option>
+                                                            <option value="box">Box</option>
                                                         </select>
                                                         @error('unit_id')
                                                             <span class="text-danger">{{ $message }}</span>
@@ -188,7 +198,9 @@
                                                         <span class="text-danger fw-bold">*</span>
                                                     </label>
                                                     <div class="col-10">
-                                                        <select class="form-select @error('size') is-invalid @enderror size" name="size" id="size-select">
+                                                        <select
+                                                            class="form-select @error('size') is-invalid @enderror size"
+                                                            name="size" id="size-select">
 
                                                         </select>
                                                         @error('size')
@@ -196,7 +208,8 @@
                                                         @enderror
                                                     </div>
                                                     <div class="col-2 p-0">
-                                                        <button type="button" class="btn btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#addSizeModal">
+                                                        <button type="button" class="btn btn-outline-primary w-100"
+                                                            data-bs-toggle="modal" data-bs-target="#addSizeModal">
                                                             +
                                                         </button>
                                                     </div>
@@ -218,10 +231,12 @@
                                             <div class="col-md-6">
                                                 <div class="row">
                                                     <label class="form-label col-12">
-                                                        Select Color <span class="text-danger fw-bold">*</span>
+                                                        Select Color
                                                     </label>
                                                     <div class="col-10">
-                                                        <select class="form-select @error('color') is-invalid @enderror color" name="color" id="color-select">
+                                                        <select
+                                                            class="form-select @error('color') is-invalid @enderror color"
+                                                            name="color" id="color-select">
                                                             <option value="">Select Color</option>
 
                                                         </select>
@@ -230,7 +245,8 @@
                                                         @enderror
                                                     </div>
                                                     <div class="col-2 p-0">
-                                                        <button type="button" class="btn btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#addColorModal">
+                                                        <button type="button" class="btn btn-outline-primary w-100"
+                                                            data-bs-toggle="modal" data-bs-target="#addColorModal">
                                                             +
                                                         </button>
                                                     </div>
@@ -239,17 +255,20 @@
 
 
 
+
+
                                             <div class="col-md-6">
 
                                                 <div class="row">
                                                     <div class="col-12">
-                                                        <label for="" class="form-label">Product Weight <span class="text-danger">*</span></label>
+                                                        <label for="" class="form-label">Product Weight (is for
+                                                            Shipping) <span class="text-danger">*</span></label>
                                                     </div>
                                                     <div class="col-12">
                                                         <input type="number" name="weight"
-                                                            class="form-control @error('weight') is-invalid  @enderror" id="inputEnterYourName"
-                                                            placeholder="Enter Product Weight" >
-                                                         @error('weight')
+                                                            class="form-control @error('weight') is-invalid  @enderror"
+                                                            id="inputEnterYourName" placeholder="Enter Product Weight">
+                                                        @error('weight')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                     </div>
@@ -273,9 +292,9 @@
                                                     </div>
                                                     <div class="col-12">
                                                         <input type="text" name="flavor"
-                                                            class="form-control @error('flavor') is-invalid  @enderror" id="inputEnterYourName"
-                                                            placeholder="Enter Product flavor">
-                                                         @error('flavor')
+                                                            class="form-control @error('flavor') is-invalid  @enderror"
+                                                            id="inputEnterYourName" placeholder="Enter Product flavor">
+                                                        @error('flavor')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                     </div>
@@ -287,13 +306,15 @@
 
                                                 <div class="row">
                                                     <div class="col-12">
-                                                        <label for="" class="form-label">Product Price <span class="text-danger fw-bold">*</span></label>
+                                                        <label for="" class="form-label">Product Price <span
+                                                                class="text-danger fw-bold">*</span></label>
                                                     </div>
                                                     <div class="col-12">
                                                         <input type="number" name="price"
-                                                            class="form-control @error('price') is-invalid  @enderror" id="inputEnterYourName"
-                                                            placeholder="Enter Product Weight" min="0" value="0">
-                                                         @error('price')
+                                                            class="form-control @error('price') is-invalid  @enderror"
+                                                            id="inputEnterYourName" placeholder="Enter Product Weight"
+                                                            min="0" value="0">
+                                                        @error('price')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                     </div>
@@ -309,9 +330,11 @@
                                             <div class="col-md-6">
 
                                                 <div class="row">
-                                                    <label class="form-label col-12">Select Gender <span class="text-danger fw-bold">*</span></label>
+                                                    <label class="form-label col-12">Select Gender <span
+                                                            class="text-danger fw-bold">*</span></label>
                                                     <div class="col-12">
-                                                        <select class="form-select @error('gender') is-invalid  @enderror" name="gender">
+                                                        <select class="form-select @error('gender') is-invalid  @enderror"
+                                                            name="gender">
                                                             <option value="">Select Gender</option>
                                                             <option value="unisex">Unisex</option>
                                                             <option value="male">Male</option>
@@ -329,9 +352,12 @@
                                             <div class="col-md-6">
 
                                                 <div class="row">
-                                                    <label class="form-label col-12">Shipping Charge <span class="text-danger fw-bold"></span></label>
+                                                    <label class="form-label col-12">Shipping Charge <span
+                                                            class="text-danger fw-bold"></span></label>
                                                     <div class="col-12">
-                                                        <select class="form-select @error('shipping_charge') is-invalid  @enderror" name="shipping_charge">
+                                                        <select
+                                                            class="form-select @error('shipping_charge') is-invalid  @enderror"
+                                                            name="shipping_charge">
                                                             <option value="">Select Charge</option>
                                                             <option value="free">Free</option>
                                                             <option value="paid">Paid</option>
@@ -346,6 +372,24 @@
                                             </div>
 
 
+                                <div class="col-md-6 mt-2">
+                                    <label for="category" class="form-label">Promotion Name</label>
+                                    <select class="form-select promotion" id="promotion" name="promotion_id">
+                                        {{-- @php
+                                        $existingPromotionIds = App\Models\ProductPromotion::pluck('promotion_id')->toArray();
+                                    @endphp --}}
+                                    <option value="">Select Promotion</option>
+                                    @foreach ($promotion as $promo)
+                                        {{-- @if (!in_array($promo->id, $existingPromotionIds)) --}}
+                                            <option value="{{ $promo->id }}"> {{ $promo->promotion_name??'' }} </option>
+                                        {{-- @endif --}}
+                                    @endforeach
+
+                                    </select>
+                                </div>
+
+
+
 
 
                                         </div>
@@ -357,13 +401,14 @@
                                             <div class="col-12">
                                                 <div class="row">
                                                     <div class="col-12">
-                                                        <label for="" class="form-label">Product Name <span class="text-danger fw-bold">*</span></label>
+                                                        <label for="" class="form-label">Product Name <span
+                                                                class="text-danger fw-bold">*</span></label>
                                                     </div>
                                                     <div class="col-12">
                                                         <input type="text" name="product_name"
-                                                            class="form-control product_sku @error('product_name') is-invalid  @enderror" id="inputEnterYourName"
-                                                            placeholder="Enter Product Name">
-                                                         @error('product_name')
+                                                            class="form-control product_sku @error('product_name') is-invalid  @enderror"
+                                                            id="inputEnterYourName" placeholder="Enter Product Name">
+                                                        @error('product_name')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                     </div>
@@ -377,9 +422,9 @@
                                                     </div>
                                                     <div class="col-12">
                                                         <input type="text" name="variant_name"
-                                                            class="form-control  @error('variant_name') is-invalid  @enderror" id="inputEnterYourName"
-                                                            placeholder="Enter Variant Name">
-                                                         @error('variant_name')
+                                                            class="form-control  @error('variant_name') is-invalid  @enderror"
+                                                            id="inputEnterYourName" placeholder="Enter Variant Name">
+                                                        @error('variant_name')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                     </div>
@@ -390,11 +435,13 @@
                                             <div class="col-12 mt-2">
                                                 <div class="row">
                                                     <div class="col-12">
-                                                        <label for="" class="form-label">Short Description <span class="text-danger fw-bold"></span></label>
+                                                        <label for="" class="form-label">Short Description <span
+                                                                class="text-danger fw-bold"></span></label>
                                                     </div>
                                                     <div class="col-12">
-                                                      <textarea name="short_description" class="form-control @error('short_description') is-invalid  @enderror" id="" cols="30" rows="6"></textarea>
-                                                         @error('short_description')
+                                                        <textarea name="short_description" class="form-control @error('short_description') is-invalid  @enderror"
+                                                            id="" cols="30" rows="6"></textarea>
+                                                        @error('short_description')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                     </div>
@@ -405,11 +452,13 @@
                                             <div class="col-12 mt-2">
                                                 <div class="row">
                                                     <div class="col-12">
-                                                        <label for="" class="form-label">Product Policy<span class="text-danger fw-bold"></span></label>
+                                                        <label for="" class="form-label">Product Policy<span
+                                                                class="text-danger fw-bold"></span></label>
                                                     </div>
                                                     <div class="col-12">
-                                                      <textarea name="product_policy" class="form-control @error('product_policy') is-invalid  @enderror" id="" cols="30" rows="6"></textarea>
-                                                         @error('product_policy')
+                                                        <textarea name="product_policy" class="form-control @error('product_policy') is-invalid  @enderror" id=""
+                                                            cols="30" rows="6"></textarea>
+                                                        @error('product_policy')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                     </div>
@@ -428,8 +477,9 @@
                                                         <label for="" class="form-label"> Description</label>
                                                     </div>
                                                     <div class="col-12">
-                                                        <textarea class="form-control product_descriptions_on @error('description') is-invalid  @enderror" name="description" placeholder="Enter Product Description" style="resize: none; height: 70px;"></textarea>
-                                                         @error('description')
+                                                        <textarea class="form-control product_descriptions_on no-bg @error('description') is-invalid  @enderror" name="description"
+                                                            placeholder="Enter Product Description" style="resize: none; height: 70px;"></textarea>
+                                                        @error('description')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                     </div>
@@ -443,11 +493,11 @@
                                                         <label for="" class="form-label">Ingredients</label>
                                                     </div>
                                                     <div class="col-12">
-                                                        <textarea class="form-control ingrediants" name="ingredients" placeholder="Enter Ingredients"
-                                                            style="resize: none; height: 100px;" id="product_description"></textarea>
+                                                        <textarea class="form-control ingrediants no-bg" name="ingredients" placeholder="Enter Ingredients"
+                                                            style="resize: none; height: 100px;" id=""></textarea>
 
 
-                                                            @error('ingredients')
+                                                        @error('ingredients')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                     </div>
@@ -464,11 +514,11 @@
                                                         <label for="" class="form-label">Usage Instruction</label>
                                                     </div>
                                                     <div class="col-12">
-                                                        <textarea class="form-control usage_instruction" name="usage_instruction" placeholder="Enter Usage Instruction"
+                                                        <textarea class="form-control usage_instruction no-bg" name="usage_instruction" placeholder="Enter Usage Instruction"
                                                             style="resize: none; height: 100px;" id=""></textarea>
 
 
-                                                            @error('usage_instruction')
+                                                        @error('usage_instruction')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                     </div>
@@ -493,7 +543,8 @@
                                             <div class="col-12">
                                                 <div class="mb-3">
                                                     <label class="form-label">SKU</label>
-                                                    <input type="text" class="form-control sku_generate @error('sku') is-invalid  @enderror"
+                                                    <input type="text"
+                                                        class="form-control sku_generate @error('sku') is-invalid  @enderror"
                                                         placeholder="ASD1202" name="sku">
                                                     @error('sku')
                                                         <span class="text-danger">{{ $message }}</span>
@@ -506,8 +557,10 @@
                                             <div class="col-12">
                                                 <div class="mb-3">
                                                     <label class="form-label"> Stock Quantity</label>
-                                                    <input type="number" class="form-control  @error('stock_quantity') is-invalid  @enderror"
-                                                        placeholder="Enter Stock Quantity" name="stock_quantity" min="0" value="0">
+                                                    <input type="number"
+                                                        class="form-control  @error('stock_quantity') is-invalid  @enderror"
+                                                        placeholder="Enter Stock Quantity" name="stock_quantity"
+                                                        min="0" value="0">
                                                     @error('stock_quantity')
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
@@ -528,15 +581,16 @@
                                                 <div class="mb-3">
                                                     <label class="form-label col-12">Select Feature</label>
                                                     <div class="col-12">
-                                                        <select class="multiple-select @error('product_feature') is-invalid  @enderror" id="multiple-select-field"
-                                                            name="product_feature[]" data-placeholder="Choose anything"
-                                                            multiple>
-                                                           @foreach ( $features as  $feature)
-                                                           <option value="{{ $feature->id }}">{{ $feature->feature_name }}</option>
-
-                                                           @endforeach
+                                                        <select
+                                                            class="multiple-select @error('product_feature') is-invalid  @enderror"
+                                                            id="multiple-select-field" name="product_feature[]"
+                                                            data-placeholder="Choose anything" multiple>
+                                                            @foreach ($features as $feature)
+                                                                <option value="{{ $feature->id }}">
+                                                                    {{ $feature->feature_name }}</option>
+                                                            @endforeach
                                                         </select>
-                                                         @error('product_feature')
+                                                        @error('product_feature')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                     </div>
@@ -547,15 +601,16 @@
 
 
                                             @php
-                                              $tag=App\Models\TagName::all();
+                                                $tag = App\Models\TagName::all();
                                             @endphp
 
                                             <div class="mb-3">
                                                 <label class="form-label">Select Product Tag</label>
-                                                <select class="multiple-select" data-placeholder="Choose anything" multiple="multiple" name="tag[]">
+                                                <select class="multiple-select" data-placeholder="Choose anything"
+                                                    multiple="multiple" name="tag[]">
                                                     {{-- <option value="" selected>Select Product Tag</option> --}}
-                                                    @foreach($tag as $tag)
-                                                       <option value="{{$tag->id}}">{{$tag->tagName}}</option>
+                                                    @foreach ($tag as $tag)
+                                                        <option value="{{ $tag->id }}">{{ $tag->tagName }}</option>
                                                     @endforeach
 
                                                 </select>
@@ -567,7 +622,7 @@
 
                                             <div class="mb-3 col-12 data" style="display:none">
                                                 <label for="" class="mb-2">Extra Field Add</label>
-                                                <select class="form-select extra_field" name="extra_field" >
+                                                <select class="form-select extra_field" name="extra_field">
 
                                                 </select>
                                             </div>
@@ -582,7 +637,7 @@
 
 
 
-                                      {{--
+                                        {{--
                                             <div class="col-12">
                                                 <label for="image" class="form-label">Image Gallery </label>
                                                 <input type="file" id="imageGallery" class="form-control "
@@ -601,68 +656,70 @@
                                                 </div>
                                             </div> --}}
 
-                                            <div class="row mb-3 d-flex align-items-center">
-                                                <div class="col-md-6">
-                                                    <label for="image" class="form-label">Product Thumbnail <span class="text-danger fw-bold">*</span></label>
-                                                    <input type="file" id="image"
-                                                        class="form-control @error('product_main_image') is-invalid @enderror"
-                                                        name="product_main_image[]" multiple required>
+                                        <div class="row mb-3 d-flex align-items-center">
+                                            <div class="col-md-6">
+                                                <label for="image" class="form-label">Product Thumbnail <span
+                                                        class="text-danger fw-bold">*</span></label>
+                                                <input type="file" id="image"
+                                                    class="form-control @error('product_main_image') is-invalid @enderror"
+                                                    name="product_main_image[]" multiple required>
 
-                                                    <div class="my-1">
-                                                        <i><b>Note:</b> Please provide a 600 X 600 size image</i>
-                                                    </div>
-                                                    <div id="imageCount" class="text-primary mt-1"></div> <!-- Display image count here -->
+                                                <div class="my-1">
+                                                    <i><b>Note:</b> Please provide a 600 X 600 size image</i>
+                                                </div>
+                                                <div id="imageCount" class="text-primary mt-1"></div>
+                                                <!-- Display image count here -->
 
-                                                    <!-- Error message for the main image field -->
-                                                    @error('product_main_image')
-                                                        <span class="text-danger">{{ $message }}</span>
-                                                    @enderror
+                                                <!-- Error message for the main image field -->
+                                                @error('product_main_image')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
 
-                                                    <!-- Error messages for each uploaded image -->
-                                                    @foreach ($errors->get('product_main_image.*') as $messages)
-                                                        @foreach ($messages as $message)
-                                                            <span class="text-danger d-block">{{ $message }}</span>
-                                                        @endforeach
+                                                <!-- Error messages for each uploaded image -->
+                                                @foreach ($errors->get('product_main_image.*') as $messages)
+                                                    @foreach ($messages as $message)
+                                                        <span class="text-danger d-block">{{ $message }}</span>
                                                     @endforeach
-                                                </div>
+                                                @endforeach
                                             </div>
+                                        </div>
 
 
 
-                                            <div class="col-12">
-                                                <div class="d-grid">
-                                                    <a type="" class="btn btn-primary add_product">Add
-                                                        Product</a>
-                                                </div>
+                                        <div class="col-12">
+                                            <div class="d-grid">
+                                                <a type="" class="btn btn-primary add_product">Add
+                                                    Product</a>
                                             </div>
+                                        </div>
 
-                                            <div class="col-12 mt-2">
-                                                <div class="d-grid">
-                                                    <a  class="btn btn-danger add_variant">
-                                                        <i class="fas fa-plus"></i>
-                                                        Add Variant</a>
-                                                </div>
+                                        <div class="col-12 mt-2">
+                                            <div class="d-grid">
+                                                <a class="btn btn-danger add_variant">
+                                                    <i class="fas fa-plus"></i>
+                                                    Add Variant</a>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </form>
+                    </div>
+                    </form>
 
 
 
 
-                        <div class="row" style="display: none;" id="variant_form">
+                    <div class="row" style="display: none;" id="variant_form">
 
-                        </div>
-
-
+                    </div>
 
 
 
 
 
-                        {{-- style="display: none"
+
+
+                    {{-- style="display: none"
                         <div class="row variant_section">
                             <div class="card-title d-flex">
                                 <h5 class="mb-0 text-info">Add Variants</h5>
@@ -806,153 +863,153 @@
 
 
                         </div> --}}
-                    </div>
-
                 </div>
 
-                <!--end row-->
             </div>
+
+            <!--end row-->
         </div>
     </div>
-{{-- //////////////////////////////////size modal//////////////////////////////////// --}}
-
-   <!-- Modal -->
-   <div class="modal fade" id="addSizeModal" tabindex="-1" aria-labelledby="addSizeModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <form id="addsizeform">
-          <div class="modal-content">
-              <div class="modal-header">
-                  <h5 class="modal-title">Add New Size</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                  <label for="new-size" class="form-label">Size Name</label>
-                  <input type="text" id="new-size" name="size_name" class="form-control" placeholder="e.g., 3XL, 2kg, etc.">
-              </div>
-              <div class="modal-footer">
-                  <a  class="btn btn-primary addSize">Add Size</a>
-              </div>
-          </div>
-      </form>
     </div>
-  </div>
-{{-- //////////////////////////////////////////////////////add color modal////////////////////////// --}}
-<!-- Modal for Adding New Color -->
-<div class="modal fade" id="addColorModal" tabindex="-1" aria-labelledby="addColorModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <form id="addcolorform">
-          <div class="modal-content">
-              <div class="modal-header">
-                  <h5 class="modal-title">Add New Color</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                  <label for="new-color" class="form-label">Color Name</label>
-                  <input type="text" name="color_name"id="new-color" class="form-control" placeholder="e.g., Peach, Sky Blue">
-              </div>
-              <div class="modal-footer">
-                  <a  class="btn btn-primary addColor">Add Color</a>
-              </div>
-          </div>
-      </form>
-    </div>
-  </div>
-  {{-- //////////////////////////////////////////////// add extra field modal //////////////////////////////////////////////////////// --}}
+    {{-- //////////////////////////////////size modal//////////////////////////////////// --}}
 
-
-  <div class="modal fade" id="addFieldModal" tabindex="-1" aria-labelledby="addFieldModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addFieldModalLabel">Add New Field</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="addFieldForm">
-                    <!-- Field Name -->
-                    <div class="mb-3">
-                        <label for="field_name" class="form-label">Field Name</label>
-                        <input type="text" class="form-control" id="field_name" name="field_name" required>
+    <!-- Modal -->
+    <div class="modal fade" id="addSizeModal" tabindex="-1" aria-labelledby="addSizeModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form id="addsizeform">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add New Size</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-
-
-
-                    <div class="mb-3">
-                        <label for="data_type" class="form-label">Data Type</label>
-                        <select class="form-select p-2" id="data_type" name="data_type" required>
-                            <option value="">Select Data Type</option>
-
-                            <option value="longText">Text</option>
-                            <option value="text">String</option>
-                            <option value="int">Integer</option>
-
-                            <option value="decimal">Decimal</option>
-                            <option value="double">Double</option>
-                            <option value="date">Date</option>
-                            <option value="json">MultiSelect</option>
-                        </select>
+                    <div class="modal-body">
+                        <label for="new-size" class="form-label">Size Name</label>
+                        <input type="text" id="new-size" name="size_name" class="form-control"
+                            placeholder="e.g., 3XL, 2kg, etc.">
                     </div>
-                    <div class="mb-3 multiInput" style="display: none;">
-
+                    <div class="modal-footer">
+                        <a class="btn btn-primary addSize">Add Size</a>
                     </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <a href="#" class="btn btn-success addFieldForm" form="addFieldForm" id="">Save
-                    Field</a>
-            </div>
+                </div>
+            </form>
         </div>
     </div>
-</div>
+    {{-- //////////////////////////////////////////////////////add color modal////////////////////////// --}}
+    <!-- Modal for Adding New Color -->
+    <div class="modal fade" id="addColorModal" tabindex="-1" aria-labelledby="addColorModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form id="addcolorform">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add New Color</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <label for="new-color" class="form-label">Color Name</label>
+                        <input type="text" name="color_name"id="new-color" class="form-control"
+                            placeholder="e.g., Peach, Sky Blue">
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn btn-primary addColor">Add Color</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    {{-- //////////////////////////////////////////////// add extra field modal //////////////////////////////////////////////////////// --}}
 
 
-{{-- script start --}}
-<script>
-
-
-
-
-$(document).ready(function() {
-    // প্রথম এডিটর
-    $('.product_descriptions_on').summernote({
-        height: 300,
-        callbacks: {
-            onPaste: function(e) {
-                var bufferText = ((e.originalEvent || e).clipboardData || window.clipboardData).getData('Text');
-                e.preventDefault();
-                document.execCommand('insertText', false, bufferText);
-            }
-        }
-    });
-
-    // দ্বিতীয় এডিটর
-    $('.ingredients').summernote({
-        height: 300,
-        callbacks: {
-            onPaste: function(e) {
-                var bufferText = ((e.originalEvent || e).clipboardData || window.clipboardData).getData('Text');
-                e.preventDefault();
-                document.execCommand('insertText', false, bufferText);
-            }
-        }
-    });
-
-    // তৃতীয় এডিটর
-    $('.usage_instruction').summernote({
-        height: 300,
-        callbacks: {
-            onPaste: function(e) {
-                var bufferText = ((e.originalEvent || e).clipboardData || window.clipboardData).getData('Text');
-                e.preventDefault();
-                document.execCommand('insertText', false, bufferText);
-            }
-        }
-    });
-});
+    <div class="modal fade" id="addFieldModal" tabindex="-1" aria-labelledby="addFieldModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addFieldModalLabel">Add New Field</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addFieldForm">
+                        <!-- Field Name -->
+                        <div class="mb-3">
+                            <label for="field_name" class="form-label">Field Name</label>
+                            <input type="text" class="form-control" id="field_name" name="field_name" required>
+                        </div>
 
 
 
+                        <div class="mb-3">
+                            <label for="data_type" class="form-label">Data Type</label>
+                            <select class="form-select p-2" id="data_type" name="data_type" required>
+                                <option value="">Select Data Type</option>
+
+                                <option value="longText">Text</option>
+                                <option value="text">String</option>
+                                <option value="int">Integer</option>
+
+                                <option value="decimal">Decimal</option>
+                                <option value="double">Double</option>
+                                <option value="date">Date</option>
+                                <option value="json">MultiSelect</option>
+                            </select>
+                        </div>
+                        <div class="mb-3 multiInput" style="display: none;">
+
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <a href="#" class="btn btn-success addFieldForm" form="addFieldForm" id="">Save
+                        Field</a>
+                </div>
+            </div>
+
+            <!--end row-->
+        </div>
+    </div>
+
+
+    {{-- script start --}}
+    <script>
+        $(document).ready(function() {
+            // প্রথম এডিটর
+            $('.product_descriptions_on').summernote({
+                height: 300,
+                callbacks: {
+                    onPaste: function(e) {
+                        var bufferText = ((e.originalEvent || e).clipboardData || window.clipboardData)
+                            .getData('Text');
+                        e.preventDefault();
+                        document.execCommand('insertText', false, bufferText);
+                    }
+                }
+            });
+
+            // দ্বিতীয় এডিটর
+            $('.ingrediants').summernote({
+                height: 300,
+                callbacks: {
+                    onPaste: function(e) {
+                        var bufferText = ((e.originalEvent || e).clipboardData || window.clipboardData)
+                            .getData('Text');
+                        e.preventDefault();
+                        document.execCommand('insertText', false, bufferText);
+                    }
+                }
+            });
+
+            // তৃতীয় এডিটর
+            $('.usage_instruction').summernote({
+                height: 300,
+                callbacks: {
+                    onPaste: function(e) {
+                        var bufferText = ((e.originalEvent || e).clipboardData || window.clipboardData)
+                            .getData('Text');
+                        e.preventDefault();
+                        document.execCommand('insertText', false, bufferText);
+                    }
+                }
+            });
+        });
 
 
 
@@ -968,8 +1025,11 @@ $(document).ready(function() {
 
 
 
-            //////////////////////////////////////// addSizeSave ////////////////////////
-            $(document).on('click', '.addSize', function () {
+
+
+
+        //////////////////////////////////////// addSizeSave ////////////////////////
+        $(document).on('click', '.addSize', function() {
 
             let size = $('input[name="size_name"]').val();
             $('input[name="size_name"]').next('.text-danger').remove();
@@ -979,7 +1039,9 @@ $(document).ready(function() {
             }
             let formdata = new FormData($('#addsizeform')[0]);
             $.ajaxSetup({
-                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
             });
 
             $.ajax({
@@ -988,7 +1050,7 @@ $(document).ready(function() {
                 data: formdata,
                 contentType: false,
                 processData: false,
-                success: function (response) {
+                success: function(response) {
                     if (response.status == 200) {
                         $('#addsizeform')[0].reset();
                         $('#addSizeModal').modal('hide');
@@ -999,10 +1061,10 @@ $(document).ready(function() {
                     }
                 },
             });
-            });
+        });
 
-            //////////////////////////////////////// colorSave ////////////////////////
-            $(document).on('click', '.addColor', function () {
+        //////////////////////////////////////// colorSave ////////////////////////
+        $(document).on('click', '.addColor', function() {
 
             let color = $('input[name="color_name"]').val();
             $('input[name="color_name"]').next('.text-danger').remove();
@@ -1012,7 +1074,9 @@ $(document).ready(function() {
             }
             let formdata = new FormData($('#addcolorform')[0]);
             $.ajaxSetup({
-                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
             });
 
             $.ajax({
@@ -1021,7 +1085,7 @@ $(document).ready(function() {
                 data: formdata,
                 contentType: false,
                 processData: false,
-                success: function (response) {
+                success: function(response) {
                     if (response.status == 200) {
                         $('#addcolorform')[0].reset();
                         $('#addColorModal').modal('hide');
@@ -1032,208 +1096,214 @@ $(document).ready(function() {
                     }
                 },
             });
+        });
+        ///////////////////////////////////////get color/////////////////////
+
+        // function getColor(){
+        //     $.ajax({
+        //         url: "{{ route('admin.products.getColor') }}",
+        //         type: "GET",
+        //         success: function(response) {
+        //             console.log(response);
+        //             if(response.status == 200){
+        //                 let color=response.color;
+        //                 console.log(color);
+        //                 let option='';
+        //                 color.forEach(function(color){
+        //                     option += '<option value="'+color.color_name+'">'+color.color_name+'</option>';
+        //                 });
+        //                  $('.color').append(option);
+        //             }
+        //         }
+        //     });
+        // }
+
+
+        function getColor(targetElement = '.color') {
+            $.ajax({
+                url: "{{ route('admin.products.getColor') }}",
+                type: "GET",
+                success: function(response) {
+                    if (response.status == 200) {
+                        let color = response.color;
+                        let options = '<option value="">Select Color</option>';
+                        color.forEach(function(c) {
+                            options += '<option value="' + c.color_name + '">' + c.color_name +
+                                '</option>';
+                        });
+
+                        // Apply only to the given element(s)
+                        $(targetElement).html(options);
+                    }
+                }
             });
-///////////////////////////////////////get color/////////////////////
+        }
 
-// function getColor(){
-//     $.ajax({
-//         url: "{{ route('admin.products.getColor') }}",
-//         type: "GET",
-//         success: function(response) {
-//             console.log(response);
-//             if(response.status == 200){
-//                 let color=response.color;
-//                 console.log(color);
-//                 let option='';
-//                 color.forEach(function(color){
-//                     option += '<option value="'+color.color_name+'">'+color.color_name+'</option>';
-//                 });
-//                  $('.color').append(option);
-//             }
-//         }
-//     });
-// }
+        function getSize(targetElement = '.size') {
+            $.ajax({
+                url: "{{ route('admin.products.getSize') }}",
+                type: "GET",
+                success: function(response) {
+                    console.log(response);
+                    if (response.status == 200) {
+                        let size = response.size;
+                        let options = '<option value="">Select Size</option>';
+                        size.forEach(function(s) {
+                            options += '<option value="' + s.size_name + '">' + s.size_name +
+                                '</option>';
+                        });
+                        // Apply only to the given element(s)
+                        $(targetElement).html(options);
+                    }
+                }
+            });
+        }
 
+        ////////////////////summernote//////////////////////
 
-function getColor(targetElement = '.color') {
-    $.ajax({
-        url: "{{ route('admin.products.getColor') }}",
-        type: "GET",
-        success: function(response) {
-            if (response.status == 200) {
-                let color = response.color;
-                let options = '<option value="">Select Color</option>';
-                color.forEach(function(c) {
-                    options += '<option value="' + c.color_name + '">' + c.color_name + '</option>';
-                });
+        ////////////////////////////////////show validation error //////////////////////////////////////
+        function validationError() {
+            $(".error-message").remove();
+            $("input, select, textarea").removeClass("is-invalid");
+            $(".text-danger").remove(); // ensure old errors are cleared
 
-                // Apply only to the given element(s)
-                $(targetElement).html(options);
+            let isValid = true;
+            let errors = {};
+
+            let category_id = $('select[name="category_id"]').val()?.trim() || "";
+            let brand_id = $('select[name="brand_id"]').val()?.trim() || "";
+            let unit_id = $('select[name="unit_id"]').val()?.trim() || "";
+            let size = $('select[name="size"]').val()?.trim() || "";
+            //let color = $('select[name="color"]').val()?.trim() || "";
+            let price = $('input[name="price"]').val()?.trim() || "";
+            let gender = $('select[name="gender"]').val()?.trim() || "";
+            let product_name = $('input[name="product_name"]').val()?.trim() || "";
+            let galleryImages = $("input[name='product_main_image[]']")[0]?.files || [];
+            let short_description = $('textarea[name="short_description"]').val()?.trim() || "";
+            let product_policy = $('textarea[name="product_policy"]').val()?.trim() || "";
+            let weight = $('input[name="weight"]').val()?.trim() || "";
+
+            // Validate short description and product policy length
+            if (short_description.length > 220) {
+                errors.short_description = "Short Description must be less than 220 characters!";
+                isValid = false;
             }
-        }
-    });
-}
-function getSize(targetElement = '.size') {
-    $.ajax({
-        url: "{{ route('admin.products.getSize') }}",
-        type: "GET",
-        success: function(response) {
-            console.log(response);
-            if (response.status == 200) {
-                let size = response.size;
-                let options = '<option value="">Select Size</option>';
-                size.forEach(function(s) {
-                    options += '<option value="' + s.size_name + '">' + s.size_name + '</option>';
-                });
-                // Apply only to the given element(s)
-                $(targetElement).html(options);
+
+            if (product_policy.length > 220) {
+                errors.product_policy = "Product Policy must be less than 220 characters!";
+                isValid = false;
             }
+
+            // Validate required fields
+            if (category_id === "") errors.category_id = "Category is required!";
+            if (weight === "") errors.weight = "weight is required!";
+            if (brand_id === "") errors.brand_id = "Brand is required!";
+            if (unit_id === "") errors.unit_id = "Unit is required!";
+            if (size === "") errors.size = "Size is required!";
+            // if (color === "") errors.color = "Color is required!";
+            if (price === "") errors.price = "Price is required!";
+            if (gender === "") errors.gender = "Gender is required!";
+            if (product_name === "") errors.product_name = "Product Name is required!";
+            if (galleryImages.length === 0) errors.galleryimages = "Gallery Images are required!";
+
+            // Validate gallery images
+            let allowedGalleryTypes = ["image/jpeg", "image/png", "image/jpg", "image/gif", "image/webp"];
+            let maxGallerySize = 2048; // 2MB
+
+            for (let i = 0; i < galleryImages.length; i++) {
+                let galleryFile = galleryImages[i];
+                let galleryFileSize = galleryFile.size / 1024;
+
+                if (!allowedGalleryTypes.includes(galleryFile.type)) {
+                    errors.galleryimages = "Only JPG, JPEG, PNG, GIF and WEBP files are allowed!";
+                    isValid = false;
+                    break;
+                }
+                if (galleryFileSize > maxGallerySize) {
+                    errors.galleryimages = "Gallery image size must be less than 2MB!";
+                    isValid = false;
+                    break;
+                }
+            }
+
+            // Show errors
+            if (!$.isEmptyObject(errors)) {
+                isValid = false;
+
+                if (errors.category_id) $("select[name='category_id']").after(
+                    `<span class="text-danger">${errors.category_id}</span>`);
+                if (errors.brand_id) $("select[name='brand_id']").after(
+                    `<span class="text-danger">${errors.brand_id}</span>`);
+                if (errors.unit_id) $("select[name='unit_id']").after(`<span class="text-danger">${errors.unit_id}</span>`);
+
+                if (errors.weight) $("input[name='weight']").after(`<span class="text-danger">${errors.weight}</span>`);
+
+                if (errors.size) $("select[name='size']").after(`<span class="text-danger">${errors.size}</span>`);
+                // if (errors.color) $("select[name='color']").after(`<span class="text-danger">${errors.color}</span>`);
+                if (errors.price) $("input[name='price']").after(`<span class="text-danger">${errors.price}</span>`);
+                if (errors.gender) $("select[name='gender']").after(`<span class="text-danger">${errors.gender}</span>`);
+                if (errors.product_name) $("input[name='product_name']").after(
+                    `<span class="text-danger">${errors.product_name}</span>`);
+                if (errors.galleryimages) $("input[name='product_main_image[]']").after(
+                    `<span class="text-danger">${errors.galleryimages}</span>`);
+                if (errors.short_description) $("textarea[name='short_description']").after(
+                    `<span class="text-danger">${errors.short_description}</span>`);
+                if (errors.product_policy) $("textarea[name='product_policy']").after(
+                    `<span class="text-danger">${errors.product_policy}</span>`);
+            }
+
+            return isValid;
         }
-    });
-}
-
-    ////////////////////summernote//////////////////////
-    $(document).ready(function(){
-        // $('.product_descriptions').summernote();
-        $('.ingrediants').summernote();
-        $('.usage_instruction').summernote();
-    });
-////////////////////////////////////show validation error //////////////////////////////////////
-function validationError() {
-    $(".error-message").remove();
-    $("input, select, textarea").removeClass("is-invalid");
-    $(".text-danger").remove(); // ensure old errors are cleared
-
-    let isValid = true;
-    let errors = {};
-
-    let category_id = $('select[name="category_id"]').val()?.trim() || "";
-    let brand_id = $('select[name="brand_id"]').val()?.trim() || "";
-    let unit_id = $('select[name="unit_id"]').val()?.trim() || "";
-    let size = $('select[name="size"]').val()?.trim() || "";
-    let color = $('select[name="color"]').val()?.trim() || "";
-    let price = $('input[name="price"]').val()?.trim() || "";
-    let gender = $('select[name="gender"]').val()?.trim() || "";
-    let product_name = $('input[name="product_name"]').val()?.trim() || "";
-    let galleryImages = $("input[name='product_main_image[]']")[0]?.files || [];
-    let short_description = $('textarea[name="short_description"]').val()?.trim() || "";
-    let product_policy = $('textarea[name="product_policy"]').val()?.trim() || "";
-    let weight = $('input[name="weight"]').val()?.trim() || "";
-
-    // Validate short description and product policy length
-    if (short_description.length >220) {
-        errors.short_description = "Short Description must be less than 220 characters!";
-        isValid = false;
-    }
-
-    if (product_policy.length >220) {
-        errors.product_policy = "Product Policy must be less than 220 characters!";
-        isValid = false;
-    }
-
-    // Validate required fields
-    if (category_id === "") errors.category_id = "Category is required!";
-    if (weight === "") errors.weight = "weight is required!";
-    if (brand_id === "") errors.brand_id = "Brand is required!";
-    if (unit_id === "") errors.unit_id = "Unit is required!";
-    if (size === "") errors.size = "Size is required!";
-    if (color === "") errors.color = "Color is required!";
-    if (price === "") errors.price = "Price is required!";
-    if (gender === "") errors.gender = "Gender is required!";
-    if (product_name === "") errors.product_name = "Product Name is required!";
-    if (galleryImages.length === 0) errors.galleryimages = "Gallery Images are required!";
-
-    // Validate gallery images
-    let allowedGalleryTypes = ["image/jpeg", "image/png", "image/jpg", "image/gif", "image/webp"];
-    let maxGallerySize = 2048; // 2MB
-
-    for (let i = 0; i < galleryImages.length; i++) {
-        let galleryFile = galleryImages[i];
-        let galleryFileSize = galleryFile.size / 1024;
-
-        if (!allowedGalleryTypes.includes(galleryFile.type)) {
-            errors.galleryimages = "Only JPG, JPEG, PNG, GIF and WEBP files are allowed!";
-            isValid = false;
-            break;
-        }
-        if (galleryFileSize > maxGallerySize) {
-            errors.galleryimages = "Gallery image size must be less than 2MB!";
-            isValid = false;
-            break;
-        }
-    }
-
-    // Show errors
-    if (!$.isEmptyObject(errors)) {
-        isValid = false;
-
-        if (errors.category_id) $("select[name='category_id']").after(`<span class="text-danger">${errors.category_id}</span>`);
-        if (errors.brand_id) $("select[name='brand_id']").after(`<span class="text-danger">${errors.brand_id}</span>`);
-        if (errors.unit_id) $("select[name='unit_id']").after(`<span class="text-danger">${errors.unit_id}</span>`);
-
-        if (errors.weight) $("input[name='weight']").after(`<span class="text-danger">${errors.weight}</span>`);
-
-        if (errors.size) $("select[name='size']").after(`<span class="text-danger">${errors.size}</span>`);
-        if (errors.color) $("select[name='color']").after(`<span class="text-danger">${errors.color}</span>`);
-        if (errors.price) $("input[name='price']").after(`<span class="text-danger">${errors.price}</span>`);
-        if (errors.gender) $("select[name='gender']").after(`<span class="text-danger">${errors.gender}</span>`);
-        if (errors.product_name) $("input[name='product_name']").after(`<span class="text-danger">${errors.product_name}</span>`);
-        if (errors.galleryimages) $("input[name='product_main_image[]']").after(`<span class="text-danger">${errors.galleryimages}</span>`);
-        if (errors.short_description) $("textarea[name='short_description']").after(`<span class="text-danger">${errors.short_description}</span>`);
-        if (errors.product_policy) $("textarea[name='product_policy']").after(`<span class="text-danger">${errors.product_policy}</span>`);
-    }
-
-    return isValid;
-}
 
 
 
-/////////////////////////////////extra field show in product page///////////////////////
+        /////////////////////////////////extra field show in product page///////////////////////
 
-function showExtraField() {
-    $.ajax({
-        url: "{{ url('get-extra-field/info/product/page/show') }}",
-        type: "GET",
-        dataType: "json",
-        success: function (data) {
-            // console.log("Response Data:", data);
+        function showExtraField() {
+            $.ajax({
+                url: "{{ url('get-extra-field/info/product/page/show') }}",
+                type: "GET",
+                dataType: "json",
+                success: function(data) {
+                    // console.log("Response Data:", data);
 
-            if (data.status === 200) {
-                $('.extra_field').empty();
-                let extraField = data.extraField;
-                if (extraField.length > 3) {
-    // Show dropdown and hide auto-fields
-    $('.data').fadeIn(); // Show the dropdown container
-    $('#extra_info_field').empty(); // Clear previously added fields if any
+                    if (data.status === 200) {
+                        $('.extra_field').empty();
+                        let extraField = data.extraField;
+                        if (extraField.length > 3) {
+                            // Show dropdown and hide auto-fields
+                            $('.data').fadeIn(); // Show the dropdown container
+                            $('#extra_info_field').empty(); // Clear previously added fields if any
 
-    let option = `<option value="" selected disabled>Select Extra Field</option>`;
+                            let option = `<option value="" selected disabled>Select Extra Field</option>`;
 
-    extraField.forEach(function (field) {
-        option += `<option value="${field.id}" data-id="${field.id}">${field.field_name}</option>`;
-    });
+                            extraField.forEach(function(field) {
+                                option +=
+                                    `<option value="${field.id}" data-id="${field.id}">${field.field_name}</option>`;
+                            });
 
-    $('.extra_field').html(option).prop('disabled', false); // Populate dropdown
-} else {
-    // Hide dropdown and auto-render input fields
-    $('.data').fadeOut();
-    $('.extra_field').prop('disabled', true); // Optional: disable dropdown
+                            $('.extra_field').html(option).prop('disabled', false); // Populate dropdown
+                        } else {
+                            // Hide dropdown and auto-render input fields
+                            $('.data').fadeOut();
+                            $('.extra_field').prop('disabled', true); // Optional: disable dropdown
 
-    $('#extra_info_field').empty(); // Clear any old input
+                            $('#extra_info_field').empty(); // Clear any old input
 
-    extraField.forEach(function (extraData) {
-        let id = extraData.id;
+                            extraField.forEach(function(extraData) {
+                                let id = extraData.id;
 
-        // Hidden input for tracking
-        let hiddenInput = $('<input>')
-            .attr('type', 'hidden')
-            .attr('name', `extra_field_id[${id}]`)
-            .val(id);
+                                // Hidden input for tracking
+                                let hiddenInput = $('<input>')
+                                    .attr('type', 'hidden')
+                                    .attr('name', `extra_field_id[${id}]`)
+                                    .val(id);
 
-        $('#extra_info_field').append(hiddenInput);
+                                $('#extra_info_field').append(hiddenInput);
 
-        // Now render inputs by type
-        if (extraData.data_type === "longtext") {
-            $('#extra_info_field').append(`
+                                // Now render inputs by type
+                                if (extraData.data_type === "longtext") {
+                                    $('#extra_info_field').append(`
                 <div class="mb-3 col-md-6 extra-field-container">
                     <label class="form-label">${extraData.field_name}</label>
                     <textarea class="form-control" name="extra_field[${id}]" rows="3"
@@ -1242,8 +1312,8 @@ function showExtraField() {
                     <button type="button" class="btn btn-danger btn-sm remove-field mt-2">-</button>
                 </div>
             `);
-        } else if (["decimal", "int", "double"].includes(extraData.data_type)) {
-            $('#extra_info_field').append(`
+                                } else if (["decimal", "int", "double"].includes(extraData.data_type)) {
+                                    $('#extra_info_field').append(`
                 <div class="mb-3 col-md-6 extra-field-container">
                     <label class="form-label">${extraData.field_name}</label>
                     <input class="form-control" type="number" name="extra_field[${id}]"
@@ -1252,8 +1322,8 @@ function showExtraField() {
                     <button type="button" class="btn btn-danger btn-sm remove-field mt-2">-</button>
                 </div>
             `);
-        } else if (extraData.data_type === "text") {
-            $('#extra_info_field').append(`
+                                } else if (extraData.data_type === "text") {
+                                    $('#extra_info_field').append(`
                 <div class="mb-3 col-md-6 extra-field-container">
                     <label class="form-label">${extraData.field_name}</label>
                     <input class="form-control" type="text" name="extra_field[${id}]"
@@ -1262,8 +1332,8 @@ function showExtraField() {
                     <button type="button" class="btn btn-danger btn-sm remove-field mt-2">-</button>
                 </div>
             `);
-        } else if (extraData.data_type === "date") {
-            $('#extra_info_field').append(`
+                                } else if (extraData.data_type === "date") {
+                                    $('#extra_info_field').append(`
                 <div class="mb-3 col-md-6 extra-field-container">
                     <label class="form-label">${extraData.field_name}</label>
                     <input class="form-control" type="date" name="extra_field[${id}]"
@@ -1272,16 +1342,16 @@ function showExtraField() {
                     <button type="button" class="btn btn-danger btn-sm remove-field mt-2">-</button>
                 </div>
             `);
-        } else if (extraData.data_type === "json") {
-            let options = JSON.parse(extraData.options);
-            let checkboxes = options.map(option => `
+                                } else if (extraData.data_type === "json") {
+                                    let options = JSON.parse(extraData.options);
+                                    let checkboxes = options.map(option => `
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" name="extra_field[${id}][]" value="${option}" id="checkbox_${id}_${option}">
                     <label class="form-check-label" for="checkbox_${id}_${option}">${option}</label>
                 </div>
             `).join('');
 
-            $('#extra_info_field').append(`
+                                    $('#extra_info_field').append(`
                 <div class="mb-3 col-md-6 extra-field-container">
                     <label class="form-label">${extraData.field_name}</label>
                     ${checkboxes}
@@ -1289,55 +1359,55 @@ function showExtraField() {
                     <button type="button" class="btn btn-danger btn-sm remove-field mt-2">-</button>
                 </div>
             `);
+                                }
+                            });
+                        }
+
+                    }
+
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error fetching extra fields:", error);
+                }
+            });
         }
-    });
-}
-
-            }
-
-        },
-        error: function (xhr, status, error) {
-            console.error("Error fetching extra fields:", error);
-        }
-    });
-}
 
 
 
-    showExtraField(); // Ensure the function runs after the DOM is fully loaded
+        showExtraField(); // Ensure the function runs after the DOM is fully loaded
 
 
-  //////////////////////////////////////////////extra field multiple input show ////////////////////////////
-           $(document).on('change', '#data_type', function() {
-                    let container = $('.multiInput');
-                    if ($(this).val() == 'json') {
-                        container.fadeIn();
-                        container.html(`
+        //////////////////////////////////////////////extra field multiple input show ////////////////////////////
+        $(document).on('change', '#data_type', function() {
+            let container = $('.multiInput');
+            if ($(this).val() == 'json') {
+                container.fadeIn();
+                container.html(`
                             <div class="input-group mb-2">
                                 <input type="text" class="form-control" name="multi_input[]" placeholder="Enter Multi Input">
                                 <button type="button" class="btn btn-success addInput">+</button>
                             </div>
                         `);
-                    } else {
-                        container.fadeOut().empty();
-                    }
-                });
-                $(document).on('click', '.addInput', function() {
-                    $('.multiInput').append(`
+            } else {
+                container.fadeOut().empty();
+            }
+        });
+        $(document).on('click', '.addInput', function() {
+            $('.multiInput').append(`
                         <div class="input-group mb-2">
                             <input type="text" class="form-control" name="multi_input[]" placeholder="Enter Multi Input">
                             <button type="button" class="btn btn-danger removeInput">-</button>
                         </div>
                     `);
-                });
-                $(document).on('click', '.removeInput', function() {
-                    $(this).closest('.input-group').remove();
+        });
+        $(document).on('click', '.removeInput', function() {
+            $(this).closest('.input-group').remove();
 
-                });
-  //////////////////////////////////////extra field multiple input show end ////////////////////////////
+        });
+        //////////////////////////////////////extra field multiple input show end ////////////////////////////
 
-     /////////////////////extra field insert modal ////////////////////////////
-           $(document).on('click', '.addFieldForm', function() {
+        /////////////////////extra field insert modal ////////////////////////////
+        $(document).on('click', '.addFieldForm', function() {
             let fieldName = $('#field_name').val().trim();
             let dataType = $('#data_type').val();
             $('.error-message').remove();
@@ -1388,15 +1458,15 @@ function showExtraField() {
         });
 
 
-/////////////////////////////////extra field insert modal end///////////////////////////
+        /////////////////////////////////extra field insert modal end///////////////////////////
 
 
 
-   ///////////////////////////Extra field show in product insert page//////////////////////////
+        ///////////////////////////Extra field show in product insert page//////////////////////////
 
         $(document).on('change', '.extra_field', function() {
             let selectedOption = $(this).find(':selected');
-             console.log(selectedOption);
+            console.log(selectedOption);
             let id = selectedOption.data('id');
 
             if (id) {
@@ -1500,24 +1570,24 @@ function showExtraField() {
         });
 
         $(document).on("click", ".remove-field", function() {
-    $(this).closest(".extra-field-container").remove();
+            $(this).closest(".extra-field-container").remove();
 
-    // Reset the extra_field dropdown
-    $(".extra_field").val("").trigger("change");
-});
-
-
-
-  /////////////////extra field show end////////////////////
+            // Reset the extra_field dropdown
+            $(".extra_field").val("").trigger("change");
+        });
 
 
 
+        /////////////////extra field show end////////////////////
 
-            document.getElementById('image').addEventListener('change', function () {
-                let count = this.files.length;
-                let message = count > 0 ? count + " image(s) selected" : "No images selected";
-                document.getElementById('imageCount').innerText = message;
-            });
+
+
+
+        document.getElementById('image').addEventListener('change', function() {
+            let count = this.files.length;
+            let message = count > 0 ? count + " image(s) selected" : "No images selected";
+            document.getElementById('imageCount').innerText = message;
+        });
 
 
         // sku Generator
@@ -1551,9 +1621,9 @@ function showExtraField() {
 
 
 
-        $(document).on("click", ".addRow", function () {
-          let rowCount = $("#productTableBody tr").length; // Get current row count
-        let row = `<tr>
+        $(document).on("click", ".addRow", function() {
+            let rowCount = $("#productTableBody tr").length; // Get current row count
+            let row = `<tr>
             <td></td>
             <td><input type="text" class="form-control" name="variant_name[]"></td>
             <td><input type="number" class="form-control" name="price[]"></td>
@@ -1575,30 +1645,30 @@ function showExtraField() {
                 <button type="button" class="btn btn-danger removeRow">✖</button>
             </td>
         </tr>`;
-    $("#productTableBody").append(row);
-       // Call the function after form is added
-       getSize();
-       getColor();
-});
+            $("#productTableBody").append(row);
+            // Call the function after form is added
+            getSize();
+            getColor();
+        });
 
-$(document).on("click", ".removeRow", function () {
-    $(this).closest("tr").remove();
-});
-
-
+        $(document).on("click", ".removeRow", function() {
+            $(this).closest("tr").remove();
+        });
 
 
 
-    $(document).on("click", ".add_variant", function() {
-    $('#variant_form').fadeIn(1000);
-    this.disabled = true;
-    this.innerText = "Variant Added";
 
-    $.ajax({
-        url: '/product/get_variant_data',
-        type: 'GET',
-        success: function(res) {
-            $('#variant_form').append(`
+
+        $(document).on("click", ".add_variant", function() {
+            $('#variant_form').fadeIn(1000);
+            this.disabled = true;
+            this.innerText = "Variant Added";
+
+            $.ajax({
+                url: '/product/get_variant_data',
+                type: 'GET',
+                success: function(res) {
+                    $('#variant_form').append(`
                 <form id="variant_form_submit" enctype="multipart/form-data">
                     <div class="col-md-12 col-sm-12">
                         <h5 class="mb-3 fw-bold text-primary border-bottom pb-2">Variation Product Name:  ${res.product_name}</h5>
@@ -1654,157 +1724,162 @@ $(document).on("click", ".removeRow", function () {
                 </form>
             `);
 
-            // Call the function after form is added
-            getSize();
-            getColor();
-        }
-    });
-});
+                    // Call the function after form is added
+                    getSize();
+                    getColor();
+                }
+            });
+        });
 
 
 
 
 
-    $(document).on("click", ".add_product", function () {
+        $(document).on("click", ".add_product", function() {
 
-        if (!validationError()) {
-            console.log("Validation failed");
-            return;
-        }
+            if (!validationError()) {
+                console.log("Validation failed");
+                return;
+            }
 
 
             let formdata = new FormData($('#productForm')[0]); // Corrected FormData
             $.ajaxSetup({
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        }
-                    });
-
-                    $.ajax({
-                        type: "POST",
-                        url: "/product/store",
-                        data: formdata,
-                        contentType: false,
-                        processData: false,
-                        beforeSend: function () {
-                            $('#loader').show(); // Show loader
-                        },
-
-                        success:function(res){
-                            $('#loader').hide();
-                            if(res.status == 200){
-                            toastr.success(res.message);
-                            }
-
-
-
-                        },
-                        error: function (xhr) {
-                            $('#loader').hide();
-                                if (xhr.status === 422) {
-                                    let errors = xhr.responseJSON.errors;
-                                    $('.error-message').remove(); // Remove previous errors
-                                    console.log(errors);
-                                    $.each(errors, function (key, value) {
-                                        let inputField = $('[name="' + key + '"]');
-                                        inputField.after('<div class="text-danger error-message">' + value[0] + '</div>');
-                                    });
-                                }
-                            }
-                    })
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
             });
 
+            $.ajax({
+                type: "POST",
+                url: "/product/store",
+                data: formdata,
+                contentType: false,
+                processData: false,
+                beforeSend: function() {
+                    $('#loader').show(); // Show loader
+                },
+
+                success: function(res) {
+                    $('#loader').hide();
+                    if (res.status == 200) {
+                        toastr.success(res.message);
+                    }
 
 
 
-
-
-
-
-$(document).on("click", ".variant_save", function (e) {
-    e.preventDefault();
-
-    let isValid = true;
-    $(".error-message").remove();  // Clear existing errors
-
-    $("#productTableBody tr").each(function (index) {
-        let size = $(this).find('[name="size[]"]').val();
-        let color = $(this).find('[name="color[]"]').val();
-
-        // Validate size or color
-        if (!size && !color) {
-            $(this).find('[name="size[]"]').after('<div class="text-danger error-message">Size or Color is required</div>');
-            isValid = false;
-        }
-
-        // Dynamically find the image input by index
-        let imageInput = $(this).find(`input[name="image[${index}][]"]`)[0];
-
-        if (!imageInput) {
-            $(this).find('[name="size[]"]').after('<div class="text-danger error-message">Image input not found</div>');
-            isValid = false;
-            return true; // continue to next row
-        }
-
-        let files = imageInput.files;
-
-        // if (files.length < 1) {
-        //     $(imageInput).after('<div class="text-danger error-message">Image is required</div>');
-        //     isValid = false;
-        // } else {
-        if(files.length >1){
-            for (let i = 0; i < files.length; i++) {
-                if (files[i].size > 2 * 1024 * 1024) { // 2MB limit
-                    $(imageInput).after('<div class="text-danger error-message">Each image must be less than 2MB</div>');
-                    isValid = false;
-                    break;
+                },
+                error: function(xhr) {
+                    $('#loader').hide();
+                    if (xhr.status === 422) {
+                        let errors = xhr.responseJSON.errors;
+                        $('.error-message').remove(); // Remove previous errors
+                        console.log(errors);
+                        $.each(errors, function(key, value) {
+                            let inputField = $('[name="' + key + '"]');
+                            inputField.after('<div class="text-danger error-message">' + value[
+                                0] + '</div>');
+                        });
+                    }
                 }
+            })
+        });
+
+
+
+
+
+
+
+
+        $(document).on("click", ".variant_save", function(e) {
+            e.preventDefault();
+
+            let isValid = true;
+            $(".error-message").remove(); // Clear existing errors
+
+            $("#productTableBody tr").each(function(index) {
+                let size = $(this).find('[name="size[]"]').val();
+                let color = $(this).find('[name="color[]"]').val();
+
+                // Validate size or color
+                if (!size && !color) {
+                    $(this).find('[name="size[]"]').after(
+                        '<div class="text-danger error-message">Size or Color is required</div>');
+                    isValid = false;
+                }
+
+                // Dynamically find the image input by index
+                let imageInput = $(this).find(`input[name="image[${index}][]"]`)[0];
+
+                if (!imageInput) {
+                    $(this).find('[name="size[]"]').after(
+                        '<div class="text-danger error-message">Image input not found</div>');
+                    isValid = false;
+                    return true; // continue to next row
+                }
+
+                let files = imageInput.files;
+
+                // if (files.length < 1) {
+                //     $(imageInput).after('<div class="text-danger error-message">Image is required</div>');
+                //     isValid = false;
+                // } else {
+                if (files.length > 1) {
+                    for (let i = 0; i < files.length; i++) {
+                        if (files[i].size > 2 * 1024 * 1024) { // 2MB limit
+                            $(imageInput).after(
+                                '<div class="text-danger error-message">Each image must be less than 2MB</div>'
+                            );
+                            isValid = false;
+                            break;
+                        }
+                    }
+                }
+            });
+
+            // Stop if invalid
+            if (!isValid) {
+                toastr.error("Please select at least one size, one color, and a valid image before saving.");
+                return;
             }
-        }
-    });
 
-    // Stop if invalid
-    if (!isValid) {
-        toastr.error("Please select at least one size, one color, and a valid image before saving.");
-        return;
-    }
+            // Submit via AJAX
+            let formdata = new FormData($('#variant_form_submit')[0]);
 
-    // Submit via AJAX
-    let formdata = new FormData($('#variant_form_submit')[0]);
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
 
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-    });
-
-    $.ajax({
-        url: "/product/variant/store",
-        type: "POST",
-        data: formdata,
-        contentType: false,
-        processData: false,
-        beforeSend: function () {
-            $('#loader').show(); // Show loader
-        },
-        success: function (res) {
-            $('#loader').hide();
-            console.log(res);
-            toastr.success(res.message);
-            $('#variant_form_submit')[0].reset();
-            $('#productForm')[0].reset();
-            location.reload();
-        }
-    });
-});
+            $.ajax({
+                url: "/product/variant/store",
+                type: "POST",
+                data: formdata,
+                contentType: false,
+                processData: false,
+                beforeSend: function() {
+                    $('#loader').show(); // Show loader
+                },
+                success: function(res) {
+                    $('#loader').hide();
+                    console.log(res);
+                    toastr.success(res.message);
+                    $('#variant_form_submit')[0].reset();
+                    $('#productForm')[0].reset();
+                    location.reload();
+                }
+            });
+        });
 
 
 
 
-// Call it
-getColor();
+        // Call it
+        getColor();
 
-getSize();
+        getSize();
 
 
 

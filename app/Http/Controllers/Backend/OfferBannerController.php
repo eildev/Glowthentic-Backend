@@ -37,49 +37,49 @@ class OfferBannerController extends Controller
         //     return back()->with('error', 'You can not add more than Five banner');
         // } else {
 
-        $offerBanerAdd = new OfferBanner;
-        $offerBanerAdd->head = $request->heading;
-        $offerBanerAdd->title = $request->title;
-        $offerBanerAdd->short_description = $request->short_description;
-        $offerBanerAdd->link = $request->link;
-        $offerBanerAdd->link_button = $request->link_button;
-        $offerBanerAdd->status = $request->status;
-        if ($request->hasFile('image')) {
-            // $file=$request->file('image');
-            // $extension=$file->extension();
-            // $fileName=time().'.'.$extension;
-            // $path='uploads/offer_banner/';
-            // $file->move($path,$fileName);
-            $destinationPath = public_path('uploads/offer_banner/');
-            $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
-            $offerBanerAdd->image = 'uploads/offer_banner/' . $imageName;
-            // $offerBanerAdd->image='uploads/offer_banner/'.$fileName;
-        }
-        $offerBanerAdd->save();
-        if ($offerBanerAdd) {
-            if ($offerBanerAdd->status == "cart1") {
-                if ($request->galleryimages) {
-                    $allImages = $request->galleryimages;
-                    foreach ($allImages as $galleryImage) {
-                        // $imageName = rand() . '.' . $galleryImage->extension();
-                        // Generate a unique filename
+            $offerBanerAdd = new OfferBanner;
+            $offerBanerAdd->head = $request->heading;
+            $offerBanerAdd->title = $request->title;
+            $offerBanerAdd->short_description = $request->short_description;
+            $offerBanerAdd->link = $request->link;
+            $offerBanerAdd->link_button = $request->link_button;
+            $offerBanerAdd->status = $request->status;
+            if ($request->hasFile('image')) {
+                // $file=$request->file('image');
+                // $extension=$file->extension();
+                // $fileName=time().'.'.$extension;
+                // $path='uploads/offer_banner/';
+                // $file->move($path,$fileName);
+                $destinationPath = public_path('uploads/offer_banner/');
+                $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
+                $offerBanerAdd->image = 'uploads/offer_banner/'. $imageName;
+                // $offerBanerAdd->image='uploads/offer_banner/'.$fileName;
+            }
+            $offerBanerAdd->save();
+            if ($offerBanerAdd) {
+                if ($offerBanerAdd->status == "cart1") {
+                    if ($request->galleryimages) {
+                        $allImages = $request->galleryimages;
+                        foreach ($allImages as $galleryImage) {
+                            // $imageName = rand() . '.' . $galleryImage->extension();
+                            // Generate a unique filename
 
-                        $destinationPath = public_path('uploads/offer_banner/');
-                        // $filename = time() . '_' . uniqid() . '.' . $galleryImage->extension();
-                        $imageName = $imageService->resizeAndOptimize($galleryImage, $destinationPath);
-                        $image = 'uploads/offer_banner/' . $imageName;
+                            $destinationPath = public_path('uploads/offer_banner/');
+                            // $filename = time() . '_' . uniqid() . '.' . $galleryImage->extension();
+                            $imageName = $imageService->resizeAndOptimize($galleryImage, $destinationPath);
+                            $image = 'uploads/offer_banner/'.$imageName;
 
-                        // $path= 'uploads/banner/gallery/';
-                        // $galleryImage->move(public_path('uploads/banner/gallery/'), $imageName);
-                        $ImageGallery = new ImageGallery;
-                        $ImageGallery->offer_banner_id = $offerBanerAdd->id;
-                        $ImageGallery->image = $image;
-                        $ImageGallery->save();
+                            // $path= 'uploads/banner/gallery/';
+                            // $galleryImage->move(public_path('uploads/banner/gallery/'), $imageName);
+                            $ImageGallery = new ImageGallery;
+                            $ImageGallery->offer_banner_id = $offerBanerAdd->id;
+                            $ImageGallery->image = $image;
+                            $ImageGallery->save();
+                        }
                     }
                 }
             }
-        }
-        return back()->with('success', 'Offer Banner Added Successfully');
+            return back()->with('success', 'Offer Banner Added Successfully');
         // }
     }
 
@@ -126,7 +126,7 @@ class OfferBannerController extends Controller
 
             $destinationPath = public_path('uploads/offer_banner/');
             $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
-            $offerBanner->image = 'uploads/offer_banner/' . $imageName;
+            $offerBanner->image = 'uploads/offer_banner/'.$imageName;
         }
 
         $offerBanner->save();
@@ -141,7 +141,7 @@ class OfferBannerController extends Controller
                 $destinationPath = public_path('uploads/offer_banner/');
                 // $filename = time() . '_' . uniqid() . '.' . $galleryImage->extension();
                 $imageName = $imageService->resizeAndOptimize($galleryImage, $destinationPath);
-                $image = 'uploads/offer_banner/' . $imageName;
+                $image = 'uploads/offer_banner/'.$imageName;
 
                 $imageGallery = new ImageGallery;
                 $imageGallery->offer_banner_id = $offerBanner->id;

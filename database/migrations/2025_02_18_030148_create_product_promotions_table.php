@@ -17,9 +17,13 @@ return new class extends Migration
             $table->unsignedBigInteger('promotion_id')->unsigned();
             $table->json('variant_id')->nullable();
             $table->unsignedBigInteger('category_id')->nullable();
+             $table->unsignedBigInteger('brand_id')->nullable();
+
             $table->enum('status', ['active', 'inactive'])->default('active');
+
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->foreign('promotion_id')->references('id')->on('coupons')->onDelete('cascade');
+            $table->foreign('brand_id')->references('id')->on('brands')->onDelete('cascade');
             // $table->foreign('variant_id')->references('id')->on('variants')->onDelete('cascade');
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
             $table->timestamps(0);

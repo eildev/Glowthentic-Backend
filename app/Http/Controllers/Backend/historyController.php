@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use App\Models\Order;
-use App\Models\PurchaseDetails;
+ use Illuminate\Support\Facades\DB;
 
 class historyController extends Controller
 {
@@ -26,10 +26,7 @@ class historyController extends Controller
             ->whereDate('created_at', $date)
             ->groupByRaw('DATE(created_at)')
             ->get();
-            $purchaseData = PurchaseDetails::selectRaw('DATE(created_at) as purchase_date, SUM(grand_total) as grand_total, SUM(quantity) as total_quantity, COUNT(id) as count')
-            ->whereDate('created_at', $date)
-            ->groupByRaw('DATE(created_at)')
-            ->get();
+
         }
         if($value == "currentYearly"){
             $orderData = Order::selectRaw('DATE(created_at) as order_date,SUM(grand_total) as grand_total, SUM(product_quantity) as total_quantity, COUNT(id) as count')
@@ -42,10 +39,7 @@ class historyController extends Controller
             ->where('status','refunded')
             ->groupByRaw('DATE(created_at)')
             ->get();
-            $purchaseData = PurchaseDetails::selectRaw('DATE(created_at) as purchase_date,SUM(grand_total) as grand_total, SUM(quantity) as total_quantity, COUNT(id) as count')
-            ->whereYear('created_at', $year)
-            ->groupByRaw('DATE(created_at)')
-            ->get();
+
         }
         if($value == "currentMonthly"){
             // dd($year, $month);
@@ -61,11 +55,7 @@ class historyController extends Controller
             ->whereMonth('created_at', $month)
             ->groupByRaw('DATE(created_at)')
             ->get();
-            $purchaseData = PurchaseDetails::selectRaw('DATE(created_at) as purchase_date,SUM(grand_total) as grand_total, SUM(quantity) as total_quantity,COUNT(id) as count')
-            ->whereYear('created_at', $year)
-            ->whereMonth('created_at', $month)
-            ->groupByRaw('DATE(created_at)')
-            ->get();
+
         }
         if($value == "currentWeekly"){
             $orderData = Order::selectRaw('DATE(created_at) as order_date,SUM(grand_total) as grand_total, SUM(product_quantity) as total_quantity,COUNT(id) as count')
@@ -80,18 +70,78 @@ class historyController extends Controller
             ->whereRaw('WEEK(created_at, 1) = '.$currentWeek)
             ->groupByRaw('DATE(created_at)')
             ->get();
-            $purchaseData = PurchaseDetails::selectRaw('DATE(created_at) as purchase_date,SUM(grand_total) as grand_total, SUM(quantity) as total_quantity,COUNT(id) as count')
-            ->whereYear('created_at', $year)
-            ->whereRaw('WEEK(created_at, 1) = '.$currentWeek)
-            ->groupByRaw('DATE(created_at)')
-            ->get();
+
         }
 
 
         return response()->json([
             'orderData' => $orderData,
-            'purchaseData' => $purchaseData,
+
             'refundData' => $refundData
+        ]);
+    }
+
+
+
+    public function OrderChart(){
+       try{
+        $lastWeek = Carbon::now()->subDays(6)->startOfDay();
+
+        $orders = DB::table('orders')
+            ->select(
+                DB::raw('DATE(created_at) as date'),
+                DB::raw("SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as new_orders"),
+                DB::raw("SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed_orders"),
+                DB::raw("SUM(CASE WHEN status = 'Delivering' THEN 1 ELSE 0 END) as delivered_orders")
+            )
+            ->where('created_at', '>=', $lastWeek)
+            ->groupBy(DB::raw('DATE(created_at)'))
+            ->orderBy('date', 'ASC')
+            ->get();
+        //   dd($orders);
+        return response()->json($orders);
+       }
+       catch(\Exception $e){
+        return response()->json([
+            'error' => $e->getMessage()
+        ]);
+       }
+    }
+
+
+    public function categoryStockChart(){
+        $data = DB::table('categories')
+        ->join('products', 'categories.id', '=', 'products.category_id')
+        ->join('product_stocks', 'products.id', '=', 'product_stocks.product_id')
+        ->select('categories.categoryName', DB::raw('SUM(product_stocks.StockQuantity) as total_stock'))
+        ->groupBy('categories.categoryName')
+        ->get();
+
+       return response()->json($data);
+    }
+
+    public function monthlyChartData()
+    {
+        $data = DB::table('orders')
+            ->select(DB::raw('MONTH(created_at) as month'), DB::raw('SUM(grand_total) as total_sales'))
+            ->whereYear('created_at', date('Y'))
+            ->where('status', 'completed')
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
+
+        // Convert month number to name
+        $labels = [];
+        $sales = [];
+
+        foreach ($data as $item) {
+            $labels[] = date("F", mktime(0, 0, 0, $item->month, 1)); // January, February...
+            $sales[] = $item->total_sales;
+        }
+
+        return response()->json([
+            'labels' => $labels,
+            'sales' => $sales
         ]);
     }
 }

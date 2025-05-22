@@ -9,5 +9,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class OTPData extends Model
 {
     use HasFactory, SoftDeletes;
-    protected $guarded = [];
+    protected $table = 'o_t_p_data';
+
+    protected $fillable = ['phone', 'email', 'otp', 'expire_at'];
+
+    protected $casts = [
+        'expire_at' => 'datetime',
+    ];
 }

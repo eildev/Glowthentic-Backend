@@ -4,8 +4,7 @@
         <div class="row">
             <div class="col-md-8 offset-md-2">
                 <div class="card border-top border-0 border-3 border-info">
-                    <form action="{{ route('offerbanner.store') }}" method="POST" enctype="multipart/form-data"
-                        id="offerBannerForm">
+                    <form action="{{ route('offerbanner.store') }}" method="POST" enctype="multipart/form-data" id="offerBannerForm">
                         @csrf
                         <div class="card-body">
                             <div class="border p-4 rounded">
@@ -21,8 +20,7 @@
                                 <div class="row mb-3">
                                     <label class="col-sm-3 col-form-label">Banner Head</label>
                                     <div class="col-sm-9">
-                                        <input type="text" name="heading" class="form-control"
-                                            placeholder="Enter Banner Heading">
+                                        <input type="text" name="heading" class="form-control" placeholder="Enter Banner Heading">
                                     </div>
                                 </div>
 
@@ -30,8 +28,7 @@
                                 <div class="row mb-3">
                                     <label class="col-sm-3 col-form-label">Banner Title</label>
                                     <div class="col-sm-9">
-                                        <input type="text" name="title" class="form-control"
-                                            placeholder="Enter Banner Title">
+                                        <input type="text" name="title" class="form-control" placeholder="Enter Banner Title">
                                     </div>
                                 </div>
 
@@ -47,8 +44,7 @@
                                 <div class="row mb-3">
                                     <label class="col-sm-3 col-form-label">Link Button Name</label>
                                     <div class="col-sm-9">
-                                        <input type="text" name="link_button" class="form-control"
-                                            placeholder="Enter Button Text">
+                                        <input type="text" name="link_button" class="form-control" placeholder="Enter Button Text">
                                     </div>
                                 </div>
 
@@ -56,8 +52,7 @@
                                 <div class="row mb-3">
                                     <label class="col-sm-3 col-form-label">Banner Link</label>
                                     <div class="col-sm-9">
-                                        <input type="url" name="link" class="form-control"
-                                            placeholder="Enter Banner Link">
+                                        <input type="url" name="link" class="form-control" placeholder="Enter Banner Link">
                                     </div>
                                 </div>
 
@@ -159,7 +154,7 @@
                     let type = image.type;
                     if (!["image/jpeg", "image/png", "image/jpg"].includes(type)) {
                         errors.image = "Only JPG, JPEG, PNG allowed!";
-                    } else if (sizeKB > 20480) {
+                    } else if (sizeKB > 5120) {
                         errors.image = "Thumbnail must be under 5MB!";
                     }
                 }
@@ -173,7 +168,7 @@
                             errors.gallery = "Only JPG, JPEG, PNG allowed in gallery!";
                             break;
                         }
-                        if (img.size / 1024 > 20480) {
+                        if (img.size / 1024 > 5120) {
                             errors.gallery = "Each gallery image must be under 5MB!";
                             break;
                         }
@@ -183,15 +178,13 @@
                 // Display Errors
                 if (Object.keys(errors).length > 0) {
                     if (errors.status) {
-                        $("select[name='status']").after(
-                            `<span class="text-danger">${errors.status}</span>`);
+                        $("select[name='status']").after(`<span class="text-danger">${errors.status}</span>`);
                     }
                     if (errors.image) {
                         $("input[name='image']").after(`<span class="text-danger">${errors.image}</span>`);
                     }
                     if (errors.gallery) {
-                        $("input[name='galleryimages[]']").after(
-                            `<span class="text-danger">${errors.gallery}</span>`);
+                        $("input[name='galleryimages[]']").after(`<span class="text-danger">${errors.gallery}</span>`);
                     }
                     return;
                 }

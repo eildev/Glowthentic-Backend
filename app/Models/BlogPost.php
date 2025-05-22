@@ -18,4 +18,12 @@ class BlogPost extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
+    public function comments()
+    {
+        return $this->hasMany(BlogComment::class, 'blog_id', 'id');
+    }
+    public function likes()
+    {
+        return $this->hasMany(BlogReact::class, 'blog_id', 'id');
+    }
 }

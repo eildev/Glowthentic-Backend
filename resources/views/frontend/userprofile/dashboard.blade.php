@@ -66,7 +66,7 @@
                                 <ul>
                                     <li>
                                         <span><i class="fas fa-user pe-2"></i>
-                                            <a href="#" tabindex="1" class="active">Profile</a>
+                                            <a href="{{ route('user.profile') }}" tabindex="1" class="active">Profile</a>
                                     </li>
                                     <li>
                                         <span><i class="fas fa-envelope-open-dollar pe-2"></i>

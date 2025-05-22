@@ -7,6 +7,7 @@ use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver as GdDriver;
 use Spatie\ImageOptimizer\OptimizerChainFactory;
 use Spatie\ImageOptimizer\OptimizerChain;
+use Spatie\ImageOptimizer\Optimizers\Cwebp;
 use Spatie\ImageOptimizer\Optimizers\Jpegoptim;
 use Spatie\ImageOptimizer\Optimizers\Pngquant;
 
@@ -23,21 +24,31 @@ class ImageOptimizerService
 
     public function resizeAndOptimize($imageFile, $destinationPath, $quality = 85)
     {
-
-
+        // Ensure destination directory exists
         if (!File::exists($destinationPath)) {
             File::makeDirectory($destinationPath, 0755, true, true);
         }
 
-        $imageName = rand(000000, 999999) . '.' . $imageFile->extension();
-        $imagePath = $destinationPath . '/' . $imageName;
+        // Generate a random image name
+        $imageName = rand(000000, 999999);
+        $extension = strtolower($imageFile->extension());
 
+        // Determine output format: WebP for non-GIFs, original extension for GIFs
+        $outputExtension = ($extension !== 'gif') ? 'webp' : $extension;
+        $imageNameWithExtension = $imageName . '.' . $outputExtension;
+        $imagePath = $destinationPath . '/' . $imageNameWithExtension;
 
-        $this->imageManager->read($imageFile)
-            ->toJpeg($quality, true)
-            ->save($imagePath);
+        // Read and process the image
+        $image = $this->imageManager->read($imageFile);
 
+        // Convert to WebP for non-GIFs, otherwise use original format
+        if ($extension !== 'gif') {
+            $image->toWebp($quality)->save($imagePath);
+        } else {
+            $image->toJpeg($quality, true)->save($imagePath); // Fallback for GIFs or other formats
+        }
 
+        // Optimize the image
         $optimizer = (new OptimizerChain())
             ->addOptimizer(new Jpegoptim([
                 '--max=90',
@@ -48,33 +59,45 @@ class ImageOptimizerService
                 '--quality=90',
                 '--force',
             ]))
+            ->addOptimizer(new Cwebp([ // Add WebP optimizer
+                '--lossy',
+                '-q 90',
+            ]))
             ->optimize($imagePath);
 
-        return $imageName;
+        return $imageNameWithExtension;
     }
-    // public function resizeAndOptimize($imageFile, $destinationPath, $width = 800, $height = 600, $quality = 100)
+
+    // public function resizeAndOptimize($imageFile, $destinationPath, $quality = 85)
     // {
 
-    //     $width = (int) $width;
-    //     $height = (int) $height;
 
     //     if (!File::exists($destinationPath)) {
     //         File::makeDirectory($destinationPath, 0755, true, true);
     //     }
 
-    //     // Generate unique image name
-    //     $imageName = rand() . '.' . $imageFile->extension();
+
+    //     $imageName = rand(000000, 999999) . '.' . $imageFile->extension();
     //     $imagePath = $destinationPath . '/' . $imageName;
 
-    //     // Resize and save image using Intervention Image v3
+
     //     $this->imageManager->read($imageFile)
-    //         ->scale($width, $height)
-    //         ->save($imagePath, $quality);
+    //         ->toJpeg($quality, true)
+    //         ->save($imagePath);
 
-    //     // Optimize the resized image using Spatie
-    //     $optimizer = OptimizerChainFactory::create();
-    //     $optimizer->optimize($imagePath);
 
-    //     return $imageName; // Return image name to save in the database
+    //     $optimizer = (new OptimizerChain())
+    //         ->addOptimizer(new Jpegoptim([
+    //             '--max=90',
+    //             '--strip-all',
+    //             '--all-progressive',
+    //         ]))
+    //         ->addOptimizer(new Pngquant([
+    //             '--quality=90',
+    //             '--force',
+    //         ]))
+    //         ->optimize($imagePath);
+
+    //     return $imageName;
     // }
 }

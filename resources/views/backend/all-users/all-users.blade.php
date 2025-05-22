@@ -35,15 +35,17 @@
                                         <tr>
                                             <td>{{ $serialNumber++ }}</td>
                                             <td>{{ $alluser->name }}</td>
-                                            <td>{{ $alluser->userDetails->full_name??'' }}</td>
-                                            <td>{{ $alluser->userDetails->phone??'' }}</td>
-                                            <td>{{ $alluser->userDetails->email??''}}</td>
+                                            <td>{{ $alluser->userDetails->full_name ?? '' }}</td>
+                                            <td>{{ $alluser->userDetails->phone ?? '' }}</td>
+                                            <td>{{ $alluser->userDetails->email ?? '' }}</td>
 
                                             <td>
-                                                @if ( $alluser->status == 'active')
-                                                    <a href="{{ route('admin.disable-user',$alluser->id) }}" class="btn btn-sm btn-warning">Inactive</a>
+                                                @if ($alluser->status == 'active')
+                                                    <a href="{{ route('admin.disable-user', $alluser->id) }}"
+                                                        class="btn btn-sm btn-success">Active</a>
                                                 @else
-                                                    <a href="{{ route('admin.enable-user',$alluser->id) }}" class="btn btn-sm btn-success">Active</a>
+                                                    <a href="{{ route('admin.enable-user', $alluser->id) }}"
+                                                        class="btn btn-sm btn-warning">Inactive</a>
                                                 @endif
                                             </td>
                                         </tr>

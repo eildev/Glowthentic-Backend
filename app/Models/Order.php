@@ -37,4 +37,26 @@ class Order extends Model
     {
         return $this->hasOne(DeliveryOrder::class, 'order_id', 'id');
     }
+    // public function userDetails()
+    // {
+    //     // Check if user_id exists and is not null
+    //     if ($this->user_id) {
+    //         return $this->belongsTo(UserDetails::class, 'user_id', 'id');
+    //     }
+
+    //     // Fallback to session_id if user_id is null
+    //     return $this->belongsTo(UserDetails::class, 'session_id', 'session_id');
+    // }
+    public function userDetails()
+    {
+        if ($this->user_id) {
+            return $this->belongsTo(UserDetails::class, 'user_id', 'user_id');
+        } elseif ($this->session_id) {
+            return $this->belongsTo(UserDetails::class, 'session_id', 'session_id');
+        }
+       else{
+         return $this->belongsTo(UserDetails::class, 'customer_id', 'customer_id');
+       }
+        return null; // No user details if neither user_id nor session_id exists
+    }
 }

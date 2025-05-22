@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->string('session_id')->nullable();
+            $table->bigInteger('customer_id')->nullable();
             $table->boolean('is_default');
             $table->enum('status',['saved','draft'])->nullable();
             $table->enum('active_payment_method', ['card', 'mobile_banking', 'COD']);

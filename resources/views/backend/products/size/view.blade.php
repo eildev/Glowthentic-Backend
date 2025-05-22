@@ -128,13 +128,15 @@ function getSize() {
             if (response.status == 200) {
                 let p_size = response.size;
                 $('.data').empty();
-
+               
                 p_size.forEach(function (size, index) {
+
                     $('.data').append(`
                         <tr>
                             <td>${index + 1}</td>
                             <td>${size.size_name}</td>
                             <td>
+
 
 
                                 <a href="javascript:void(0)" class="btn btn-sm btn-outline-info editSize" data-bs-toggle="modal" data-bs-target="#addEditModal" data-id="${size.id}" data-size="${size.size_name}">
@@ -175,14 +177,16 @@ $(document).on('click','.deleteSize',function(){
 });
 
 
-$(document).on('click','.editSize',function(){
+$(document).on('click', '.editSize', function () {
 
-    let id=$(this).data('id');
-    let size=$(this).data('size');
+    let id = $(this).data('id');
+    let size = $(this).data('size');
+    console.log('ID:', id, 'Size:', size);
+
     $('#id').val(id);
     $('#size').val(size);
-
 });
+
 
 
 $(document).on('click', '.updateSize', function() {

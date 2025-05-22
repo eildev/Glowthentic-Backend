@@ -31,27 +31,49 @@
                                 @endphp
                                 @if ($canceled_orders->count() > 0)
                                     @foreach ($canceled_orders as $order)
+
                                     @php
-                                    $originalDateString = $order->created_at;
-                                    $dateTime = new DateTime($originalDateString);
-                                    $formattedDate = $dateTime->format('Y-m-d');
+                                    if($order->user_id!=null){
+                                        $customers = App\Models\UserDetails::where('user_id', $order->user_id)->first();
+                                        dd($customers);
+                                        }
+                                    else{
+                                        $customers = App\Models\UserDetails::where('session_id',$order->session_id)->first();
+                                    
+                                    }
                                     @endphp
-                                        <tr>
-                                            <td>{{ $serialNumber++ }}</td>
-                                            <td>{{ $formattedDate }}</td>
-                                            <td>{{ $order->invoice_number }}</td>
-                                            <td>{{ $order->user_identity }}</td>
-                                            <td>{{ $order->product_quantity }}</td>
-                                            <td>{{ $order->grand_total }}</td>
-                                            <td>{{ $order->payment_method }}</td>
-                                            <td>{{ $order->orderBillingDetails->address_1 ?? '' }}</td>
-                                            <td>
-                                                <span class="text-warning text-capitalize">{{ $order->status }}</span>
-                                            </td>
-                                            <td>
-                                                <a href="{{ route('order.details', $order->id) }}" class="btn btn-sm btn-success">View</a>
-                                            </td>
-                                        </tr>
+
+                                        @if ($order->product_quantity <= '20')
+                                            @php
+                                                $originalDateString = $order->created_at;
+                                                $dateTime = new DateTime($originalDateString);
+                                                $formattedDate = $dateTime->format('Y-m-d');
+                                            @endphp
+                                            <tr>
+                                                <td>{{ $serialNumber++ }}</td>
+                                                <td>{{ $formattedDate }}</td>
+                                                <td>{{ $order->invoice_number }}</td>
+                                                <td>{{$customers->phone_number}}</td>
+                                                <td>{{ $order->total_quantity }}</td>
+                                                <td>{{ $order->grand_total }}</td>
+                                                <td>{{ $order->payment_method }}</td>
+                                                <td>{{ $order->payment_status }}</td>
+
+                                                <td>
+                                                    <span class="text-warning text-capitalize">
+                                                        {{ $order->status }}
+                                                    </span>
+                                                </td>
+                                                <td>Banasree</td>
+                                                <td>
+                                                    <a href="{{ route('admin.approve.order',$order->id) }}"
+                                                        class="btn btn-sm btn-info">Approve</a>
+                                                    <a href="{{ route('order.details', $order->id) }}"
+                                                        class="btn btn-sm btn-success">View</a>
+                                                    <a href="{{ route('admin.denied.order', $order->invoice_number) }}"
+                                                        class="btn btn-sm btn-danger" id="delete">Denied</a>
+                                                </td>
+                                            </tr>
                                     @endforeach
                                 @else
                                     <tr>

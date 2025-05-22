@@ -12,6 +12,9 @@ use App\Models\Category;
 use Validator;
 use App\Models\VariantPromotion;
 use Exception;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use App\Models\Brand;
 class ProductPromotionController extends Controller
 {
 
@@ -26,11 +29,44 @@ class ProductPromotionController extends Controller
     }
 
     public function create(){
-        $product = Product::where('status', 1)->get();
-        $category=Category::where('status', 1)->get();
-        $promotion = Coupon::where('type','promotion')->get();
-        // $variant=Variant::all();
-        return view('backend.promotionProduct.create',compact('product','category','promotion'));
+        $ActivePromotion=Coupon::where('type','promotion')
+                  ->where('end_date','>=',Carbon::now()->format('Y-m-d'))
+                  ->where('status','Active')
+                  ->pluck('id')
+                  ->toArray();
+                  $categoryPromotion=ProductPromotion::whereIn('promotion_id',$ActivePromotion)->get();
+                  $brandPromotion=ProductPromotion::whereIn('promotion_id',$ActivePromotion)->get();
+
+                  $brandPromotionIds = $brandPromotion->pluck('brand_id')
+                                      ->filter()
+                                      ->unique()
+                                      ->values()
+                                      ->toArray();
+                  $categoryPromotionIds = $categoryPromotion->pluck('category_id')
+                                        ->filter()
+                                        ->unique()
+                                        ->values()
+                                        ->toArray();
+
+
+                         $productsWithoutVariantPromotionIds= $categoryPromotion->pluck('product_id')
+                         ->filter()
+                         ->unique()
+                         ->values()
+                         ->toArray();
+
+                        $product = Product::where('status', 1)
+                        ->whereNotIn('category_id', $categoryPromotionIds)
+                        ->whereNotIn('id', $productsWithoutVariantPromotionIds)
+                        ->whereNotIn('brand_id', $brandPromotionIds)
+                        ->get();
+
+
+                $category=Category::where('status', 1)->whereNotIn('id',$categoryPromotionIds)->get();
+                $brand=Brand::where('status', 1)->whereNotIn('id',$brandPromotionIds)->get();
+                $promotion = Coupon::where('type','promotion')->get();
+                // $variant=Variant::all();
+        return view('backend.promotionProduct.create',compact('product','category','promotion','brand'));
     }
     public function getProductPromotion(){
         $product = Product::where('status', 1)->get();
@@ -43,6 +79,8 @@ class ProductPromotionController extends Controller
             'variant'=>$variant
         ]);
     }
+
+
 
     public function store(Request $request){
 
@@ -88,6 +126,19 @@ class ProductPromotionController extends Controller
                 }
             }
 
+              if ($request->brand_id) {
+                            foreach ($request->brand_id as $key => $brand_id) {
+
+                                    $productPromotion = new ProductPromotion();
+                                    $productPromotion->brand_id = $brand_id;
+                                    $productPromotion->promotion_id = $request->promotion_id[0];
+                                    $productPromotion->save();
+                            }
+                        }
+
+
+
+
             return response()->json([
                 'status' => 200,
                 'message' => 'Data Saved Successfully'
@@ -100,6 +151,10 @@ class ProductPromotionController extends Controller
         }
 
     }
+
+
+
+
 
     public function view(){
         $productPromotion = ProductPromotion::with('product','coupon','variant')->get();
@@ -118,7 +173,8 @@ class ProductPromotionController extends Controller
         $product = Product::where('status', 1)->get();
         $categories=Category::where('status', 1)->get();
         $promotion = Coupon::where('type','promotion')->get();
-        return view('backend.promotionProduct.edit',compact('promotionProduct','product','categories','promotion'));
+           $brand=Brand::where('status', 1)->get();
+        return view('backend.promotionProduct.edit',compact('promotionProduct','product','categories','promotion','brand'));
     }
 
 
@@ -202,6 +258,24 @@ class ProductPromotionController extends Controller
                     }
                 }
             }
+
+          if ($request->brand_id) {
+            foreach ($request->brand_id as $key => $brand_id) {
+                $productPromotion = ProductPromotion::where('brand_id', $brand_id)
+                    ->where('promotion_id', $promotionId)
+                    ->first();
+                    if ($productPromotion) {
+                        $productPromotion->brand_id = $brand_id;
+                        $productPromotion->promotion_id = $promotionId;
+                        $productPromotion->save();
+                    } else {
+                        $productPromotion = new ProductPromotion();
+                        $productPromotion->brand_id = $brand_id;
+                        $productPromotion->promotion_id = $promotionId;
+                        $productPromotion->save();
+                    }
+          }
+        }
 
             return response()->json([
                 'status' => 200,
@@ -295,6 +369,31 @@ class ProductPromotionController extends Controller
         }
 
 }
+
+
+
+    public function productPromotionBrandShow(Request $request){
+        try{
+            if($request->brand_id){
+                $brand_id=Brand::find($request->brand_id);
+                $promotion=Coupon::where('id',$request->promotion_id)->first();
+                return response()->json([
+                    'status'=>200,
+                    'brand'=>$brand_id,
+                    'promotion'=>$promotion,
+                ]);
+
+            }
+        }
+        catch (Exception $e) {
+            return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
+        }
+
+}
+
+
+
+
 
 public function variantDelete(Request $request){
     try{

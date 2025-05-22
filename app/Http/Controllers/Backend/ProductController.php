@@ -22,13 +22,24 @@ use App\Models\ProductFeature;
 use App\Models\SizeModel;
 use App\Models\ColorModel;
 use File;
+use App\Models\Category;
+use App\Models\Coupon;
+use App\Models\ProductPromotion;
+use App\Models\VariantPromotion;
+use Carbon\Carbon;
+
 // use App\Models\
 class ProductController extends Controller
 {
     // product index function
     public function index()
     {
-        return view('backend.products.insert');
+
+        $promotion = Coupon::where('type','promotion')->where('end_date','>=',Carbon::now()->format('Y-m-d'))->get();
+
+        // dd($promotion);
+
+        return view('backend.products.insert',compact('promotion'));
     }
     public function findVariant($id)
     {
@@ -89,7 +100,7 @@ class ProductController extends Controller
 
     public function store(Request $request, ImageOptimizerService $imageService)
     {
-          dd($request->all());
+        //   dd($request->all());
         $validator = Validator::make($request->all(), [
             'category_id' => 'required',
             'brand_id' => 'required',
@@ -124,13 +135,13 @@ class ProductController extends Controller
         $product->subcategory_id = $request->subcategory_id;
         $product->brand_id = $request->brand_id;
         $product->sub_subcategory_id = $request->sub_subcategory_id;
-        if ($request->shipping_charge) {
+        if($request->shipping_charge){
             $product->shipping_charge = $request->shipping_charge;
         }
 
         $product->product_name = $request->product_name;
         $product->unit_id = $request->unit_id;
-        $product->slug = Str::slug($request->product_name);
+        $product->slug = Str::slug($request->product_name) . '-' . time();
         $product->sku = $request->sku;
         $product->created_by = Auth::user()->id;
         $product->save();
@@ -147,6 +158,16 @@ class ProductController extends Controller
             $productDetails->usage_instruction = $request->usage_instruction;
             $productDetails->created_by = Auth::user()->id;
             $productDetails->save();
+        }
+
+
+
+        if($product->id && $request->promotion_id){
+            // dd($request->all());
+            $promotion = new ProductPromotion();
+            $promotion->product_id = $product->id;
+            $promotion->promotion_id = $request->promotion_id;
+            $promotion->save();
         }
 
 
@@ -220,8 +241,8 @@ class ProductController extends Controller
             }
         }
 
-        if ($product && $request->product_feature) {
-            foreach ($request->product_feature as $feature) {
+        if($product && $request->product_feature){
+            foreach($request->product_feature as $feature){
                 $productFeature = new ProductFeature();
                 $productFeature->product_id = $product->id;
                 $productFeature->feature_id = $feature;
@@ -280,6 +301,7 @@ class ProductController extends Controller
                 $stock->product_id = $product->id;
                 $stock->variant_id = $variant->id;
                 $stock->StockQuantity = $request->stock_quantity;
+
                 $stock->status = 'Available';
                 $stock->save();
             }
@@ -318,14 +340,15 @@ class ProductController extends Controller
 
         $attribute_manages = AttributeManage::where('product_id', $id)->get();
         $variants = Variant::where('product_id', $id)->get();
-        $size=SizeModel::all();
-        $color=ColorModel::all();
+        $size = SizeModel::select('size_name')->get();
+        $color = ColorModel::select('color_name')->get();
         $inserttag = Product_Tags::where('product_id', $id)->get();
         $extraFields = AttributeManage::where('product_id', $product->id)->get();
+         $promotion = Coupon::where('type','promotion')->where('end_date','>=',Carbon::now()->format('Y-m-d'))->get();
         // ->pluck('value', 'attribute_id')
         // ->toArray();
 
-        return view('backend.products.edit', compact('product', 'attribute_manages', 'variants', 'inserttag', 'extraFields','size','color'));
+        return view('backend.products.edit', compact('product', 'attribute_manages', 'variants', 'inserttag', 'extraFields', 'size', 'color','promotion'));
     }
 
 
@@ -334,13 +357,13 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
 
-        $getVariants = Variant::where('product_id', $id)->get();
-        $stock = ProductStock::where('product_id', $id)->get();
-        foreach ($stock as $stocks) {
+        $getVariants=Variant::where('product_id',$id)->get();
+        $stock=ProductStock::where('product_id',$id)->get();
+        foreach($stock as $stocks){
             $stocks->delete();
         }
-        foreach ($getVariants as $variant) {
-            if ($variant->image) {
+        foreach($getVariants as $variant){
+            if($variant->image){
                 $imagePath = public_path($variant->image);
                 if (file_exists($imagePath)) {
                     unlink($imagePath);
@@ -386,7 +409,7 @@ class ProductController extends Controller
 
         $product->product_name = $request->product_name;
         $product->unit_id = $request->unit_id;
-        if ($request->shipping_charge) {
+        if($request->shipping_charge){
             $product->shipping_charge = $request->shipping_charge;
         }
         $product->slug = Str::slug($request->product_name);
@@ -408,6 +431,34 @@ class ProductController extends Controller
 
             $productDetails->save();
         }
+
+
+
+
+
+
+
+     if($product->id){
+            $product_promotion = ProductPromotion::where('product_id', $product->id)->first();
+            if ($product_promotion) {
+                $product_promotion->product_id = $product->id;
+                $product_promotion->promotion_id = $request->promotion_id;
+                $product_promotion->save();
+            }
+            else{
+                $product_promotion = new ProductPromotion();
+                $product_promotion->product_id = $product->id;
+                $product_promotion->promotion_id = $request->promotion_id;
+                $product_promotion->save();
+            }
+
+        }
+
+
+
+
+
+
 
 
         if ($request->has('extra_field')) {
@@ -472,7 +523,7 @@ class ProductController extends Controller
         }
 
         if ($product && $request->tag) {
-            Product_Tags::where('product_id', $product->id)->delete();
+           Product_Tags::where('product_id', $product->id)->delete();
             foreach ($request->tag as $tag) {
                 $productTag = new Product_Tags();
                 $productTag->product_id = $product->id;
@@ -482,9 +533,9 @@ class ProductController extends Controller
         }
 
 
-        if ($product && $request->product_feature) {
+        if($product && $request->product_feature){
             ProductFeature::where('product_id', $product->id)->delete();
-            foreach ($request->product_feature as $feature) {
+            foreach($request->product_feature as $feature){
                 $productFeature = new ProductFeature();
                 $productFeature->product_id = $product->id;
                 $productFeature->feature_id = $feature;
@@ -763,6 +814,7 @@ class ProductController extends Controller
     public function variantProductStore(Request $request, ImageOptimizerService $imageService)
     {
         try {
+
             if (!empty($request->price ?? 0)) {
                 foreach ($request->price as $key => $price) {
 
@@ -771,6 +823,7 @@ class ProductController extends Controller
                     $variant = new Variant();
                     $variant->product_id = $request->product_id;
                     $variant->size = $request->size[$key];
+                    // dd( $variant->size );
                     $variant->color = $request->color[$key];
                     $variant->regular_price = $price;
                     $variant->weight = $request->weight[$key] ?? null;
@@ -833,6 +886,7 @@ class ProductController extends Controller
     {
         try {
 
+            //  dd($request->all());
             $existingVariants = Variant::where('product_id', $request->product_id)->get()->keyBy('id');
 
             if (!empty($request->price)) {
@@ -845,6 +899,7 @@ class ProductController extends Controller
                         $variant = new Variant();
                         $variant->product_id = $request->product_id;
                         $variant->variant_name = $request->variant_name[$variant_id];
+
                         $variant->save();
                     }
 
@@ -883,7 +938,10 @@ class ProductController extends Controller
                     }
 
 
-                    if (!empty($request->stock_quantity[$variant_id])) {
+
+
+                    if (isset($request->stock_quantity[$variant_id])) {
+
                         ProductStock::updateOrCreate(
                             ['product_id' => $request->product_id, 'variant_id' => $variant->id],
                             ['StockQuantity' => $request->stock_quantity[$variant_id], 'status' => 'Available']

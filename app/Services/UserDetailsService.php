@@ -12,6 +12,7 @@ class UserDetailsService
     public function storeUserDetails(Request $request){
         try{
 
+
            if($request->user_id){
 
             $user = User::find($request->user_id);
@@ -31,10 +32,12 @@ class UserDetailsService
               $userDetails->full_name = $request->full_name;
               $userDetails->phone_number = $request->phone_number;
               $userDetails->address = $request->address;
+              $userDetails->secondary_email = $request->email;
               $userDetails->city = $request->district;
               $userDetails->postal_code = $request->postal_code;
               $userDetails->police_station = $request->police_station;
               $userDetails->country = $request->country??'';
+              
               $userDetails->save();
               return response()->json([
                 'status' => 201,
@@ -57,6 +60,7 @@ class UserDetailsService
               $userDetails->full_name = $request->full_name;
               $userDetails->phone_number = $request->phone_number;
               $userDetails->address = $request->address;
+              $userDetails->secondary_email = $request->email;
               $userDetails->city = $request->district;
               $userDetails->postal_code = $request->postal_code;
               $userDetails->police_station = $request->police_station;

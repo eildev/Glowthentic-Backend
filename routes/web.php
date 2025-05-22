@@ -37,6 +37,8 @@ use App\Http\Controllers\Backend\DeliverOrderAssignController;
 use App\Http\Controllers\Backend\FeatureController;
 use App\Http\Controllers\Backend\CourierController;
 use App\Http\Controllers\Backend\ColorController;
+use App\Http\Controllers\Backend\userProfileController;
+
 
 // Route::get('/home', function () {
 //     return view('frontend.index');
@@ -51,6 +53,8 @@ Route::controller(AllMail::class)->group(function () {
     Route::post('/reply/mail', 'replyMail')->name('reply.mail');
 });
 Route::middleware('auth')->group(function () {
+
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -71,6 +75,9 @@ Route::middleware('auth')->group(function () {
     });
     Route::controller(historyController::class)->group(function () {
         Route::get('/current-history/{value}', 'CurrentHistory');
+        Route::get('order/chart', 'OrderChart')->name('order.chart.data');
+        Route::get('stock/category/chart', 'categoryStockChart')->name('chart.category.stock');
+        Route::get('monthly/chart/data', 'monthlyChartData')->name('monthly.chart.data');
     });
     // Marketing for SMS Marketing Routes
     Route::controller(MarketingController::class)->group(function () {
@@ -82,6 +89,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/disable-user/{user_id}', 'DisableUser')->name('admin.disable-user');
         Route::get('/admin/enable-user/{user_id}', 'EnableUser')->name('admin.enable-user');
     });
+
+
+
+
+
 
     //All Routes for Category End
 
@@ -246,14 +258,20 @@ Route::middleware('auth')->group(function () {
 
         Route::post('/promotion/product/store', 'store')->name('promotion.store');
         Route::post('product/promotion/add/variant', 'productPromotionVariantShow')->name('product.promotion.add.variant');
-       Route::post('promotion/update','update')->name('promotion.update');
-       Route::post('/promotion/product/delete/', 'delete')->name('promotion.delete');
+        Route::post('promotion/update', 'update')->name('promotion.update');
+        Route::post('/promotion/product/delete/', 'delete')->name('promotion.delete');
 
         Route::post('product/promotion/add/category', 'productPromotionCategoryShow')->name('product.promotion.add.category');
+
+        Route::post('product/promotion/add/brand', 'productPromotionBrandShow')->name('product.promotion.add.brand');
+
+
+
+
         Route::get('admin/product/promotion/edit/{id}', 'edit')->name('admin.product.promotion.edit');
         Route::post('/product/promotion/variant/delete/', 'variantDelete')->name('promotion.variant.delete');
-        Route::post('promotion/delete','Promotiondelete')->name('product.promotion.delete');
-         Route::get('product/promotion/view/{promotion_id}','PromotionView')->name('product.promotion.view');
+        Route::post('promotion/delete', 'Promotiondelete')->name('product.promotion.delete');
+        Route::get('product/promotion/view/{promotion_id}', 'PromotionView')->name('product.promotion.view');
 
         Route::post('/product/promotion/status/{id}', 'statusUpdate')->name('product.promotion.status');
         Route::get('/get/product/and/promotion', 'getProductPromotion');
@@ -274,12 +292,11 @@ Route::middleware('auth')->group(function () {
 
 
 
-  Route::controller(CourierController::class)->group(function(){
-   Route::get('steadFast/courier', 'steadfast')->name('Courier.steadfast');
-   Route::post('steadFast/courier/store', 'steadfastSend')->name('steadfast.send');
-   Route::get('Courier/Manage/steadfast/order','All')->name('Courier.Manage.steadfast.order');
-
-  });
+    Route::controller(CourierController::class)->group(function () {
+        Route::get('steadFast/courier', 'steadfast')->name('Courier.steadfast');
+        Route::post('steadFast/courier/store', 'steadfastSend')->name('steadfast.send');
+        Route::get('Courier/Manage/steadfast/order', 'All')->name('Courier.Manage.steadfast.order');
+    });
 
     //All Routes for Global Coupons Start
     Route::controller(GlobalCouponController::class)->group(function () {
@@ -319,6 +336,12 @@ Route::middleware('auth')->group(function () {
         Route::post('admin/order/get-order-details', 'getOrderDetails')->name('get.order.details');
 
         Route::get('/order/detailed-orders/{order_id}', 'DetailOrders')->name('order.details');
+        Route::get('/custom/order/create', 'customOrderCreate')->name('custom.order.create');
+        Route::get('get/variant/custom/order_info/{id}', 'getVariantCustomOrderInfo')->name('get.variant.custom.order.info');
+        Route::post('get/custom/user/details', 'getCustomUserDetails')->name('get.user.data');
+        Route::post('create/custom/user/address', 'createCustomUserAddress')->name('create.custom.order.customer');
+        Route::post('create/custom/order', 'createCustomOrder')->name('custom.order.store');
+        Route::get('get/combo/custom/order/{id}', 'getComboCustom')->name('get.custom.combo.product.order');
         // Route::post('/order/send-sms', 'SendSMS')->name('send.sms');
 
 
@@ -338,20 +361,20 @@ Route::middleware('auth')->group(function () {
         Route::get('order/delivered', 'Delivered')->name('order.delivered');
     });
 
-          /////////////////////////////Product Size Add///////////////////////////
-          Route::controller(SizeController::class)->group(function () {
-            Route::get('/size/view', 'SizeView')->name('size.view');
-            Route::post('/size/store', 'SizeStore')->name('admin.products.addSize');
-            Route::get('/size/edit/{id}', 'SizeEdit')->name('size.edit');
-            Route::post('/size/update', 'SizeUpdate')->name('admin.products.updateSize');
-            Route::post('/size/delete', 'SizeDelete')->name('admin.products.deleteSize');
-            Route::get('admin/products/getSize', 'SizeGet')->name('admin.products.getSize');
-        });
+    /////////////////////////////Product Size Add///////////////////////////
+    Route::controller(SizeController::class)->group(function () {
+        Route::get('/size/view', 'SizeView')->name('size.view');
+        Route::post('/size/store', 'SizeStore')->name('admin.products.addSize');
+        Route::get('/size/edit/{id}', 'SizeEdit')->name('size.edit');
+        Route::post('/size/update', 'SizeUpdate')->name('admin.products.updateSize');
+        Route::post('/size/delete', 'SizeDelete')->name('admin.products.deleteSize');
+        Route::get('admin/products/getSize', 'SizeGet')->name('admin.products.getSize');
+    });
 
 
-      /////////////////////////////Product Color Add///////////////////////////
+    /////////////////////////////Product Color Add///////////////////////////
 
-     Route::controller(ColorController::class)->group(function () {
+    Route::controller(ColorController::class)->group(function () {
         Route::get('/color/view', 'ColorView')->name('color.view');
         Route::get('/color/get', 'ColorGet')->name('admin.products.getColor');
         Route::post('/color/store', 'ColorStore')->name('admin.products.addColor');
@@ -443,6 +466,10 @@ Route::middleware('auth')->group(function () {
     });
     //Purchase Details All Route End
 
+    Route::controller(userProfileController::class)->group(function () {
+        Route::get('/user/profile', 'index')->name('user.profile');
+        Route::post('/user/profile', 'update')->name('user.password.update');
+   });
 
 
     //Company Details All Route Start
@@ -474,9 +501,16 @@ Route::controller(UserTrackerController::class)->group(function () {
     // Route::get('/company-details/delete/{id}', 'delete')->name('company-details.delete');
     // Route::post('/company-details/status/{id}', 'status')->name('company-details.status');
 });
+
+
+// Route::controller(VariantController::class)->group(function () {
+//     Route::get('/check-mail-template/{id}', 'checkMail');
+// });
 //User Tracker All Route End
 
 // require __DIR__ . '/auth.php';
 // require __DIR__ . '/frontend.php';
-
 Route::group([], base_path('routes/frontend.php'));
+Route::get('/{any}', function () {
+    return view('errors.404'); // or return view('welcome') if you are using welcome.blade.php
+})->where('any', '.*');
