@@ -49,8 +49,8 @@ class DeliverOrderAssignController extends Controller
 
                $endPoint ="https://portal.packzy.com/api/v1/create_order";
 
-               $appKey="lgx16toeschl9fmulen1rwbdqfluhrin";
-               $secretKey="kswetbgjpcuz7nwbqgj4vp8z";
+               $appKey="wb67wzfzpfhb5nozj9i624wrdryug1wm";
+               $secretKey="gw7wrur1kgdms3pfff6nxddi";
 
                $invoice = $request->invoice;
                $recipient_name = $request->recipient_name;

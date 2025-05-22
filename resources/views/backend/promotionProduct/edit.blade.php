@@ -40,17 +40,46 @@
                         </div>
                     </div>
 
+
+
+
+
+
+
+
+
+
+
+
+
                     <!-- Second Row: Category -->
                     <div class="row mb-3">
+
+                        <div class="col-md-6">
+                            <label for="category" class="form-label">Brand</label>
+                            <select class="form-select brand" id="brand">
+                                <option selected value="">Select Brand</option>
+                                @foreach ($brand as $brand)
+                                    <option value="{{ $brand->id }}" >{{ $brand->BrandName }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+
+
+
                         <div class="col-md-6">
                             <label for="category" class="form-label">Product</label>
                             <select class="form-select product" id="product">
                                 <option selected value="">Select Product</option>
                                 @foreach ($product as $product)
-                                    <option  value="{{ $product->id }}" data-category-id="{{ $product->category_id }}">{{ $product->product_name }},({{$product->category->categoryName}})</option>
+                                    <option  value="{{ $product->id }}" data-category-id="{{ $product->category_id }}" data-brand-id="{{ $product->brand_id }}">{{ $product->product_name }},({{$product->category->categoryName}})</option>
                                 @endforeach
                             </select>
                         </div>
+
+
+
                     </div>
 
 
@@ -65,6 +94,7 @@
                                 <th>Product Name</th>
                                 <th>Variant</th>
                                 <th>Category Name</th>
+                                <th>Brand Name</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -106,6 +136,13 @@
 
                             <input value="{{ $promotionProduct->category_id }}" type="hidden" name="catgory_id[]">
                             {{ $promotionProduct->category->categoryName??'--'}}</td>
+
+                                 <td>
+
+                            <input value="{{ $promotionProduct->brand_id }}" type="hidden" name="brand_id[]">
+                            {{ $promotionProduct->brand->BrandName??'--'}}</td>
+
+
                             <td><button class="btn btn-danger btn-sm remove-row delete_button" data-id="{{$promotionProduct->id}}">Remove</button></td>
                            </tr>
 
@@ -194,6 +231,7 @@ $(document).ready(function() {
 
 ///////////////////////////////using for checking category is selected or not////////////////////////
 var previous_category_ids = [];
+var previous_brand_ids = [];
 
 $(document).on('change', '.category', function () {
     var selected_category_id = $(this).val();
@@ -202,6 +240,16 @@ $(document).on('change', '.category', function () {
         previous_category_ids.push(selected_category_id);
     }
 
+    $('.product').val('').change();
+});
+
+
+$(document).on('change', '.brand', function () {
+    var selected_brand_id = $(this).val();
+
+    if (!previous_brand_ids.includes(selected_brand_id)) {
+        previous_brand_ids.push(selected_brand_id);
+    }
 
     $('.product').val('').change();
 });
@@ -209,31 +257,29 @@ $(document).on('change', '.category', function () {
 
 
 
-
-
-
 $(document).on('change','.product', function () {
-    var product_id = $('.product').val();
+    var product_id = $(this).val();
     var promotion_id = $('.promotion').val();
-
-
-
     var category_id = $('.category').val();
 
-        var productCategory_id = $(this).find(':selected').attr('data-category-id');
+    var productCategory_id = $(this).find(':selected').attr('data-category-id');
+    var productBrand_id = $(this).find(':selected').attr('data-brand-id');
 
-        console.log("Selected Product's Category ID:", productCategory_id);
+    // Check for duplicate category
+    if (previous_category_ids.includes(productCategory_id)) {
+        alert("This product's category is already selected!");
+        $(this).val('');
+        return;
+    }
 
-        if (previous_category_ids.includes(productCategory_id)) {
-            alert("This product's category is already selected!");
-            $(this).val('');
-            return;
-        } else {
-            console.log("Valid selection, proceeding...");
-        }
+    // Check for duplicate brand
+    if (previous_brand_ids.includes(productBrand_id)) {
+        alert("This product's brand is already selected!");
+        $(this).val('');
+        return;
+    }
 
-
-
+    console.log("Valid selection, proceeding...");
 
     if (!product_id) {
         console.log("No Product selected.");
@@ -285,6 +331,8 @@ $(document).on('change','.product', function () {
                                 </select>
                             </td>
                             <td>—</td> <!-- No category -->
+                              <td>—</td> <!-- No category -->
+
                             <td><button class="btn btn-danger btn-sm remove-row">Remove</button></td>
                         </tr>
                     `);
@@ -306,6 +354,71 @@ $(document).on('change','.product', function () {
         }
     });
 });
+
+
+
+
+
+
+
+
+
+$(document).on('change', '.brand', function () {
+
+    var brand_id = $('.brand').val();
+
+    var promotion_id = $('.promotion').val();
+
+
+    if (!brand_id) {
+        console.log("No brand selected.");
+        return;
+    }
+
+    $.ajax({
+        url: "{{ route('product.promotion.add.brand') }}",
+        method: "POST",
+        data: {
+            brand_id: brand_id,
+            promotion_id: promotion_id,
+            _token: "{{ csrf_token() }}"
+        },
+        success: function (response) {
+            // console.log(response);
+            if (response.status === 200) {
+
+                $('.promotionTable').fadeIn();
+                let promotion = response.promotion;
+                let brand = response.brand;
+
+                console.log(brand);
+
+                if (brand) {
+                    $('.promotion-table-body').append(`
+                        <tr>
+                            <td>
+                                <input value="${promotion.id}" type="hidden" name="promotion_id[]">
+                                ${promotion.promotion_name}
+                            </td>
+                            <td>—</td>
+                            <td>—</td> <!-- No product/variant -->
+                              <td>—</td> <!-- No product/variant -->
+                            <td>
+                                <input value="${brand.id}" name="brand_id[]" type="hidden">
+                                ${brand.BrandName}
+                            </td>
+                            <td><button class="btn btn-danger btn-sm remove-row">Remove</button></td>
+                        </tr>
+                    `);
+                }
+            }
+        }
+    });
+});
+
+
+
+
 
 
 ////////////////////////add show category/////////////////////////////////////
@@ -343,6 +456,7 @@ $(document).on('change','.product', function () {
                                         <input value="${category.id}" name="category_id[]" type="hidden">
                                         ${category.categoryName}
                                     </td>
+                                     <td>—-</td>
                                     <td><button class="btn btn-danger btn-sm remove-row">Remove</button></td>
                                 </tr>
                             `);

@@ -22,6 +22,9 @@ class ProductPromotion extends Model
         return $this->belongsTo(Coupon::class, 'promotion_id', 'id');
     }
 
+    public function brand(){
+        return $this->belongsTo(Brand::class, 'brand_id', 'id');
+    }
     public function variant()
     {
         return $this->belongsTo(Variant::class, 'variant_id', 'id');

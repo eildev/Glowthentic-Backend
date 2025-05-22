@@ -189,7 +189,7 @@
                                               </div>
 
 
-                                              <div class="col-md-6">
+                                              <div class="col-md-6 mt-2">
 
                                                 <div class="row">
                                                     <label class="form-label col-12">Shipping Charge <span class="text-danger fw-bold"></span></label>
@@ -207,6 +207,30 @@
                                                     </div>
                                                 </div>
                                             </div>
+
+
+
+
+                                <div class="col-md-6 mt-2">
+                                    <label for="category" class="form-label">Promotion Name</label>
+                                    <select class="form-select promotion" id="promotion" name="promotion_id">
+                                        @php
+                                            $existPromotion = App\Models\ProductPromotion::where('product_id', $product->id)->latest()->first();
+                                        @endphp
+                                      <option value="">Select Promotion</option>
+                                        @foreach ($promotion as $promo)
+                                            <option value="{{ $promo->id }}" {{ isset($existPromotion) && $existPromotion->promotion_id == $promo->id ? 'selected' : '' }}>
+                                                {{ $promo->promotion_name ?? '' }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+
+
+
+
+
 
                                         </div>
 

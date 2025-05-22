@@ -262,6 +262,12 @@ Route::middleware('auth')->group(function () {
         Route::post('/promotion/product/delete/', 'delete')->name('promotion.delete');
 
         Route::post('product/promotion/add/category', 'productPromotionCategoryShow')->name('product.promotion.add.category');
+
+        Route::post('product/promotion/add/brand', 'productPromotionBrandShow')->name('product.promotion.add.brand');
+
+
+
+
         Route::get('admin/product/promotion/edit/{id}', 'edit')->name('admin.product.promotion.edit');
         Route::post('/product/promotion/variant/delete/', 'variantDelete')->name('promotion.variant.delete');
         Route::post('promotion/delete', 'Promotiondelete')->name('product.promotion.delete');

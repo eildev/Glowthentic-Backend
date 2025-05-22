@@ -255,6 +255,8 @@
 
 
 
+
+
                                             <div class="col-md-6">
 
                                                 <div class="row">
@@ -368,6 +370,24 @@
                                                     </div>
                                                 </div>
                                             </div>
+
+
+                                <div class="col-md-6 mt-2">
+                                    <label for="category" class="form-label">Promotion Name</label>
+                                    <select class="form-select promotion" id="promotion" name="promotion_id">
+                                        {{-- @php
+                                        $existingPromotionIds = App\Models\ProductPromotion::pluck('promotion_id')->toArray();
+                                    @endphp --}}
+                                    <option value="">Select Promotion</option>
+                                    @foreach ($promotion as $promo)
+                                        {{-- @if (!in_array($promo->id, $existingPromotionIds)) --}}
+                                            <option value="{{ $promo->id }}"> {{ $promo->promotion_name??'' }} </option>
+                                        {{-- @endif --}}
+                                    @endforeach
+
+                                    </select>
+                                </div>
+
 
 
 
