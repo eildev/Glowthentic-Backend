@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Brand;
+use App\Models\Combo;
 use App\Models\TagName;
 use App\Models\Product;
 
@@ -164,6 +165,7 @@ class ApiProductController extends Controller
                 'subcategory',
                 'brand',
             )->where('status', 1)->get();
+
             // dd($products);
             return response()->json([
                 'status' => '200',
@@ -178,6 +180,70 @@ class ApiProductController extends Controller
             ]);
         }
     }
+    // public function viewAll()
+    // {
+    //     try {
+    //         // Fetch products with related data
+    //         $products = Product::orderByDesc('id')->with([
+    //             'variants.variantImage',
+    //             'variants.product',
+    //             'variants.productStock',
+    //             'variants.productVariantPromotion.coupon',
+    //             'promotionproduct.coupon',
+    //             'variants.comboProduct',
+    //             'product_tags',
+    //             'productStock',
+    //             'productdetails',
+    //             'variantImage',
+    //             'category.productPromotions.coupon',
+    //             'subcategory',
+    //             'brand',
+    //         ])->where('status', 1)->get();
+
+    //         // Fetch combos with related data
+    //         $combos = Combo::with([
+    //             'comboproduct.product',
+    //             'comboproduct.product.subcategory',
+    //             'comboproduct.product.brand',
+    //             'comboproduct.product.category.productPromotions.coupon',
+    //             'comboproduct.product.productdetails',
+    //             'comboproduct.product.productStock',
+    //             'comboproduct.product.product_tags',
+    //             'comboproduct.product.promotionproduct.coupon',
+    //             'comboproduct.variant',
+    //             'comboproduct.variant.variantImage',
+    //             'comboproduct.variant.productStock',
+    //             'comboimage',
+    //         ])->where('status', 'active')->get();
+
+    //         // Transform products to include a 'type' field
+    //         $products = $products->map(function ($product) {
+    //             return array_merge($product->toArray(), ['type' => 'product']);
+    //         });
+
+    //         // Transform combos to include a 'type' field
+    //         $combos = $combos->map(function ($combo) {
+    //             return array_merge($combo->toArray(), ['type' => 'combo']);
+    //         });
+
+    //         // Merge the collections into a single array
+    //         $combinedData = $products->concat($combos)->values();
+
+    //         return response()->json([
+    //             'status' => '200',
+    //             'message' => 'Product and Combo List',
+    //             'data' => $combinedData,
+    //         ]);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'status' => '500',
+    //             'message' => 'Data Retrieval Failed',
+    //             'error' => $e->getMessage(),
+    //         ]);
+    //     }
+    // }
+
+
     public function show($slug)
     {
         try {

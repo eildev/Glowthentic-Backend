@@ -3,8 +3,6 @@
     <div class="page-content">
         <div class="row">
             <div class="col-md-8 offset-md-2">
-
-
                 <p>{{ session('test') }}</p>
                 <div class="card border-top border-0 border-3 border-info">
 
