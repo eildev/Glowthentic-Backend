@@ -22,13 +22,24 @@ use App\Models\ProductFeature;
 use App\Models\SizeModel;
 use App\Models\ColorModel;
 use File;
+use App\Models\Category;
+use App\Models\Coupon;
+use App\Models\ProductPromotion;
+use App\Models\VariantPromotion;
+use Carbon\Carbon;
+
 // use App\Models\
 class ProductController extends Controller
 {
     // product index function
     public function index()
     {
-        return view('backend.products.insert');
+
+        $promotion = Coupon::where('type','promotion')->where('end_date','>=',Carbon::now()->format('Y-m-d'))->get();
+
+        // dd($promotion);
+
+        return view('backend.products.insert',compact('promotion'));
     }
     public function findVariant($id)
     {
@@ -130,7 +141,7 @@ class ProductController extends Controller
 
         $product->product_name = $request->product_name;
         $product->unit_id = $request->unit_id;
-        $product->slug = Str::slug($request->product_name);
+        $product->slug = Str::slug($request->product_name) . '-' . time();
         $product->sku = $request->sku;
         $product->created_by = Auth::user()->id;
         $product->save();
@@ -147,6 +158,16 @@ class ProductController extends Controller
             $productDetails->usage_instruction = $request->usage_instruction;
             $productDetails->created_by = Auth::user()->id;
             $productDetails->save();
+        }
+
+
+
+        if($product->id && $request->promotion_id){
+            // dd($request->all());
+            $promotion = new ProductPromotion();
+            $promotion->product_id = $product->id;
+            $promotion->promotion_id = $request->promotion_id;
+            $promotion->save();
         }
 
 
@@ -280,7 +301,7 @@ class ProductController extends Controller
                 $stock->product_id = $product->id;
                 $stock->variant_id = $variant->id;
                 $stock->StockQuantity = $request->stock_quantity;
-                
+
                 $stock->status = 'Available';
                 $stock->save();
             }
@@ -323,10 +344,11 @@ class ProductController extends Controller
         $color = ColorModel::select('color_name')->get();
         $inserttag = Product_Tags::where('product_id', $id)->get();
         $extraFields = AttributeManage::where('product_id', $product->id)->get();
+         $promotion = Coupon::where('type','promotion')->where('end_date','>=',Carbon::now()->format('Y-m-d'))->get();
         // ->pluck('value', 'attribute_id')
         // ->toArray();
 
-        return view('backend.products.edit', compact('product', 'attribute_manages', 'variants', 'inserttag', 'extraFields', 'size', 'color'));
+        return view('backend.products.edit', compact('product', 'attribute_manages', 'variants', 'inserttag', 'extraFields', 'size', 'color','promotion'));
     }
 
 
@@ -409,6 +431,34 @@ class ProductController extends Controller
 
             $productDetails->save();
         }
+
+
+
+
+
+
+
+     if($product->id){
+            $product_promotion = ProductPromotion::where('product_id', $product->id)->first();
+            if ($product_promotion) {
+                $product_promotion->product_id = $product->id;
+                $product_promotion->promotion_id = $request->promotion_id;
+                $product_promotion->save();
+            }
+            else{
+                $product_promotion = new ProductPromotion();
+                $product_promotion->product_id = $product->id;
+                $product_promotion->promotion_id = $request->promotion_id;
+                $product_promotion->save();
+            }
+
+        }
+
+
+
+
+
+
 
 
         if ($request->has('extra_field')) {

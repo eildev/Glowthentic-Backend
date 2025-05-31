@@ -11,7 +11,7 @@ use App\Models\Variant;
 class ApiComboProductController extends Controller
 {
     public function view(){
-        $comboProduct=ComboProduct::with('product','combo','variant')->get();
+        $comboProduct=Combo::with('comboproduct.product','comboproduct','comboproduct.variant.variantImage','comboimage','comboproduct.product.productdetails')->get();
 
         return response()->json([
             'status'=>200,
@@ -23,7 +23,7 @@ class ApiComboProductController extends Controller
 
 
   public function show($id){
-    $comboProduct=ComboProduct::where('status','active')->with('product','combo')->find($id);
+    $comboProduct=Combo::with('comboproduct.product','comboproduct','comboproduct.variant.variantImage','comboimage','comboproduct.product.productdetails')->find($id);
     return response()->json([
         'status'=>200,
         'comboProduct'=>$comboProduct,
