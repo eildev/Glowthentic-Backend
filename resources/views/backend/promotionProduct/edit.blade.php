@@ -36,21 +36,8 @@
                         </div>
                     </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
                     <!-- Second Row: Category -->
                     <div class="row mb-3">
-
                         <div class="col-md-6">
                             <label for="category" class="form-label">Brand</label>
                             <select class="form-select brand" id="brand">
@@ -60,9 +47,6 @@
                                 @endforeach
                             </select>
                         </div>
-
-
-
 
                         <div class="col-md-6">
                             <label for="category" class="form-label">Product</label>
@@ -76,12 +60,7 @@
                                 @endforeach
                             </select>
                         </div>
-
-
-
                     </div>
-
-
                 </div>
 
                 <div class="card-body promotionTable">
@@ -159,14 +138,7 @@
                         </table>
                         <button type="button" class="btn btn-success edit_promotion" id="save-promotion">Update</button>
                     </form>
-
                 </div>
-
-
-
-
-
-
             </div>
         </div>
         <!--end row-->
