@@ -397,28 +397,29 @@ class ProductController extends Controller
     // product update function
     public function update(Request $request)
     {
-        // dd($request->all());
         $product = Product::findOrFail($request->product_id);
+        // dd($product->product_name !== $request->product_name);
         $product->category_id = $request->category_id;
         $product->subcategory_id = $request->subcategory_id;
         $product->brand_id = $request->brand_id;
         $product->sub_subcategory_id = $request->sub_subcategory_id;
+        $product->product_name = $request->product_name;
         // if ($request->product_feature) {
         //     $product->product_feature = json_encode($request->product_feature);
         // }
 
-        // if ($product->product_name !== $request->product_name) {
-        //     $product->slug = Str::slug($request->product_name) . '-' . time();
-        // }
-        if ($product->product_name === $request->product_name) {
-        } else {
+        if ($product->product_name !== $request->product_name) {
             $product->slug = Str::slug($request->product_name) . '-' . time();
         }
+        // if ($product->product_name === $request->product_name) {
+        // } else {
+        //     $product->slug = Str::slug($request->product_name) . '-' . time();
+        // }
         $product->unit_id = $request->unit_id;
         if ($request->shipping_charge) {
             $product->shipping_charge = $request->shipping_charge;
         }
-        $product->slug = Str::slug($request->product_name);
+        // $product->slug = Str::slug($request->product_name);
         $product->sku = $request->sku;
         $product->created_by = Auth::user()->id;
         $product->save();
