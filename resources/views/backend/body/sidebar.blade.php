@@ -13,7 +13,7 @@
         </div>
     </div>
     <!--navigation-->
-    <ul class="metismenu" id="menu">
+    <ul class="metismenu mb-5" id="menu">
 
         <li>
             <a href="{{ route('admin.dashboard') }}">
@@ -74,7 +74,7 @@
                     <a class="has-arrow" href="javascript:;">
                         <div class="parent-icon"><i class='bx bx-category-alt'></i>
                         </div></i>
-                        <div class="menu-title">Shop By Concern (Category)</div>
+                        <div class="menu-title">Shop By Category</div>
                     </a>
                     <ul class="mm-collapse">
                         <li> <a href="{{ route('category') }}"><i class="bx bx-right-arrow-alt"></i>Manage Category</a>
@@ -313,7 +313,8 @@
                 </li>
 
                 <li>
-                    <a href="{{ route('custom.order.create') }}"><i class="bx bx-right-arrow-alt"></i>Custom Order Create</a>
+                    <a href="{{ route('custom.order.create') }}"><i class="bx bx-right-arrow-alt"></i>Custom Order
+                        Create</a>
                 </li>
             </ul>
         </li>

@@ -46,12 +46,13 @@
                             <thead>
                                 <tr>
                                     <th>SI</th>
-                                   
+
                                     <th>Product name</th>
-                                     <th>Image</th>
+                                    <th>Image</th>
                                     <th>Category</th>
                                     <th>Sub Category</th>
                                     <th>Brand</th>
+                                    <th>Promotion</th>
                                     <th>Unit</th>
                                     <th>Price</th>
                                     <th>Stock</th>
@@ -66,7 +67,6 @@
                                 @endphp
                                 @if ($products->count() > 0)
                                     @foreach ($products as $product)
-
                                         <tr>
                                             <td>{{ $serialNumber++ }}</td>
 
@@ -76,25 +76,33 @@
                                                     alt="Products Image">
                                             </td> --}}
                                             <td>{{ Illuminate\Support\Str::limit($product->product_name, 29) }}</td>
-                                            <td>  @if($product->variantImage && $product->variantImage->whereNull('deleted_at')->first())
-                                                <img src="{{ asset($product->variantImage->whereNull('deleted_at')->first()->image) }}" class="img-fluid" alt="product-image" style="height:80px;">
-                                            @endif</td>
-                                            <td>{{ $product->category->categoryName??'' }}</td>
+                                            <td>
+                                                @if ($product->variantImage && $product->variantImage->whereNull('deleted_at')->first())
+                                                    <img src="{{ asset($product->variantImage->whereNull('deleted_at')->first()->image) }}"
+                                                        class="img-fluid" alt="product-image" style="height:80px;">
+                                                @endif
+                                            </td>
+                                            <td>{{ $product->category->categoryName ?? '' }}</td>
                                             @php
-                                                $subcategory=App\Models\Category::find($product->subcategory_id);
+                                                $subcategory = App\Models\Category::find($product->subcategory_id);
                                             @endphp
                                             <td>{{ $subcategory->categoryName ?? '' }}</td>
-                                            <td>{{ $product->brand->BrandName??'' }}</td>
-                                            <td>{{ $product->unit_id??'' }}</td>
+                                            <td>{{ $product->brand->BrandName ?? '' }}</td>
+                                            <td>{{ $product->promotionproduct->first()?->coupon?->promotion_name ?? 'N/A' }}
+                                            </td>
+                                            <td>{{ $product->unit_id ?? '' }}</td>
                                             <td>
                                                 ৳{{ $product->varient[0]->regular_price ?? 0 }}
                                             </td>
                                             @php
-                                                $Total_stock = App\Models\ProductStock::where('product_id', $product->id)->sum('StockQuantity')??0;
+                                                $Total_stock =
+                                                    App\Models\ProductStock::where('product_id', $product->id)->sum(
+                                                        'StockQuantity',
+                                                    ) ?? 0;
                                             @endphp
                                             {{-- @dd($Total_stock) --}}
                                             <td>
-                                                {{ $Total_stock}}
+                                                {{ $Total_stock }}
                                             </td>
 
                                             <td>

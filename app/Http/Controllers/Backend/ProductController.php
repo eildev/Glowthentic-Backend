@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\auth;
 use Illuminate\Support\Str;
 use App\Models\Attribute;
 use App\Models\AttributeManage;
+use App\Models\Brand;
 use App\Services\ImageOptimizerService;
 use Exception;
 use App\Models\ProductFeature;
@@ -35,11 +36,11 @@ class ProductController extends Controller
     public function index()
     {
 
-        $promotion = Coupon::where('type','promotion')->where('end_date','>=',Carbon::now()->format('Y-m-d'))->get();
+        $promotion = Coupon::where('type', 'promotion')->where('end_date', '>=', Carbon::now()->format('Y-m-d'))->get();
+        $categories = Category::where('status', 1)->whereNull('parent_id')->get();
+        $brands = Brand::where('status', 1)->get();
 
-        // dd($promotion);
-
-        return view('backend.products.insert',compact('promotion'));
+        return view('backend.products.insert', compact('promotion', 'categories', 'brands'));
     }
     public function findVariant($id)
     {
@@ -135,7 +136,7 @@ class ProductController extends Controller
         $product->subcategory_id = $request->subcategory_id;
         $product->brand_id = $request->brand_id;
         $product->sub_subcategory_id = $request->sub_subcategory_id;
-        if($request->shipping_charge){
+        if ($request->shipping_charge) {
             $product->shipping_charge = $request->shipping_charge;
         }
 
@@ -162,7 +163,7 @@ class ProductController extends Controller
 
 
 
-        if($product->id && $request->promotion_id){
+        if ($product->id && $request->promotion_id) {
             // dd($request->all());
             $promotion = new ProductPromotion();
             $promotion->product_id = $product->id;
@@ -241,8 +242,8 @@ class ProductController extends Controller
             }
         }
 
-        if($product && $request->product_feature){
-            foreach($request->product_feature as $feature){
+        if ($product && $request->product_feature) {
+            foreach ($request->product_feature as $feature) {
                 $productFeature = new ProductFeature();
                 $productFeature->product_id = $product->id;
                 $productFeature->feature_id = $feature;
@@ -318,8 +319,7 @@ class ProductController extends Controller
     // show all products function
     public function view()
     {
-        $products = Product::with('varient')->orderBy('id', 'desc')->get();
-
+        $products = Product::latest()->get();
 
 
         return view('backend.products.view', compact('products'));
@@ -344,11 +344,13 @@ class ProductController extends Controller
         $color = ColorModel::select('color_name')->get();
         $inserttag = Product_Tags::where('product_id', $id)->get();
         $extraFields = AttributeManage::where('product_id', $product->id)->get();
-         $promotion = Coupon::where('type','promotion')->where('end_date','>=',Carbon::now()->format('Y-m-d'))->get();
+        $promotion = Coupon::where('type', 'promotion')->where('end_date', '>=', Carbon::now()->format('Y-m-d'))->get();
         // ->pluck('value', 'attribute_id')
         // ->toArray();
+        $categories = Category::where('status', 1)->whereNull('parent_id')->get();
+        $brands = Brand::where('status', 1)->get();
 
-        return view('backend.products.edit', compact('product', 'attribute_manages', 'variants', 'inserttag', 'extraFields', 'size', 'color','promotion'));
+        return view('backend.products.edit', compact('product', 'attribute_manages', 'variants', 'inserttag', 'extraFields', 'size', 'color', 'promotion', 'categories', 'brands'));
     }
 
 
@@ -357,13 +359,13 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
 
-        $getVariants=Variant::where('product_id',$id)->get();
-        $stock=ProductStock::where('product_id',$id)->get();
-        foreach($stock as $stocks){
+        $getVariants = Variant::where('product_id', $id)->get();
+        $stock = ProductStock::where('product_id', $id)->get();
+        foreach ($stock as $stocks) {
             $stocks->delete();
         }
-        foreach($getVariants as $variant){
-            if($variant->image){
+        foreach ($getVariants as $variant) {
+            if ($variant->image) {
                 $imagePath = public_path($variant->image);
                 if (file_exists($imagePath)) {
                     unlink($imagePath);
@@ -395,9 +397,7 @@ class ProductController extends Controller
     // product update function
     public function update(Request $request)
     {
-
-
-
+        // dd($request->all());
         $product = Product::findOrFail($request->product_id);
         $product->category_id = $request->category_id;
         $product->subcategory_id = $request->subcategory_id;
@@ -407,9 +407,15 @@ class ProductController extends Controller
         //     $product->product_feature = json_encode($request->product_feature);
         // }
 
-        $product->product_name = $request->product_name;
+        // if ($product->product_name !== $request->product_name) {
+        //     $product->slug = Str::slug($request->product_name) . '-' . time();
+        // }
+        if ($product->product_name === $request->product_name) {
+        } else {
+            $product->slug = Str::slug($request->product_name) . '-' . time();
+        }
         $product->unit_id = $request->unit_id;
-        if($request->shipping_charge){
+        if ($request->shipping_charge) {
             $product->shipping_charge = $request->shipping_charge;
         }
         $product->slug = Str::slug($request->product_name);
@@ -433,32 +439,20 @@ class ProductController extends Controller
         }
 
 
-
-
-
-
-
-     if($product->id){
+        // Product Promotion 
+        if ($product->id && $request->promotion_id) {
             $product_promotion = ProductPromotion::where('product_id', $product->id)->first();
             if ($product_promotion) {
                 $product_promotion->product_id = $product->id;
                 $product_promotion->promotion_id = $request->promotion_id;
                 $product_promotion->save();
-            }
-            else{
+            } else {
                 $product_promotion = new ProductPromotion();
                 $product_promotion->product_id = $product->id;
                 $product_promotion->promotion_id = $request->promotion_id;
                 $product_promotion->save();
             }
-
         }
-
-
-
-
-
-
 
 
         if ($request->has('extra_field')) {
@@ -523,7 +517,7 @@ class ProductController extends Controller
         }
 
         if ($product && $request->tag) {
-           Product_Tags::where('product_id', $product->id)->delete();
+            Product_Tags::where('product_id', $product->id)->delete();
             foreach ($request->tag as $tag) {
                 $productTag = new Product_Tags();
                 $productTag->product_id = $product->id;
@@ -533,9 +527,9 @@ class ProductController extends Controller
         }
 
 
-        if($product && $request->product_feature){
+        if ($product && $request->product_feature) {
             ProductFeature::where('product_id', $product->id)->delete();
-            foreach($request->product_feature as $feature){
+            foreach ($request->product_feature as $feature) {
                 $productFeature = new ProductFeature();
                 $productFeature->product_id = $product->id;
                 $productFeature->feature_id = $feature;

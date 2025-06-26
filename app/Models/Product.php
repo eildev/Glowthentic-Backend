@@ -58,6 +58,11 @@ class Product extends Model
         return $this->hasMany(ProductPromotion::class, 'product_id', 'id');
     }
 
+    public function myProductPromotion()
+    {
+        return $this->belongsTo(ProductPromotion::class, 'product_id', 'id');
+    }
+
     public function product_tags()
     {
         return $this->hasMany(Product_Tags::class, 'product_id', 'id');
@@ -74,17 +79,20 @@ class Product extends Model
         return $this->hasOne(ProductDetails::class, 'product_id', 'id');
     }
 
-    public function product_attribute(){
-        return $this->hasMany(AttributeManage::class,'product_id','id');
+    public function product_attribute()
+    {
+        return $this->hasMany(AttributeManage::class, 'product_id', 'id');
     }
 
 
 
-    public function productVarinatPromotion(){
-        return $this->hasMany(VariantPromotion::class,'product_id','id');
+    public function productVarinatPromotion()
+    {
+        return $this->hasMany(VariantPromotion::class, 'product_id', 'id');
     }
 
-    public function productFeatures(){
+    public function productFeatures()
+    {
         return $this->hasMany(ProductFeature::class);
     }
 }

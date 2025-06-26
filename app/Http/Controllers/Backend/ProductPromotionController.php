@@ -15,78 +15,81 @@ use Exception;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use App\Models\Brand;
+
 class ProductPromotionController extends Controller
 {
 
     public function index()
     {
-        $productPromotion = ProductPromotion::with(['product', 'coupon', 'category'])
-        ->get()
-        ->groupBy('promotion_id');
+        $productPromotion = ProductPromotion::where('status', 'active')->with(['product', 'coupon', 'category'])
+            ->get();
 
 
         return view('backend.promotionProduct.index', compact('productPromotion'));
     }
 
-    public function create(){
-        $ActivePromotion=Coupon::where('type','promotion')
-                  ->where('end_date','>=',Carbon::now()->format('Y-m-d'))
-                  ->where('status','Active')
-                  ->pluck('id')
-                  ->toArray();
-                  $categoryPromotion=ProductPromotion::whereIn('promotion_id',$ActivePromotion)->get();
-                  $brandPromotion=ProductPromotion::whereIn('promotion_id',$ActivePromotion)->get();
+    public function create()
+    {
+        $ActivePromotion = Coupon::where('type', 'promotion')
+            ->where('end_date', '>=', Carbon::now()->format('Y-m-d'))
+            ->where('status', 'Active')
+            ->pluck('id')
+            ->toArray();
+        $categoryPromotion = ProductPromotion::whereIn('promotion_id', $ActivePromotion)->get();
+        $brandPromotion = ProductPromotion::whereIn('promotion_id', $ActivePromotion)->get();
 
-                  $brandPromotionIds = $brandPromotion->pluck('brand_id')
-                                      ->filter()
-                                      ->unique()
-                                      ->values()
-                                      ->toArray();
-                  $categoryPromotionIds = $categoryPromotion->pluck('category_id')
-                                        ->filter()
-                                        ->unique()
-                                        ->values()
-                                        ->toArray();
-
-
-                         $productsWithoutVariantPromotionIds= $categoryPromotion->pluck('product_id')
-                         ->filter()
-                         ->unique()
-                         ->values()
-                         ->toArray();
-
-                        $product = Product::where('status', 1)
-                        ->whereNotIn('category_id', $categoryPromotionIds)
-                        ->whereNotIn('id', $productsWithoutVariantPromotionIds)
-                        ->whereNotIn('brand_id', $brandPromotionIds)
-                        ->get();
+        $brandPromotionIds = $brandPromotion->pluck('brand_id')
+            ->filter()
+            ->unique()
+            ->values()
+            ->toArray();
+        $categoryPromotionIds = $categoryPromotion->pluck('category_id')
+            ->filter()
+            ->unique()
+            ->values()
+            ->toArray();
 
 
-                $category=Category::where('status', 1)->whereNotIn('id',$categoryPromotionIds)->get();
-                $brand=Brand::where('status', 1)->whereNotIn('id',$brandPromotionIds)->get();
-                $promotion = Coupon::where('type','promotion')->get();
-                // $variant=Variant::all();
-        return view('backend.promotionProduct.create',compact('product','category','promotion','brand'));
+        $productsWithoutVariantPromotionIds = $categoryPromotion->pluck('product_id')
+            ->filter()
+            ->unique()
+            ->values()
+            ->toArray();
+
+        $product = Product::where('status', 1)
+            ->whereNotIn('category_id', $categoryPromotionIds)
+            ->whereNotIn('id', $productsWithoutVariantPromotionIds)
+            ->whereNotIn('brand_id', $brandPromotionIds)
+            ->get();
+
+
+        $category = Category::where('status', 1)->whereNotIn('id', $categoryPromotionIds)->get();
+        $brand = Brand::where('status', 1)->whereNotIn('id', $brandPromotionIds)->get();
+        $promotion = Coupon::where('type', 'promotion')->get();
+        // $variant=Variant::all();
+        return view('backend.promotionProduct.create', compact('product', 'category', 'promotion', 'brand'));
     }
-    public function getProductPromotion(){
+    public function getProductPromotion()
+    {
         $product = Product::where('status', 1)->get();
-        $promotion = Coupon::where('type','promotion')->where('status','Active')->get();
-        $variant=Variant::all();
+        $promotion = Coupon::where('type', 'promotion')->where('status', 'Active')->get();
+        $variant = Variant::all();
 
         return response()->json([
             'product' => $product,
             'promotion' => $promotion,
-            'variant'=>$variant
+            'variant' => $variant
         ]);
     }
 
 
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
 
 
 
-        try{
+        try {
             if ($request->product_id) {
                 foreach ($request->product_id as $key => $product_id) {
 
@@ -96,45 +99,43 @@ class ProductPromotionController extends Controller
                         ->where('promotion_id', $request->promotion_id[0])
                         ->latest()
                         ->exists();
-                        $variants = $request->variant_id[$product_id] ?? [];
-                        if (!$exists && $productCategory !== (int) $request->category_id) {
-                            $productPromotion = new ProductPromotion();
-                            $productPromotion->product_id = $product_id;
-                            $productPromotion->promotion_id = $request->promotion_id[0];
-                            // $productPromotion->variant_id = json_encode($variants);
-                            $productPromotion->save();
-                            foreach($variants as $variant){
-                                $variantPromotion = new VariantPromotion();
-                                $variantPromotion->variant_id = $variant;
-                                $variantPromotion->product_id = $product_id;
-                                $variantPromotion->promotion_id = $request->promotion_id[0];
-                                $variantPromotion->save();
-                            }
-
+                    $variants = $request->variant_id[$product_id] ?? [];
+                    if (!$exists && $productCategory !== (int) $request->category_id) {
+                        $productPromotion = new ProductPromotion();
+                        $productPromotion->product_id = $product_id;
+                        $productPromotion->promotion_id = $request->promotion_id[0];
+                        // $productPromotion->variant_id = json_encode($variants);
+                        $productPromotion->save();
+                        foreach ($variants as $variant) {
+                            $variantPromotion = new VariantPromotion();
+                            $variantPromotion->variant_id = $variant;
+                            $variantPromotion->product_id = $product_id;
+                            $variantPromotion->promotion_id = $request->promotion_id[0];
+                            $variantPromotion->save();
                         }
-
+                    }
                 }
             }
 
             if ($request->category_id) {
                 foreach ($request->category_id as $key => $category_id) {
 
-                        $productPromotion = new ProductPromotion();
-                        $productPromotion->category_id = $category_id;
-                        $productPromotion->promotion_id = $request->promotion_id[0];
-                        $productPromotion->save();
+                    $productPromotion = new ProductPromotion();
+                    $productPromotion->category_id = $category_id;
+                    $productPromotion->promotion_id = $request->promotion_id[0];
+                    $productPromotion->save();
                 }
             }
 
-              if ($request->brand_id) {
-                            foreach ($request->brand_id as $key => $brand_id) {
+            if ($request->brand_id) {
+                foreach ($request->brand_id as $key => $brand_id) {
 
-                                    $productPromotion = new ProductPromotion();
-                                    $productPromotion->brand_id = $brand_id;
-                                    $productPromotion->promotion_id = $request->promotion_id[0];
-                                    $productPromotion->save();
-                            }
-                        }
+                    $productPromotion = new ProductPromotion();
+                    $productPromotion->brand_id = $brand_id;
+                    $productPromotion->promotion_id = $request->promotion_id[0];
+                    $productPromotion->save();
+                }
+            }
 
 
 
@@ -143,38 +144,36 @@ class ProductPromotionController extends Controller
                 'status' => 200,
                 'message' => 'Data Saved Successfully'
             ]);
-
-            }
-
-      catch (Exception $e) {
+        } catch (Exception $e) {
             return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
         }
-
     }
 
 
 
 
 
-    public function view(){
-        $productPromotion = ProductPromotion::with('product','coupon','variant')->get();
+    public function view()
+    {
+        $productPromotion = ProductPromotion::with('product', 'coupon', 'variant')->get();
         //   dd($productPromotion);
         return response()->json([
-            'status'=>200,
-            'productPromotion'=>$productPromotion
+            'status' => 200,
+            'productPromotion' => $productPromotion
         ]);
     }
 
-    public function edit($id){
+    public function edit($id)
+    {
 
-        $promotionProduct = ProductPromotion::with('category','product','coupon')->where('promotion_id',$id)->get();
+        $promotionProduct = ProductPromotion::with('category', 'product', 'coupon')->where('promotion_id', $id)->get();
         // $variant_promotion = VariantPromotion::with('variant')->where('promotion_id',$id)->get();
 
         $product = Product::where('status', 1)->get();
-        $categories=Category::where('status', 1)->get();
-        $promotion = Coupon::where('type','promotion')->get();
-           $brand=Brand::where('status', 1)->get();
-        return view('backend.promotionProduct.edit',compact('promotionProduct','product','categories','promotion','brand'));
+        $categories = Category::where('status', 1)->get();
+        $promotion = Coupon::where('type', 'promotion')->get();
+        $brand = Brand::where('status', 1)->get();
+        return view('backend.promotionProduct.edit', compact('promotionProduct', 'product', 'categories', 'promotion', 'brand'));
     }
 
 
@@ -197,17 +196,17 @@ class ProductPromotionController extends Controller
                         // $productPromotion->variant_id = json_encode($request->variant_id[$product_id] ?? []);
                         $variants = $request->variant_id[$product_id] ?? [];
                         $productPromotion->save();
-                        foreach($variants as $variant){
+                        foreach ($variants as $variant) {
                             // dd($variant);
                             $variantPromotion = VariantPromotion::where('variant_id', $variant)
-                            ->where('product_id', $product_id)
-                            ->where('promotion_id', $promotionId)
-                            ->first();
+                                ->where('product_id', $product_id)
+                                ->where('promotion_id', $promotionId)
+                                ->first();
 
                             if (!$variantPromotion) {
 
-                                 $variantPromotion = new VariantPromotion();
-                                $variantPromotion->variant_id =$variant;
+                                $variantPromotion = new VariantPromotion();
+                                $variantPromotion->variant_id = $variant;
                                 $variantPromotion->product_id = $product_id;
                                 $variantPromotion->promotion_id = $promotionId;
 
@@ -220,14 +219,13 @@ class ProductPromotionController extends Controller
                             // $variantPromotion->promotion_id = $request->promotion_id[0];
                             // $variantPromotion->save();
                         }
-
                     } else {
                         $productPromotion = new ProductPromotion();
                         $productPromotion->product_id = $product_id;
                         $productPromotion->promotion_id = $promotionId;
                         // $productPromotion->variant_id = json_encode($request->variant_id[$product_id] ?? []);
                         $variants = $request->variant_id[$product_id] ?? [];
-                        foreach($variants as $variant){
+                        foreach ($variants as $variant) {
                             $variantPromotion = new VariantPromotion();
                             $variantPromotion->variant_id = $variant;
                             $variantPromotion->product_id = $product_id;
@@ -259,11 +257,11 @@ class ProductPromotionController extends Controller
                 }
             }
 
-          if ($request->brand_id) {
-            foreach ($request->brand_id as $key => $brand_id) {
-                $productPromotion = ProductPromotion::where('brand_id', $brand_id)
-                    ->where('promotion_id', $promotionId)
-                    ->first();
+            if ($request->brand_id) {
+                foreach ($request->brand_id as $key => $brand_id) {
+                    $productPromotion = ProductPromotion::where('brand_id', $brand_id)
+                        ->where('promotion_id', $promotionId)
+                        ->first();
                     if ($productPromotion) {
                         $productPromotion->brand_id = $brand_id;
                         $productPromotion->promotion_id = $promotionId;
@@ -274,8 +272,8 @@ class ProductPromotionController extends Controller
                         $productPromotion->promotion_id = $promotionId;
                         $productPromotion->save();
                     }
-          }
-        }
+                }
+            }
 
             return response()->json([
                 'status' => 200,
@@ -287,152 +285,148 @@ class ProductPromotionController extends Controller
     }
 
 
-    public function delete(Request $request){
-        try{
+    public function delete(Request $request)
+    {
+        try {
             $product = ProductPromotion::find($request->id);
-            $variantPromotion = VariantPromotion::where('product_id',$product->product_id)->get();
+            $variantPromotion = VariantPromotion::where('product_id', $product->product_id)->get();
 
-            foreach($variantPromotion as $variant){
+            foreach ($variantPromotion as $variant) {
                 $variant->delete();
             }
             $product->delete();
 
             return response()->json([
-                'status'=>200,
-                'message'=>'Data Deleted Successfully'
+                'status' => 200,
+                'message' => 'Data Deleted Successfully'
             ]);
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
         }
-
     }
 
     //rest Api
-    public function show($id){
+    public function show($id)
+    {
         $productPromotion = ProductPromotion::find($id);
         return response()->json([
-            'status'=>200,
-            'messege'=>'Product Promotion search',
-            'productPromotion'=>$productPromotion
+            'status' => 200,
+            'messege' => 'Product Promotion search',
+            'productPromotion' => $productPromotion
         ]);
     }
 
-    public function getProductPromotionVariant(Request $request){
+    public function getProductPromotionVariant(Request $request)
+    {
         $product_id = $request->product_id;
         $variant = Variant::where('product_id', $product_id)->get();
         return response()->json([
-            'status'=>200,
-            'variant'=>$variant
+            'status' => 200,
+            'variant' => $variant
         ]);
     }
 
-    public function productPromotionVariantShow(Request $request){
-        try{
-            if($request->product_id){
-                $product_id=Product::with('variants')->find($request->product_id);
+    public function productPromotionVariantShow(Request $request)
+    {
+        try {
+            if ($request->product_id) {
+                $product_id = Product::with('variants')->find($request->product_id);
                 // $variant=Variant::where('product_id',$product_id->id)->get();
             }
 
-            $promotion=Coupon::where('id',$request->promotion_id)->first();
+            $promotion = Coupon::where('id', $request->promotion_id)->first();
 
 
             return response()->json([
-                'status'=>200,
+                'status' => 200,
                 // 'variant'=>$variant??null,
-                'product'=>$product_id??null,
-                'promotion'=>$promotion,
+                'product' => $product_id ?? null,
+                'promotion' => $promotion,
 
             ]);
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
         }
-
     }
 
-    public function productPromotionCategoryShow(Request $request){
-        try{
-            if($request->category_id){
-                $category_id=Category::find($request->category_id);
-                $promotion=Coupon::where('id',$request->promotion_id)->first();
+    public function productPromotionCategoryShow(Request $request)
+    {
+        try {
+            if ($request->category_id) {
+                $category_id = Category::find($request->category_id);
+                $promotion = Coupon::where('id', $request->promotion_id)->first();
                 return response()->json([
-                    'status'=>200,
-                    'category'=>$category_id,
-                    'promotion'=>$promotion,
+                    'status' => 200,
+                    'category' => $category_id,
+                    'promotion' => $promotion,
                 ]);
-
             }
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
         }
-
-}
-
+    }
 
 
-    public function productPromotionBrandShow(Request $request){
-        try{
-            if($request->brand_id){
-                $brand_id=Brand::find($request->brand_id);
-                $promotion=Coupon::where('id',$request->promotion_id)->first();
+
+    public function productPromotionBrandShow(Request $request)
+    {
+        try {
+            if ($request->brand_id) {
+                $brand_id = Brand::find($request->brand_id);
+                $promotion = Coupon::where('id', $request->promotion_id)->first();
                 return response()->json([
-                    'status'=>200,
-                    'brand'=>$brand_id,
-                    'promotion'=>$promotion,
+                    'status' => 200,
+                    'brand' => $brand_id,
+                    'promotion' => $promotion,
                 ]);
-
             }
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
         }
-
-}
-
-
-
-
-
-public function variantDelete(Request $request){
-    try{
-
-         $variantPromotion = VariantPromotion::where('variant_id',$request->variant_id)->where('product_id',$request->product_id)->first();
-        $variantPromotion->delete();
-        return response()->json([
-            'status'=>200,
-            'message'=>'Data Deleted Successfully'
-        ]);
     }
-    catch (Exception $e) {
-        return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
-    }
-}
 
-  public function Promotiondelete(Request $request){
-    try{
-        $promotion = ProductPromotion::where('id',$request->id)->first();
-        $promotionVariant = VariantPromotion::where('product_id', $promotion->product_id)->get();
-        foreach($promotionVariant as $variant){
-            $variant->delete();
+
+
+
+
+    public function variantDelete(Request $request)
+    {
+        try {
+
+            $variantPromotion = VariantPromotion::where('variant_id', $request->variant_id)->where('product_id', $request->product_id)->first();
+            $variantPromotion->delete();
+            return response()->json([
+                'status' => 200,
+                'message' => 'Data Deleted Successfully'
+            ]);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
         }
-        $promotion->delete();
-        return response()->json([
-            'status'=>200,
-            'message'=>'Data Deleted Successfully'
-        ]);
     }
-    catch (Exception $e) {
-        return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
+
+    public function Promotiondelete(Request $request)
+    {
+        try {
+            $promotion = ProductPromotion::where('id', $request->id)->first();
+            $promotionVariant = VariantPromotion::where('product_id', $promotion->product_id)->get();
+            foreach ($promotionVariant as $variant) {
+                $variant->delete();
+            }
+            $promotion->delete();
+            return response()->json([
+                'status' => 200,
+                'message' => 'Data Deleted Successfully'
+            ]);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
+        }
     }
-}
 
 
-   public function PromotionView($promotion_id){
-    $promotionProduct = ProductPromotion::with('category','product','coupon')->where('promotion_id',$promotion_id)->get();
+    public function PromotionView($promotion_id)
+    {
+        $promotionProduct = ProductPromotion::with('category', 'product', 'coupon')->where('promotion_id', $promotion_id)->get();
 
-    return view('backend.promotionProduct.view',compact('promotionProduct'));
-
-   }
+        return view('backend.promotionProduct.view', compact('promotionProduct'));
+    }
 }

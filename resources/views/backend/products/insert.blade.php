@@ -47,13 +47,6 @@
                             </div>
 
                         </div>
-
-
-
-
-
-
-
                         <form method="POST" enctype="multipart/form-data" id="productForm">
                             @csrf
                             <div class="row g-3 mb-3">
@@ -61,9 +54,6 @@
                                     <div class="border border-3 p-4 rounded">
                                         <div class="row mb-3">
                                             <div class="col-md-6">
-                                                @php
-                                                    $categories = App\Models\Category::whereNull('parent_id')->get();
-                                                @endphp
                                                 <div class="row">
                                                     <label class="form-label col-12">Select Category<span
                                                             class="text-danger fw-bold">*</span></label>
@@ -120,9 +110,6 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
-                                                @php
-                                                    $brands = App\Models\Brand::all();
-                                                @endphp
                                                 <div class="row">
                                                     <label class="form-label col-12">Select Brand <span
                                                             class="text-danger fw-bold">*</span></label>
@@ -143,18 +130,8 @@
                                                 </div>
                                             </div>
                                         </div>
-
-
-
-
-
-
-
                                         <div class="row mb-3">
-
                                             <div class="col-md-6">
-
-
                                                 <div class="row">
                                                     <label class="form-label col-12">Select Unit <span
                                                             class="text-danger fw-bold">*</span></label>
@@ -190,7 +167,6 @@
                                                 </div>
                                             </div>
 
-
                                             <div class="col-md-6">
                                                 <div class="row">
                                                     <label class="form-label col-12">
@@ -215,19 +191,9 @@
                                                     </div>
                                                 </div>
                                             </div>
-
-
-
                                         </div>
 
-
-
-
-
-
-
                                         <div class="row mb-3">
-
                                             <div class="col-md-6">
                                                 <div class="row">
                                                     <label class="form-label col-12">
@@ -252,13 +218,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-
-
-
-
-
                                             <div class="col-md-6">
-
                                                 <div class="row">
                                                     <div class="col-12">
                                                         <label for="" class="form-label">Product Weight (is for
@@ -274,18 +234,9 @@
                                                     </div>
                                                 </div>
                                             </div>
-
                                         </div>
-
-
-
-
-
-
                                         <div class="row mb-3">
-
                                             <div class="col-md-6">
-
                                                 <div class="row">
                                                     <div class="col-12">
                                                         <label for="" class="form-label">Flavor</label>
@@ -301,9 +252,7 @@
                                                 </div>
                                             </div>
 
-
                                             <div class="col-md-6">
-
                                                 <div class="row">
                                                     <div class="col-12">
                                                         <label for="" class="form-label">Product Price <span
@@ -320,15 +269,9 @@
                                                     </div>
                                                 </div>
                                             </div>
-
                                         </div>
-
-
-
                                         <div class="row mb-3">
-
                                             <div class="col-md-6">
-
                                                 <div class="row">
                                                     <label class="form-label col-12">Select Gender <span
                                                             class="text-danger fw-bold">*</span></label>
@@ -348,9 +291,7 @@
                                                 </div>
                                             </div>
 
-
                                             <div class="col-md-6">
-
                                                 <div class="row">
                                                     <label class="form-label col-12">Shipping Charge <span
                                                             class="text-danger fw-bold"></span></label>
@@ -371,31 +312,23 @@
                                                 </div>
                                             </div>
 
-
-                                <div class="col-md-6 mt-2">
-                                    <label for="category" class="form-label">Promotion Name</label>
-                                    <select class="form-select promotion" id="promotion" name="promotion_id">
-                                        {{-- @php
+                                            <div class="col-md-6 mt-2">
+                                                <label for="category" class="form-label">Promotion Name</label>
+                                                <select class="form-select promotion" id="promotion" name="promotion_id">
+                                                    {{-- @php
                                         $existingPromotionIds = App\Models\ProductPromotion::pluck('promotion_id')->toArray();
                                     @endphp --}}
-                                    <option value="">Select Promotion</option>
-                                    @foreach ($promotion as $promo)
-                                        {{-- @if (!in_array($promo->id, $existingPromotionIds)) --}}
-                                            <option value="{{ $promo->id }}"> {{ $promo->promotion_name??'' }} </option>
-                                        {{-- @endif --}}
-                                    @endforeach
+                                                    <option value="">Select Promotion</option>
+                                                    @foreach ($promotion as $promo)
+                                                        {{-- @if (!in_array($promo->id, $existingPromotionIds)) --}}
+                                                        <option value="{{ $promo->id }}">
+                                                            {{ $promo->promotion_name ?? '' }} </option>
+                                                        {{-- @endif --}}
+                                                    @endforeach
 
-                                    </select>
-                                </div>
-
-
-
-
-
+                                                </select>
+                                            </div>
                                         </div>
-
-
-
 
                                         <div class="row mb-3">
                                             <div class="col-12">
@@ -464,10 +397,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-
-
-
-
                                         </div>
 
                                         <div class="row mb-3">
@@ -477,8 +406,8 @@
                                                         <label for="" class="form-label"> Description</label>
                                                     </div>
                                                     <div class="col-12">
-                                                        <textarea class="form-control product_descriptions_on no-bg @error('description') is-invalid  @enderror" name="description"
-                                                            placeholder="Enter Product Description" style="resize: none; height: 70px;"></textarea>
+                                                        <textarea class="form-control product_descriptions_on no-bg @error('description') is-invalid  @enderror"
+                                                            name="description" placeholder="Enter Product Description" style="resize: none; height: 70px;"></textarea>
                                                         @error('description')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -525,16 +454,6 @@
                                                 </div>
                                             </div>
                                         </div>
-
-
-
-
-
-
-
-
-
-
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
@@ -551,9 +470,6 @@
                                                     @enderror
                                                 </div>
                                             </div>
-
-
-
                                             <div class="col-12">
                                                 <div class="mb-3">
                                                     <label class="form-label"> Stock Quantity</label>
@@ -566,13 +482,6 @@
                                                     @enderror
                                                 </div>
                                             </div>
-
-
-
-
-
-
-
                                             <div class="col-12">
                                                 @php
                                                     $features = App\Models\Features::get();
@@ -596,10 +505,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-
-
-
-
                                             @php
                                                 $tag = App\Models\TagName::all();
                                             @endphp
@@ -616,10 +521,6 @@
                                                 </select>
                                             </div>
 
-
-
-
-
                                             <div class="mb-3 col-12 data" style="display:none">
                                                 <label for="" class="mb-2">Extra Field Add</label>
                                                 <select class="form-select extra_field" name="extra_field">
@@ -627,16 +528,7 @@
                                                 </select>
                                             </div>
                                             <div id="extra_info_field"></div>
-
-
                                         </div>
-
-
-
-
-
-
-
                                         {{--
                                             <div class="col-12">
                                                 <label for="image" class="form-label">Image Gallery </label>
@@ -655,7 +547,6 @@
 
                                                 </div>
                                             </div> --}}
-
                                         <div class="row mb-3 d-flex align-items-center">
                                             <div class="col-md-6">
                                                 <label for="image" class="form-label">Product Thumbnail <span
@@ -683,9 +574,6 @@
                                                 @endforeach
                                             </div>
                                         </div>
-
-
-
                                         <div class="col-12">
                                             <div class="d-grid">
                                                 <a type="" class="btn btn-primary add_product">Add
@@ -706,19 +594,9 @@
                     </div>
                     </form>
 
-
-
-
                     <div class="row" style="display: none;" id="variant_form">
 
                     </div>
-
-
-
-
-
-
-
                     {{-- style="display: none"
                         <div class="row variant_section">
                             <div class="card-title d-flex">
@@ -1010,21 +888,6 @@
                 }
             });
         });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
