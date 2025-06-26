@@ -38,7 +38,7 @@ use App\Http\Controllers\Backend\FeatureController;
 use App\Http\Controllers\Backend\CourierController;
 use App\Http\Controllers\Backend\ColorController;
 use App\Http\Controllers\Backend\userProfileController;
-
+use App\Http\Controllers\Backend\VariantController;
 
 // Route::get('/home', function () {
 //     return view('frontend.index');
@@ -469,7 +469,7 @@ Route::middleware('auth')->group(function () {
     Route::controller(userProfileController::class)->group(function () {
         Route::get('/user/profile', 'index')->name('user.profile');
         Route::post('/user/profile', 'update')->name('user.password.update');
-   });
+    });
 
 
     //Company Details All Route Start
@@ -503,9 +503,9 @@ Route::controller(UserTrackerController::class)->group(function () {
 });
 
 
-// Route::controller(VariantController::class)->group(function () {
-//     Route::get('/check-mail-template/{id}', 'checkMail');
-// });
+Route::controller(VariantController::class)->group(function () {
+    Route::get('/check-mail-template/{id}', 'checkMail');
+});
 //User Tracker All Route End
 
 // require __DIR__ . '/auth.php';

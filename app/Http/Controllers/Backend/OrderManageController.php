@@ -25,27 +25,22 @@ use App\Models\BillingInformation;
 use App\Models\Combo;
 use App\Models\ComboProduct;
 use Illuminate\Http\JsonResponse;
+
 class OrderManageController extends Controller
 {
-
-
-
-
-
+    // protected variable 
     protected $billingInformationService;
     protected $userDetailsService;
+
+
+    // call to service function 
     public function __construct(BillingInformationService $billingInformationService, UserDetailsService $userDetailsService)
     {
         $this->billingInformationService = $billingInformationService;
         $this->userDetailsService = $userDetailsService;
     }
 
-
-
-
-
-
-
+    // all user function 
     public function allUser()
     {
         $allUsers = User::all();
@@ -54,6 +49,8 @@ class OrderManageController extends Controller
             'allusers' => $allUsers
         ]);
     }
+
+    // sendSMS function 
     public function SendSMS(Request $request)
     {
         // dd($request->all());
@@ -83,6 +80,7 @@ class OrderManageController extends Controller
             return back()->with('warring', 'Something went wrong Message not Send');
         }
     }
+
     public function index()
     {
         $newOrders = Order::where("status", 'pending')->orWhere('status', 'mismatchOrder')->latest()->get();
@@ -212,42 +210,31 @@ class OrderManageController extends Controller
     public function adminApprove($id)
     {
 
-        $newOrders = Order::where("id", $id)->latest()->first();
+        $newOrders = Order::findOrFail($id);
 
         $newOrders->status = "approve";
         $newOrders->update();
         if ($newOrders->user_id) {
-
             $userDetails = UserDetails::where("user_id", $newOrders->user_id)->latest()->first();
-
             if ($userDetails && $userDetails->secondary_email) {
-
                 Mail::to($userDetails->secondary_email)->send(new OrderConformationMail($newOrders));
             } else {
                 $user = User::find($newOrders->user_id);
                 if ($user && $user->email) {
-
                     Mail::to($user->email)->send(new OrderConformationMail($newOrders));
                 }
             }
-
         } else {
             $userDetails = UserDetails::where("session_id", $newOrders->session_id)->latest()->first();
-
             if ($userDetails && $userDetails->secondary_email) {
-
                 Mail::to($userDetails->secondary_email)->send(new OrderConformationMail($newOrders));
             }
         }
 
-
-
-
-
-
-
-        $trackingUrl = 'https://sobrokom.store/order-tracking';
-        $number = $newOrders->user_identity;
+        // sms to phone 
+        $trackingUrl = 'https://glowthentic.store/order-progress?orderId=' . ($newOrders ? $newOrders->invoice_number : '');
+        // $number = $newOrders->userDetails->phone_number;
+        $number = '+880' . $newOrders->userDetails->phone_number;
         $api_key = "0yRu5BkB8tK927YQBA8u";
         $senderid = "8809617615171";
         $message = "Your order has been confirmed. your invoice number is : " . $newOrders->invoice_number . " you find your product using this invoice Number in here: " . $trackingUrl;
@@ -267,16 +254,11 @@ class OrderManageController extends Controller
         $response = curl_exec($ch);
         curl_close($ch);
         $email = OrderBillingDetails::where('order_id', $newOrders->id)->first();
-        $url = 'https://sobrokom.store/order-tracking/invoice';
         $data = [
             'name' => $newOrders->first_name,
             'invoiceNumber' => $newOrders->invoice_number,
-            'trackingURL' => $url
+            'trackingURL' => $trackingUrl
         ];
-        // if(!empty($email->email)){
-        //     Mail::to($email->email)->send(new OrderMail($data));
-        // }
-
 
         $response = json_decode($response, true);
         if ($response['response_code'] == 202) {
@@ -334,38 +316,39 @@ class OrderManageController extends Controller
 
 
 
-    public function customOrderCreate(){
+    public function customOrderCreate()
+    {
 
         $allproduct = Product::where('status', 1)
-        ->get()
-        ->map(function ($item) {
+            ->get()
+            ->map(function ($item) {
 
-            return[
-                'id' => $item->id,
-                'name' => $item->product_name,
-                'type' => 'product',
-            ];
-        });
-
-
-    $comboProducts = Combo::where('status', 'active')
-        ->whereIn('id', function ($query) {
-            $query->select('combo_id')
-                  ->from('combo_products')
-                  ->distinct();
-        })
-        ->get()
-        ->map(function ($item) {
-            $item->type = 'combo';
-            return [
-                'id' => $item->id,
-                'name' => $item->name,
-                'type' => 'combo',
-            ];
-        });
+                return [
+                    'id' => $item->id,
+                    'name' => $item->product_name,
+                    'type' => 'product',
+                ];
+            });
 
 
-    $product = $allproduct->concat($comboProducts);
+        $comboProducts = Combo::where('status', 'active')
+            ->whereIn('id', function ($query) {
+                $query->select('combo_id')
+                    ->from('combo_products')
+                    ->distinct();
+            })
+            ->get()
+            ->map(function ($item) {
+                $item->type = 'combo';
+                return [
+                    'id' => $item->id,
+                    'name' => $item->name,
+                    'type' => 'combo',
+                ];
+            });
+
+
+        $product = $allproduct->concat($comboProducts);
 
 
         $user = User::where('role', 'user')->get()->map(function ($u) {
@@ -391,20 +374,18 @@ class OrderManageController extends Controller
         return view('backend.order.custom_order', compact('product', 'custom_user'));
     }
 
-    public function getCustomUserDetails(Request $request){
-        try{
-            if($request->source == 'user'){
+    public function getCustomUserDetails(Request $request)
+    {
+        try {
+            if ($request->source == 'user') {
                 $user = User::findOrFail($request->id);
                 $user_details = UserDetails::where('user_id', $request->id)->first();
-                if( $user_details){
-                  $user_data=$user_details;
-                }
-                else{
+                if ($user_details) {
+                    $user_data = $user_details;
+                } else {
                     $user_data = $user;
                 }
-
-            }
-            else{
+            } else {
                 $user = UserDetails::findOrFail($request->id);
                 $user_data = UserDetails::where('id', $request->id)->first();
             }
@@ -412,8 +393,7 @@ class OrderManageController extends Controller
                 'status' => 200,
                 'user_data' => $user_data
             ]);
-        }
-        catch(\Exception $e){
+        } catch (\Exception $e) {
             return response()->json([
                 'status' => 400,
                 'message' => $e->getMessage()
@@ -422,7 +402,8 @@ class OrderManageController extends Controller
     }
 
 
-    public function getVariantCustomOrderInfo($id){
+    public function getVariantCustomOrderInfo($id)
+    {
         try {
             $today = Carbon::today();
 
@@ -451,10 +432,12 @@ class OrderManageController extends Controller
 
             $activePromotion = null;
             $promotionSource = null;
-             $activePromotioncal=0;
+            $activePromotioncal = 0;
 
-            if ($checkCategoryPromotion && $checkCategoryPromotion->coupon &&
-                $today->between(Carbon::parse($checkCategoryPromotion->coupon->start_date), Carbon::parse($checkCategoryPromotion->coupon->end_date))) {
+            if (
+                $checkCategoryPromotion && $checkCategoryPromotion->coupon &&
+                $today->between(Carbon::parse($checkCategoryPromotion->coupon->start_date), Carbon::parse($checkCategoryPromotion->coupon->end_date))
+            ) {
 
                 $promotionId = $checkCategoryPromotion->promotion_id;
 
@@ -468,8 +451,10 @@ class OrderManageController extends Controller
             }
 
 
-            if (!$activePromotion && $checkProductPromotion && $checkProductPromotion->coupon &&
-                $today->between(Carbon::parse($checkProductPromotion->coupon->start_date), Carbon::parse($checkProductPromotion->coupon->end_date))) {
+            if (
+                !$activePromotion && $checkProductPromotion && $checkProductPromotion->coupon &&
+                $today->between(Carbon::parse($checkProductPromotion->coupon->start_date), Carbon::parse($checkProductPromotion->coupon->end_date))
+            ) {
 
                 $promotionId = $checkProductPromotion->promotion_id;
 
@@ -480,20 +465,20 @@ class OrderManageController extends Controller
             }
 
 
-            if (!$activePromotion && $variantPromotion && $variantPromotion->coupon &&
-                $today->between(Carbon::parse($variantPromotion->coupon->start_date), Carbon::parse($variantPromotion->coupon->end_date))) {
+            if (
+                !$activePromotion && $variantPromotion && $variantPromotion->coupon &&
+                $today->between(Carbon::parse($variantPromotion->coupon->start_date), Carbon::parse($variantPromotion->coupon->end_date))
+            ) {
 
                 $activePromotion = $variantPromotion;
                 $promotionSource = 'variant';
             }
-          if($activePromotion && $activePromotion->coupon->discount_type == 'percentage'){
+            if ($activePromotion && $activePromotion->coupon->discount_type == 'percentage') {
 
-            $activePromotioncal= $variant->regular_price * $activePromotion->coupon->discount_value / 100;
-
-
+                $activePromotioncal = $variant->regular_price * $activePromotion->coupon->discount_value / 100;
             }
-            if($activePromotion && $activePromotion->coupon->discount_type == 'fixed'){
-                $activePromotioncal= $activePromotion->coupon->discount_value;
+            if ($activePromotion && $activePromotion->coupon->discount_type == 'fixed') {
+                $activePromotioncal = $activePromotion->coupon->discount_value;
             }
 
 
@@ -512,10 +497,11 @@ class OrderManageController extends Controller
     }
 
 
-    public function createCustomOrder(Request $request){
-        try{
+    public function createCustomOrder(Request $request)
+    {
+        try {
             // dd($request->all());
-            if($request->source == "user"){
+            if ($request->source == "user") {
                 $user_data = User::findOrFail($request->custom_user_id);
                 $user_details = UserDetails::where('user_id', $request->custom_user_id)->first();
                 if ($user_details) {
@@ -555,8 +541,7 @@ class OrderManageController extends Controller
                 }
 
                 $billingInfo->save();
-            }
-            else if ($request->source == "user_detail"){
+            } else if ($request->source == "user_detail") {
                 $user_details = UserDetails::where('id', $request->custom_user_id)->first();
 
                 if ($user_details) {
@@ -564,7 +549,7 @@ class OrderManageController extends Controller
                 } else {
                     $user_data = new UserDetails();
                 }
-                if($user_details->customer_id==null){
+                if ($user_details->customer_id == null) {
                     $cust_id = UserDetails::latest()->first();
                     $user_data->customer_id = $cust_id ? $cust_id->id + 1 : 1;
                 }
@@ -599,8 +584,7 @@ class OrderManageController extends Controller
                 }
 
                 $billingInfo->save();
-            }
-            else{
+            } else {
 
                 $user_data = new UserDetails();
 
@@ -642,13 +626,11 @@ class OrderManageController extends Controller
             }
 
             $order = new Order();
-            if ($request->source == "user"){
+            if ($request->source == "user") {
                 $order->user_id = $user_data->user_id;
-            }
-            elseif ($request->source == "user_detail"){
+            } elseif ($request->source == "user_detail") {
                 $order->session_id = $user_data->session_id;
-            }
-            else{
+            } else {
 
                 $order->customer_id = $user_data->customer_id;
             }
@@ -671,15 +653,15 @@ class OrderManageController extends Controller
 
             $total_amount = (float) ($request->subtotal ?? 0) + $total_discount;
 
-            $order->discount_amount = $total_discount+$request->discount;
-          
+            $order->discount_amount = $total_discount + $request->discount;
+
             $order->total_amount = $total_amount;
             $order->total_quantity = $total_quantity;
             $order->sub_total = $request->subtotal;
             $order->status = "Approve";
             $order->grand_total = $request->grand_total;
             $order->payment_method = $request->active_payment_method;
-            $order->shipping_charge= $request->shipping_charge;
+            $order->shipping_charge = $request->shipping_charge;
             $order->invoice_number = rand(100000, 999999);
             $order->save();
 
@@ -715,7 +697,6 @@ class OrderManageController extends Controller
                 'message' => 'Order placed successfully',
                 'order_id' => $order->id
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 400,
@@ -724,27 +705,21 @@ class OrderManageController extends Controller
         }
     }
 
-// custom order end
+    // custom order end
 
-public function getComboCustom($id){
-    try{
-        $combo = Combo::findOrFail($id);
-        return response()->json([
-            'status' => 200,
-            'combo' => $combo
-        ]);
+    public function getComboCustom($id)
+    {
+        try {
+            $combo = Combo::findOrFail($id);
+            return response()->json([
+                'status' => 200,
+                'combo' => $combo
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 400,
+                'message' => $e->getMessage()
+            ]);
+        }
     }
-    catch(\Exception $e){
-        return response()->json([
-            'status' => 400,
-            'message' => $e->getMessage()
-        ]);
-    }
-
-}
-
-
-
-
-
 }

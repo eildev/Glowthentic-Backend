@@ -70,16 +70,6 @@
                                         <dt class="col-sm-6">Category</dt>
                                         <dd class="col-sm-6">{{ $product->category->categoryName ?? '' }}</dd>
 
-                                        <dt class="col-sm-6">Promotion </dt>
-                                        <dd class="col-sm-6">
-                                            {{ $product->promotionproduct->first()?->coupon?->promotion_name ?? 'N/A' }}
-                                        </dd>
-
-
-                                    </dl>
-                                </div>
-                                <div class="col-md-6">
-                                    <dl class="row my-3">
                                         <dt class="col-sm-6">Subcategory</dt>
                                         @php
                                             $subcategory = App\Models\Category::where(
@@ -89,6 +79,27 @@
                                         @endphp
                                         {{-- @dd($product->subcategory_id) --}}
                                         <dd class="col-sm-6">{{ $subcategory->categoryName ?? '' }}</dd>
+
+                                        @if ($product->promotionproduct->isNotEmpty())
+                                            <dt class="col-sm-6">Promotion </dt>
+                                            <dd class="col-sm-6">
+                                                {{ $product->promotionproduct->first()?->coupon?->promotion_name ?? 'N/A' }}
+                                            </dd>
+                                        @endif
+                                        @if ($product->comboproduct->isNotEmpty())
+                                            <dt class="col-sm-6">Combo Product </dt>
+                                            <dd class="col-sm-6">
+                                                {{ $product->comboproduct->first()?->combo?->name ?? 'N/A' }}
+                                            </dd>
+                                        @endif
+
+
+
+                                    </dl>
+                                </div>
+                                <div class="col-md-6">
+                                    <dl class="row my-3">
+
 
                                         <dt class="col-sm-6">Brand</dt>
                                         <dd class="col-sm-6">{{ $product->brand->BrandName ?? '' }}</dd>
