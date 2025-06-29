@@ -27,196 +27,122 @@
         <li class="menu-label">Manage Store</li>
         <li>
             <a class="has-arrow" href="javascript:;">
-                <div class="parent-icon"><i class="bx bx-menu"></i>
-                </div>
+                <div class="parent-icon"><i class="bx bx-store"></i></div>
                 <div class="menu-title">Manage Store</div>
             </a>
             <ul class="mm-collapse">
-                {{-- Product Related menu  --}}
-
+                {{-- Product Related menu --}}
                 <li>
                     <a href="javascript:;" class="has-arrow">
-                        <div class="parent-icon">
-                            <i class='bx bx-package'></i>
-                        </div>
+                        <div class="parent-icon"><i class='bx bx-package'></i></div>
                         <div class="menu-title">Manage Products</div>
                     </a>
                     <ul>
                         <li>
-                            <a href="{{ route('product.view') }}"><i class="bx bx-right-arrow-alt"></i>All Products</a>
+                            <a href="{{ route('product.view') }}"><i class="bx bx-list-ul"></i>All Products</a>
                         </li>
                         <li>
-                            <a href="{{ route('product') }}"><i class="bx bx-right-arrow-alt"></i>Add Product</a>
+                            <a href="{{ route('product') }}"><i class="bx bx-plus-circle"></i>Add Product</a>
                         </li>
                     </ul>
                 </li>
 
-                {{-- <li>
-                    <a href="javascript:;" class="has-arrow">
-                        <div class="parent-icon">
-                            <i class="fas fa-shopping-bag"></i>
-                        </div>
-                        <div class="menu-title">Purchase</div>
-                    </a>
-                    <ul>
-
-                        <li> <a href="{{ route('purchase') }}"><i class="bx bx-right-arrow-alt"></i>Add Purchase</a>
-                        </li>
-                        <li> <a href="{{ route('purchase.view') }}"><i class="bx bx-right-arrow-alt"></i>Manage
-                                Purchase</a>
-                        </li>
-                    </ul>
-                </li> --}}
-
-                {{-- category Related menu  --}}
-
                 <li>
                     <a class="has-arrow" href="javascript:;">
-                        <div class="parent-icon"><i class='bx bx-category-alt'></i>
-                        </div></i>
+                        <div class="parent-icon"><i class='bx bx-category-alt'></i></div>
                         <div class="menu-title">Shop By Category</div>
                     </a>
                     <ul class="mm-collapse">
-                        <li> <a href="{{ route('category') }}"><i class="bx bx-right-arrow-alt"></i>Manage Category</a>
+                        <li>
+                            <a href="{{ route('category') }}"><i class="bx bx-plus-circle"></i>Manage Category</a>
                         </li>
-                        {{-- <li> <a href="{{ route('category.view') }}"><i class="bx bx-right-arrow-alt"></i>
-                                All Category</a>
-                        </li> --}}
                     </ul>
                 </li>
 
-                {{-- Subcategory menu  --}}
-                {{-- <li>
-                    <a class="has-arrow" href="javascript:;">
-                        <div class="parent-icon"><i class='bx bx-category-alt'></i>
-                        </div></i>
-                        <div class="menu-title">Manage
-                            Sub-Category</div>
-                    </a>
-                    <ul class="mm-collapse">
-                        <li> <a href="{{ route('subcategory') }}"><i class="bx bx-right-arrow-alt"></i>Add
-                                Subcategory</a>
-                        </li>
-                        <li> <a href="{{ route('subcategory.view') }}"><i class="bx bx-right-arrow-alt"></i>All
-                                Subcategory</a>
-                        </li>
-
-                        <li>
-                            <a class="has-arrow" href="javascript:;">
-                                <div class="parent-icon"><i class='bx bx-category-alt'></i>
-                                </div></i>
-                                <div class="menu-title">Manage Sub
-                                    Sub-Category</div>
-                            </a>
-                            <ul class="mm-collapse">
-                                <li> <a href="{{ route('sub.subcategory') }}"><i class="bx bx-right-arrow-alt"></i>Add
-                                        Sub-Subcategory</a>
-                                </li>
-                                <li> <a href="{{ route('sub.subcategory.view') }}"><i
-                                            class="bx bx-right-arrow-alt"></i>All
-                                        Sub-Subcategory</a>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li> --}}
-
-                {{-- brand Related menu  --}}
+                {{-- Brand Related menu --}}
                 <li>
                     <a href="javascript:;" class="has-arrow">
-                        <div class="parent-icon">
-                            <i class='bx bx-package'></i>
-                        </div>
+                        <div class="parent-icon"><i class='bx bx-bookmark-alt'></i></div>
                         <div class="menu-title">Manage Brands</div>
                     </a>
                     <ul>
-
                         <li>
-                            <a href="{{ route('brand') }}"><i class="bx bx-right-arrow-alt"></i>Add Brand</a>
+                            <a href="{{ route('brand') }}"><i class="bx bx-plus-circle"></i>Add Brand</a>
                         </li>
                         <li>
-                            <a href="{{ route('brand.view') }}"><i class="bx bx-right-arrow-alt"></i>Manage Brand</a>
+                            <a href="{{ route('brand.view') }}"><i class="bx bx-list-ul"></i>Manage Brand</a>
                         </li>
-
-
                     </ul>
                 </li>
 
                 <li>
                     <a href="javascript:;" class="has-arrow">
-                        <div class="parent-icon">
-                            <i class='bx bx-package'></i>
-                        </div>
+                        <div class="parent-icon"><i class='bx bx-ruler'></i></div>
                         <div class="menu-title">Manage Size</div>
                     </a>
                     <ul>
-
                         <li>
-                            <a href="{{ route('size.view') }}"><i class="bx bx-right-arrow-alt"></i>Size</a>
+                            <a href="{{ route('size.view') }}"><i class="bx bx-list-ul"></i>Size</a>
                         </li>
-
-
-
                     </ul>
                 </li>
 
-
-
                 <li>
                     <a href="javascript:;" class="has-arrow">
-                        <div class="parent-icon">
-                            <i class='bx bx-package'></i>
-                        </div>
+                        <div class="parent-icon"><i class='bx bx-palette'></i></div>
                         <div class="menu-title">Manage Color</div>
                     </a>
                     <ul>
                         <li>
-                            <a href="{{ route('color.view') }}"><i class="bx bx-right-arrow-alt"></i>Color</a>
+                            <a href="{{ route('color.view') }}"><i class="bx bx-list-ul"></i>Color</a>
                         </li>
-
-
                     </ul>
                 </li>
 
-
-
-
-
-
                 <li>
                     <a href="javascript:;" class="has-arrow">
-                        <div class="parent-icon">
-                            <i class='bx bx-package'></i>
-                        </div>
+                        <div class="parent-icon"><i class='bx bx-star'></i></div>
                         <div class="menu-title">Manage Features</div>
                     </a>
                     <ul>
-
                         <li>
-                            <a href="{{ route('product.feature.index') }}"><i class="bx bx-right-arrow-alt"></i>Add
+                            <a href="{{ route('product.feature.index') }}"><i class="bx bx-plus-circle"></i>Add
                                 Feature</a>
                         </li>
                         <li>
-                            <a href="{{ route('feature.view') }}"><i class="bx bx-right-arrow-alt"></i>Manage
-                                Features</a>
+                            <a href="{{ route('feature.view') }}"><i class="bx bx-list-ul"></i>Manage Features</a>
                         </li>
-
-
                     </ul>
                 </li>
-                {{-- tag menu  --}}
+
+                {{-- Tag menu --}}
                 <li>
                     <a href="javascript:;" class="has-arrow">
-                        <div class="parent-icon">
-                            <i class='bx bx-purchase-tag-alt'></i>
-                        </div>
+                        <div class="parent-icon"><i class='bx bx-purchase-tag-alt'></i></div>
                         <div class="menu-title">Product Tag</div>
                     </a>
                     <ul>
-                        <li> <a href="{{ route('tagname') }}"><i class="bx bx-right-arrow-alt"></i>Add Tag</a>
+                        <li>
+                            <a href="{{ route('tagname') }}"><i class="bx bx-plus-circle"></i>Add Tag</a>
                         </li>
-                        <li> <a href="{{ route('tagname.view') }}"><i class="bx bx-right-arrow-alt"></i>Manage
-                                Tags</a>
+                        <li>
+                            <a href="{{ route('tagname.view') }}"><i class="bx bx-list-ul"></i>Manage Tags</a>
+                        </li>
+                    </ul>
+                </li>
+
+                {{-- Care By Concern --}}
+                <li>
+                    <a href="javascript:;" class="has-arrow">
+                        <div class="parent-icon"><i class='bx bx-heart'></i></div>
+                        <div class="menu-title">Care By Concern</div>
+                    </a>
+                    <ul>
+                        <li>
+                            <a href="{{ route('concern') }}"><i class="bx bx-plus-circle"></i>Add Concern</a>
+                        </li>
+                        <li>
+                            <a href="{{ route('concern.view') }}"><i class="bx bx-list-ul"></i>Manage Concern</a>
                         </li>
                     </ul>
                 </li>
@@ -646,6 +572,7 @@
             <a href="javascript:;" class="has-arrow">
                 <div class="parent-icon">
                     <i class='bx bx-purchase-tag-alt'></i>
+
                 </div>
                 <div class="menu-title">Manage Product Promotion</div>
             </a>
@@ -657,6 +584,20 @@
             </ul>
         </li>
 
+        <li class="menu-label">Seetings</li>
+        <li>
+            <a href="javascript:;" class="has-arrow">
+                <div class="parent-icon">
+                    <i class='bx bx-cog'></i>
+                </div>
+                <div class="menu-title">Settings</div>
+            </a>
+            <ul>
+                <li> <a href="{{ route('settings') }}"><i class="bx bx-right-arrow-alt"></i>Category Settings</a>
+                </li>
+
+            </ul>
+        </li>
 
 
     </ul>

@@ -26,6 +26,7 @@ use File;
 use App\Models\Category;
 use App\Models\Coupon;
 use App\Models\ProductPromotion;
+use App\Models\Setting;
 use App\Models\VariantPromotion;
 use Carbon\Carbon;
 
@@ -35,12 +36,12 @@ class ProductController extends Controller
     // product index function
     public function index()
     {
-
+        $setting = Setting::latest()->first();
         $promotion = Coupon::where('type', 'promotion')->where('end_date', '>=', Carbon::now()->format('Y-m-d'))->get();
         $categories = Category::where('status', 1)->whereNull('parent_id')->get();
         $brands = Brand::where('status', 1)->get();
 
-        return view('backend.products.insert', compact('promotion', 'categories', 'brands'));
+        return view('backend.products.insert', compact('promotion', 'categories', 'brands', 'setting'));
     }
     public function findVariant($id)
     {

@@ -271,6 +271,26 @@ class CategoryController extends Controller
         ]);
     }
 
+    public function findSubcategories(Request $request)
+    {
+        $category_ids = $request->input('category_ids', []);
+
+        // Ensure category_ids is an array and contains valid IDs
+        if (!is_array($category_ids) || empty($category_ids)) {
+            return response()->json([
+                'subcats' => []
+            ]);
+        }
+
+        $subcats = Category::where('status', 1)
+            ->whereIn('parent_id', $category_ids)
+            ->get();
+
+        return response()->json([
+            'subcats' => $subcats
+        ]);
+    }
+
     // find sub sub category
     public function findSubSubcat($id)
     {

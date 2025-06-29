@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('category_id')->unsigned();
-            $table->unsignedBigInteger('subcategory_id')->nullable();
-            $table->integer('sub_subcategory_id')->nullable();
+            // $table->unsignedBigInteger('category_id')->unsigned();
+            // $table->unsignedBigInteger('subcategory_id')->nullable();
+            // $table->integer('sub_subcategory_id')->nullable();
             $table->unsignedBigInteger('brand_id')->unsigned();
             $table->json('product_feature')->nullable();
             $table->string('product_name');
@@ -23,7 +23,8 @@ return new class extends Migration
             $table->string('slug', 200)->unique();
             $table->bigInteger('created_by')->nullable();
             $table->string('sku');
-            $table->enum('shipping_charge',['free','paid'])->default('paid');
+            $table->enum('shipping_charge', ['free', 'paid'])->default('paid');
+            $table->string('video_link', 255)->nullable();
             $table->tinyInteger('status')->default(1)->index();
             $table->foreign('category_id')
                 ->references('id')

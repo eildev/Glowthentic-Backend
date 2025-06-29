@@ -52,22 +52,34 @@
                             <div class="row g-3 mb-3">
                                 <div class="col-lg-8">
                                     <div class="border border-3 p-4 rounded">
-                                        <div class="row mb-3">
+                                        <div class="row mb-3 g-3">
                                             <div class="col-md-6">
                                                 <div class="row">
                                                     <label class="form-label col-12">Select Category<span
                                                             class="text-danger fw-bold">*</span></label>
                                                     <div class="col-12">
-                                                        <select
-                                                            class="form-select category_select @error('category_id') is-invalid  @enderror"
-                                                            name="category_id">
-                                                            <option value="">Select Category</option>
-                                                            @foreach ($categories as $category)
-                                                                <option value="{{ $category->id }}">
-                                                                    {{ $category->categoryName }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
+                                                        @if ($setting->isMultipleCategory === 0)
+                                                            <select
+                                                                class="form-select category_select @error('category_id') is-invalid  @enderror"
+                                                                name="category_id">
+                                                                <option value="">Select Category</option>
+                                                                @foreach ($categories as $category)
+                                                                    <option value="{{ $category->id }}">
+                                                                        {{ $category->categoryName }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
+                                                        @else
+                                                            <select class="multiple-select category_select"
+                                                                data-placeholder="Select Category" multiple="multiple"
+                                                                name="category_id[]">
+                                                                @foreach ($categories as $category)
+                                                                    <option value="{{ $category->id }}">
+                                                                        {{ $category->categoryName }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
+                                                        @endif
                                                         @error('category_id')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -78,37 +90,40 @@
                                                 <div class="row">
                                                     <label class="form-label col-12">Select Subcategory</label>
                                                     <div class="col-12">
-                                                        <select
-                                                            class="form-select subcategory_select @error('subcategory_id') is-invalid  @enderror"
-                                                            name="subcategory_id">
-                                                            <option value="">Select Subcategory</option>
-                                                        </select>
+                                                        @if ($setting->isMultipleCategory === 0)
+                                                            <select
+                                                                class="form-select subcategory_select @error('subcategory_id') is-invalid  @enderror"
+                                                                name="subcategory_id">
+                                                                <option value="">Select Subcategory</option>
+                                                            </select>
+                                                        @else
+                                                            <select
+                                                                class="multiple-select subcategory_select @error('subcategory_id') is-invalid  @enderror"
+                                                                data-placeholder="Select Subcategory" multiple="multiple"
+                                                                name="subcategory_id[]">
+                                                                <option value="">Select Subcategory</option>
+                                                            </select>
+                                                        @endif
                                                         @error('category_id')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="row mb-3">
-                                            <div class="col-md-6">
-                                                {{-- @php
-                                                    $sub_subcategories = App\Models\SubSubcategory::all();
-                                                @endphp --}}
+
+                                            {{-- <div class="col-md-6">
+                                               
                                                 <div class="row">
                                                     <label class="form-label col-12">Select Sub-Subcategory</label>
                                                     <div class="col-12">
                                                         <select class="form-select" name="sub_subcategory_id">
                                                             <option value="">Select Sub-Subcategory</option>
-                                                            {{-- @foreach ($sub_subcategories as $sub_subcategory)
-                                                                <option value="{{ $sub_subcategory->id }}">
-                                                                    {{ $sub_subcategory->subSubcategoryName }}</option>
-                                                            @endforeach --}}
+                                                          
                                                         </select>
                                                         <span class="sub_subcategory_id text-danger"></span>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div> --}}
                                             <div class="col-md-6">
                                                 <div class="row">
                                                     <label class="form-label col-12">Select Brand <span
@@ -129,8 +144,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="row mb-3">
                                             <div class="col-md-6">
                                                 <div class="row">
                                                     <label class="form-label col-12">Select Unit <span
@@ -167,85 +180,21 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-6">
-                                                <div class="row">
-                                                    <label class="form-label col-12">
-                                                        Select Size
-                                                        <span class="text-danger fw-bold">*</span>
-                                                    </label>
-                                                    <div class="col-10">
-                                                        <select
-                                                            class="form-select @error('size') is-invalid @enderror size"
-                                                            name="size" id="size-select">
 
-                                                        </select>
-                                                        @error('size')
-                                                            <span class="text-danger">{{ $message }}</span>
-                                                        @enderror
-                                                    </div>
-                                                    <div class="col-2 p-0">
-                                                        <button type="button" class="btn btn-outline-primary w-100"
-                                                            data-bs-toggle="modal" data-bs-target="#addSizeModal">
-                                                            +
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
 
-                                        <div class="row mb-3">
-                                            <div class="col-md-6">
-                                                <div class="row">
-                                                    <label class="form-label col-12">
-                                                        Select Color
-                                                    </label>
-                                                    <div class="col-10">
-                                                        <select
-                                                            class="form-select @error('color') is-invalid @enderror color"
-                                                            name="color" id="color-select">
-                                                            <option value="">Select Color</option>
 
-                                                        </select>
-                                                        @error('color')
-                                                            <span class="text-danger">{{ $message }}</span>
-                                                        @enderror
-                                                    </div>
-                                                    <div class="col-2 p-0">
-                                                        <button type="button" class="btn btn-outline-primary w-100"
-                                                            data-bs-toggle="modal" data-bs-target="#addColorModal">
-                                                            +
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
+
+                                            <div class="col-12">
                                                 <div class="row">
                                                     <div class="col-12">
-                                                        <label for="" class="form-label">Product Weight (is for
-                                                            Shipping) <span class="text-danger">*</span></label>
+                                                        <label for="" class="form-label">Product Name <span
+                                                                class="text-danger fw-bold">*</span></label>
                                                     </div>
                                                     <div class="col-12">
-                                                        <input type="number" name="weight"
-                                                            class="form-control @error('weight') is-invalid  @enderror"
-                                                            id="inputEnterYourName" placeholder="Enter Product Weight">
-                                                        @error('weight')
-                                                            <span class="text-danger">{{ $message }}</span>
-                                                        @enderror
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row mb-3">
-                                            <div class="col-md-6">
-                                                <div class="row">
-                                                    <div class="col-12">
-                                                        <label for="" class="form-label">Flavor</label>
-                                                    </div>
-                                                    <div class="col-12">
-                                                        <input type="text" name="flavor"
-                                                            class="form-control @error('flavor') is-invalid  @enderror"
-                                                            id="inputEnterYourName" placeholder="Enter Product flavor">
-                                                        @error('flavor')
+                                                        <input type="text" name="product_name"
+                                                            class="form-control product_sku @error('product_name') is-invalid  @enderror"
+                                                            id="inputEnterYourName" placeholder="Enter Product Name">
+                                                        @error('product_name')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                     </div>
@@ -269,86 +218,8 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="row mb-3">
-                                            <div class="col-md-6">
-                                                <div class="row">
-                                                    <label class="form-label col-12">Select Gender <span
-                                                            class="text-danger fw-bold">*</span></label>
-                                                    <div class="col-12">
-                                                        <select class="form-select @error('gender') is-invalid  @enderror"
-                                                            name="gender">
-                                                            <option value="">Select Gender</option>
-                                                            <option value="unisex">Unisex</option>
-                                                            <option value="male">Male</option>
-                                                            <option value="female">Female</option>
-
-                                                        </select>
-                                                        @error('gender')
-                                                            <span class="text-danger">{{ $message }}</span>
-                                                        @enderror
-                                                    </div>
-                                                </div>
-                                            </div>
 
                                             <div class="col-md-6">
-                                                <div class="row">
-                                                    <label class="form-label col-12">Shipping Charge <span
-                                                            class="text-danger fw-bold"></span></label>
-                                                    <div class="col-12">
-                                                        <select
-                                                            class="form-select @error('shipping_charge') is-invalid  @enderror"
-                                                            name="shipping_charge">
-                                                            <option value="">Select Charge</option>
-                                                            <option value="free">Free</option>
-                                                            <option value="paid">Paid</option>
-
-
-                                                        </select>
-                                                        @error('shipping_charge')
-                                                            <span class="text-danger">{{ $message }}</span>
-                                                        @enderror
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-6 mt-2">
-                                                <label for="category" class="form-label">Promotion Name</label>
-                                                <select class="form-select promotion" id="promotion" name="promotion_id">
-                                                    {{-- @php
-                                        $existingPromotionIds = App\Models\ProductPromotion::pluck('promotion_id')->toArray();
-                                    @endphp --}}
-                                                    <option value="">Select Promotion</option>
-                                                    @foreach ($promotion as $promo)
-                                                        {{-- @if (!in_array($promo->id, $existingPromotionIds)) --}}
-                                                        <option value="{{ $promo->id }}">
-                                                            {{ $promo->promotion_name ?? '' }} </option>
-                                                        {{-- @endif --}}
-                                                    @endforeach
-
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <div class="row mb-3">
-                                            <div class="col-12">
-                                                <div class="row">
-                                                    <div class="col-12">
-                                                        <label for="" class="form-label">Product Name <span
-                                                                class="text-danger fw-bold">*</span></label>
-                                                    </div>
-                                                    <div class="col-12">
-                                                        <input type="text" name="product_name"
-                                                            class="form-control product_sku @error('product_name') is-invalid  @enderror"
-                                                            id="inputEnterYourName" placeholder="Enter Product Name">
-                                                        @error('product_name')
-                                                            <span class="text-danger">{{ $message }}</span>
-                                                        @enderror
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-12 mt-2">
                                                 <div class="row">
                                                     <div class="col-12">
                                                         <label for="" class="form-label">Variant Name</label>
@@ -365,7 +236,7 @@
                                             </div>
 
 
-                                            <div class="col-12 mt-2">
+                                            <div class="col-md-6">
                                                 <div class="row">
                                                     <div class="col-12">
                                                         <label for="" class="form-label">Short Description <span
@@ -373,7 +244,7 @@
                                                     </div>
                                                     <div class="col-12">
                                                         <textarea name="short_description" class="form-control @error('short_description') is-invalid  @enderror"
-                                                            id="" cols="30" rows="6"></textarea>
+                                                            id="" cols="30" rows="3"></textarea>
                                                         @error('short_description')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -382,7 +253,7 @@
                                             </div>
 
 
-                                            <div class="col-12 mt-2">
+                                            <div class="col-md-6">
                                                 <div class="row">
                                                     <div class="col-12">
                                                         <label for="" class="form-label">Product Policy<span
@@ -390,16 +261,14 @@
                                                     </div>
                                                     <div class="col-12">
                                                         <textarea name="product_policy" class="form-control @error('product_policy') is-invalid  @enderror" id=""
-                                                            cols="30" rows="6"></textarea>
+                                                            cols="30" rows="3"></textarea>
                                                         @error('product_policy')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
 
-                                        <div class="row mb-3">
                                             <div class="col-12">
                                                 <div class="row">
                                                     <div class="col-12">
@@ -414,8 +283,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="row mb-3">
+
                                             <div class="col-12">
                                                 <div class="row">
                                                     <div class="col-12">
@@ -432,11 +300,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
 
-
-
-                                        <div class="row mb-3">
                                             <div class="col-12">
                                                 <div class="row">
                                                     <div class="col-12">
@@ -482,6 +346,148 @@
                                                     @enderror
                                                 </div>
                                             </div>
+                                            <div class="col-md-12">
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <label for="" class="form-label">Product Weight (is for
+                                                            Shipping) <span class="text-danger">*</span></label>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <input type="number" name="weight"
+                                                            class="form-control @error('weight') is-invalid  @enderror"
+                                                            id="inputEnterYourName" placeholder="Enter Product Weight">
+                                                        @error('weight')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-12">
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <label for="" class="form-label">Flavor</label>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <input type="text" name="flavor"
+                                                            class="form-control @error('flavor') is-invalid  @enderror"
+                                                            id="inputEnterYourName" placeholder="Enter Product flavor">
+                                                        @error('flavor')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="row">
+                                                    <label class="form-label col-12">
+                                                        Select Size
+                                                        <span class="text-danger fw-bold">*</span>
+                                                    </label>
+                                                    <div class="col-10">
+                                                        <select
+                                                            class="form-select @error('size') is-invalid @enderror size"
+                                                            name="size" id="size-select">
+
+                                                        </select>
+                                                        @error('size')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                    <div class="col-2 p-0">
+                                                        <button type="button" class="btn btn-outline-primary w-100"
+                                                            data-bs-toggle="modal" data-bs-target="#addSizeModal">
+                                                            +
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="row">
+                                                    <label class="form-label col-12">
+                                                        Select Color
+                                                    </label>
+                                                    <div class="col-10">
+                                                        <select
+                                                            class="form-select @error('color') is-invalid @enderror color"
+                                                            name="color" id="color-select">
+                                                            <option value="">Select Color</option>
+
+                                                        </select>
+                                                        @error('color')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                    <div class="col-2 p-0">
+                                                        <button type="button" class="btn btn-outline-primary w-100"
+                                                            data-bs-toggle="modal" data-bs-target="#addColorModal">
+                                                            +
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="row">
+                                                    <label class="form-label col-12">Select Gender <span
+                                                            class="text-danger fw-bold">*</span></label>
+                                                    <div class="col-12">
+                                                        <select class="form-select @error('gender') is-invalid  @enderror"
+                                                            name="gender">
+                                                            <option value="">Select Gender</option>
+                                                            <option value="unisex">Unisex</option>
+                                                            <option value="male">Male</option>
+                                                            <option value="female">Female</option>
+
+                                                        </select>
+                                                        @error('gender')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-12">
+                                                <div class="row">
+                                                    <label class="form-label col-12">Shipping Charge <span
+                                                            class="text-danger fw-bold"></span></label>
+                                                    <div class="col-12">
+                                                        <select
+                                                            class="form-select @error('shipping_charge') is-invalid  @enderror"
+                                                            name="shipping_charge">
+                                                            <option value="">Select Charge</option>
+                                                            <option value="free">Free</option>
+                                                            <option value="paid">Paid</option>
+
+
+                                                        </select>
+                                                        @error('shipping_charge')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Video Link</label>
+                                                    <input type="url"
+                                                        class="form-control video_link @error('video_link') is-invalid  @enderror"
+                                                        placeholder="https://www.youtube.com/" name="video_link">
+                                                    @error('video_link')
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-12">
+                                                <label for="category" class="form-label">Promotion Name</label>
+                                                <select class="form-select promotion" id="promotion" name="promotion_id">
+                                                    <option value="">Select Promotion</option>
+                                                    @foreach ($promotion as $promo)
+                                                        <option value="{{ $promo->id }}">
+                                                            {{ $promo->promotion_name ?? '' }} </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
                                             <div class="col-12">
                                                 @php
                                                     $features = App\Models\Features::get();
@@ -492,8 +498,8 @@
                                                     <div class="col-12">
                                                         <select
                                                             class="multiple-select @error('product_feature') is-invalid  @enderror"
-                                                            id="multiple-select-field" name="product_feature[]"
-                                                            data-placeholder="Choose anything" multiple>
+                                                            name="product_feature[]" data-placeholder="Choose anything"
+                                                            multiple="multiple">
                                                             @foreach ($features as $feature)
                                                                 <option value="{{ $feature->id }}">
                                                                     {{ $feature->feature_name }}</option>
@@ -576,14 +582,14 @@
                                         </div>
                                         <div class="col-12">
                                             <div class="d-grid">
-                                                <a type="" class="btn btn-primary add_product">Add
+                                                <a type="" class="btn btn-primary add_product">Save
                                                     Product</a>
                                             </div>
                                         </div>
 
                                         <div class="col-12 mt-2">
                                             <div class="d-grid">
-                                                <a class="btn btn-danger add_variant">
+                                                <a class="btn btn-success add_variant">
                                                     <i class="fas fa-plus"></i>
                                                     Add Variant</a>
                                             </div>

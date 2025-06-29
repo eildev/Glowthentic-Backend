@@ -9,16 +9,14 @@
                             {{ session('success') }}
                         </div>
                     @endif
-                    <form action="{{ Route('tagname.store') }}" method="POST" enctype="multipart/form-data" id="tagForm">
+                    <form action="{{ Route('concern.store') }}" method="POST" enctype="multipart/form-data" id="tagForm">
                         @csrf
                         <div class="card-body">
-
                             <div class="border p-4 rounded">
-
                                 <div class="card-title d-flex justify-content-between align-items-center">
-                                    <h5 class="mb-0 text-info">Add Tag</h5>
+                                    <h5 class="mb-0 text-info">Add Concern</h5>
 
-                                    <a href="{{ route('tagname.view') }}" class="btn-info btn-sm text-light ">
+                                    <a href="{{ route('concern.view') }}" class="btn-info btn-sm text-light ">
                                         <i class='bx bx-show'></i>
                                     </a>
                                 </div>
@@ -26,12 +24,12 @@
                                 <hr>
 
                                 <div class="row mb-3">
-                                    <label for="inputEnterYourName" class="col-sm-3 col-form-label">Tag Name</label>
+                                    <label for="inputEnterYourName" class="col-sm-3 col-form-label">Concern Name</label>
                                     <div class="col-sm-9">
-                                        <input type="text" name="tagname" class="form-control" id="inputEnterYourName"
-                                            value="{{ old('tagname') }}" placeholder="Enter Tag Name">
-                                        @if (isset($errors) && $errors->has('tagname'))
-                                            <span class="text-danger">{{ $errors->first('tagname') }}</span>
+                                        <input type="text" name="name" class="form-control" id="inputEnterYourName"
+                                            value="{{ old('name') }}" placeholder="Enter Concern Name">
+                                        @if (isset($errors) && $errors->has('name'))
+                                            <span class="text-danger">{{ $errors->first('name') }}</span>
                                         @endif
                                     </div>
 
@@ -39,7 +37,7 @@
 
 
                                 <div class="row mb-3">
-                                    <label for="image" class="col-sm-3 col-form-label">Tag Thumbnail </label>
+                                    <label for="image" class="col-sm-3 col-form-label">Concern Image</label>
                                     <div class="col-sm-9">
                                         <input type="file" id="image" class="form-control " name="image">
                                         <div class="my-1">
@@ -52,19 +50,15 @@
                                             <span class="text-danger">{{ $errors->first('image') }}</span>
                                         @endif
                                         <div class="mt-3">
-                                            <img id="showImage" class="showImage" height="150" width="200"
-                                                alt="Tag image">
+                                            <img src="/uploads/productempty.jpg" id="showImage" class="showImage"
+                                                height="150" alt="Tag image">
                                         </div>
                                     </div>
-
                                 </div>
-
-
-
                                 <div class="row">
                                     <label class="col-sm-3 col-form-label"></label>
                                     <div class="col-sm-9">
-                                        <a href="" class="btn btn-info px-5" id="submitBtn">Add Tagname</a>
+                                        <a href="" class="btn btn-info px-5" id="submitBtn">Save Concern</a>
                                     </div>
                                 </div>
                             </div>
@@ -84,7 +78,7 @@
                 e.preventDefault();
 
                 let form = $("#tagForm");
-                let tagname = $("input[name='tagname']").val().trim();
+                let name = $("input[name='name']").val().trim();
                 let imageInput = $("input[name='image']")[0].files[0];
 
 
@@ -93,13 +87,13 @@
                 let errors = {};
 
 
-                if (tagname === "") {
-                    errors.tagname = "Tag name is required!";
+                if (name === "") {
+                    errors.name = "Concern name is required!";
                 }
 
 
                 if (!imageInput) {
-                    errors.image = "Tag thumbnail is required!";
+                    errors.image = "Concern Image is required!";
                 } else {
                     let fileSize = imageInput.size / 1024;
                     let fileType = imageInput.type;
@@ -116,9 +110,9 @@
 
 
                 if (!$.isEmptyObject(errors)) {
-                    if (errors.tagname) {
-                        $("input[name='tagname']").after(
-                            `<span class="text-danger">${errors.tagname}</span>`);
+                    if (errors.name) {
+                        $("input[name='name']").after(
+                            `<span class="text-danger">${errors.name}</span>`);
                     }
                     if (errors.image) {
                         $("input[name='image']").after(`<span class="text-danger">${errors.image}</span>`);

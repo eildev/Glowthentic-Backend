@@ -25,6 +25,7 @@ use App\Models\BillingInformation;
 use App\Models\Combo;
 use App\Models\ComboProduct;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
 class OrderManageController extends Controller
 {
@@ -207,6 +208,11 @@ class OrderManageController extends Controller
         $denied_order->update();
         return back()->with('success', 'Order Status Denied Sucessfully');
     }
+
+
+
+
+    // admin approve 
     public function adminApprove($id)
     {
 
@@ -231,10 +237,21 @@ class OrderManageController extends Controller
             }
         }
 
+
+        $first_digit = substr($newOrders->userDetails->phone_number, 0, 1);
+
+        if ($first_digit === '0') {
+            $phone_number = '+88' . $newOrders->userDetails->phone_number;
+        } elseif ($first_digit === '1') {
+            $phone_number = '+880' . $newOrders->userDetails->phone_number;
+        } else {
+            $phone_number = '+880' . $newOrders->userDetails->phone_number;
+        }
+
         // sms to phone 
         $trackingUrl = 'https://glowthentic.store/order-progress?orderId=' . ($newOrders ? $newOrders->invoice_number : '');
         // $number = $newOrders->userDetails->phone_number;
-        $number = '+880' . $newOrders->userDetails->phone_number;
+        $number = $phone_number;
         $api_key = "0yRu5BkB8tK927YQBA8u";
         $senderid = "8809617615171";
         $message = "Your order has been confirmed. your invoice number is : " . $newOrders->invoice_number . " you find your product using this invoice Number in here: " . $trackingUrl;
@@ -496,9 +513,11 @@ class OrderManageController extends Controller
         }
     }
 
-
+    // create custome Order 
     public function createCustomOrder(Request $request)
     {
+
+        // dd($request->all());
         try {
             // dd($request->all());
             if ($request->source == "user") {
@@ -690,6 +709,68 @@ class OrderManageController extends Controller
                         $order_details->save();
                     }
                 }
+
+
+                if ($request->source == "user") {
+                    $userDetails = UserDetails::where("user_id", $order->user_id)->latest()->first();
+                    if ($userDetails && $userDetails->secondary_email) {
+                        Mail::to($userDetails->secondary_email)->send(new OrderConformationMail($order));
+                    } else {
+                        $user = User::find($order->user_id);
+                        if ($user && $user->email) {
+                            Mail::to($user->email)->send(new OrderConformationMail($order));
+                        }
+                    }
+                } elseif ($request->source == "user_detail") {
+                    $userDetails = UserDetails::where("session_id", $order->session_id)->latest()->first();
+                    if ($userDetails && $userDetails->secondary_email) {
+                        Mail::to($userDetails->secondary_email)->send(new OrderConformationMail($order));
+                    }
+                } elseif ($request->source == "guest") {
+                    $userDetails = UserDetails::where("customer_id", $order->customer_id)->latest()->first();
+                    if ($userDetails && $userDetails->secondary_email) {
+                        Mail::to($userDetails->secondary_email)->send(new OrderConformationMail($order));
+                    }
+                }
+
+                $userDetails = $user_data; // $user_data 
+                if ($userDetails && $userDetails->phone_number) {
+                    $first_digit = substr($userDetails->phone_number, 0, 1);
+                    if ($first_digit === '0') {
+                        $phone_number = '+88' . $userDetails->phone_number;
+                    } elseif ($first_digit === '1') {
+                        $phone_number = '+880' . $userDetails->phone_number;
+                    } else {
+                        $phone_number = '+880' . $userDetails->phone_number;
+                    }
+
+                    // SMS 
+                    $trackingUrl = 'https://glowthentic.store/order-progress?orderId=' . $order->invoice_number;
+                    $api_key = "0yRu5BkB8tK927YQBA8u";
+                    $senderid = "8809617615171";
+                    $message = "Your order has been confirmed. Your invoice number is: " . $order->invoice_number . ". Track your order here: " . $trackingUrl;
+                    $url = "http://bulksmsbd.net/api/smsapi";
+                    $data = [
+                        "api_key" => $api_key,
+                        "number" => $phone_number,
+                        "senderid" => $senderid,
+                        "message" => $message
+                    ];
+
+                    $ch = curl_init();
+                    curl_setopt($ch, CURLOPT_URL, $url);
+                    curl_setopt($ch, CURLOPT_POST, 1);
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                    $response = curl_exec($ch);
+                    curl_close($ch);
+
+                    $response = json_decode($response, true);
+                    if ($response['response_code'] != 202) {
+                        Log::error('SMS sending failed: ' . json_encode($response));
+                    }
+                }
             }
 
             return response()->json([
@@ -704,7 +785,6 @@ class OrderManageController extends Controller
             ]);
         }
     }
-
     // custom order end
 
     public function getComboCustom($id)

@@ -37,6 +37,8 @@ use App\Http\Controllers\Backend\DeliverOrderAssignController;
 use App\Http\Controllers\Backend\FeatureController;
 use App\Http\Controllers\Backend\CourierController;
 use App\Http\Controllers\Backend\ColorController;
+use App\Http\Controllers\Backend\ConcernController;
+use App\Http\Controllers\Backend\SettingsController;
 use App\Http\Controllers\Backend\userProfileController;
 use App\Http\Controllers\Backend\VariantController;
 
@@ -70,6 +72,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/get/parent/category', 'GetParentCategory');
         //find Subcategory
         Route::get('/find/subcategory/{id}', 'findSubcat')->name('subcategory.find');
+        Route::post('/find/subcategories', 'findSubcategories');
         //find SubSubcategory
         Route::get('/find/sub-subcategory/{id}', 'findSubSubcat')->name('sub.subcategory.find');
     });
@@ -141,6 +144,19 @@ Route::middleware('auth')->group(function () {
         Route::get('/tagname/edit/{id}', 'edit')->name('tagname.edit');
         Route::post('/tagname/update/{id}', 'update')->name('tagname.update');
         Route::get('/tagname/delete/{id}', 'delete')->name('tagname.delete');
+    });
+    //All Routes for Tag name End
+
+
+    //All Routes for Concerns
+    Route::controller(ConcernController::class)->group(function () {
+        Route::get('/concern', 'index')->name('concern');
+        Route::post('/concern/store', 'store')->name('concern.store');
+        Route::get('/concern/view', 'view')->name('concern.view');
+        Route::get('/concern/edit/{id}', 'edit')->name('concern.edit');
+        Route::post('/concern/update/{id}', 'update')->name('concern.update');
+        Route::get('/concern/delete/{id}', 'delete')->name('concern.delete');
+        Route::post('/concern/status/{id}', 'status')->name('concern.status');
     });
     //All Routes for Tag name End
 
@@ -503,8 +519,12 @@ Route::controller(UserTrackerController::class)->group(function () {
 });
 
 
-Route::controller(VariantController::class)->group(function () {
-    Route::get('/check-mail-template/{id}', 'checkMail');
+// Route::controller(VariantController::class)->group(function () {
+//     Route::get('/check-mail-template/{id}', 'checkMail');
+// });
+Route::controller(SettingsController::class)->group(function () {
+    Route::get('/settings', 'index')->name('settings');
+    Route::post('/settings/store', 'store')->name('settings.store');
 });
 //User Tracker All Route End
 
