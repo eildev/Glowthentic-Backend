@@ -15,13 +15,9 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('product_id')->unsigned();
             $table->string('variant_name', 191);
-
             $table->string('color')->nullable();
             $table->string('size')->nullable();
             $table->float('regular_price')->nullable();
-            // $table->string('discount');
-            // $table->integer('discount_amount');
-            // $table->integer('stock_quantity');
             $table->string('barcode')->nullable();
             // $table->string('unit');
             $table->string('weight')->nullable();
@@ -31,8 +27,6 @@ return new class extends Migration
             // $table->tinyInteger('status')->default(1);
             // $table->date('expire_date')->nullable();
             // $table->date('manufacture_date')->nullable();
-
-
             $table->foreign('product_id')
                 ->references('id')
                 ->on('products')
