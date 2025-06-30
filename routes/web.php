@@ -140,10 +140,13 @@ Route::middleware('auth')->group(function () {
     Route::controller(TagNameController::class)->group(function () {
         Route::get('/tagname', 'index')->name('tagname');
         Route::post('/tagname/store', 'store')->name('tagname.store');
+        Route::post('/tagname/create', 'create');
         Route::get('/tagname/view', 'view')->name('tagname.view');
+        Route::get('/tagname/show', 'show');
         Route::get('/tagname/edit/{id}', 'edit')->name('tagname.edit');
         Route::post('/tagname/update/{id}', 'update')->name('tagname.update');
         Route::get('/tagname/delete/{id}', 'delete')->name('tagname.delete');
+        Route::post('/tagname/status/{id}', 'status')->name('tagname.status');
     });
     //All Routes for Tag name End
 

@@ -24,10 +24,16 @@ use App\Models\SizeModel;
 use App\Models\ColorModel;
 use File;
 use App\Models\Category;
+use App\Models\Concern;
 use App\Models\Coupon;
+use App\Models\Features;
+use App\Models\ProductCategory;
+use App\Models\ProductConcern;
 use App\Models\ProductPromotion;
 use App\Models\Setting;
+use App\Models\TagName;
 use App\Models\VariantPromotion;
+use App\Services\SlugService;
 use Carbon\Carbon;
 
 // use App\Models\
@@ -40,9 +46,14 @@ class ProductController extends Controller
         $promotion = Coupon::where('type', 'promotion')->where('end_date', '>=', Carbon::now()->format('Y-m-d'))->get();
         $categories = Category::where('status', 1)->whereNull('parent_id')->get();
         $brands = Brand::where('status', 1)->get();
+        $concerns = Concern::where('status', 'active')->latest()->get();
+        $features = Features::where('status', 1)->get();
+        $tags = TagName::where('status', 'active')->get();
 
-        return view('backend.products.insert', compact('promotion', 'categories', 'brands', 'setting'));
+        return view('backend.products.insert', compact('promotion', 'categories', 'brands', 'setting', 'concerns', 'features', 'tags'));
     }
+
+    // find variant function 
     public function findVariant($id)
     {
         $variant = Variant::where('product_id', $id)->first();
@@ -51,58 +62,10 @@ class ProductController extends Controller
         ]);
     }
 
-    // product add function
-    // public function store(Request $request)
-    // {
-    //     dd($request->all());
-    //     $request->validate([
-    //         'category_id' => 'required',
-    //         'subcategory_id' => 'required',
-    //         'brand_id' => 'required',
-    //         'product_feature' => 'required',
-    //         'product_name' => 'required|max:100',
-    //         'short_desc' => 'required|max:255',
-    //         'product_image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-    //         'sku' => 'required',
-    //         'tag' => 'required',
-    //     ]);
-    //     $product = new Product;
-    //     if ($request->product_image) {
-    //         $productImage = rand() . '.' . $request->product_image->extension();
-    //         $request->product_image->move(public_path('uploads/products/'), $productImage);
 
-    //         $product->category_id = $request->category_id;
-    //         $product->subcategory_id = $request->subcategory_id;
-    //         $product->brand_id = $request->brand_id;
-    //         $product->sub_subcategory_id = $request->sub_subcategory_id;
-    //         $product->product_feature = implode(',', $request->product_feature);
-    //         $product->product_name = $request->product_name;
-    //         $product->slug = Str::slug($request->product_name);
-    //         $product->short_desc = $request->short_desc;
-    //         $product->long_desc = $request->long_desc;
-    //         $product->product_image = $productImage;
-    //         $product->sku = $request->sku;
-    //         $product->tags = $request->tag;
-    //         $product->shipping = $request->shipping;
-    //         $product->save();
-    //         if ($request->imageGallery) {
-    //             $imagesGallery = $request->imageGallery;
-    //             foreach ($imagesGallery as $image) {
-    //                 $galleryImage = rand() . '.' . $image->extension();
-    //                 $image->move(public_path('uploads/products/gallery/'), $galleryImage);
-    //                 $productGallery = new ProductGallery;
-    //                 $productGallery->product_id = $product->id;
-    //                 $productGallery->image = $galleryImage;
-    //                 $productGallery->save();
-    //             }
-    //         }
-    //     }
-    //     return back()->with('success', 'Product Successfully Saved');
-    // }
-
+    // Product Store Function 
     public function store(Request $request, ImageOptimizerService $imageService)
     {
-        //   dd($request->all());
         $validator = Validator::make($request->all(), [
             'category_id' => 'required',
             'brand_id' => 'required',
@@ -113,8 +76,6 @@ class ProductController extends Controller
             'price' => 'required|numeric|min:1',
             'gender' => 'required',
             'stock_quantity' => 'required|integer|min:0',
-
-            // Validate product_main_image as an array
             'product_main_image' => 'required|array|min:1', // At least one image is required
             'product_main_image.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:2048', // Validate each image
         ], [
@@ -132,24 +93,30 @@ class ProductController extends Controller
             ], 422);
         }
 
+        $setting = Setting::latest()->first();
+
+
         $product = new Product;
-        $product->category_id = $request->category_id;
-        $product->subcategory_id = $request->subcategory_id;
+        // $product->category_id = $request->category_id;
+        // $product->subcategory_id = $request->subcategory_id;
         $product->brand_id = $request->brand_id;
-        $product->sub_subcategory_id = $request->sub_subcategory_id;
-        if ($request->shipping_charge) {
-            $product->shipping_charge = $request->shipping_charge;
-        }
+        // $product->sub_subcategory_id = $request->sub_subcategory_id;
+        // if ($request->shipping_charge) {
+        //     $product->shipping_charge = $request->shipping_charge;
+        // }
 
         $product->product_name = $request->product_name;
         $product->unit_id = $request->unit_id;
-        $product->slug = Str::slug($request->product_name) . '-' . time();
+        // $product->slug = Str::slug($request->product_name) . '-' . time();
+        $product->slug = SlugService::generateUniqueSlug($request->product_name, TagName::class);
         $product->sku = $request->sku;
         $product->created_by = Auth::user()->id;
+        $product->video_link = $request->video_link;
         $product->save();
 
-        if ($product) {
 
+
+        if ($product) {
             $productDetails = new ProductDetails();
             $productDetails->product_id = $product->id;
             $productDetails->gender = $request->gender;
@@ -160,17 +127,38 @@ class ProductController extends Controller
             $productDetails->usage_instruction = $request->usage_instruction;
             $productDetails->created_by = Auth::user()->id;
             $productDetails->save();
+
+
+            if ($setting->isMultipleCategory === 0) {
+                $productCategory = new ProductCategory;
+                $productCategory->product_id = $product->id;
+                $productCategory->category_id = $request->category_id;
+                $productCategory->save();
+
+                $productCategory = new ProductCategory;
+                $productCategory->product_id = $product->id;
+                $productCategory->category_id = $request->category_id;
+                $productCategory->type = 'subcategory';
+                $productCategory->save();
+            } else {
+                foreach ($request->category_id as $id) {
+                    $productCategory = new ProductCategory;
+                    $productCategory->product_id = $product->id;
+                    $productCategory->category_id = $id;
+                    $productCategory->save();
+                }
+
+                foreach ($request->subcategory_id as $id) {
+                    $productCategory = new ProductCategory;
+                    $productCategory->product_id = $product->id;
+                    $productCategory->category_id = $id;
+                    $productCategory->type = 'subcategory';
+                    $productCategory->save();
+                }
+            }
         }
 
 
-
-        if ($product->id && $request->promotion_id) {
-            // dd($request->all());
-            $promotion = new ProductPromotion();
-            $promotion->product_id = $product->id;
-            $promotion->promotion_id = $request->promotion_id;
-            $promotion->save();
-        }
 
 
 
@@ -225,14 +213,6 @@ class ProductController extends Controller
             }
         }
 
-
-
-
-
-
-
-
-
         if ($product && $request->tag) {
 
             foreach ($request->tag as $tag) {
@@ -252,6 +232,15 @@ class ProductController extends Controller
             }
         }
 
+        if ($product && $request->concerns) {
+            foreach ($request->concerns as $id) {
+                $concern = new ProductConcern();
+                $concern->product_id = $product->id;
+                $concern->concern_id = $id;
+                $concern->save();
+            }
+        }
+
 
         if ($product) {
             $variant = new Variant();
@@ -267,15 +256,6 @@ class ProductController extends Controller
             }
             $variant->weight = $request->weight;
             $variant->flavor = $request->flavor;
-
-            // if($request->hasFile('product_main_image')){
-            //     $file = $request->file('product_main_image');
-            //     $extension =$file->extension();
-            //     $filename = time().'.'.$extension;
-            //     $path='uploads/products/variant/';
-            //     $file->move($path,$filename);
-            //     $variant->image=$path.$filename;
-            // }
             $variant->save();
 
 
@@ -307,6 +287,20 @@ class ProductController extends Controller
                 $stock->status = 'Available';
                 $stock->save();
             }
+
+            if ($variant->id && $request->promotion_id) {
+                $promotion = new ProductPromotion();
+                $promotion->product_id = $product->id;
+                $promotion->variant_id = $variant->id;
+                $promotion->promotion_id = $request->promotion_id;
+                $promotion->save();
+
+                $variantPromotion = new VariantPromotion;
+                $variantPromotion->product_id = $product->id;
+                $variantPromotion->variant_id = $variant->id;
+                $variantPromotion->promotion_id = $request->promotion_id;
+                $variantPromotion->save();
+            }
         }
 
         return response()->json([
@@ -321,8 +315,6 @@ class ProductController extends Controller
     public function view()
     {
         $products = Product::latest()->get();
-
-
         return view('backend.products.view', compact('products'));
     }
 

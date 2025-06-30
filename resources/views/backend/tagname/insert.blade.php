@@ -34,37 +34,13 @@
                                             <span class="text-danger">{{ $errors->first('tagname') }}</span>
                                         @endif
                                     </div>
-
                                 </div>
-
-
-                                <div class="row mb-3">
-                                    <label for="image" class="col-sm-3 col-form-label">Tag Thumbnail </label>
-                                    <div class="col-sm-9">
-                                        <input type="file" id="image" class="form-control " name="image">
-                                        <div class="my-1">
-                                            <i>
-                                                <b>Note:</b> Please provide 300 X 180 size
-                                                image
-                                            </i>
-                                        </div>
-                                        @if (isset($errors) && $errors->has('image'))
-                                            <span class="text-danger">{{ $errors->first('image') }}</span>
-                                        @endif
-                                        <div class="mt-3">
-                                            <img id="showImage" class="showImage" height="150" width="200"
-                                                alt="Tag image">
-                                        </div>
-                                    </div>
-
-                                </div>
-
 
 
                                 <div class="row">
                                     <label class="col-sm-3 col-form-label"></label>
                                     <div class="col-sm-9">
-                                        <a href="" class="btn btn-info px-5" id="submitBtn">Add Tagname</a>
+                                        <a href="" class="btn btn-info px-5" id="submitBtn">Save Tagname</a>
                                     </div>
                                 </div>
                             </div>
@@ -85,33 +61,13 @@
 
                 let form = $("#tagForm");
                 let tagname = $("input[name='tagname']").val().trim();
-                let imageInput = $("input[name='image']")[0].files[0];
-
 
                 $(".text-danger").text("");
 
                 let errors = {};
 
-
                 if (tagname === "") {
                     errors.tagname = "Tag name is required!";
-                }
-
-
-                if (!imageInput) {
-                    errors.image = "Tag thumbnail is required!";
-                } else {
-                    let fileSize = imageInput.size / 1024;
-                    let fileType = imageInput.type;
-
-
-                    let allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
-
-                    if (!allowedTypes.includes(fileType)) {
-                        errors.image = "Only JPG, JPEG, and PNG files are allowed!";
-                    } else if (fileSize > 2048) {
-                        errors.image = "Image size must be less than 2MB!";
-                    }
                 }
 
 
@@ -120,9 +76,7 @@
                         $("input[name='tagname']").after(
                             `<span class="text-danger">${errors.tagname}</span>`);
                     }
-                    if (errors.image) {
-                        $("input[name='image']").after(`<span class="text-danger">${errors.image}</span>`);
-                    }
+
                     return false;
                 }
 

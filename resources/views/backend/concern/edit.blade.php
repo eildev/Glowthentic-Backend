@@ -41,7 +41,7 @@
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                         <div class="mt-3">
-                                            <img src="{{ $concern->image ? $concern->image : '/uploads/productempty.jpg' }}"
+                                            <img src="/{{ $concern->image ? $concern->image : 'uploads/productempty.jpg' }}"
                                                 id="showImage" class="showImage" height="150" alt="Tag image">
                                         </div>
                                     </div>

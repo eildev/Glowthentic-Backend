@@ -35,7 +35,7 @@
                                             <td>{{ $concern->name ?? '' }}</td>
                                             <td>
                                                 <img height="100"
-                                                    src="{{ $concern->image ? $concern->image : '/uploads/productempty.jpg' }}"
+                                                    src="/{{ $concern->image ? $concern->image : 'uploads/productempty.jpg' }}"
                                                     alt="Concern Image">
                                             </td>
                                             <td>

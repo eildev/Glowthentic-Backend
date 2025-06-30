@@ -354,7 +354,7 @@
                 let subcategorySelect = $('.subcategory_select');
 
                 // Clear previous options
-                subcategorySelect.html('<option value="">Select a Sub-Category</option>');
+                // subcategorySelect.html('<option value="">Select a Sub-Category</option>');
 
                 // console.log(Array.isArray(category_id));
                 if (category_id) {

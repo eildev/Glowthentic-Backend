@@ -32,9 +32,9 @@ class ConcernController extends Controller
 
             // Handle image upload
             if ($request->hasFile('image')) {
-                $destinationPath = public_path('/uploads/concern/');
+                $destinationPath = public_path('uploads/tag/');
                 $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
-                $concern->image = '/uploads/concern/' . $imageName;
+                $concern->image = 'uploads/tag/' . $imageName;
             }
 
             // Save the Concern record
@@ -84,9 +84,9 @@ class ConcernController extends Controller
                     unlink($imagePath);
                 }
             }
-            $destinationPath = public_path('/uploads/concern/');
+            $destinationPath = public_path('uploads/tag');
             $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
-            $concern->image = '/uploads/concern/' . $imageName;
+            $concern->image = 'uploads/tag/' . $imageName;
         }
         $concern->save();
         return redirect()->route('concern.view')->with('success', 'Concern Successfully updated');
