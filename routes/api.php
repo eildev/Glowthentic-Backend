@@ -24,6 +24,7 @@ use App\Http\Controllers\API\ApiUserManageController;
 use App\Http\Controllers\API\ApiPostReactController;
 use App\Http\Controllers\API\ForgotPasswordController;
 use App\Http\Controllers\API\SocialAuthController;
+use App\Http\Controllers\API\UserTrackerController;
 use Illuminate\Http\Request;
 // Open Routes
 Route::post('/register', [AuthController::class, "register"]);
@@ -32,7 +33,7 @@ Route::get('/sanctum/csrf-cookie', function () {
     return response()->noContent();
 });
 
-// reset password 
+// reset password
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
 Route::post('/verify-otp', [ForgotPasswordController::class, 'verifyOTP']);
 Route::post('/reset-password', [ForgotPasswordController::class, 'reset']);
@@ -192,4 +193,11 @@ Route::controller(ApiReviewController::class)->group(function () {
     Route::get('/review/{product_id}', 'getReview');
     Route::delete('/review/delete/{id}', 'deleteReview');
 });
-// Route::get('/product', [App\Http\Controllers\Backend\ProductController::class, 'index']);
+Route::controller(UserTrackerController::class)->group(function () {
+    Route::post('/user-tracker', 'store');
+});
+
+
+Route::get('/{any}', function () {
+    return view('errors.404'); // or return view('welcome') if you are using welcome.blade.php
+})->where('any', '.*');

@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('tag_names', function (Blueprint $table) {
             $table->id();
             $table->string('tagName');
-            $table->string('image')->nullable();
+            $table->string('slug')->unique();
+            $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamps(0);
             $table->softDeletes();
         });

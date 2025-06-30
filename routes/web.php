@@ -37,6 +37,9 @@ use App\Http\Controllers\Backend\DeliverOrderAssignController;
 use App\Http\Controllers\Backend\FeatureController;
 use App\Http\Controllers\Backend\CourierController;
 use App\Http\Controllers\Backend\ColorController;
+use App\Http\Controllers\Backend\ConcernController;
+use App\Http\Controllers\Backend\SettingsController;
+use App\Http\Controllers\Backend\userProfileController;
 use App\Http\Controllers\Backend\VariantController;
 
 // Route::get('/home', function () {
@@ -52,6 +55,8 @@ Route::controller(AllMail::class)->group(function () {
     Route::post('/reply/mail', 'replyMail')->name('reply.mail');
 });
 Route::middleware('auth')->group(function () {
+
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -67,6 +72,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/get/parent/category', 'GetParentCategory');
         //find Subcategory
         Route::get('/find/subcategory/{id}', 'findSubcat')->name('subcategory.find');
+        Route::post('/find/subcategories', 'findSubcategories');
         //find SubSubcategory
         Route::get('/find/sub-subcategory/{id}', 'findSubSubcat')->name('sub.subcategory.find');
     });
@@ -86,6 +92,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/disable-user/{user_id}', 'DisableUser')->name('admin.disable-user');
         Route::get('/admin/enable-user/{user_id}', 'EnableUser')->name('admin.enable-user');
     });
+
+
+
+
+
 
     //All Routes for Category End
 
@@ -129,10 +140,26 @@ Route::middleware('auth')->group(function () {
     Route::controller(TagNameController::class)->group(function () {
         Route::get('/tagname', 'index')->name('tagname');
         Route::post('/tagname/store', 'store')->name('tagname.store');
+        Route::post('/tagname/create', 'create');
         Route::get('/tagname/view', 'view')->name('tagname.view');
+        Route::get('/tagname/show', 'show');
         Route::get('/tagname/edit/{id}', 'edit')->name('tagname.edit');
         Route::post('/tagname/update/{id}', 'update')->name('tagname.update');
         Route::get('/tagname/delete/{id}', 'delete')->name('tagname.delete');
+        Route::post('/tagname/status/{id}', 'status')->name('tagname.status');
+    });
+    //All Routes for Tag name End
+
+
+    //All Routes for Concerns
+    Route::controller(ConcernController::class)->group(function () {
+        Route::get('/concern', 'index')->name('concern');
+        Route::post('/concern/store', 'store')->name('concern.store');
+        Route::get('/concern/view', 'view')->name('concern.view');
+        Route::get('/concern/edit/{id}', 'edit')->name('concern.edit');
+        Route::post('/concern/update/{id}', 'update')->name('concern.update');
+        Route::get('/concern/delete/{id}', 'delete')->name('concern.delete');
+        Route::post('/concern/status/{id}', 'status')->name('concern.status');
     });
     //All Routes for Tag name End
 
@@ -254,6 +281,12 @@ Route::middleware('auth')->group(function () {
         Route::post('/promotion/product/delete/', 'delete')->name('promotion.delete');
 
         Route::post('product/promotion/add/category', 'productPromotionCategoryShow')->name('product.promotion.add.category');
+
+        Route::post('product/promotion/add/brand', 'productPromotionBrandShow')->name('product.promotion.add.brand');
+
+
+
+
         Route::get('admin/product/promotion/edit/{id}', 'edit')->name('admin.product.promotion.edit');
         Route::post('/product/promotion/variant/delete/', 'variantDelete')->name('promotion.variant.delete');
         Route::post('promotion/delete', 'Promotiondelete')->name('product.promotion.delete');
@@ -322,6 +355,12 @@ Route::middleware('auth')->group(function () {
         Route::post('admin/order/get-order-details', 'getOrderDetails')->name('get.order.details');
 
         Route::get('/order/detailed-orders/{order_id}', 'DetailOrders')->name('order.details');
+        Route::get('/custom/order/create', 'customOrderCreate')->name('custom.order.create');
+        Route::get('get/variant/custom/order_info/{id}', 'getVariantCustomOrderInfo')->name('get.variant.custom.order.info');
+        Route::post('get/custom/user/details', 'getCustomUserDetails')->name('get.user.data');
+        Route::post('create/custom/user/address', 'createCustomUserAddress')->name('create.custom.order.customer');
+        Route::post('create/custom/order', 'createCustomOrder')->name('custom.order.store');
+        Route::get('get/combo/custom/order/{id}', 'getComboCustom')->name('get.custom.combo.product.order');
         // Route::post('/order/send-sms', 'SendSMS')->name('send.sms');
 
 
@@ -446,6 +485,10 @@ Route::middleware('auth')->group(function () {
     });
     //Purchase Details All Route End
 
+    Route::controller(userProfileController::class)->group(function () {
+        Route::get('/user/profile', 'index')->name('user.profile');
+        Route::post('/user/profile', 'update')->name('user.password.update');
+    });
 
 
     //Company Details All Route Start
@@ -478,12 +521,19 @@ Route::controller(UserTrackerController::class)->group(function () {
     // Route::post('/company-details/status/{id}', 'status')->name('company-details.status');
 });
 
+
 // Route::controller(VariantController::class)->group(function () {
 //     Route::get('/check-mail-template/{id}', 'checkMail');
 // });
+Route::controller(SettingsController::class)->group(function () {
+    Route::get('/settings', 'index')->name('settings');
+    Route::post('/settings/store', 'store')->name('settings.store');
+});
 //User Tracker All Route End
 
 // require __DIR__ . '/auth.php';
 // require __DIR__ . '/frontend.php';
-
 Route::group([], base_path('routes/frontend.php'));
+Route::get('/{any}', function () {
+    return view('errors.404'); // or return view('welcome') if you are using welcome.blade.php
+})->where('any', '.*');

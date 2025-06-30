@@ -7,12 +7,19 @@
 
                     if ($orders->user_id != null) {
                         $customers = App\Models\UserDetails::where('user_id', $orders->user_id)->first();
-                    } else {
+                    }
+                     else if($orders->customer_id!= null){
+
+                        $customers = App\Models\UserDetails::where('customer_id', $orders->customer_id)->first();
+
+                     }
+                    else {
                         $customers = App\Models\UserDetails::where('session_id', $orders->session_id)->first();
+                        
                     }
                     $first_name = $customers->full_name ?? '';
 
-                    $email = $customers->user->email ?? '';
+                    $email = $customers->user->email ?? $customers->secondary_email ?? '';
                     $phone = $customers?->phone_number ? (substr($customers?->phone_number, 0, 1) === '0' ? $customers?->phone_number : '0' . $customers?->phone_number) : '0';
                     $address_1 = $customers->address ?? '';
 
@@ -28,7 +35,7 @@
                     $product_quantity = $orders->total_quantity ?? '';
                     $product_total = $orders->total_amount ?? '';
                     $coupon_id = $orders->global_coupon_id ?? '';
-                    $discount = $orders->discount ?? '';
+                    $discount = $orders->discount_amount ?? '';
                     $sub_total = $orders->sub_total ?? '';
                     $shipping_method = $orders->shipping_method ?? '';
                     $shipping_amount = $orders->shipping_charge ?? '';
@@ -202,60 +209,7 @@
                                     </div>
                                 </div>
                             </div>
-                            {{-- <table id="order_table" class="table table-striped table-bordered py-3" style="width:100%">
-                                <thead>
-                                    <tr>
-                                        <th>SI</th>
-                                        <th>Product Image</th>
-                                        <th>Product Name</th>
-                                        <th>Quantity</th>
-                                        <th>Unit Price</th>
-                                        <th>Total Price</th>
-                                        <!--<th>Action</th>-->
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <strong><p><u>Order Details</u></p></strong>
-                                    @php
-                                        $serialNumber = 1;
-                                    @endphp
 
-                                    @foreach ($orders->orderDetails as $order)
-
-                                        @php
-                                            $originalDateString = $order->created_at;
-                                            $dateTime = new DateTime($originalDateString);
-                                            $formattedDate = $dateTime->format('Y-m-d');
-
-
-                                            $product = App\Models\Product::where('id', $order->product_id)->first();
-                                        @endphp
-                                        <tr>
-                                            <td>{{ $serialNumber++ }}</td>
-                                            <td>
-                                                <img src="{{ asset($order->variant->variantImage[0]->image) }}"
-                                                    style="height: 100px;" class="img-fluid" alt="Products Image">
-                                            </td>
-                                            <td>{{ $product->product_name }}</td>
-                                            <td>{{ $order->product_quantity }}</td>
-                                            <td>{{ $order->variant->regular_price }}</td>
-                                            <td>{{ $order->total_price }}</td>
-
-                                            <!--<td>-->
-                                            <!--    <a href="#" class="btn btn-sm btn-info">Approve</a>-->
-                                            <!--    <a href="#" class="btn btn-sm btn-danger" id="delete">Denied</a>-->
-                                            <!--</td>-->
-
-                                        </tr>
-                                    @endforeach
-                                @else
-                                    <tr>
-                                        <td colspan="10" class="text-center text-warning">Data not Found</td>
-                                    </tr>
-
-                                </tbody>
-
-                            </table> --}}
 
                             <table id="order_table" class="table table-striped table-bordered py-3" style="width:100%">
                                 <thead>
@@ -284,7 +238,7 @@
                                             $formattedDate = $dateTime->format('Y-m-d');
 
                                             $product = App\Models\Product::where('id', $order->product_id)->first();
-                                            $variantImage = $order->variant->variantImage[0]->image ?? null;
+                                            $variantImage = $order->variant->variantImage[0]->image ??$order->combo->comboimage[0]->image??null;
                                         @endphp
                                         <tr>
                                             <td>{{ $serialNumber++ }}</td>
@@ -296,9 +250,9 @@
                                                     <span>No Image</span>
                                                 @endif
                                             </td>
-                                            <td>{{ $product->product_name ?? 'N/A' }}</td>
+                                            <td>{{ $product->product_name ??$order->combo->name?? 'N/A' }}</td>
                                             <td>{{ $order->product_quantity }}</td>
-                                            <td>{{ $order->variant->regular_price ?? 'N/A' }}</td>
+                                            <td>{{ $order->variant->regular_price ??$order->combo->offerd_price??'N/A' }}</td>
                                             <td>{{ $order->total_price ?? 'N/A' }}</td>
                                             <!--<td>-->
                                             <!--    <a href="#" class="btn btn-sm btn-info">Approve</a>-->

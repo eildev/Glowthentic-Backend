@@ -26,18 +26,25 @@
                                     <td>{{ $promotionProduct->product->product_name ?? '--' }}</td>
                                     <td>
 
-                                            @php
-                                                $selectedVariants = App\Models\VariantPromotion::where('product_id', $promotionProduct->product_id)
-                                                    ->pluck('variant_id')->toArray() ?? [];
+                                        @php
+                                            $selectedVariants =
+                                                App\Models\VariantPromotion::where(
+                                                    'product_id',
+                                                    $promotionProduct->product_id,
+                                                )
+                                                    ->pluck('variant_id')
+                                                    ->toArray() ?? [];
 
-                                                $variantNames = optional($promotionProduct->product)->variants // Use optional() to avoid null errors
-                                                    ?->whereIn('id', $selectedVariants)
+                                            $variantNames =
+                                                // Use optional() to avoid null errors
+                                                optional($promotionProduct->product)
+                                                    ->variants?->whereIn('id', $selectedVariants)
                                                     ->pluck('variant_name')
                                                     ->filter() // Remove null values
                                                     ->implode(', '); // Convert array to a comma-separated string
-                                            @endphp
-                                            {{ $variantNames ?: '--' }}
-                                       
+                                        @endphp
+                                        {{ $variantNames ?: '--' }}
+
 
                                     </td>
 
@@ -48,8 +55,6 @@
                         </tbody>
                     </table>
                 </div>
-
-
             </div>
         </div>
     </div>

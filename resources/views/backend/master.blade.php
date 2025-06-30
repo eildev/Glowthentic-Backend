@@ -325,28 +325,87 @@
         // subcategory select function
         $(document).ready(function() {
             $('.product_descriptions').summernote();
-            $('.category_select').on('change', function() {
+            // $('.category_select').on('change', function() {
 
-                let category_id = $(this).val();
+            //     let category_id = $(this).val();
+
+            //     console.log(category_id);
+            //     if (category_id) {
+            //         $.ajax({
+            //             url: '/find/subcategory/' + category_id,
+            //             type: 'GET',
+            //             dataType: 'JSON',
+            //             success: function(result) {
+            //                 $('select[name="subcategory_id"]').html(
+            //                     '<option value="">Select a Sub-Category</option>');
+            //                 $.each(result.subcats, function(key, item) {
+            //                     $('select[name="subcategory_id"]').append(
+            //                         '<option myid="' + item.id +
+            //                         '" value="' + item.id +
+            //                         '">' + item
+            //                         .categoryName + '</option>');
+            //                 })
+            //             }
+            //         });
+            //     }
+            // })
+            $('.category_select').on('change', function() {
+                let category_id = $(this).val(); // Single ID or array of IDs
+                let subcategorySelect = $('.subcategory_select');
+
+                // Clear previous options
+                // subcategorySelect.html('<option value="">Select a Sub-Category</option>');
+
+                // console.log(Array.isArray(category_id));
                 if (category_id) {
-                    $.ajax({
-                        url: '/find/subcategory/' + category_id,
-                        type: 'GET',
-                        dataType: 'JSON',
-                        success: function(result) {
-                            $('select[name="subcategory_id"]').html(
-                                '<option value="">Select a Sub-Category</option>');
-                            $.each(result.subcats, function(key, item) {
-                                $('select[name="subcategory_id"]').append(
-                                    '<option myid="' + item.id +
-                                    '" value="' + item.id +
-                                    '">' + item
-                                    .categoryName + '</option>');
-                            })
-                        }
-                    });
+                    // Check if category_id is an array
+                    if (Array.isArray(category_id)) {
+                        // Handle multiple category IDs
+                        $.ajax({
+                            url: '/find/subcategories',
+                            type: 'POST',
+                            dataType: 'JSON',
+                            data: {
+                                category_ids: category_id
+                            },
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            success: function(result) {
+                                $.each(result.subcats, function(key, item) {
+                                    subcategorySelect.append(
+                                        '<option myid="' + item.id + '" value="' +
+                                        item.id + '">' + item.categoryName +
+                                        '</option>'
+                                    );
+                                });
+                            },
+                            error: function(xhr) {
+                                console.error('Error fetching subcategories:', xhr);
+                            }
+                        });
+                    } else {
+                        // Handle single category ID
+                        $.ajax({
+                            url: '/find/subcategory/' + category_id,
+                            type: 'GET',
+                            dataType: 'JSON',
+                            success: function(result) {
+                                $.each(result.subcats, function(key, item) {
+                                    subcategorySelect.append(
+                                        '<option myid="' + item.id + '" value="' +
+                                        item.id + '">' + item.categoryName +
+                                        '</option>'
+                                    );
+                                });
+                            },
+                            error: function(xhr) {
+                                console.error('Error fetching subcategory:', xhr);
+                            }
+                        });
+                    }
                 }
-            })
+            });
 
             $('.subcategory_select').on('change', function() {
                 // alert('ok');

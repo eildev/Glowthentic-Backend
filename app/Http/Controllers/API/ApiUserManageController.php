@@ -214,7 +214,7 @@ class ApiUserManageController extends Controller
             ]);
 
             if ($validator->fails()) {
-                Log::error('Validation Errors:', $validator->errors()->toArray());
+                // Log::error('Validation Errors:', $validator->errors()->toArray());
                 return response()->json([
                     'status' => 422,
                     'errors' => $validator->errors(),

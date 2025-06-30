@@ -43,7 +43,7 @@ class CategoryController extends Controller
                 $category = new Category;
                 $category->categoryName = $request->categoryName;
                 $category->slug = Str::slug($request->categoryName);
-                if($request->image) {
+                if ($request->image) {
                     $destinationPath = public_path('uploads/category/');
                     $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
                     $category->image = 'uploads/category/' . $imageName;
@@ -227,8 +227,8 @@ class CategoryController extends Controller
     {
         $id = $request->id;
         $category = Category::findOrFail($id);
-        if(file_exists($category->image)) {
-        unlink(public_path($category->image));
+        if (file_exists($category->image)) {
+            unlink(public_path($category->image));
         }
         $category->delete();
         return response()->json(['message' => 'Category Deleted Successfully']);
@@ -264,8 +264,28 @@ class CategoryController extends Controller
     //find sub category
     public function findSubcat($id)
     {
-        $subcats = Category::where('parent_id', $id)->get();
+        $subcats = Category::where('status', 1)->where('parent_id', $id)->get();
         // dd($subcats);
+        return response()->json([
+            'subcats' => $subcats
+        ]);
+    }
+
+    public function findSubcategories(Request $request)
+    {
+        $category_ids = $request->input('category_ids', []);
+
+        // Ensure category_ids is an array and contains valid IDs
+        if (!is_array($category_ids) || empty($category_ids)) {
+            return response()->json([
+                'subcats' => []
+            ]);
+        }
+
+        $subcats = Category::where('status', 1)
+            ->whereIn('parent_id', $category_ids)
+            ->get();
+
         return response()->json([
             'subcats' => $subcats
         ]);
@@ -274,7 +294,7 @@ class CategoryController extends Controller
     // find sub sub category
     public function findSubSubcat($id)
     {
-        $subsubcats = Category::where('parent_id', $id)->get();
+        $subsubcats = Category::where('status', 1)->where('parent_id', $id)->get();
         if ($subsubcats) {
             return response()->json([
                 'status' => 200,

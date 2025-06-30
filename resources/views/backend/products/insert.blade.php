@@ -19,6 +19,7 @@
                             <div class="my-3 me-2">
                                 <a href="{{ route('product') }}" class="btn btn-success">
                                     <i class="fas fa-plus"></i>
+                                    {{-- <i class="fas fa-rotate-right"></i> --}}
                                     Add New Product</a>
                             </div>
 
@@ -47,37 +48,40 @@
                             </div>
 
                         </div>
-
-
-
-
-
-
-
                         <form method="POST" enctype="multipart/form-data" id="productForm">
                             @csrf
                             <div class="row g-3 mb-3">
                                 <div class="col-lg-8">
                                     <div class="border border-3 p-4 rounded">
-                                        <div class="row mb-3">
+                                        <div class="row mb-3 g-3">
                                             <div class="col-md-6">
-                                                @php
-                                                    $categories = App\Models\Category::whereNull('parent_id')->get();
-                                                @endphp
                                                 <div class="row">
                                                     <label class="form-label col-12">Select Category<span
                                                             class="text-danger fw-bold">*</span></label>
                                                     <div class="col-12">
-                                                        <select
-                                                            class="form-select category_select @error('category_id') is-invalid  @enderror"
-                                                            name="category_id">
-                                                            <option value="">Select Category</option>
-                                                            @foreach ($categories as $category)
-                                                                <option value="{{ $category->id }}">
-                                                                    {{ $category->categoryName }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
+                                                        @if ($setting->isMultipleCategory === 0)
+                                                            <select
+                                                                class="form-select category_select @error('category_id') is-invalid  @enderror"
+                                                                name="category_id">
+                                                                <option value="">Select Category</option>
+                                                                @foreach ($categories as $category)
+                                                                    <option value="{{ $category->id }}">
+                                                                        {{ $category->categoryName ?? '' }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
+                                                        @else
+                                                            <select
+                                                                class="multiple-select category_select @error('category_id') is-invalid  @enderror"
+                                                                data-placeholder="Select Category" multiple="multiple"
+                                                                name="category_id[]">
+                                                                @foreach ($categories as $category)
+                                                                    <option value="{{ $category->id }}">
+                                                                        {{ $category->categoryName ?? '' }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
+                                                        @endif
                                                         @error('category_id')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -88,41 +92,41 @@
                                                 <div class="row">
                                                     <label class="form-label col-12">Select Subcategory</label>
                                                     <div class="col-12">
-                                                        <select
-                                                            class="form-select subcategory_select @error('subcategory_id') is-invalid  @enderror"
-                                                            name="subcategory_id">
-                                                            <option value="">Select Subcategory</option>
-                                                        </select>
+                                                        @if ($setting->isMultipleCategory === 0)
+                                                            <select
+                                                                class="form-select subcategory_select @error('subcategory_id') is-invalid  @enderror"
+                                                                name="subcategory_id">
+                                                                <option value="">Select Subcategory</option>
+                                                            </select>
+                                                        @else
+                                                            <select
+                                                                class="multiple-select subcategory_select @error('subcategory_id') is-invalid  @enderror"
+                                                                data-placeholder="Select Subcategory" multiple="multiple"
+                                                                name="subcategory_id[]">
+
+                                                            </select>
+                                                        @endif
                                                         @error('category_id')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="row mb-3">
-                                            <div class="col-md-6">
-                                                {{-- @php
-                                                    $sub_subcategories = App\Models\SubSubcategory::all();
-                                                @endphp --}}
+
+                                            {{-- <div class="col-md-6">
+                                               
                                                 <div class="row">
                                                     <label class="form-label col-12">Select Sub-Subcategory</label>
                                                     <div class="col-12">
                                                         <select class="form-select" name="sub_subcategory_id">
                                                             <option value="">Select Sub-Subcategory</option>
-                                                            {{-- @foreach ($sub_subcategories as $sub_subcategory)
-                                                                <option value="{{ $sub_subcategory->id }}">
-                                                                    {{ $sub_subcategory->subSubcategoryName }}</option>
-                                                            @endforeach --}}
+                                                          
                                                         </select>
                                                         <span class="sub_subcategory_id text-danger"></span>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div> --}}
                                             <div class="col-md-6">
-                                                @php
-                                                    $brands = App\Models\Brand::all();
-                                                @endphp
                                                 <div class="row">
                                                     <label class="form-label col-12">Select Brand <span
                                                             class="text-danger fw-bold">*</span></label>
@@ -132,7 +136,7 @@
                                                             <option value="">Select Brand</option>
                                                             @foreach ($brands as $brand)
                                                                 <option value="{{ $brand->id }}">
-                                                                    {{ $brand->BrandName }}
+                                                                    {{ $brand->BrandName ?? '' }}
                                                                 </option>
                                                             @endforeach
                                                         </select>
@@ -142,19 +146,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-
-
-
-
-
-
-
-                                        <div class="row mb-3">
-
                                             <div class="col-md-6">
-
-
                                                 <div class="row">
                                                     <label class="form-label col-12">Select Unit <span
                                                             class="text-danger fw-bold">*</span></label>
@@ -190,8 +182,201 @@
                                                 </div>
                                             </div>
 
+                                            <div class="col-12">
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <label for="" class="form-label">Product Name <span
+                                                                class="text-danger fw-bold">*</span></label>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <input type="text" name="product_name"
+                                                            class="form-control product_sku @error('product_name') is-invalid  @enderror"
+                                                            id="inputEnterYourName" placeholder="Enter Product Name">
+                                                        @error('product_name')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                            </div>
 
                                             <div class="col-md-6">
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <label for="" class="form-label">Product Price <span
+                                                                class="text-danger fw-bold">*</span></label>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <input type="number" name="price"
+                                                            class="form-control @error('price') is-invalid  @enderror"
+                                                            id="inputEnterYourName" placeholder="Enter Product Weight"
+                                                            min="0" value="0">
+                                                        @error('price')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <label for="" class="form-label">Variant Name</label>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <input type="text" name="variant_name"
+                                                            class="form-control  @error('variant_name') is-invalid  @enderror"
+                                                            id="inputEnterYourName" placeholder="Enter Variant Name">
+                                                        @error('variant_name')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="col-md-6">
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <label for="" class="form-label">Short Description <span
+                                                                class="text-danger fw-bold"></span></label>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <textarea name="short_description" class="form-control @error('short_description') is-invalid  @enderror"
+                                                            id="" cols="30" rows="3"></textarea>
+                                                        @error('short_description')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="col-md-6">
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <label for="" class="form-label">Product Policy<span
+                                                                class="text-danger fw-bold"></span></label>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <textarea name="product_policy" class="form-control @error('product_policy') is-invalid  @enderror" id=""
+                                                            cols="30" rows="3"></textarea>
+                                                        @error('product_policy')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-12">
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <label for="" class="form-label"> Description</label>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <textarea class="form-control product_descriptions_on no-bg @error('description') is-invalid  @enderror"
+                                                            name="description" placeholder="Enter Product Description" style="resize: none; height: 70px;"></textarea>
+                                                        @error('description')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-12">
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <label for="" class="form-label">Ingredients</label>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <textarea class="form-control ingrediants no-bg" name="ingredients" placeholder="Enter Ingredients"
+                                                            style="resize: none; height: 100px;" id=""></textarea>
+
+
+                                                        @error('ingredients')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-12">
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <label for="" class="form-label">Usage Instruction</label>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <textarea class="form-control usage_instruction no-bg" name="usage_instruction" placeholder="Enter Usage Instruction"
+                                                            style="resize: none; height: 100px;" id=""></textarea>
+
+
+                                                        @error('usage_instruction')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="border border-3 p-4 rounded">
+                                        <div class="row g-3">
+                                            <div class="col-12">
+                                                <div class="mb-3">
+                                                    <label class="form-label">SKU</label>
+                                                    <input type="text"
+                                                        class="form-control sku_generate @error('sku') is-invalid  @enderror"
+                                                        placeholder="ASD1202" name="sku">
+                                                    @error('sku')
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="mb-3">
+                                                    <label class="form-label"> Stock Quantity</label>
+                                                    <input type="number"
+                                                        class="form-control  @error('stock_quantity') is-invalid  @enderror"
+                                                        placeholder="Enter Stock Quantity" name="stock_quantity"
+                                                        min="0" value="0">
+                                                    @error('stock_quantity')
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <label for="" class="form-label">Product Weight (is for
+                                                            Shipping) <span class="text-danger">*</span></label>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <input type="number" name="weight"
+                                                            class="form-control @error('weight') is-invalid  @enderror"
+                                                            id="inputEnterYourName" placeholder="Enter Product Weight">
+                                                        @error('weight')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-12">
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <label for="" class="form-label">Flavor</label>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <input type="text" name="flavor"
+                                                            class="form-control @error('flavor') is-invalid  @enderror"
+                                                            id="inputEnterYourName" placeholder="Enter Product flavor">
+                                                        @error('flavor')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
                                                 <div class="row">
                                                     <label class="form-label col-12">
                                                         Select Size
@@ -215,20 +400,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-
-
-
-                                        </div>
-
-
-
-
-
-
-
-                                        <div class="row mb-3">
-
-                                            <div class="col-md-6">
+                                            <div class="col-md-12">
                                                 <div class="row">
                                                     <label class="form-label col-12">
                                                         Select Color
@@ -252,81 +424,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-
-
-
-                                            <div class="col-md-6">
-
-                                                <div class="row">
-                                                    <div class="col-12">
-                                                        <label for="" class="form-label">Product Weight (is for
-                                                            Shipping) <span class="text-danger">*</span></label>
-                                                    </div>
-                                                    <div class="col-12">
-                                                        <input type="number" name="weight"
-                                                            class="form-control @error('weight') is-invalid  @enderror"
-                                                            id="inputEnterYourName" placeholder="Enter Product Weight">
-                                                        @error('weight')
-                                                            <span class="text-danger">{{ $message }}</span>
-                                                        @enderror
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                        </div>
-
-
-
-
-
-
-                                        <div class="row mb-3">
-
-                                            <div class="col-md-6">
-
-                                                <div class="row">
-                                                    <div class="col-12">
-                                                        <label for="" class="form-label">Flavor</label>
-                                                    </div>
-                                                    <div class="col-12">
-                                                        <input type="text" name="flavor"
-                                                            class="form-control @error('flavor') is-invalid  @enderror"
-                                                            id="inputEnterYourName" placeholder="Enter Product flavor">
-                                                        @error('flavor')
-                                                            <span class="text-danger">{{ $message }}</span>
-                                                        @enderror
-                                                    </div>
-                                                </div>
-                                            </div>
-
-
-                                            <div class="col-md-6">
-
-                                                <div class="row">
-                                                    <div class="col-12">
-                                                        <label for="" class="form-label">Product Price <span
-                                                                class="text-danger fw-bold">*</span></label>
-                                                    </div>
-                                                    <div class="col-12">
-                                                        <input type="number" name="price"
-                                                            class="form-control @error('price') is-invalid  @enderror"
-                                                            id="inputEnterYourName" placeholder="Enter Product Weight"
-                                                            min="0" value="0">
-                                                        @error('price')
-                                                            <span class="text-danger">{{ $message }}</span>
-                                                        @enderror
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                        </div>
-
-
-
-                                        <div class="row mb-3">
-
-                                            <div class="col-md-6">
-
+                                            <div class="col-md-12">
                                                 <div class="row">
                                                     <label class="form-label col-12">Select Gender <span
                                                             class="text-danger fw-bold">*</span></label>
@@ -346,9 +444,7 @@
                                                 </div>
                                             </div>
 
-
-                                            <div class="col-md-6">
-
+                                            <div class="col-md-12">
                                                 <div class="row">
                                                     <label class="form-label col-12">Shipping Charge <span
                                                             class="text-danger fw-bold"></span></label>
@@ -368,206 +464,39 @@
                                                     </div>
                                                 </div>
                                             </div>
-
-
-
-
-                                        </div>
-
-
-
-
-                                        <div class="row mb-3">
-                                            <div class="col-12">
-                                                <div class="row">
-                                                    <div class="col-12">
-                                                        <label for="" class="form-label">Product Name <span
-                                                                class="text-danger fw-bold">*</span></label>
-                                                    </div>
-                                                    <div class="col-12">
-                                                        <input type="text" name="product_name"
-                                                            class="form-control product_sku @error('product_name') is-invalid  @enderror"
-                                                            id="inputEnterYourName" placeholder="Enter Product Name">
-                                                        @error('product_name')
-                                                            <span class="text-danger">{{ $message }}</span>
-                                                        @enderror
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-12 mt-2">
-                                                <div class="row">
-                                                    <div class="col-12">
-                                                        <label for="" class="form-label">Variant Name</label>
-                                                    </div>
-                                                    <div class="col-12">
-                                                        <input type="text" name="variant_name"
-                                                            class="form-control  @error('variant_name') is-invalid  @enderror"
-                                                            id="inputEnterYourName" placeholder="Enter Variant Name">
-                                                        @error('variant_name')
-                                                            <span class="text-danger">{{ $message }}</span>
-                                                        @enderror
-                                                    </div>
-                                                </div>
-                                            </div>
-
-
-                                            <div class="col-12 mt-2">
-                                                <div class="row">
-                                                    <div class="col-12">
-                                                        <label for="" class="form-label">Short Description <span
-                                                                class="text-danger fw-bold"></span></label>
-                                                    </div>
-                                                    <div class="col-12">
-                                                        <textarea name="short_description" class="form-control @error('short_description') is-invalid  @enderror"
-                                                            id="" cols="30" rows="6"></textarea>
-                                                        @error('short_description')
-                                                            <span class="text-danger">{{ $message }}</span>
-                                                        @enderror
-                                                    </div>
-                                                </div>
-                                            </div>
-
-
-                                            <div class="col-12 mt-2">
-                                                <div class="row">
-                                                    <div class="col-12">
-                                                        <label for="" class="form-label">Product Policy<span
-                                                                class="text-danger fw-bold"></span></label>
-                                                    </div>
-                                                    <div class="col-12">
-                                                        <textarea name="product_policy" class="form-control @error('product_policy') is-invalid  @enderror" id=""
-                                                            cols="30" rows="6"></textarea>
-                                                        @error('product_policy')
-                                                            <span class="text-danger">{{ $message }}</span>
-                                                        @enderror
-                                                    </div>
-                                                </div>
-                                            </div>
-
-
-
-
-                                        </div>
-
-                                        <div class="row mb-3">
-                                            <div class="col-12">
-                                                <div class="row">
-                                                    <div class="col-12">
-                                                        <label for="" class="form-label"> Description</label>
-                                                    </div>
-                                                    <div class="col-12">
-                                                        <textarea class="form-control product_descriptions_on @error('description') is-invalid  @enderror" name="description"
-                                                            placeholder="Enter Product Description" style="resize: none; height: 70px;"></textarea>
-                                                        @error('description')
-                                                            <span class="text-danger">{{ $message }}</span>
-                                                        @enderror
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row mb-3">
-                                            <div class="col-12">
-                                                <div class="row">
-                                                    <div class="col-12">
-                                                        <label for="" class="form-label">Ingredients</label>
-                                                    </div>
-                                                    <div class="col-12">
-                                                        <textarea class="form-control ingrediants" name="ingredients" placeholder="Enter Ingredients"
-                                                            style="resize: none; height: 100px;" id="product_description"></textarea>
-
-
-                                                        @error('ingredients')
-                                                            <span class="text-danger">{{ $message }}</span>
-                                                        @enderror
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-
-
-                                        <div class="row mb-3">
-                                            <div class="col-12">
-                                                <div class="row">
-                                                    <div class="col-12">
-                                                        <label for="" class="form-label">Usage Instruction</label>
-                                                    </div>
-                                                    <div class="col-12">
-                                                        <textarea class="form-control usage_instruction" name="usage_instruction" placeholder="Enter Usage Instruction"
-                                                            style="resize: none; height: 100px;" id=""></textarea>
-
-
-                                                        @error('usage_instruction')
-                                                            <span class="text-danger">{{ $message }}</span>
-                                                        @enderror
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-
-
-
-
-
-
-
-
-
-                                    </div>
-                                </div>
-                                <div class="col-lg-4">
-                                    <div class="border border-3 p-4 rounded">
-                                        <div class="row g-3">
                                             <div class="col-12">
                                                 <div class="mb-3">
-                                                    <label class="form-label">SKU</label>
-                                                    <input type="text"
-                                                        class="form-control sku_generate @error('sku') is-invalid  @enderror"
-                                                        placeholder="ASD1202" name="sku">
-                                                    @error('sku')
+                                                    <label class="form-label">Video Link</label>
+                                                    <input type="url"
+                                                        class="form-control video_link @error('video_link') is-invalid  @enderror"
+                                                        placeholder="https://www.youtube.com/" name="video_link">
+                                                    @error('video_link')
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
                                                 </div>
                                             </div>
 
-
-
-                                            <div class="col-12">
-                                                <div class="mb-3">
-                                                    <label class="form-label"> Stock Quantity</label>
-                                                    <input type="number"
-                                                        class="form-control  @error('stock_quantity') is-invalid  @enderror"
-                                                        placeholder="Enter Stock Quantity" name="stock_quantity"
-                                                        min="0" value="0">
-                                                    @error('stock_quantity')
-                                                        <span class="text-danger">{{ $message }}</span>
-                                                    @enderror
-                                                </div>
+                                            <div class="col-md-12">
+                                                <label for="category" class="form-label">Promotion Name</label>
+                                                <select class="form-select promotion" id="promotion" name="promotion_id">
+                                                    <option value="">Select Promotion</option>
+                                                    @foreach ($promotion as $promo)
+                                                        <option value="{{ $promo->id }}">
+                                                            {{ $promo->promotion_name ?? '' }} </option>
+                                                    @endforeach
+                                                </select>
                                             </div>
-
-
-
-
-
-
-
                                             <div class="col-12">
-                                                @php
-                                                    $features = App\Models\Features::get();
-                                                @endphp
-
                                                 <div class="mb-3">
                                                     <label class="form-label col-12">Select Feature</label>
                                                     <div class="col-12">
                                                         <select
                                                             class="multiple-select @error('product_feature') is-invalid  @enderror"
-                                                            id="multiple-select-field" name="product_feature[]"
-                                                            data-placeholder="Choose anything" multiple>
+                                                            name="product_feature[]" data-placeholder="Choose anything"
+                                                            multiple="multiple">
                                                             @foreach ($features as $feature)
                                                                 <option value="{{ $feature->id }}">
-                                                                    {{ $feature->feature_name }}</option>
+                                                                    {{ $feature->feature_name ?? '' }}</option>
                                                             @endforeach
                                                         </select>
                                                         @error('product_feature')
@@ -577,28 +506,40 @@
                                                 </div>
                                             </div>
 
+                                            <div class="col-md-12">
+                                                <div class="row">
+                                                    <label class="form-label col-12">
+                                                        Select Product Tag
+                                                    </label>
+                                                    <div class="col-10">
+                                                        <select class="multiple-select product_tag"
+                                                            data-placeholder="Choose anything" multiple="multiple"
+                                                            name="tag[]">
 
-
-
-                                            @php
-                                                $tag = App\Models\TagName::all();
-                                            @endphp
-
-                                            <div class="mb-3">
-                                                <label class="form-label">Select Product Tag</label>
-                                                <select class="multiple-select" data-placeholder="Choose anything"
-                                                    multiple="multiple" name="tag[]">
-                                                    {{-- <option value="" selected>Select Product Tag</option> --}}
-                                                    @foreach ($tag as $tag)
-                                                        <option value="{{ $tag->id }}">{{ $tag->tagName }}</option>
-                                                    @endforeach
-
-                                                </select>
+                                                        </select>
+                                                        @error('tag')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                    <div class="col-2 p-0">
+                                                        <button type="button" class="btn btn-outline-primary w-100"
+                                                            data-bs-toggle="modal" data-bs-target="#addTagModal">
+                                                            +
+                                                        </button>
+                                                    </div>
+                                                </div>
                                             </div>
 
-
-
-
+                                            <div class="mb-3">
+                                                <label class="form-label">Select Product Concerns</label>
+                                                <select class="multiple-select" data-placeholder="Choose anything"
+                                                    multiple="multiple" name="concerns[]">
+                                                    @foreach ($concerns as $concern)
+                                                        <option value="{{ $concern->id }}">{{ $concern->name ?? '' }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
 
                                             <div class="mb-3 col-12 data" style="display:none">
                                                 <label for="" class="mb-2">Extra Field Add</label>
@@ -607,16 +548,7 @@
                                                 </select>
                                             </div>
                                             <div id="extra_info_field"></div>
-
-
                                         </div>
-
-
-
-
-
-
-
                                         {{--
                                             <div class="col-12">
                                                 <label for="image" class="form-label">Image Gallery </label>
@@ -635,7 +567,6 @@
 
                                                 </div>
                                             </div> --}}
-
                                         <div class="row mb-3 d-flex align-items-center">
                                             <div class="col-md-6">
                                                 <label for="image" class="form-label">Product Thumbnail <span
@@ -663,19 +594,16 @@
                                                 @endforeach
                                             </div>
                                         </div>
-
-
-
                                         <div class="col-12">
                                             <div class="d-grid">
-                                                <a type="" class="btn btn-primary add_product">Add
+                                                <a type="" class="btn btn-primary add_product">Save
                                                     Product</a>
                                             </div>
                                         </div>
 
                                         <div class="col-12 mt-2">
                                             <div class="d-grid">
-                                                <a class="btn btn-danger add_variant">
+                                                <a class="btn btn-success add_variant">
                                                     <i class="fas fa-plus"></i>
                                                     Add Variant</a>
                                             </div>
@@ -683,173 +611,17 @@
                                     </div>
                                 </div>
                             </div>
-                    </div>
-                    </form>
-
-
-
-
-                    <div class="row" style="display: none;" id="variant_form">
-
+                        </form>
                     </div>
 
+                    <div class="row" style="display: none;" id="variant_form"></div>
 
-
-
-
-
-
-                    {{-- style="display: none"
-                        <div class="row variant_section">
-                            <div class="card-title d-flex">
-                                <h5 class="mb-0 text-info">Add Variants</h5>
-                            </div>
-                            <form method="POST" id="productVariant">
-                                @csrf
-                                <div class="col-12">
-                                    <div class="border border-3 p-4 rounded">
-                                        <div class="row g-3 mb-4">
-                                            <div class="col-lg-3 col-md-6">
-                                                <label for="inputPrice" class="form-label">Regular Price</label>
-                                                <input type="number" class="form-control regular_price" id="inputPrice"
-                                                    placeholder="00.00" name="regular_price">
-                                                <input type="hidden" class="product_id" name="product_id">
-                                                <input type="hidden" class="variant_id" name="variant_id"
-                                                    value="">
-                                                <span class="regular_price_error text-danger"></span>
-                                            </div>
-                                            <div class="col-lg-3 col-md-6">
-                                                <label for="inputPrice" class="form-label">Discount Price</label>
-                                                <input type="number" class="form-control discount_amount"
-                                                    id="inputPrice" placeholder="00.00" name="discount_amount">
-                                                <span class="discount_amount_error text-danger"></span>
-                                            </div>
-                                            <div class="col-lg-3 col-md-6">
-                                                <label class="form-label col-12">Discount</label>
-                                                <select class="form-select discount" name="discount">
-                                                    <option value="0">discount</option>
-                                                    <option value="0">0</option>
-                                                    <option value="10">10%</option>
-                                                    <option value="20">20%</option>
-                                                    <option value="30">30%</option>
-                                                    <option value="40">40%</option>
-
-                                                </select>
-                                                <span class="discount_error text-danger"></span>
-                                            </div>
-
-                                            <div class="col-lg-3 col-md-6">
-                                                <label for="inputPrice" class="form-label">Stock Quantity</label>
-                                                <input type="number" class="form-control" id="stock"
-                                                    placeholder="00.00" name="stock_quantity">
-                                                <span class="stock_quantity_error text-danger"></span>
-                                            </div>
-                                            <div class="col-lg-3 col-md-6">
-                                                <label class="form-label col-12">Unit</label>
-                                                <select class="form-select unit" name="unit">
-                                                    <option value="">Unit</option>
-                                                    <option value="kg">KG</option>
-                                                    <option value="liter">Liter</option>
-                                                    <option value="piece">Piece</option>
-                                                    <option value="dozon">Dozon</option>
-                                                    <option value="inch">Inch</option>
-                                                    <option value="gm">GM</option>
-                                                    <option value="ml">ML</option>
-                                                    <option value="packet">Packet</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-lg-3 col-md-6">
-                                                <label class="form-label">Weight</label> <br>
-                                                <input type="text" class="form-control weight" id="inputPrice"
-                                                    placeholder="Weight" name="weight">
-                                            </div>
-                                            <div class="col-lg-3 col-md-6">
-                                                <label class="form-label col-12">Color</label>
-                                                <select class="form-select color" name="color">
-                                                    <option value="">Color</option>
-                                                    <option value="black">Black</option>
-                                                    <option value="white">White</option>
-                                                    <option value="red">Red</option>
-                                                    <option value="blue">Blue</option>
-                                                    <option value="green">Green</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-lg-3 col-md-6">
-                                                <label class="form-label col-12">Size</label>
-                                                <select class="form-select size" name="size">
-                                                    <option value="">Size</option>
-                                                    <option value="M">M</option>
-                                                    <option value="L">L</option>
-                                                    <option value="XL">XL</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-lg-3 col-md-6">
-                                                <label class="form-label">Barcode Generator</label> <br>
-                                                <input type="text" class="form-control barcode" id="inputPrice"
-                                                    placeholder="Barcode" name="barcode">
-                                            </div>
-                                            <div class="col-lg-3 col-md-6">
-                                                <label class="form-label">Manufacture Date</label> <br>
-                                                <input type="date" class="form-control" id="inputPrice"
-                                                    placeholder="" name="manufacture_date">
-                                            </div>
-                                            <div class="col-lg-3 col-md-6">
-                                                <label class="form-label">Expire Date</label> <br>
-                                                <input type="date" class="form-control" id="inputPrice"
-                                                    placeholder="" name="expire_date">
-                                            </div>
-                                            <div class="col-md-3">
-                                                <div class="d-flex justify-content-center align-items-center h-100">
-                                                    <button type="button" class="btn btn-primary add_varient">Add
-                                                        Varients</button>
-                                                    <button type="button" class="btn btn-primary update_varient"
-                                                        style="display: none;">Update
-                                                        Varients</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-
-
-                            <div class="row mt-3">
-                                <div class="col-12">
-                                    <div class="table-responsive">
-                                        <table id="example" class="table table-striped table-bordered"
-                                            style="width:100%">
-                                            <thead>
-                                                <tr>
-                                                    <th>Regular Price</th>
-                                                    <th>Discount</th>
-                                                    <th>Discount Price</th>
-                                                    <th>Stock Quantity</th>
-                                                    <th>Unit</th>
-                                                    <th>Weight</th>
-                                                    <th>color</th>
-                                                    <th>Size</th>
-                                                    <th>Manufacture Date</th>
-                                                    <th>Expire Date</th>
-                                                    <th>Action</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="varient_container">
-
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                        </div> --}}
                 </div>
 
             </div>
 
             <!--end row-->
         </div>
-    </div>
     </div>
     {{-- //////////////////////////////////size modal//////////////////////////////////// --}}
 
@@ -891,6 +663,31 @@
                     </div>
                     <div class="modal-footer">
                         <a class="btn btn-primary addColor">Add Color</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    {{-- //////////////////////////////////////////////// add extra field modal //////////////////////////////////////////////////////// --}}
+
+
+    {{-- //////////////////////////////////////////////////////add color modal////////////////////////// --}}
+    <!-- Modal for Adding Product Tag -->
+    <div class="modal fade" id="addTagModal" tabindex="-1" aria-labelledby="addTagModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form id="addTagform">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add Product Tag</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <label for="new-tag" class="form-label">Tag Name</label>
+                        <input type="text" name="tagName" id="new-tag" class="form-control"
+                            placeholder="Enter Tag Name">
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn btn-primary addTag">Add Tag</a>
                     </div>
                 </div>
             </form>
@@ -965,7 +762,7 @@
             });
 
             // দ্বিতীয় এডিটর
-            $('.ingredients').summernote({
+            $('.ingrediants').summernote({
                 height: 300,
                 callbacks: {
                     onPaste: function(e) {
@@ -990,21 +787,6 @@
                 }
             });
         });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1043,6 +825,27 @@
             });
         });
 
+        ///////////////////////////////////////get size/////////////////////
+        function getSize(targetElement = '.size') {
+            $.ajax({
+                url: "{{ route('admin.products.getSize') }}",
+                type: "GET",
+                success: function(response) {
+                    console.log(response);
+                    if (response.status == 200) {
+                        let size = response.size;
+                        let options = '<option value="">Select Size</option>';
+                        size.forEach(function(s) {
+                            options += '<option value="' + s.size_name + '">' + s.size_name +
+                                '</option>';
+                        });
+                        // Apply only to the given element(s)
+                        $(targetElement).html(options);
+                    }
+                }
+            });
+        }
+
         //////////////////////////////////////// colorSave ////////////////////////
         $(document).on('click', '.addColor', function() {
 
@@ -1077,28 +880,8 @@
                 },
             });
         });
+
         ///////////////////////////////////////get color/////////////////////
-
-        // function getColor(){
-        //     $.ajax({
-        //         url: "{{ route('admin.products.getColor') }}",
-        //         type: "GET",
-        //         success: function(response) {
-        //             console.log(response);
-        //             if(response.status == 200){
-        //                 let color=response.color;
-        //                 console.log(color);
-        //                 let option='';
-        //                 color.forEach(function(color){
-        //                     option += '<option value="'+color.color_name+'">'+color.color_name+'</option>';
-        //                 });
-        //                  $('.color').append(option);
-        //             }
-        //         }
-        //     });
-        // }
-
-
         function getColor(targetElement = '.color') {
             $.ajax({
                 url: "{{ route('admin.products.getColor') }}",
@@ -1119,46 +902,103 @@
             });
         }
 
-        function getSize(targetElement = '.size') {
+
+        //////////////////////////////////////// Product Tag Save ////////////////////////
+        $(document).on('click', '.addTag', function() {
+            let tagName = $('input[name="tagName"]').val();
+            $('input[name="tagName"]').next('.text-danger').remove();
+
+            if (tagName == '') {
+                $('input[name="tagName"]').after('<span class="text-danger">Tag Name is required</span>');
+                return;
+            }
+
+            let formdata = new FormData($('#addTagform')[0]);
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
             $.ajax({
-                url: "{{ route('admin.products.getSize') }}",
+                url: "/tagname/create",
+                type: "POST",
+                data: formdata,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    if (response.status == 200) {
+                        $('#addTagform')[0].reset();
+                        $('#addTagModal').modal('hide');
+                        toastr.success(response.message);
+                        getProductTag();
+                    } else {
+                        toastr.error(response.message || "Something Went Wrong");
+                    }
+                },
+                error: function(xhr) {
+                    let response = xhr.responseJSON;
+                    if (response && response.status == 422) {
+                        // Validation error
+                        $.each(response.errors, function(field, errors) {
+                            toastr.error(errors.join(', '));
+                        });
+                    } else if (response && response.status == 500) {
+                        // Server error
+                        toastr.error(response.message);
+                    } else {
+                        // Other errors
+                        toastr.error("An unexpected error occurred");
+                    }
+                }
+            });
+        });
+
+        //////////////////////////////////////// get Product Tag Function ////////////////////////
+        function getProductTag() {
+            let product_tag = $('.product_tag');
+            $.ajax({
+                url: "/tagname/show",
                 type: "GET",
                 success: function(response) {
                     console.log(response);
                     if (response.status == 200) {
-                        let size = response.size;
-                        let options = '<option value="">Select Size</option>';
-                        size.forEach(function(s) {
-                            options += '<option value="' + s.size_name + '">' + s.size_name +
-                                '</option>';
+                        product_tag.empty();
+                        let tagNames = response.data;
+                        $.each(tagNames, function(key, item) {
+                            product_tag.append(
+                                '<option myid="' + item.id + '" value="' +
+                                item.id + '">' + item.tagName +
+                                '</option>'
+                            );
                         });
-                        // Apply only to the given element(s)
-                        $(targetElement).html(options);
                     }
                 }
             });
         }
+        getProductTag();
 
-        ////////////////////summernote//////////////////////
-        $(document).ready(function() {
-            // $('.product_descriptions').summernote();
-            $('.ingrediants').summernote();
-            $('.usage_instruction').summernote();
-        });
-        ////////////////////////////////////show validation error //////////////////////////////////////
+
+
+        //////////////////// summernote //////////////////////
+
+        //////////////////////////////////// show validation error //////////////////////////////////////
+        const isMultipleCategory = '{{ $setting->isMultipleCategory }}'
+
         function validationError() {
             $(".error-message").remove();
             $("input, select, textarea").removeClass("is-invalid");
-            $(".text-danger").remove(); // ensure old errors are cleared
+            $(".text-danger").remove();
 
             let isValid = true;
             let errors = {};
 
-            let category_id = $('select[name="category_id"]').val()?.trim() || "";
+            // Handle single and multiple select
+            let category_id = isMultipleCategory == 0 ? $('select[name="category_id"]').val() : $(
+                'select[name="category_id[]"]').val();
             let brand_id = $('select[name="brand_id"]').val()?.trim() || "";
             let unit_id = $('select[name="unit_id"]').val()?.trim() || "";
             let size = $('select[name="size"]').val()?.trim() || "";
-            //let color = $('select[name="color"]').val()?.trim() || "";
             let price = $('input[name="price"]').val()?.trim() || "";
             let gender = $('select[name="gender"]').val()?.trim() || "";
             let product_name = $('input[name="product_name"]').val()?.trim() || "";
@@ -1166,6 +1006,20 @@
             let short_description = $('textarea[name="short_description"]').val()?.trim() || "";
             let product_policy = $('textarea[name="product_policy"]').val()?.trim() || "";
             let weight = $('input[name="weight"]').val()?.trim() || "";
+
+            // console.log("Field Values:", {
+            //     category_id,
+            //     brand_id,
+            //     unit_id,
+            //     size,
+            //     price,
+            //     gender,
+            //     product_name,
+            //     galleryImages: galleryImages.length,
+            //     short_description,
+            //     product_policy,
+            //     weight
+            // });
 
             // Validate short description and product policy length
             if (short_description.length > 220) {
@@ -1179,16 +1033,42 @@
             }
 
             // Validate required fields
-            if (category_id === "") errors.category_id = "Category is required!";
-            if (weight === "") errors.weight = "weight is required!";
-            if (brand_id === "") errors.brand_id = "Brand is required!";
-            if (unit_id === "") errors.unit_id = "Unit is required!";
-            if (size === "") errors.size = "Size is required!";
-            // if (color === "") errors.color = "Color is required!";
-            if (price === "") errors.price = "Price is required!";
-            if (gender === "") errors.gender = "Gender is required!";
-            if (product_name === "") errors.product_name = "Product Name is required!";
-            if (galleryImages.length === 0) errors.galleryimages = "Gallery Images are required!";
+            if (!category_id || (Array.isArray(category_id) && category_id.length === 0)) {
+                errors.category_id = "Category id is Required";
+                isValid = false;
+            }
+            if (weight === "") {
+                errors.weight = "Weight is required!";
+                isValid = false;
+            }
+            if (brand_id === "") {
+                errors.brand_id = "Brand is required!";
+                isValid = false;
+            }
+            if (unit_id === "") {
+                errors.unit_id = "Unit is required!";
+                isValid = false;
+            }
+            if (size === "") {
+                errors.size = "Size is required!";
+                isValid = false;
+            }
+            if (price === "") {
+                errors.price = "Price is required!";
+                isValid = false;
+            }
+            if (gender === "") {
+                errors.gender = "Gender is required!";
+                isValid = false;
+            }
+            if (product_name === "") {
+                errors.product_name = "Product Name is required!";
+                isValid = false;
+            }
+            if (galleryImages.length === 0) {
+                errors.galleryimages = "Gallery Images are required!";
+                isValid = false;
+            }
 
             // Validate gallery images
             let allowedGalleryTypes = ["image/jpeg", "image/png", "image/jpg", "image/gif", "image/webp"];
@@ -1199,7 +1079,7 @@
                 let galleryFileSize = galleryFile.size / 1024;
 
                 if (!allowedGalleryTypes.includes(galleryFile.type)) {
-                    errors.galleryimages = "Only JPG, JPEG, PNG, GIF and WEBP files are allowed!";
+                    errors.galleryimages = "Only JPG, JPEG, PNG, GIF, and WEBP files are allowed!";
                     isValid = false;
                     break;
                 }
@@ -1210,30 +1090,79 @@
                 }
             }
 
+            // Log errors for debugging
+            // console.log("Validation Errors:", errors);
+
             // Show errors
             if (!$.isEmptyObject(errors)) {
                 isValid = false;
 
-                if (errors.category_id) $("select[name='category_id']").after(
-                    `<span class="text-danger">${errors.category_id}</span>`);
-                if (errors.brand_id) $("select[name='brand_id']").after(
-                    `<span class="text-danger">${errors.brand_id}</span>`);
-                if (errors.unit_id) $("select[name='unit_id']").after(`<span class="text-danger">${errors.unit_id}</span>`);
-
-                if (errors.weight) $("input[name='weight']").after(`<span class="text-danger">${errors.weight}</span>`);
-
-                if (errors.size) $("select[name='size']").after(`<span class="text-danger">${errors.size}</span>`);
-                // if (errors.color) $("select[name='color']").after(`<span class="text-danger">${errors.color}</span>`);
-                if (errors.price) $("input[name='price']").after(`<span class="text-danger">${errors.price}</span>`);
-                if (errors.gender) $("select[name='gender']").after(`<span class="text-danger">${errors.gender}</span>`);
-                if (errors.product_name) $("input[name='product_name']").after(
-                    `<span class="text-danger">${errors.product_name}</span>`);
-                if (errors.galleryimages) $("input[name='product_main_image[]']").after(
-                    `<span class="text-danger">${errors.galleryimages}</span>`);
-                if (errors.short_description) $("textarea[name='short_description']").after(
-                    `<span class="text-danger">${errors.short_description}</span>`);
-                if (errors.product_policy) $("textarea[name='product_policy']").after(
-                    `<span class="text-danger">${errors.product_policy}</span>`);
+                if (errors.category_id) {
+                    $("select[name='category_id']").after(
+                        `<span class="text-danger error-message">${errors.category_id}</span>`
+                    );
+                    toastr.error(errors.category_id);
+                }
+                if (errors.weight) {
+                    $("input[name='weight']").after(
+                        `<span class="text-danger error-message">${errors.weight}</span>`
+                    );
+                    toastr.error(errors.weight);
+                }
+                if (errors.brand_id) {
+                    $("select[name='brand_id']").after(
+                        `<span class="text-danger error-message">${errors.brand_id}</span>`
+                    );
+                    toastr.error(errors.brand_id);
+                }
+                if (errors.unit_id) {
+                    $("select[name='unit_id']").after(
+                        `<span class="text-danger error-message">${errors.unit_id}</span>`
+                    );
+                    toastr.error(errors.unit_id);
+                }
+                if (errors.size) {
+                    $("select[name='size']").after(
+                        `<span class="text-danger error-message">${errors.size}</span>`
+                    );
+                    toastr.error(errors.size);
+                }
+                if (errors.price) {
+                    $("input[name='price']").after(
+                        `<span class="text-danger error-message">${errors.price}</span>`
+                    );
+                    toastr.error(errors.price);
+                }
+                if (errors.gender) {
+                    $("select[name='gender']").after(
+                        `<span class="text-danger error-message">${errors.gender}</span>`
+                    );
+                    toastr.error(errors.gender);
+                }
+                if (errors.product_name) {
+                    $("input[name='product_name']").after(
+                        `<span class="text-danger error-message">${errors.product_name}</span>`
+                    );
+                    toastr.error(errors.product_name);
+                }
+                if (errors.galleryimages) {
+                    $("input[name='product_main_image[]']").after(
+                        `<span class="text-danger error-message">${errors.galleryimages}</span>`
+                    );
+                    toastr.error(errors.galleryimages);
+                }
+                if (errors.short_description) {
+                    $("textarea[name='short_description']").after(
+                        `<span class="text-danger error-message">${errors.short_description}</span>`
+                    );
+                    toastr.error(errors.short_description);
+                }
+                if (errors.product_policy) {
+                    $("textarea[name='product_policy']").after(
+                        `<span class="text-danger error-message">${errors.product_policy}</span>`
+                    );
+                    toastr.error(errors.product_policy);
+                }
             }
 
             return isValid;
@@ -1538,14 +1467,6 @@
                             </div>
                         `);
                             }
-
-
-
-
-
-
-
-
                         }
                     },
 
@@ -1560,13 +1481,7 @@
             $(".extra_field").val("").trigger("change");
         });
 
-
-
         /////////////////extra field show end////////////////////
-
-
-
-
         document.getElementById('image').addEventListener('change', function() {
             let count = this.files.length;
             let message = count > 0 ? count + " image(s) selected" : "No images selected";
@@ -1743,17 +1658,15 @@
                 beforeSend: function() {
                     $('#loader').show(); // Show loader
                 },
-
                 success: function(res) {
+                    console.log(res);
                     $('#loader').hide();
                     if (res.status == 200) {
                         toastr.success(res.message);
                     }
-
-
-
                 },
                 error: function(xhr) {
+                    console.log(xhr);
                     $('#loader').hide();
                     if (xhr.status === 422) {
                         let errors = xhr.responseJSON.errors;
@@ -1857,168 +1770,8 @@
             });
         });
 
-
-
-
         // Call it
         getColor();
-
         getSize();
-
-
-
-
-
-
-
-
-
-        // !.. add product ajax Crud
-        // const add_product = document.querySelector('.add_product');
-        // add_product.addEventListener('click', function(e) {
-        //     e.preventDefault();
-        //     document
-        //         .querySelector(".pageLoader")
-        //         .style.setProperty("display", "flex", "important");
-
-        //     let allData = new FormData(jQuery("#productForm")[0]);
-        //     $.ajax({
-        //         url: "/product/store",
-        //         type: "POST",
-        //         data: allData,
-        //         contentType: false,
-        //         processData: false,
-        //         success: function(res) {
-        //             if (res.status == 200) {
-        //                 $('.variant_section').show();
-        //                 $('.add_product').addClass('disabled');
-        //                 $('.product_id').val(res.productId);
-        //                 toastr.success(res.message);
-        //                 document
-        //                     .querySelector(".pageLoader")
-        //                     .style.setProperty("display", "none", "important");
-        //             } else {
-        //                 $('.category_error').text(res.error.category_id);
-        //                 $('.subcategory_error').text(res.error.subcategory_id);
-        //                 $('.brand_error').text(res.error.brand_id);
-        //                 $('.feature_error').text(res.error.product_feature);
-        //                 $('.product_name_error').text(res.error.product_name);
-        //                 $('.short_desc').text(res.error.short_desc);
-        //                 $('.long_desc').text(res.error.long_desc);
-        //                 $('.product_image').text(res.error.product_image);
-        //                 $('.sku_error').text(res.error.sku);
-        //                 $('.shipping_error').text(res.error.shipping);
-        //                 // $('.tag_error').text(res.error.tags);
-        //                 toastr.warning(res.error);
-        //                 document
-        //                     .querySelector(".pageLoader")
-        //                     .style.setProperty("display", "none", "important");
-        //             }
-        //         },
-        //     });
-        // });
-
-
-
-        // // !.. add variant ajax Crud
-        // const add_varient = document.querySelector('.add_varient');
-        // add_varient.addEventListener('click', function(e) {
-        //     e.preventDefault();
-        //     document
-        //         .querySelector(".pageLoader")
-        //         .style.setProperty("display", "flex", "important");
-        //     let regular_price = parseFloat(document.querySelector('.regular_price').value);
-        //     let discount = parseFloat(document.querySelector('.discount').value);
-        //     let discount_amount = parseFloat(document.querySelector('.discount_amount')
-        //         .value);
-        //     let stock = parseFloat(document.querySelector('#stock').value);
-
-        //     let varientData = new FormData(jQuery("#productVariant")[0]);
-        //     if (regular_price > 0 && discount >= 0 && discount_amount > 0 && stock > 0) {
-        //         $.ajax({
-        //             url: '/product/variant/store',
-        //             type: "POST",
-        //             data: varientData,
-        //             contentType: false,
-        //             processData: false,
-        //             success: function(response) {
-        //                 if (response.status == 200) {
-        //                     toastr.success(response.message);
-        //                     document.querySelector('.discount_amount')
-        //                         .value = '';
-        //                     document.querySelector('.regular_price').value = '';
-        //                     document.querySelector('.discount').value = '';
-        //                     document.querySelector('#stock').value = '';
-        //                     document.querySelector('.unit').value = '';
-        //                     document.querySelector('.weight').value = '';
-        //                     document.querySelector('.color').value = '';
-        //                     document.querySelector('.size').value = '';
-        //                     show();
-        //                     document
-        //                         .querySelector(".pageLoader")
-        //                         .style.setProperty("display", "none", "important");
-        //                 } else {
-        //                     toastr.error('Something went wrong');
-        //                     document
-        //                         .querySelector(".pageLoader")
-        //                         .style.setProperty("display", "none", "important");
-        //                 }
-        //             }
-        //         })
-
-        //         document
-        //             .querySelector(".pageLoader")
-        //             .style.setProperty("display", "none", "important");
-        //     } else {
-        //         toastr.error('please provide valid input');
-        //         document
-        //             .querySelector(".pageLoader")
-        //             .style.setProperty("display", "none", "important");
-        //     }
-
-        // })
-
-
-        // // show variantData on Table
-        // function show() {
-        //     const productId = document.querySelector('.product_id').value;
-        //     $.ajax({
-        //         url: '/product/variant/show/' + productId,
-        //         type: "GET",
-        //         dataType: 'JSON',
-        //         success: function(res) {
-        //             if (res.status == 200) {
-        //                 // console.log(res);
-        //                 let varient_container = document.querySelector('.varient_container');
-        //                 varient_container.innerHTML = "";
-        //                 const allData = res.variantData;
-        //                 allData.forEach(function(data) {
-        //                     const tr = document.createElement('tr');
-        //                     tr.innerHTML += `
-    //                         <td>${data.regular_price}</td>
-    //                         <td>${data.discount}</td>
-    //                         <td>${data.discount_amount}</td>
-    //                         <td>${data.stock_quantity}</td>
-    //                         <td>${data.unit}</td>
-    //                         <td>${data.weight}</td>
-    //                         <td>${data.color}</td>
-    //                         <td>${data.size}</td>
-    //                         <td>${data.manufacture_date}</td>
-    //                         <td>${data.expire_date}</td>
-    //                         <td>
-    //                         <button class="btn btn-sm btn-info edit_variant me-2" value="${data.id}">
-    //                             Edit
-    //                         </button>
-    //                         <button value="${data.id}" class="btn-sm btn-danger btn delete_variant">Delete</button>
-    //                                     </td>
-    //                             `;
-        //                     varient_container.appendChild(tr);
-        //                 })
-        //             } else {
-        //                 toastr.warning(res.error);
-        //             }
-        //         }
-        //     })
-        // }
     </script>
 @endsection

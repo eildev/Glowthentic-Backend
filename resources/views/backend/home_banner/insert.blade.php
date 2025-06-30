@@ -3,8 +3,6 @@
     <div class="page-content">
         <div class="row">
             <div class="col-md-8 offset-md-2">
-
-
                 <p>{{ session('test') }}</p>
                 <div class="card border-top border-0 border-3 border-info">
 
@@ -78,7 +76,7 @@
                                                     data-preview="smallImagePreview">
                                                 <div class="my-1">
                                                     <i>
-                                                        <b>Note:</b> Please provide 654 X 713 size
+                                                        <b>Note:</b> Please provide 654 X 465 size
                                                         image
                                                     </i>
                                                 </div>
@@ -97,7 +95,7 @@
                                                     data-preview="mediumImagePreview">
                                                 <div class="my-1">
                                                     <i>
-                                                        <b>Note:</b> Please provide 1024 X 713 size
+                                                        <b>Note:</b> Please provide 1024 X 465 size
                                                         image
                                                     </i>
                                                 </div>
@@ -116,7 +114,7 @@
                                                     data-preview="largeImagePreview">
                                                 <div class="my-1">
                                                     <i>
-                                                        <b>Note:</b> Please provide 1440 X 713 size
+                                                        <b>Note:</b> Please provide 1440 X 465 size
                                                         image
                                                     </i>
                                                 </div>
@@ -135,7 +133,7 @@
                                                     name="extra_large_image" data-preview="extraLargeImagePreview">
                                                 <div class="my-1">
                                                     <i>
-                                                        <b>Note:</b> Please provide 1920 X 713 size
+                                                        <b>Note:</b> Please provide 1920 X 465 size
                                                         image
                                                     </i>
                                                 </div>
@@ -218,11 +216,11 @@
                     } else {
                         let fileSize = file.size / 1024; // Size in KB
                         let fileType = file.type;
-                        let allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+                        let allowedTypes = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
                         let maxSizeKB = 5120; // 5MB
 
                         if (!allowedTypes.includes(fileType)) {
-                            errors[fieldName] = "Only JPG, JPEG, and PNG files are allowed!";
+                            errors[fieldName] = "Only JPG, JPEG, Webp, and PNG files are allowed!";
                         } else if (fileSize > maxSizeKB) {
                             errors[fieldName] = "Image size must be less than 5MB!";
                         }

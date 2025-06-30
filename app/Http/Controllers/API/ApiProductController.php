@@ -8,40 +8,114 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Brand;
+use App\Models\Combo;
 use App\Models\TagName;
 use App\Models\Product;
 
 class ApiProductController extends Controller
 {
+    // public function search(Request $request)
+    // {
+    //     try {
+    //         $searchTerm = $request->input('q');
+
+    //         // Fetch up to 10 categories matching the search term
+    //         $categories = Category::where('categoryName', 'like', "%{$searchTerm}%")
+    //             ->take(10) // Limit to 10 categories
+    //             ->get(['id', 'categoryName']);
+    //         $categoryIds = $categories->pluck('id');
+
+    //         // Fetch up to 10 brands matching the search term
+    //         $brands = Brand::where('BrandName', 'like', "%{$searchTerm}%")
+    //             ->take(10) // Limit to 10 brands
+    //             ->get(['id', 'BrandName']);
+    //         $brandIds = $brands->pluck('id');
+
+    //         // Fetch up to 10 tags matching the search term
+    //         $tags = TagName::where('tagName', 'like', "%{$searchTerm}%")
+    //             ->take(10) // Limit to 10 tags
+    //             ->get(['id', 'tagName']);
+    //         $tagIds = $tags->pluck('id');
+
+    //         // Fetch up to 10 products matching the search term or related filters
+    //         $products = Product::with([
+    //             'variants.variantImage',
+    //             'variants.product',
+    //             'variants.productStock',
+    //             // 'variants.promotionproduct',
+    //             'promotionproduct.coupon',
+    //             'variants.productVariantPromotion.coupon',
+    //             'variants.comboProduct',
+    //             'product_tags.tag',
+    //             'promotionproduct.coupon',
+    //             'productStock',
+    //             'productdetails',
+    //             'category.productPromotions.coupon',
+    //             'variantImage'
+    //         ])
+    //             ->where('product_name', 'like', "%{$searchTerm}%")
+    //             ->orWhereIn('category_id', $categoryIds)
+    //             ->orWhereIn('brand_id', $brandIds)
+    //             ->orWhereHas('product_tags', function ($query) use ($tagIds) {
+    //                 $query->whereIn('product_tags.tag_id', $tagIds);
+    //             })
+    //             ->take(10) // Limit to 10 products
+    //             ->get();
+
+    //         // Return the response with limited results
+    //         return response()->json([
+    //             'products' => $products,
+    //             'searchTerm' => $searchTerm,
+    //             'categories' => $categories,
+    //             'brands' => $brands,
+    //             'message' => count($products) ? 'Search Results Found' : 'No Results Found',
+    //         ]);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'message' => 'An error occurred while processing your request.',
+    //             'error' => $e->getMessage(),
+    //         ], 500);
+    //     }
+    // }
     public function search(Request $request)
     {
         try {
             $searchTerm = $request->input('q');
 
+            // Validate search term
+            if (empty($searchTerm)) {
+                return response()->json([
+                    'message' => 'Search term is required.',
+                    'products' => [],
+                    'searchTerm' => $searchTerm,
+                    'categories' => [],
+                    'brands' => [],
+                ], 400);
+            }
+
             // Fetch up to 10 categories matching the search term
             $categories = Category::where('categoryName', 'like', "%{$searchTerm}%")
-                ->take(10) // Limit to 10 categories
+                ->take(10)
                 ->get(['id', 'categoryName']);
             $categoryIds = $categories->pluck('id');
 
             // Fetch up to 10 brands matching the search term
             $brands = Brand::where('BrandName', 'like', "%{$searchTerm}%")
-                ->take(10) // Limit to 10 brands
+                ->take(10)
                 ->get(['id', 'BrandName']);
             $brandIds = $brands->pluck('id');
 
             // Fetch up to 10 tags matching the search term
             $tags = TagName::where('tagName', 'like', "%{$searchTerm}%")
-                ->take(10) // Limit to 10 tags
+                ->take(10)
                 ->get(['id', 'tagName']);
             $tagIds = $tags->pluck('id');
 
-            // Fetch up to 10 products matching the search term or related filters
+            // Fetch up to 10 products with dynamic sorting
             $products = Product::with([
                 'variants.variantImage',
                 'variants.product',
                 'variants.productStock',
-                // 'variants.promotionproduct',
                 'promotionproduct.coupon',
                 'variants.productVariantPromotion.coupon',
                 'variants.comboProduct',
@@ -52,13 +126,16 @@ class ApiProductController extends Controller
                 'category.productPromotions.coupon',
                 'variantImage'
             ])
-                ->where('product_name', 'like', "%{$searchTerm}%")
-                ->orWhereIn('category_id', $categoryIds)
-                ->orWhereIn('brand_id', $brandIds)
-                ->orWhereHas('product_tags', function ($query) use ($tagIds) {
-                    $query->whereIn('product_tags.tag_id', $tagIds);
+                ->where(function ($query) use ($searchTerm, $categoryIds, $brandIds, $tagIds) {
+                    $query->where('product_name', 'like', "%{$searchTerm}%")
+                        ->orWhereIn('category_id', $categoryIds)
+                        ->orWhereIn('brand_id', $brandIds)
+                        ->orWhereHas('product_tags', function ($subQuery) use ($tagIds) {
+                            $subQuery->whereIn('product_tags.tag_id', $tagIds);
+                        });
                 })
-                ->take(10) // Limit to 10 products
+                ->orderByRaw("CASE WHEN product_name LIKE ? THEN 0 ELSE 1 END, product_name ASC", ["{$searchTerm}%"])
+                ->take(10)
                 ->get();
 
             // Return the response with limited results
@@ -67,7 +144,7 @@ class ApiProductController extends Controller
                 'searchTerm' => $searchTerm,
                 'categories' => $categories,
                 'brands' => $brands,
-                'message' => count($products) ? 'Search Results Found' : 'No Results Found',
+                'message' => $products->isNotEmpty() ? 'Search Results Found' : 'No Results Found',
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -164,6 +241,7 @@ class ApiProductController extends Controller
                 'subcategory',
                 'brand',
             )->where('status', 1)->get();
+
             // dd($products);
             return response()->json([
                 'status' => '200',
@@ -178,6 +256,70 @@ class ApiProductController extends Controller
             ]);
         }
     }
+    // public function viewAll()
+    // {
+    //     try {
+    //         // Fetch products with related data
+    //         $products = Product::orderByDesc('id')->with([
+    //             'variants.variantImage',
+    //             'variants.product',
+    //             'variants.productStock',
+    //             'variants.productVariantPromotion.coupon',
+    //             'promotionproduct.coupon',
+    //             'variants.comboProduct',
+    //             'product_tags',
+    //             'productStock',
+    //             'productdetails',
+    //             'variantImage',
+    //             'category.productPromotions.coupon',
+    //             'subcategory',
+    //             'brand',
+    //         ])->where('status', 1)->get();
+
+    //         // Fetch combos with related data
+    //         $combos = Combo::with([
+    //             'comboproduct.product',
+    //             'comboproduct.product.subcategory',
+    //             'comboproduct.product.brand',
+    //             'comboproduct.product.category.productPromotions.coupon',
+    //             'comboproduct.product.productdetails',
+    //             'comboproduct.product.productStock',
+    //             'comboproduct.product.product_tags',
+    //             'comboproduct.product.promotionproduct.coupon',
+    //             'comboproduct.variant',
+    //             'comboproduct.variant.variantImage',
+    //             'comboproduct.variant.productStock',
+    //             'comboimage',
+    //         ])->where('status', 'active')->get();
+
+    //         // Transform products to include a 'type' field
+    //         $products = $products->map(function ($product) {
+    //             return array_merge($product->toArray(), ['type' => 'product']);
+    //         });
+
+    //         // Transform combos to include a 'type' field
+    //         $combos = $combos->map(function ($combo) {
+    //             return array_merge($combo->toArray(), ['type' => 'combo']);
+    //         });
+
+    //         // Merge the collections into a single array
+    //         $combinedData = $products->concat($combos)->values();
+
+    //         return response()->json([
+    //             'status' => '200',
+    //             'message' => 'Product and Combo List',
+    //             'data' => $combinedData,
+    //         ]);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'status' => '500',
+    //             'message' => 'Data Retrieval Failed',
+    //             'error' => $e->getMessage(),
+    //         ]);
+    //     }
+    // }
+
+
     public function show($slug)
     {
         try {

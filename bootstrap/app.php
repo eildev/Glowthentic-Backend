@@ -19,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Postman-এর জন্য stateless টোকেন সাপোর্ট
         $middleware->alias([
             'auth:sanctum' => \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+           
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

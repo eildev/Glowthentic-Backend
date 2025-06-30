@@ -34,11 +34,12 @@
             background-color: #0F1228;
             color: #ffffff;
             text-align: center;
-            padding: 20px;
+            padding: 5px;
         }
 
         .header img {
             max-width: 150px;
+            object-fit: cover;
         }
 
         .content {
@@ -254,6 +255,10 @@
             border-radius: 10px;
         }
 
+        .track-order a {
+            color: #ffffff;
+        }
+
         .button {
             display: inline-block;
             padding: 10px 20px;
@@ -306,7 +311,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <img src="{{ asset('/backend/assets/images/glowthentic-logo.svg') }}" alt="EcoStride Logo">
+            <img src="{{ asset('/backend/assets/images/glowthentic.png') }}" alt="Glowthentic Logo">
         </div>
         <div class="content">
             <div class="badge">
@@ -491,7 +496,8 @@
             <p>Your order has been confirmed. Click the button below to track your order and stay updated on your
                 shipment. Thank you for shopping with us!
                 - Glothentic Team</p>
-            <a href="https://glowthentic.store/track-order" class="button">Track Order</a>
+            <a href="https://glowthentic.store/order-progress?orderId={{ $order->invoice_number }}"
+                class="button">Track Order</a>
         </div>
         <div class="footer">
             <p class="footer-top"><a href="https://glowthentic.store/contact-us">Help Center</a> . <a

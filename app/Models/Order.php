@@ -54,7 +54,9 @@ class Order extends Model
         } elseif ($this->session_id) {
             return $this->belongsTo(UserDetails::class, 'session_id', 'session_id');
         }
-
+       else{
+         return $this->belongsTo(UserDetails::class, 'customer_id', 'customer_id');
+       }
         return null; // No user details if neither user_id nor session_id exists
     }
 }

@@ -54,7 +54,7 @@
                                             <td>{{ $serialNumber++ }}</td>
                                             <td>{{ $formattedDate }}</td>
                                             <td>{{ $order->invoice_number ?? 0 }}</td>
-                                            <td>{{ $customers->name ?? '' }}</td>
+                                            <td>{{ $customers->full_name ?? '' }}</td>
                                             <td>
                                                 {{ $customers->phone_number ? (substr($customers->phone_number, 0, 1) === '0' ? $customers->phone_number : '0' . $customers->phone_number) : '0' }}
                                             </td>

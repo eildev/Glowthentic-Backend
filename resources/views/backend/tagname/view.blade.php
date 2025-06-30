@@ -19,6 +19,7 @@
                                 <tr>
                                     <th>SI</th>
                                     <th>Tagname</th>
+                                    <th>Status</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -31,6 +32,18 @@
                                         <tr>
                                             <td>{{ $serialNumber++ }}</td>
                                             <td>{{ $tagname->tagName }}</td>
+                                            <td>
+                                                <form action="{{ route('tagname.status', $tagname->id) }}" method="POST">
+                                                    @csrf
+                                                    @if ($tagname->status == 'inactive')
+                                                        <button class="btn btn-sm btn-danger status_inactive"
+                                                            value="{{ $tagname->id }}">Inactive</button>
+                                                    @else
+                                                        <button class="btn btn-sm btn-success status_active"
+                                                            value="{{ $tagname->id }}">Active</button>
+                                                    @endif
+                                                </form>
+                                            </td>
                                             <td>
                                                 <a href="{{ route('tagname.edit', $tagname->id) }}"
                                                     class="btn btn-info">Edit</a>
