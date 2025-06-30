@@ -95,4 +95,17 @@ class Product extends Model
     {
         return $this->hasMany(ProductFeature::class);
     }
+
+
+    public function productCategory()
+    {
+        return $this->hasMany(ProductCategory::class, 'product_id', 'id')
+            ->where('type', 'category');
+    }
+
+    public function productSubCategories()
+    {
+        return $this->hasMany(ProductCategory::class, 'product_id', 'id')
+            ->where('type', 'subcategory');
+    }
 }

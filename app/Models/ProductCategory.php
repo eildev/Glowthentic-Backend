@@ -17,6 +17,13 @@ class ProductCategory extends Model
     }
     public function category()
     {
-        return $this->belongsTo(Category::class, 'category_id', 'id');
+        return $this->belongsTo(Category::class, 'category_id', 'id')
+            ->where('parent_id', null);
+    }
+
+    public function subCategory()
+    {
+        return $this->belongsTo(Category::class, 'category_id', 'id')
+            ->whereNotNull('parent_id');
     }
 }

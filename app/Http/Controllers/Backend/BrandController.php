@@ -55,7 +55,7 @@ class BrandController extends Controller
      */
     public function show()
     {
-        $Brands = Brand::all();
+        $Brands = Brand::get();
         // @dd($Brands->all());
         return view('backend.brands.view', compact('Brands'));
     }
@@ -85,7 +85,7 @@ class BrandController extends Controller
             $brand = Brand::findOrFail($id);
 
             if (file_exists($brand->image)) {
-            unlink($brand->image);
+                unlink($brand->image);
             }
             $brand->BrandName = $request->BrandName;
             $brand->slug = Str::slug($request->BrandName);
@@ -112,6 +112,22 @@ class BrandController extends Controller
         $Brands = Brand::findOrFail($id);
         $Brands->delete();
         return back()->with('success', 'Brands Successfully deleted');
+    }
+
+
+    public function status($id)
+    {
+        $brand = Brand::findOrFail($id);
+        if ($brand->status === 0) {
+            $newStatus = 1;
+        } else {
+            $newStatus = 0;
+        }
+
+        $brand->update([
+            'status' => $newStatus
+        ]);
+        return redirect()->back()->with('message', 'status changed successfully');
     }
 
     //Rest Api Start

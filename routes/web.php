@@ -120,6 +120,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/brand/edit/{id}', 'edit')->name('brand.edit');
         Route::post('/brand/update/{id}', 'update')->name('brand.update');
         Route::get('/brand/delete/{id}', 'destroy')->name('brand.delete');
+        Route::post('/brand/status/{id}', 'status')->name('brand.status');
     });
     //All Routes for brand End
 

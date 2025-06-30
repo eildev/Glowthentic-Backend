@@ -82,11 +82,20 @@
                                                         class="img-fluid" alt="product-image" style="height:80px;">
                                                 @endif
                                             </td>
-                                            <td>{{ $product->category->categoryName ?? '' }}</td>
-                                            @php
-                                                $subcategory = App\Models\Category::find($product->subcategory_id);
-                                            @endphp
-                                            <td>{{ $subcategory->categoryName ?? '' }}</td>
+                                            <td>
+                                                <ul>
+                                                    @foreach ($product->productCategory as $category)
+                                                        <li> {{ $category->category->categoryName ?? '' }} </li>
+                                                    @endforeach
+                                                </ul>
+                                            </td>
+                                            <td>
+                                                <ul>
+                                                    @foreach ($product->productSubCategories as $subcategory)
+                                                        <li> {{ $subcategory->subcategory->categoryName ?? '' }}</li>
+                                                    @endforeach
+                                                </ul>
+                                            </td>
                                             <td>{{ $product->brand->BrandName ?? '' }}</td>
                                             <td>{{ $product->promotionproduct->first()?->coupon?->promotion_name ?? 'N/A' }}
                                             </td>

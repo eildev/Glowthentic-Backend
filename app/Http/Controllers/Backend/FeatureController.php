@@ -26,24 +26,24 @@ class FeatureController extends Controller
             $destinationPath = public_path('uploads/feature/');
             $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
             $image = 'uploads/feature/' . $imageName;
-            $Brand = new Features;
-            $Brand->feature_name = $request->feature_name;
-            $Brand->slug = Str::slug($request->feature_name);
-            $Brand->image = $image;
-            $Brand->save();
+            $feature = new Features;
+            $feature->feature_name = $request->feature_name;
+            $feature->slug = Str::slug($request->feature_name);
+            $feature->image = $image;
+            $feature->save();
             return back()->with('success', 'Feature Successfully Added');
         }
     }
 
     public function view()
     {
-        $Brands = Features::all();
-        return view('backend.features.view', compact('Brands'));
+        $features = Features::all();
+        return view('backend.features.view', compact('features'));
     }
 
     public function edit($id)
     {
-        $brand = Features::findOrFail($id);
+        $feature = Features::findOrFail($id);
         return view('backend.features.edit', compact('brand'));
     }
 
@@ -58,33 +58,48 @@ class FeatureController extends Controller
             $destinationPath = public_path('uploads/feature/');
             $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
             $image = 'uploads/feature/' . $imageName;
-            $brand = Features::findOrFail($id);
-            $oldImagePath = public_path($brand->image);
+            $feature = Features::findOrFail($id);
+            $oldImagePath = public_path($feature->image);
             if (file_exists($oldImagePath)) {
                 unlink($oldImagePath);
             }
-            $brand->feature_name = $request->feature_name;
-            $brand->slug = Str::slug($request->feature_name);
-            $brand->image = $image;
-            $brand->update();
+            $feature->feature_name = $request->feature_name;
+            $feature->slug = Str::slug($request->feature_name);
+            $feature->image = $image;
+            $feature->update();
             return redirect()->route('feature.view')->with('success', 'Feature Successfully updated');
         } else {
-            $brand = Features::findOrFail($id);
-            $brand->feature_name = $request->feature_name;
-            $brand->slug = Str::slug($request->feature_name);
-            $brand->update();
+            $feature = Features::findOrFail($id);
+            $feature->feature_name = $request->feature_name;
+            $feature->slug = Str::slug($request->feature_name);
+            $feature->update();
             return redirect()->route('feature.view')->with('success', 'Feature Successfully updated without image');
         }
     }
 
     public function delete($id)
     {
-        $Brands = Features::findOrFail($id);
-        $oldImagePath = public_path($Brands->image);
+        $feature = Features::findOrFail($id);
+        $oldImagePath = public_path($feature->image);
         if (file_exists($oldImagePath)) {
             unlink($oldImagePath);
         }
-        $Brands->delete();
+        $feature->delete();
         return back()->with('success', 'Feature Successfully deleted');
+    }
+
+    public function statusUpdate($id)
+    {
+        $feature = Features::findOrFail($id);
+        if ($feature->status === 0) {
+            $newStatus = 1;
+        } else {
+            $newStatus = 0;
+        }
+
+        $feature->update([
+            'status' => $newStatus
+        ]);
+        return redirect()->back()->with('message', 'status changed successfully');
     }
 }

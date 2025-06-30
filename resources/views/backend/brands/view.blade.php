@@ -31,16 +31,23 @@
                                     @foreach ($Brands as $Brand)
                                         <tr>
                                             <td>{{ $serialNumber++ }}</td>
-                                            <td>{{ $Brand->BrandName }}</td>
+                                            <td>{{ $Brand->BrandName ?? '' }}</td>
                                             <td>
-                                                <img src="{{ asset('/uploads/brands/' . $Brand->image) }}"
+                                                <img src="/{{ $Brand->image ?? 'uploads/productempty.jpg' }}"
                                                     style="height: 80px; object-fit: contain;" class="img-fluid"
                                                     alt="">
                                             </td>
                                             <td>
-                                                <a href="#" class="btn btn-sm btn-success brand_active">Active</a>
-                                                <a href="#" class="btn btn-sm btn-success brand_inactive"
-                                                    style="display: none;">Inactive</a>
+                                                <form action="{{ route('brand.status', $Brand->id) }}" method="POST">
+                                                    @csrf
+                                                    @if ($Brand->status == 0)
+                                                        <button class="btn btn-sm btn-danger status_inactive"
+                                                            value="{{ $Brand->id }}">Inactive</button>
+                                                    @else
+                                                        <button class="btn btn-sm btn-success status_active"
+                                                            value="{{ $Brand->id }}">Active</button>
+                                                    @endif
+                                                </form>
                                             </td>
                                             <td>
                                                 <a href="{{ route('brand.edit', $Brand->id) }}"

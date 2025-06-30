@@ -68,17 +68,18 @@
 
 
                                         <dt class="col-sm-6">Category</dt>
-                                        <dd class="col-sm-6">{{ $product->category->categoryName ?? '' }}</dd>
+                                        <dd class="col-sm-6">
+                                            @foreach ($product->productCategory as $category)
+                                                {{ $category->category->categoryName ?? '' }},
+                                            @endforeach
+                                        </dd>
 
                                         <dt class="col-sm-6">Subcategory</dt>
-                                        @php
-                                            $subcategory = App\Models\Category::where(
-                                                'id',
-                                                $product->subcategory_id,
-                                            )->first();
-                                        @endphp
-                                        {{-- @dd($product->subcategory_id) --}}
-                                        <dd class="col-sm-6">{{ $subcategory->categoryName ?? '' }}</dd>
+                                        <dd class="col-sm-6">
+                                            @foreach ($product->productSubCategories as $subcategory)
+                                                {{ $subcategory->subcategory->categoryName ?? '' }},
+                                            @endforeach
+                                        </dd>
 
                                         @if ($product->promotionproduct->isNotEmpty())
                                             <dt class="col-sm-6">Promotion </dt>

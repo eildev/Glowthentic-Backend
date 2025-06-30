@@ -27,25 +27,32 @@
                                 @php
                                     $serialNumber = 1;
                                 @endphp
-                                @if ($Brands->count() > 0)
-                                    @foreach ($Brands as $Brand)
+                                @if ($features->count() > 0)
+                                    @foreach ($features as $feature)
                                         <tr>
                                             <td>{{ $serialNumber++ }}</td>
-                                            <td>{{ $Brand->feature_name ?? '' }}</td>
+                                            <td>{{ $feature->feature_name ?? '' }}</td>
                                             <td>
-                                                <img src="{{ asset($Brand->image) }}"
+                                                <img src="{{ asset($feature->image) }}"
                                                     style="height: 80px; object-fit: contain;" class="img-fluid"
                                                     alt="">
                                             </td>
                                             <td>
-                                                  <a href="#" class="btn btn-sm btn-success brand_active">Active</a>
-                                                <a href="#" class="btn btn-sm btn-success brand_inactive"
-                                                    style="display: none;">Inactive</a>
+                                                <form action="{{ route('feature.status', $feature->id) }}" method="POST">
+                                                    @csrf
+                                                    @if ($feature->status == 0)
+                                                        <button class="btn btn-sm btn-danger status_inactive"
+                                                            value="{{ $feature->id }}">Inactive</button>
+                                                    @else
+                                                        <button class="btn btn-sm btn-success status_active"
+                                                            value="{{ $feature->id }}">Active</button>
+                                                    @endif
+                                                </form>
                                             </td>
                                             <td>
-                                                <a href="{{ route('feature.edit', $Brand->id) }}"
+                                                <a href="{{ route('feature.edit', $feature->id) }}"
                                                     class="btn btn-info">Edit</a>
-                                                <a href="{{ route('feature.delete', $Brand->id) }}" class="btn btn-danger"
+                                                <a href="{{ route('feature.delete', $feature->id) }}" class="btn btn-danger"
                                                     id="delete">Delete</a>
                                             </td>
                                         </tr>

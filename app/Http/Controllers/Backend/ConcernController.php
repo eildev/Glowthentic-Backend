@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Models\Concern;
 use App\Services\ImageOptimizerService;
+use App\Services\SlugService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -29,12 +30,13 @@ class ConcernController extends Controller
             // Create a new Concern instance
             $concern = new Concern;
             $concern->name = $request->name;
+            $concern->slug = SlugService::generateUniqueSlug($request->name, Concern::class);
 
             // Handle image upload
             if ($request->hasFile('image')) {
-                $destinationPath = public_path('uploads/tag/');
+                $destinationPath = public_path('uploads/concern/');
                 $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
-                $concern->image = 'uploads/tag/' . $imageName;
+                $concern->image = 'uploads/concern/' . $imageName;
             }
 
             // Save the Concern record
@@ -77,6 +79,7 @@ class ConcernController extends Controller
 
         $concern = Concern::findOrFail($id);
         $concern->name = $request->name;
+        $concern->slug = SlugService::generateUniqueSlug($request->name, Concern::class);
         if ($request->hasFile('image')) {
             if ($concern->image) {
                 $imagePath = public_path($concern->image);
@@ -84,9 +87,9 @@ class ConcernController extends Controller
                     unlink($imagePath);
                 }
             }
-            $destinationPath = public_path('uploads/tag');
+            $destinationPath = public_path('uploads/concern');
             $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
-            $concern->image = 'uploads/tag/' . $imageName;
+            $concern->image = 'uploads/concern/' . $imageName;
         }
         $concern->save();
         return redirect()->route('concern.view')->with('success', 'Concern Successfully updated');
