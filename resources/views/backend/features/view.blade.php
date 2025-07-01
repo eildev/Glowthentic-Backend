@@ -33,9 +33,9 @@
                                             <td>{{ $serialNumber++ }}</td>
                                             <td>{{ $feature->feature_name ?? '' }}</td>
                                             <td>
-                                                <img src="{{ asset($feature->image) }}"
-                                                    style="height: 80px; object-fit: contain;" class="img-fluid"
-                                                    alt="">
+                                                <img src="/{{ $feature->image ?? 'uploads/productempty.jpg' }}"
+                                                    style="height: 80px; object-fit: cover;" class="img-fluid"
+                                                    alt="feature Image">
                                             </td>
                                             <td>
                                                 <form action="{{ route('feature.status', $feature->id) }}" method="POST">

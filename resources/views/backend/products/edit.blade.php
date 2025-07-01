@@ -35,28 +35,40 @@
                     <div class="form-body mt-4">
                         <form action="" enctype="multipart/form-data" id="productForm">
                             @csrf
-
                             <div class="row g-3 mb-3">
                                 <div class="col-lg-8">
                                     <div class="border border-3 p-4 rounded">
                                         <input type="text" name="product_id" value="{{ $product->id }}" hidden>
-                                        <div class="row mb-3">
+                                        <div class="row mb-3 g-3">
                                             <div class="col-md-6">
                                                 <div class="row">
-                                                    <label class="form-label col-12">Select Category</label>
+                                                    <label class="form-label col-12">Select Category<span
+                                                            class="text-danger fw-bold">*</span></label>
                                                     <div class="col-12">
-                                                        <select
-                                                            class="form-select category_select @error('category_id') is-invalid  @enderror"
-                                                            name="category_id">
-                                                            <option value="">Select Category</option>
-                                                            @foreach ($categories as $category)
-                                                                <option
-                                                                    {{ $product->category_id == $category->id ? 'selected' : '' }}
-                                                                    value="{{ $category->id }}">
-                                                                    {{ $category->categoryName }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
+                                                        @if ($setting->isMultipleCategory === 0)
+                                                            <select
+                                                                class="form-select category_select @error('category_id') is-invalid  @enderror"
+                                                                name="category_id">
+                                                                <option value="">Select Category</option>
+                                                                @foreach ($categories as $category)
+                                                                    <option value="{{ $category->id }}">
+                                                                        {{ $category->categoryName ?? '' }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
+                                                        @else
+                                                            <select
+                                                                class="multiple-select category_select @error('category_id') is-invalid  @enderror"
+                                                                data-placeholder="Select Category" multiple="multiple"
+                                                                name="category_id[]">
+                                                                @foreach ($categories as $category)
+                                                                    <option value="{{ $category->id }}"
+                                                                        {{ in_array($category->id, $selectedCategoryIds) ? 'selected' : '' }}>
+                                                                        {{ $category->categoryName ?? '' }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
+                                                        @endif
                                                         @error('category_id')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -65,49 +77,46 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="row">
-                                                    @php
-                                                        $subcategories =
-                                                            App\Models\Category::where(
-                                                                'id',
-                                                                $product->subcategory_id,
-                                                            )->first() ?? '';
-                                                    @endphp
                                                     <label class="form-label col-12">Select Subcategory</label>
                                                     <div class="col-12">
-                                                        <select
-                                                            class="form-select subcategory_select @error('subcategory_id') is-invalid  @enderror"
-                                                            name="subcategory_id">
-                                                            @if ($subcategories)
-                                                                <option value="{{ $subcategories->id }}">
-                                                                    {{ $subcategories->categoryName ?? '' }}</option>
-                                                            @endif
-                                                        </select>
+                                                        @if ($setting->isMultipleCategory === 0)
+                                                            <select
+                                                                class="form-select subcategory_select @error('subcategory_id') is-invalid  @enderror"
+                                                                name="subcategory_id">
+                                                                <option value="">Select Subcategory</option>
+                                                            </select>
+                                                        @else
+                                                            <select
+                                                                class="multiple-select subcategory_select @error('subcategory_id') is-invalid  @enderror"
+                                                                data-placeholder="Select Subcategory" multiple="multiple"
+                                                                name="subcategory_id[]">
+                                                                @foreach ($subcategories as $subcategory)
+                                                                    <option value="{{ $subcategory->id }}"
+                                                                        {{ in_array($subcategory->id, $selectedSubcategoryIds) ? 'selected' : '' }}>
+                                                                        {{ $subcategory->categoryName ?? '' }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
+                                                        @endif
                                                         @error('category_id')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="row mb-3">
-                                            <div class="col-md-6">
-                                                {{-- @php
-                                                    $sub_subcategories = App\Models\SubSubcategory::all();
-                                                @endphp --}}
+
+                                            {{-- <div class="col-md-6">
                                                 <div class="row">
                                                     <label class="form-label col-12">Select Sub-Subcategory</label>
                                                     <div class="col-12">
                                                         <select class="form-select" name="sub_subcategory_id">
                                                             <option value="">Select Sub-Subcategory</option>
-                                                            {{-- @foreach ($sub_subcategories as $sub_subcategory)
-                                                                <option value="{{ $sub_subcategory->id }}">
-                                                                    {{ $sub_subcategory->subSubcategoryName }}</option>
-                                                            @endforeach --}}
+                                                           
                                                         </select>
                                                         <span class="sub_subcategory_id text-danger"></span>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div> --}}
                                             <div class="col-md-6">
                                                 <div class="row">
                                                     <label class="form-label col-12">Select Brand</label>
@@ -119,7 +128,7 @@
                                                                 <option
                                                                     {{ $product->brand_id == $brand->id ? 'selected' : '' }}
                                                                     value="{{ $brand->id }}">
-                                                                    {{ $brand->BrandName }}
+                                                                    {{ $brand->BrandName ?? '' }}
                                                                 </option>
                                                             @endforeach
                                                         </select>
@@ -129,8 +138,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="row mb-3">
                                             <div class="col-md-6">
                                                 <div class="row">
                                                     <label class="form-label col-12">Select Unit</label>
@@ -167,79 +174,6 @@
                                                 </div>
                                             </div>
 
-
-                                            <div class="col-md-6">
-
-
-
-                                                <div class="row">
-                                                    <label class="form-label col-12">Select Gender</label>
-                                                    <div class="col-12">
-                                                        <select class="form-select @error('gender') is-invalid  @enderror"
-                                                            name="gender">
-                                                            <option
-                                                                value="{{ $product->productdetails->first()->gender }}">
-                                                                {{ $product->productdetails->first()->gender }}</option>
-                                                            <option value="unisex">Unisex</option>
-                                                            <option value="male">Male</option>
-                                                            <option value="female">Female</option>
-
-                                                        </select>
-                                                        @error('gender')
-                                                            <span class="text-danger">{{ $message }}</span>
-                                                        @enderror
-                                                    </div>
-                                                </div>
-                                            </div>
-
-
-                                            <div class="col-md-6 mt-2">
-
-                                                <div class="row">
-                                                    <label class="form-label col-12">Shipping Charge <span
-                                                            class="text-danger fw-bold"></span></label>
-                                                    <div class="col-12">
-                                                        <select
-                                                            class="form-select @error('shipping_charge') is-invalid  @enderror"
-                                                            name="shipping_charge">
-                                                            <option value="">Select Charge</option>
-                                                            <option
-                                                                {{ $product->shipping_charge == 'free' ? 'selected' : '' }}
-                                                                value="free">Free</option>
-                                                            <option
-                                                                {{ $product->shipping_charge == 'paid' ? 'selected' : '' }}
-                                                                value="paid">Paid</option>
-
-
-                                                        </select>
-                                                        @error('shipping_charge')
-                                                            <span class="text-danger">{{ $message }}</span>
-                                                        @enderror
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 mt-2">
-                                                <label for="category" class="form-label">Promotion Name</label>
-                                                <select class="form-select promotion" id="promotion" name="promotion_id">
-                                                    @php
-                                                        $existPromotion = App\Models\ProductPromotion::where(
-                                                            'product_id',
-                                                            $product->id,
-                                                        )
-                                                            ->latest()
-                                                            ->first();
-                                                    @endphp
-                                                    <option value="">Select Promotion</option>
-                                                    @foreach ($promotion as $promo)
-                                                        <option value="{{ $promo->id }}"
-                                                            {{ isset($existPromotion) && $existPromotion->promotion_id == $promo->id ? 'selected' : '' }}>
-                                                            {{ $promo->promotion_name ?? '' }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="row mb-3">
                                             <div class="col-12">
                                                 <div class="row">
                                                     <div class="col-12">
@@ -248,7 +182,8 @@
                                                     <div class="col-12">
                                                         <input type="text" name="product_name"
                                                             class="form-control product_sku @error('product_name') is-invalid  @enderror"
-                                                            id="inputEnterYourName" value="{{ $product->product_name }}">
+                                                            id="inputEnterYourName"
+                                                            value="{{ $product->product_name ?? '' }}">
                                                         @error('product_name')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -256,7 +191,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-12 mt-2">
+                                            <div class="col-md-6">
                                                 <div class="row">
                                                     <div class="col-12">
                                                         <label for="" class="form-label">Short Description <span
@@ -264,7 +199,7 @@
                                                     </div>
                                                     <div class="col-12">
                                                         <textarea name="short_description" class="form-control @error('short_description') is-invalid  @enderror"
-                                                            id="" cols="30" rows="6">{{ $product->productdetails->short_description ?? '' }}</textarea>
+                                                            id="" cols="30" rows="3">{{ $product->productdetails->short_description ?? '' }}</textarea>
                                                         @error('short_description')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -273,7 +208,8 @@
                                             </div>
 
 
-                                            <div class="col-12 mt-2">
+
+                                            <div class="col-md-6">
                                                 <div class="row">
                                                     <div class="col-12">
                                                         <label for="" class="form-label">Product Policy<span
@@ -281,15 +217,14 @@
                                                     </div>
                                                     <div class="col-12">
                                                         <textarea name="product_policy" class="form-control @error('product_policy') is-invalid  @enderror" id=""
-                                                            cols="30" rows="6">{{ $product->productdetails->product_policy ?? '' }}</textarea>
+                                                            cols="30" rows="3">{{ $product->productdetails->product_policy ?? '' }}</textarea>
                                                         @error('product_policy')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="row mb-3">
+
                                             <div class="col-12">
                                                 <div class="row">
                                                     <div class="col-12">
@@ -305,9 +240,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
 
-                                        <div class="row mb-3">
                                             <div class="col-12">
                                                 <div class="row">
                                                     <div class="col-12">
@@ -315,7 +248,7 @@
                                                     </div>
                                                     <div class="col-12">
                                                         <textarea class="form-control no-bg ingrediantsedit @error('ingredients') is-invalid @enderror" name="ingredients"
-                                                            placeholder="Enter Ingredients" style="resize: none; height: 100px;" id="ingrediants">{!! $product->productdetails->ingredients ?? 'NA' !!}</textarea>
+                                                            placeholder="Enter Ingredients" style="resize: none; height: 100px;" id="ingrediants">{!! $product->productdetails->ingredients ?? '' !!}</textarea>
 
                                                         @error('ingredients')
                                                             <span class="text-danger">{{ $message }}</span>
@@ -323,9 +256,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
 
-                                        <div class="row mb-3">
                                             <div class="col-12">
                                                 <div class="row">
                                                     <div class="col-12">
@@ -333,7 +264,7 @@
                                                     </div>
                                                     <div class="col-12">
                                                         <textarea class="form-control no-bg usage_instructionedit @error('usage_instruction') is-invalid @enderror"
-                                                            name="usage_instruction" placeholder="Enter Usage Instruction" style="resize: none; height: 100px;">{!! $product->productdetails->usage_instruction ?? 'NA' !!}</textarea>
+                                                            name="usage_instruction" placeholder="Enter Usage Instruction" style="resize: none; height: 100px;">{!! $product->productdetails->usage_instruction ?? '' !!}</textarea>
 
                                                         @error('usage_instruction')
                                                             <span class="text-danger">{{ $message }}</span>
@@ -352,54 +283,125 @@
                                                     <label class="form-label">SKU</label>
                                                     <input type="text"
                                                         class="form-control sku_generate @error('sku') is-invalid  @enderror"
-                                                        value="{{ $product->sku }}" name="sku">
+                                                        value="{{ $product->sku ?? '' }}" name="sku">
                                                     @error('sku')
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
                                                 </div>
                                             </div>
-                                            @php
-                                                use App\Models\Features;
-                                                use App\Models\ProductFeature;
 
-                                                $allFeature = Features::all();
+                                            <div class="col-md-12">
+                                                <div class="row">
+                                                    <label class="form-label col-12">Select Gender</label>
+                                                    <div class="col-12">
+                                                        <select class="form-select @error('gender') is-invalid  @enderror"
+                                                            name="gender">
+                                                            <option value="{{ $product->productdetails->gender }}">
+                                                                {{ $product->productdetails->gender ?? '' }}</option>
+                                                            <option value="unisex">Unisex</option>
+                                                            <option value="male">Male</option>
+                                                            <option value="female">Female</option>
 
-                                                $selectFeatureId = ProductFeature::where('product_id', $product->id)
-                                                    ->pluck('feature_id')
-                                                    ->toArray();
-                                            @endphp
+                                                        </select>
+                                                        @error('gender')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                            </div>
 
-                                            <div class="mb-3">
+
+                                            <div class="col-md-12">
+                                                <div class="row">
+                                                    <label class="form-label col-12">Shipping Charge <span
+                                                            class="text-danger fw-bold"></span></label>
+                                                    <div class="col-12">
+                                                        <select
+                                                            class="form-select @error('shipping_charge') is-invalid  @enderror"
+                                                            name="shipping_charge">
+                                                            <option value="">Select Charge</option>
+                                                            <option
+                                                                {{ $product->shipping_charge == 'free' ? 'selected' : '' }}
+                                                                value="free">Free</option>
+                                                            <option
+                                                                {{ $product->shipping_charge == 'paid' ? 'selected' : '' }}
+                                                                value="paid">Paid</option>
+                                                        </select>
+                                                        @error('shipping_charge')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-12">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Video Link</label>
+                                                    <input type="url"
+                                                        class="form-control video_link @error('video_link') is-invalid  @enderror"
+                                                        placeholder="https://www.youtube.com/" name="video_link"
+                                                        value="{{ $product->video_link ?? '' }}">
+                                                    @error('video_link')
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-12">
+                                                <label for="category" class="form-label">Promotion Name</label>
+                                                <select class="form-select promotion" id="promotion" name="promotion_id">
+                                                    <option value="">Select Promotion</option>
+                                                    @foreach ($promotion as $promo)
+                                                        <option value="{{ $promo->id }}"
+                                                            {{ isset($existPromotion) && $existPromotion->promotion_id == $promo->id ? 'selected' : '' }}>
+                                                            {{ $promo->promotion_name ?? '' }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="col-md-12">
                                                 <label class="form-label">Select Product Feature</label>
                                                 <select class="multiple-select" data-placeholder="Choose anything"
                                                     multiple="multiple" name="product_feature[]">
-                                                    @foreach ($allFeature as $feature)
+                                                    @foreach ($features as $feature)
                                                         <option value="{{ $feature->id }}"
-                                                            {{ in_array($feature->id, $selectFeatureId) ? 'selected' : '' }}>
+                                                            {{ in_array($feature->id, $selectFeatureIds) ? 'selected' : '' }}>
                                                             {{ $feature->feature_name }}
                                                         </option>
                                                     @endforeach
                                                 </select>
                                             </div>
-                                            @php
-                                                use App\Models\TagName;
-                                                use App\Models\Product_Tags;
+                                            <div class="col-md-12">
+                                                <div class="row">
+                                                    <label class="form-label col-12">
+                                                        Select Product Tag
+                                                    </label>
+                                                    <div class="col-10">
+                                                        <select class="multiple-select product_tag"
+                                                            data-placeholder="Choose anything" multiple="multiple"
+                                                            name="tag[]">
 
-                                                $allTags = TagName::all();
-
-                                                $selectedTagIds = Product_Tags::where('product_id', $product->id)
-                                                    ->pluck('tag_id')
-                                                    ->toArray();
-                                            @endphp
-
-                                            <div class="mb-3">
-                                                <label class="form-label">Select Product Tag</label>
+                                                        </select>
+                                                        @error('tag')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                    <div class="col-2 p-0">
+                                                        <button type="button" class="btn btn-outline-primary w-100"
+                                                            data-bs-toggle="modal" data-bs-target="#addTagModal">
+                                                            +
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label class="form-label">Select Product Concern</label>
                                                 <select class="multiple-select" data-placeholder="Choose anything"
-                                                    multiple="multiple" name="tag[]">
-                                                    @foreach ($allTags as $tag)
-                                                        <option value="{{ $tag->id }}"
-                                                            {{ in_array($tag->id, $selectedTagIds) ? 'selected' : '' }}>
-                                                            {{ $tag->tagName }}
+                                                    multiple="multiple" name="product_feature[]">
+                                                    @foreach ($concerns as $concern)
+                                                        <option value="{{ $concern->id }}"
+                                                            {{ in_array($concern->id, $selectedConcernId) ? 'selected' : '' }}>
+                                                            {{ $concern->name ?? '' }}
                                                         </option>
                                                     @endforeach
                                                 </select>
@@ -599,8 +601,6 @@
 
 
     {{-- //////////////////////////////////////////////// add extra field modal //////////////////////////////////////////////////////// --}}
-
-
     <div class="modal fade" id="addFieldModal" tabindex="-1" aria-labelledby="addFieldModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -641,6 +641,33 @@
             </div>
         </div>
     </div>
+
+
+
+    {{-- //////////////////////////////////////////////////////add color modal////////////////////////// --}}
+    <!-- Modal for Adding Product Tag -->
+    <div class="modal fade" id="addTagModal" tabindex="-1" aria-labelledby="addTagModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form id="addTagform">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add Product Tag</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <label for="new-tag" class="form-label">Tag Name</label>
+                        <input type="text" name="tagName" id="new-tag" class="form-control"
+                            placeholder="Enter Tag Name">
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn btn-primary addTag">Add Tag</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    {{-- //////////////////////////////////////////////// add extra field modal //////////////////////////////////////////////////////// --}}
+
 
 
     {{-- script start --}}
@@ -689,17 +716,107 @@
             });
         });
 
+
+
+        //////////////////////////////////////// Product Tag Save ////////////////////////
+        $(document).on('click', '.addTag', function() {
+            let tagName = $('input[name="tagName"]').val();
+            $('input[name="tagName"]').next('.text-danger').remove();
+
+            if (tagName == '') {
+                $('input[name="tagName"]').after('<span class="text-danger">Tag Name is required</span>');
+                return;
+            }
+
+            let formdata = new FormData($('#addTagform')[0]);
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            $.ajax({
+                url: "/tagname/create",
+                type: "POST",
+                data: formdata,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    if (response.status == 200) {
+                        $('#addTagform')[0].reset();
+                        $('#addTagModal').modal('hide');
+                        toastr.success(response.message);
+                        getProductTag();
+                    } else {
+                        toastr.error(response.message || "Something Went Wrong");
+                    }
+                },
+                error: function(xhr) {
+                    let response = xhr.responseJSON;
+                    if (response && response.status == 422) {
+                        // Validation error
+                        $.each(response.errors, function(field, errors) {
+                            toastr.error(errors.join(', '));
+                        });
+                    } else if (response && response.status == 500) {
+                        // Server error
+                        toastr.error(response.message);
+                    } else {
+                        // Other errors
+                        toastr.error("An unexpected error occurred");
+                    }
+                }
+            });
+        });
+
+        //////////////////////////////////////// get Product Tag Function ////////////////////////
+        // selectedTagIds
+        const selectedTagIds = @json($selectedTagIds);
+
+        function getProductTag() {
+            let product_tag = $('.product_tag');
+            $.ajax({
+                url: "/tagname/show",
+                type: "GET",
+                success: function(response) {
+                    console.log(response);
+                    if (response.status == 200) {
+                        product_tag.empty();
+                        let tagNames = response.data;
+                        $.each(tagNames, function(key, item) {
+
+                            const isSelected = selectedTagIds.includes(item.id) ? 'selected' : '';
+                            product_tag.append(
+                                '<option value="' + item.id + '" ' + isSelected + '>' + item
+                                .tagName + '</option>'
+                            );
+                        });
+
+                        product_tag.val(selectedTagIds).trigger('change');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching tags:', error);
+                }
+            });
+        }
+        getProductTag();
+
         ////////////////////////////////////////////validation error///////////////////////////////
+        const isMultipleCategory = '{{ $setting->isMultipleCategory }}'
+        const categories = @json($selectedCategoryIds);
+        console.log(categories);
 
         function validationError() {
             $(".error-message").remove();
-            $("input, select").removeClass("is-invalid");
+            $("input, select, textarea").removeClass("is-invalid");
             $(".text-danger").remove(); // ensure old errors are cleared
 
             let isValid = true;
             let errors = {};
 
-            let category_id = $('select[name="category_id"]').val()?.trim() || "";
+            let category_id = isMultipleCategory == 0 ? $('select[name="category_id"]').val() : $(
+                'select[name="category_id[]"]').val();
             let brand_id = $('select[name="brand_id"]').val()?.trim() || "";
             let unit_id = $('select[name="unit_id"]').val()?.trim() || "";
 
@@ -719,14 +836,37 @@
                 isValid = false;
             }
 
-            if (category_id === "") errors.category_id = "Category is required!";
-            if (brand_id === "") errors.brand_id = "Brand is required!";
-            if (unit_id === "") errors.unit_id = "Unit is required!";
+            if (isMultipleCategory == 0) {
+                if (categories.length > 1) {
+                    // console.log('Categories', categories);
+                    // console.log(categories.length > 1);
+                    if (!category_id || (Array.isArray(category_id) && category_id.length === 0)) {
+                        errors.category_id = "Category id is Required";
+                        isValid = false;
+                    }
+                }
+            } else {
+                if (!category_id || (Array.isArray(category_id) && category_id.length === 0)) {
+                    errors.category_id = "Category id is Required";
+                    isValid = false;
+                }
+            }
+            if (brand_id === "") {
+                errors.brand_id = "Brand is required!";
+                isValid = false;
+            }
+            if (unit_id === "") {
+                errors.unit_id = "Unit is required!";
+                isValid = false;
+            }
+            if (gender === "") {
+                errors.gender = "Gender is required!";
+                isValid = false;
+            }
 
-            if (gender === "") errors.gender = "Gender is required!";
-            // if (product_name === "") errors.product_name = "Product Name is required!";
 
-
+            // Log errors for debugging
+            console.log("Validation Errors:", errors);
             if (!$.isEmptyObject(errors)) {
                 isValid = false;
 
@@ -861,9 +1001,13 @@
                 contentType: false,
                 processData: false,
                 success: function(res) {
-                    toastr.success(res.message);
-                    $('#variant_form_submit')[0].reset();
-                    window.location.href = "/product/view/" + res.product_id;
+                    if (res.status === 200) {
+                        toastr.success(res.message);
+                        $('#variant_form_submit')[0].reset();
+                        window.location.href = "/product/view/" + res.product_id;
+                    } else {
+                        toastr.error(res.message);
+                    }
                 }
             });
         });
@@ -995,7 +1139,6 @@
                 contentType: false,
                 processData: false,
                 success: function(res) {
-
                     if (res.status == 200) {
                         $('#productForm')[0].reset();
                         toastr.success("Product Updated Successfully");
@@ -1004,8 +1147,6 @@
                     } else {
                         toastr.error("Something Went Wrong");
                     }
-
-
                 },
                 error: function(xhr) {
                     if (xhr.status === 422) {

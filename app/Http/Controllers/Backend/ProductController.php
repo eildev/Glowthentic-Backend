@@ -35,6 +35,7 @@ use App\Models\TagName;
 use App\Models\VariantPromotion;
 use App\Services\SlugService;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 // use App\Models\
 class ProductController extends Controller
@@ -95,20 +96,11 @@ class ProductController extends Controller
 
         $setting = Setting::latest()->first();
 
-
         $product = new Product;
-        // $product->category_id = $request->category_id;
-        // $product->subcategory_id = $request->subcategory_id;
         $product->brand_id = $request->brand_id;
-        // $product->sub_subcategory_id = $request->sub_subcategory_id;
-        // if ($request->shipping_charge) {
-        //     $product->shipping_charge = $request->shipping_charge;
-        // }
-
         $product->product_name = $request->product_name;
         $product->unit_id = $request->unit_id;
-        // $product->slug = Str::slug($request->product_name) . '-' . time();
-        $product->slug = SlugService::generateUniqueSlug($request->product_name, TagName::class);
+        $product->slug = SlugService::generateUniqueSlug($request->product_name, Product::class);
         $product->sku = $request->sku;
         $product->created_by = Auth::user()->id;
         $product->video_link = $request->video_link;
@@ -330,7 +322,7 @@ class ProductController extends Controller
     public function edit($id)
     {
         $product = Product::with('productdetails')->findOrFail($id);
-
+        $setting = Setting::latest()->first();
         $attribute_manages = AttributeManage::where('product_id', $id)->get();
         $variants = Variant::where('product_id', $id)->get();
         $size = SizeModel::select('size_name')->get();
@@ -338,12 +330,25 @@ class ProductController extends Controller
         $inserttag = Product_Tags::where('product_id', $id)->get();
         $extraFields = AttributeManage::where('product_id', $product->id)->get();
         $promotion = Coupon::where('type', 'promotion')->where('end_date', '>=', Carbon::now()->format('Y-m-d'))->get();
-        // ->pluck('value', 'attribute_id')
-        // ->toArray();
+        $existPromotion = ProductPromotion::where('product_id', $product->id)->latest()->first();
         $categories = Category::where('status', 1)->whereNull('parent_id')->get();
+        $selectedCategories = $product->productCategory;
         $brands = Brand::where('status', 1)->get();
 
-        return view('backend.products.edit', compact('product', 'attribute_manages', 'variants', 'inserttag', 'extraFields', 'size', 'color', 'promotion', 'categories', 'brands'));
+        $concerns = Concern::where('status', 'active')->latest()->get();
+        $selectedConcernId = ProductConcern::where('product_id', $product->id)->pluck('concern_id')->toArray();
+        $features = Features::where('status', 1)->get();
+        $selectFeatureIds = ProductFeature::where('product_id', $product->id)->pluck('feature_id')->toArray();
+        $tags = TagName::where('status', 'active')->get();
+        $selectedTagIds = Product_Tags::where('product_id', $product->id)->pluck('tag_id')->toArray();
+
+
+        $selectedCategoryIds = $product->productCategory->pluck('category_id')->toArray();
+        $selectedSubcategoryIds = $product->productSubCategories->pluck('category_id')->toArray();
+
+        $subcategories = Category::whereIn('parent_id', $selectedCategoryIds)->get();
+
+        return view('backend.products.edit', compact('product', 'attribute_manages', 'variants', 'inserttag', 'extraFields', 'size', 'color', 'promotion', 'categories', 'brands', 'setting', 'tags', 'features', 'concerns', 'selectedCategoryIds', 'selectedSubcategoryIds', 'subcategories', 'existPromotion', 'selectFeatureIds', 'selectedTagIds', 'selectedConcernId', 'selectedCategories'));
     }
 
 
@@ -390,31 +395,23 @@ class ProductController extends Controller
     // product update function
     public function update(Request $request)
     {
-        $product = Product::findOrFail($request->product_id);
-        // dd($product->product_name !== $request->product_name);
-        $product->category_id = $request->category_id;
-        $product->subcategory_id = $request->subcategory_id;
-        $product->brand_id = $request->brand_id;
-        $product->sub_subcategory_id = $request->sub_subcategory_id;
-        $product->product_name = $request->product_name;
-        // if ($request->product_feature) {
-        //     $product->product_feature = json_encode($request->product_feature);
-        // }
 
+        dd($request->category_id);
+        $setting = Setting::latest()->first();
+
+        $product = Product::findOrFail($request->product_id);
+        $product->brand_id = $request->brand_id;
+        $product->product_name = $request->product_name;
         if ($product->product_name !== $request->product_name) {
-            $product->slug = Str::slug($request->product_name) . '-' . time();
+            $product->slug = SlugService::generateUniqueSlug($request->product_name, Product::class);
         }
-        // if ($product->product_name === $request->product_name) {
-        // } else {
-        //     $product->slug = Str::slug($request->product_name) . '-' . time();
-        // }
         $product->unit_id = $request->unit_id;
         if ($request->shipping_charge) {
             $product->shipping_charge = $request->shipping_charge;
         }
-        // $product->slug = Str::slug($request->product_name);
         $product->sku = $request->sku;
         $product->created_by = Auth::user()->id;
+        $product->video_link = $request->video_link;
         $product->save();
 
         if ($product) {
@@ -424,27 +421,160 @@ class ProductController extends Controller
             $productDetails->description = $request->description;
             $productDetails->short_description = $request->short_description;
             $productDetails->product_policy = $request->product_policy;
-
             $productDetails->ingredients = $request->ingredients;
             $productDetails->usage_instruction = $request->usage_instruction;
             $productDetails->created_by = Auth::user()->id;
-
             $productDetails->save();
+
+            // if ($setting->isMultipleCategory === 0) {
+            //     $oldCat = $product->productCategory;
+
+            //     if ($request->category_id !== null) {
+            //         $productCategory = new ProductCategory;
+            //         $productCategory->product_id = $product->id;
+            //         $productCategory->category_id = $request->category_id;
+            //         $productCategory->save();
+            //     }
+            //     if ($request->subcategory_id !== null) {
+            //         $productCategory = new ProductCategory;
+            //         $productCategory->product_id = $product->id;
+            //         $productCategory->category_id = $request->category_id;
+            //         $productCategory->type = 'subcategory';
+            //         $productCategory->save();
+            //     }
+            // } else {
+            //     foreach ($request->category_id as $id) {
+            //         $productCategory = new ProductCategory;
+            //         $productCategory->product_id = $product->id;
+            //         $productCategory->category_id = $id;
+            //         $productCategory->save();
+            //     }
+
+            //     foreach ($request->subcategory_id as $id) {
+            //         $productCategory = new ProductCategory;
+            //         $productCategory->product_id = $product->id;
+            //         $productCategory->category_id = $id;
+            //         $productCategory->type = 'subcategory';
+            //         $productCategory->save();
+            //     }
+            // }
+
+            if ($setting->isMultipleCategory === 0) {
+
+                $oldCategories = ProductCategory::where('product_id', $product->id)->get()->pluck('category_id')->toArray();
+
+
+                $newCategoryIds = [];
+                if ($request->category_id !== null) {
+                    $newCategoryIds[] = $request->category_id;
+                }
+                if ($request->subcategory_id !== null) {
+                    $newCategoryIds[] = $request->subcategory_id;
+                }
+
+
+                if (!empty($newCategoryIds)) {
+                    $categoriesToDelete = array_diff($oldCategories, $newCategoryIds);
+                    if (!empty($categoriesToDelete)) {
+                        ProductCategory::where('product_id', $product->id)
+                            ->whereIn('category_id', $categoriesToDelete)
+                            ->delete();
+                    }
+                } else {
+
+                    ProductCategory::where('product_id', $product->id)->delete();
+                }
+
+
+                if ($request->category_id !== null) {
+                    $productCategory = new ProductCategory;
+                    $productCategory->product_id = $product->id;
+                    $productCategory->category_id = $request->category_id;
+                    $productCategory->type = 'category';
+                    $productCategory->save();
+                }
+                if ($request->subcategory_id !== null) {
+                    $productCategory = new ProductCategory;
+                    $productCategory->product_id = $product->id;
+                    $productCategory->category_id = $request->subcategory_id;
+                    $productCategory->type = 'subcategory';
+                    $productCategory->save();
+                }
+            } else {
+
+                $oldCategories = ProductCategory::where('product_id', $product->id)->get()->pluck('category_id')->toArray();
+
+
+                $newCategoryIds = array_merge(
+                    is_array($request->category_id) ? $request->category_id : [],
+                    is_array($request->subcategory_id) ? $request->subcategory_id : []
+                );
+
+
+                if (!empty($newCategoryIds)) {
+                    $categoriesToDelete = array_diff($oldCategories, $newCategoryIds);
+                    if (!empty($categoriesToDelete)) {
+                        ProductCategory::where('product_id', $product->id)
+                            ->whereIn('category_id', $categoriesToDelete)
+                            ->delete();
+                    }
+                } else {
+
+                    ProductCategory::where('product_id', $product->id)->delete();
+                }
+
+
+                if (is_array($request->category_id)) {
+                    foreach ($request->category_id as $id) {
+                        $productCategory = new ProductCategory;
+                        $productCategory->product_id = $product->id;
+                        $productCategory->category_id = $id;
+                        $productCategory->type = 'category';
+                        $productCategory->save();
+                    }
+                }
+
+                if (is_array($request->subcategory_id)) {
+                    foreach ($request->subcategory_id as $id) {
+                        $productCategory = new ProductCategory;
+                        $productCategory->product_id = $product->id;
+                        $productCategory->category_id = $id;
+                        $productCategory->type = 'subcategory';
+                        $productCategory->save();
+                    }
+                }
+            }
         }
 
-
-        // Product Promotion 
-        if ($product->id && $request->promotion_id) {
-            $product_promotion = ProductPromotion::where('product_id', $product->id)->first();
-            if ($product_promotion) {
-                $product_promotion->product_id = $product->id;
-                $product_promotion->promotion_id = $request->promotion_id;
-                $product_promotion->save();
-            } else {
-                $product_promotion = new ProductPromotion();
-                $product_promotion->product_id = $product->id;
-                $product_promotion->promotion_id = $request->promotion_id;
-                $product_promotion->save();
+        if ($request->promotion_id) {
+            $variants = Variant::where('product_id', $product->id)->get();
+            foreach ($variants as $variant) {
+                $product_promotion = ProductPromotion::where('variant_id', $variant->id)->first();
+                if ($product_promotion) {
+                    $product_promotion->product_id = $product->id;
+                    $product_promotion->variant_id = $variant->id;
+                    $product_promotion->promotion_id = $request->promotion_id;
+                    $product_promotion->save();
+                } else {
+                    $promotion = new ProductPromotion();
+                    $promotion->product_id = $product->id;
+                    $promotion->variant_id = $variant->id;
+                    $promotion->promotion_id = $request->promotion_id;
+                    $promotion->save();
+                }
+                $variantPromotion = VariantPromotion::where('variant_id', $variant->id)->first();
+                if ($variantPromotion) {
+                    $variantPromotion->product_id = $product->id;
+                    $variantPromotion->variant_id = $variant->id;
+                    $variantPromotion->promotion_id = $request->promotion_id;
+                    $variantPromotion->save();
+                } else {
+                    $variantPromotion = new VariantPromotion;
+                    $variantPromotion->product_id = $product->id;
+                    $variantPromotion->variant_id = $variant->id;
+                    $variantPromotion->promotion_id = $request->promotion_id;
+                    $variantPromotion->save();
+                }
             }
         }
 
@@ -510,27 +640,146 @@ class ProductController extends Controller
             }
         }
 
-        if ($product && $request->tag) {
-            Product_Tags::where('product_id', $product->id)->delete();
-            foreach ($request->tag as $tag) {
-                $productTag = new Product_Tags();
-                $productTag->product_id = $product->id;
-                $productTag->tag_id = $tag;
-                $productTag->save();
+
+
+
+        if ($product) {
+            $oldTags = Product_Tags::where('product_id', $product->id)
+                ->pluck('tag_id')
+                ->toArray();
+
+
+            $newTags = is_array($request->tag) ? $request->tag : [];
+
+
+            if (!empty($newTags)) {
+                $tagsToDelete = array_diff($oldTags, $newTags);
+                if (!empty($tagsToDelete)) {
+                    Product_Tags::where('product_id', $product->id)
+                        ->whereIn('tag_id', $tagsToDelete)
+                        ->delete();
+                }
+            } else {
+                Product_Tags::where('product_id', $product->id)->delete();
             }
-        }
 
 
-        if ($product && $request->product_feature) {
-            ProductFeature::where('product_id', $product->id)->delete();
-            foreach ($request->product_feature as $feature) {
-                $productFeature = new ProductFeature();
-                $productFeature->product_id = $product->id;
-                $productFeature->feature_id = $feature;
-                $productFeature->save();
+            if (!empty($newTags)) {
+                $insertData = [];
+                foreach ($newTags as $tagId) {
+
+                    $exists = Product_Tags::where('product_id', $product->id)
+                        ->where('tag_id', $tagId)
+                        ->exists();
+
+                    if (!$exists) {
+                        $insertData[] = [
+                            'product_id' => $product->id,
+                            'tag_id' => $tagId,
+                            'created_at' => now(),
+                            'updated_at' => now()
+                        ];
+                    }
+                }
+
+                if (!empty($insertData)) {
+                    DB::table('product_tags')->insert($insertData);
+                }
             }
-        }
 
+
+            $oldFeature = ProductFeature::where('product_id', $product->id)
+                ->pluck('feature_id')
+                ->toArray();
+            $newFeature = is_array($request->product_feature) ? $request->product_feature : [];
+            if (!empty($oldFeature)) {
+                $featureToDelete = array_diff($oldFeature, $newFeature);
+                if (!empty($featureToDelete)) {
+                    ProductFeature::where('product_id', $product->id)
+                        ->whereIn('feature_id', $featureToDelete)
+                        ->delete();
+                }
+            } else {
+                ProductFeature::where('product_id', $product->id)->delete();
+            }
+            if (!empty($newFeature)) {
+                $insertData = [];
+                foreach ($newFeature as $featureId) {
+
+                    $exists = ProductFeature::where('product_id', $product->id)
+                        ->where('feature_id', $featureId)
+                        ->exists();
+
+                    if (!$exists) {
+                        $insertData[] = [
+                            'product_id' => $product->id,
+                            'feature_id' => $featureId,
+                            'created_at' => now(),
+                            'updated_at' => now()
+                        ];
+                    }
+                }
+
+                if (!empty($insertData)) {
+                    DB::table('product_features')->insert($insertData);
+                }
+            }
+
+            // ProductFeature::where('product_id', $product->id)->delete();
+            // foreach ($request->product_feature as $feature) {
+            //     $productFeature = new ProductFeature();
+            //     $productFeature->product_id = $product->id;
+            //     $productFeature->feature_id = $feature;
+            //     $productFeature->save();
+            // }
+
+
+
+            $oldConcern = ProductConcern::where('product_id', $product->id)
+                ->pluck('concern_id')
+                ->toArray();
+            $newConcern = is_array($request->concerns) ? $request->concerns : [];
+            if (!empty($oldConcern)) {
+                $concernToDelete = array_diff($oldConcern, $newConcern);
+                if (!empty($concernToDelete)) {
+                    ProductConcern::where('product_id', $product->id)
+                        ->whereIn('concern_id', $concernToDelete)
+                        ->delete();
+                }
+            } else {
+                ProductConcern::where('product_id', $product->id)->delete();
+            }
+            if (!empty($newConcern)) {
+                $insertData = [];
+                foreach ($newConcern as $concernId) {
+
+                    $exists = ProductConcern::where('product_id', $product->id)
+                        ->where('concern_id', $concernId)
+                        ->exists();
+
+                    if (!$exists) {
+                        $insertData[] = [
+                            'product_id' => $product->id,
+                            'concern_id' => $concernId,
+                            'created_at' => now(),
+                            'updated_at' => now()
+                        ];
+                    }
+                }
+
+                if (!empty($insertData)) {
+                    DB::table('product_concerns')->insert($insertData);
+                }
+            }
+
+
+            // foreach ($request->concerns as $id) {
+            //     $concern = new ProductConcern();
+            //     $concern->product_id = $product->id;
+            //     $concern->concern_id = $id;
+            //     $concern->save();
+            // }
+        }
 
 
         return response()->json([
@@ -538,105 +787,6 @@ class ProductController extends Controller
             'message' => 'Product Updated Successfully'
         ]);
     }
-
-
-
-    // delete variants function
-    // public function deleteVariant($id)
-    // {
-    //     // dd($id);
-    //     $variant = Variant::findOrFail($id);
-    //     $variant->delete();
-    //     return response()->json([
-    //         'status' => '200',
-    //         'message' => 'Variant Delete Successfully'
-    //     ]);
-    // }
-    // public function editVariant($id)
-    // {
-    //     $variant = Variant::where('id', $id)->first();
-    //     return response()->json([
-    //         'status' => '200',
-    //         'message' => 'Please Update variant',
-    //         'variantData' => $variant
-    //     ]);
-    // }
-
-    // public function updateVariant(Request $request, $id)
-    // {
-    //     // dd($request);
-    //     $variant = Variant::findOrFail($id);
-    //     $variant->regular_price    = $request->regular_price;
-    //     $variant->discount    = $request->discount;
-    //     $variant->discount_amount    = $request->discount_amount;
-    //     $variant->stock_quantity    = $request->stock_quantity;
-    //     $variant->barcode    = $request->barcode;
-    //     $variant->color    = $request->color;
-    //     $variant->size    = $request->size;
-    //     $variant->unit    = $request->unit;
-    //     $variant->weight    = $request->weight;
-    //     $variant->expire_date    = $request->expire_date;
-    //     $variant->manufacture_date    = $request->manufacture_date;
-    //     $variant->product_id    = $request->product_id;
-    //     $variant->update();
-    //     return response()->json([
-    //         'status' => '200',
-    //         'message' => 'variant Updated successfully',
-
-    //     ]);
-    // }
-
-
-    // variants store function
-    // public function variantStore(Request $request)
-    // {
-    //     $validator = Validator::make($request->all(), [
-    //         'product_id' => 'required',
-    //         'regular_price' => 'required|numeric',
-    //         'discount' => 'required|numeric',
-    //         'discount_amount' => 'required|numeric',
-    //         'stock_quantity' => 'required|numeric',
-    //         'unit' => 'required|max:50',
-    //     ]);
-
-    //     if ($validator->passes()) {
-    //         $variant = new Variant;
-    //         $variant->regular_price    = $request->regular_price;
-    //         $variant->discount    = $request->discount;
-    //         $variant->discount_amount    = $request->discount_amount;
-    //         $variant->stock_quantity    = $request->stock_quantity;
-    //         $variant->barcode    = $request->barcode;
-    //         $variant->color    = $request->color;
-    //         $variant->size    = $request->size;
-    //         $variant->unit    = $request->unit;
-    //         $variant->weight    = $request->weight;
-    //         $variant->expire_date    = $request->expire_date;
-    //         $variant->manufacture_date    = $request->manufacture_date;
-    //         $variant->product_id    = $request->product_id;
-    //         $variant->save();
-    //         return response()->json([
-    //             'status' => '200',
-    //             'message' => 'variant saved successfully',
-
-    //         ]);
-    //     }
-    //     return response()->json([
-    //         'status' => '500',
-    //         'error' => $validator->messages()
-    //     ]);
-    // }
-
-    // show variants function
-    // public function variantShow($id)
-    // {
-    //     $variant = Variant::where('product_id', $id)->get();
-    //     return response()->json([
-    //         'status' => '200',
-    //         'message' => 'variant saved successfully',
-    //         'variantData' => $variant,
-    //     ]);
-    // }
-
 
     public function getVariant_product_id()
     {
@@ -647,156 +797,6 @@ class ProductController extends Controller
             'product_name' => Product::where('id', $product_id)->first()->product_name,
         ]);
     }
-
-
-
-    //     public function variantProductStore(Request $request)
-    // {
-
-    //     try{
-
-    //         if ($request->price ??0) {
-    //             foreach ($request->price as $key => $price) {
-
-    //                 $productVerify = Variant::where('product_id', $request->product_id)->first();
-
-    //                 $variant = new Variant;
-    //                 $variant->product_id = $request->product_id;
-    //                 $variant->size = $request->size[$key];
-    //                 $variant->color = $request->color[$key];
-    //                 $variant->regular_price = $price;
-    //                 $variant->weight = $request->weight[$key];
-    //             $variant->flavor = $request->flavor[$key];
-    //             $variant->variant_name = $request->variant_name[$key];
-
-    //             if ($productVerify) {
-    //                 $variant->status = "Variant";
-    //             }
-    //             $variant->save();
-
-
-    //             if($variant->id){
-
-    //                 if($request->hasFile('image')&& isset($request->image[$key])){
-    //                     foreach($request->image as $key => $image) {
-    //                     dd($request->image[$key]);
-    //                     $file = $request->file('image')[$key];
-    //                     $extension = $file->extension();
-    //                     $filename = time() . '_' . $key . '.' . $extension;
-    //                     $path = 'uploads/products/variant/';
-    //                     $file->move($path,$filename);
-    //                     $galleryImage = $path.$filename;
-
-    //                     $variantImage = new VariantImageGallery();
-    //                     $variantImage->variant_id = $variant->id;
-    //                     $variantImage->product_id= $request->product_id;
-    //                     $variantImage->image = $galleryImage;
-    //                     $variantImage->save();
-    //                 }
-    //                }
-    //             }
-
-
-
-
-
-
-
-
-    //             if ($request->stock_quantity && isset($request->stock_quantity[$key])) {
-
-    //                 $stock = new ProductStock();
-    //                 $stock->product_id = $request->product_id;
-    //                 $stock->variant_id = $variant->id;
-    //                 $stock->StockQuantity = $request->stock_quantity[$key];
-    //                 $stock->status = 'Available';
-
-    //                 $stock->save();
-
-    //             }
-    //         }
-    //     }
-
-    //     return response()->json([
-    //         'status' => 200,
-    //         'message' => 'Variant saved successfully',
-    //     ]);
-    // }
-    // catch (\Exception $e) {
-    //     return response()->json([
-    //         'status' => '500',
-    //         'message' => 'Something went wrong',
-    //     ]);
-    // }
-    // }
-
-    // public function variantProductStore(Request $request)
-    // {
-
-    //     try {
-    //         if ($request->price ?? 0) {
-    //             foreach ($request->price as $key => $price) {
-
-    //                 $productVerify = Variant::where('product_id', $request->product_id)->first();
-
-    //                 $variant = new Variant;
-    //                 $variant->product_id = $request->product_id;
-    //                 $variant->size = $request->size[$key];
-    //                 $variant->color = $request->color[$key];
-    //                 $variant->regular_price = $price;
-    //                 $variant->weight = $request->weight[$key];
-    //                 $variant->flavor = $request->flavor[$key];
-    //                 $variant->variant_name = $request->variant_name[$key];
-
-    //                 if ($productVerify) {
-    //                     $variant->status = "Variant";
-    //                 }
-    //                 $variant->save();
-
-
-    //                 if ($variant->id && $request->hasFile('image')) {
-
-    //                     foreach ($request->file('image')[$key] as $image) {
-
-    //                         $extension = $image->extension();
-    //                         $filename = time() . '_' . uniqid() . '.' . $extension;
-    //                         $path = 'uploads/products/variant/';
-    //                         $image->move($path,$filename);
-    //                         $galleryImage = $path . $filename;
-
-
-    //                         $variantImage = new VariantImageGallery();
-    //                         $variantImage->variant_id = $variant->id;
-    //                         $variantImage->product_id = $request->product_id;
-    //                         $variantImage->image = $galleryImage;
-    //                         $variantImage->save();
-    //                     }
-    //                 }
-
-    //                 // **Handling stock for each variant**
-    //                 if ($request->stock_quantity && isset($request->stock_quantity[$key])) {
-    //                     $stock = new ProductStock();
-    //                     $stock->product_id = $request->product_id;
-    //                     $stock->variant_id = $variant->id;
-    //                     $stock->StockQuantity = $request->stock_quantity[$key];
-    //                     $stock->status = 'Available';
-    //                     $stock->save();
-    //                 }
-    //             }
-    //         }
-
-    //         return response()->json([
-    //             'status' => 200,
-    //             'message' => 'Variant saved successfully',
-    //         ]);
-    //     } catch (\Exception $e) {
-    //         return response()->json([
-    //             'status' => 500,
-    //             'message' => 'Something went wrong',
-    //             'error' => $e->getMessage(),
-    //         ]);
-    //     }
-    // }
 
 
     public function variantProductStore(Request $request, ImageOptimizerService $imageService)

@@ -217,48 +217,50 @@
 
 
         function validateCategoryForm() {
-    $(".error-message").remove();
-    $("input, select").removeClass("is-invalid");
+            $(".error-message").remove();
+            $("input, select").removeClass("is-invalid");
 
-    let isValid = true;
+            let isValid = true;
 
-    // Get form values
-    let categoryName = $("input[name='categoryName']").val().trim();
-    let imageInput = $("input[name='image']")[0].files[0];
-    let parentId = $("select[name='parent_id']").val();
+            // Get form values
+            let categoryName = $("input[name='categoryName']").val().trim();
+            let imageInput = $("input[name='image']")[0].files[0];
+            let parentId = $("select[name='parent_id']").val();
 
-    // Validation rules
-    if (categoryName === "") {
-        $("input[name='categoryName']").addClass("is-invalid")
-            .after('<span class="text-danger error-message">Category name is required</span>');
-        isValid = false;
-    }
-
-    // Only validate image if parent_id is not selected (i.e., root category)
-    if (!parentId) {
-        if (!imageInput) {
-            $("input[name='image']").addClass("is-invalid")
-                .after('<span class="text-danger error-message">Image is required</span>');
-            isValid = false;
-        } else {
-            let fileSize = imageInput.size / 1024;
-            let fileType = imageInput.type;
-            let allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
-
-            if (!allowedTypes.includes(fileType)) {
-                $("input[name='image']").addClass("is-invalid")
-                    .after('<span class="text-danger error-message">Only JPG, JPEG, and PNG files are allowed!</span>');
-                isValid = false;
-            } else if (fileSize > 2048) {
-                $("input[name='image']").addClass("is-invalid")
-                    .after('<span class="text-danger error-message">Image size must be less than 2MB!</span>');
+            // Validation rules
+            if (categoryName === "") {
+                $("input[name='categoryName']").addClass("is-invalid")
+                    .after('<span class="text-danger error-message">Category name is required</span>');
                 isValid = false;
             }
-        }
-    }
 
-    return isValid;
-}
+            // Only validate image if parent_id is not selected (i.e., root category)
+            if (!parentId) {
+                if (!imageInput) {
+                    $("input[name='image']").addClass("is-invalid")
+                        .after('<span class="text-danger error-message">Image is required</span>');
+                    isValid = false;
+                } else {
+                    let fileSize = imageInput.size / 1024;
+                    let fileType = imageInput.type;
+                    let allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+
+                    if (!allowedTypes.includes(fileType)) {
+                        $("input[name='image']").addClass("is-invalid")
+                            .after(
+                                '<span class="text-danger error-message">Only JPG, JPEG, and PNG files are allowed!</span>'
+                            );
+                        isValid = false;
+                    } else if (fileSize > 2048) {
+                        $("input[name='image']").addClass("is-invalid")
+                            .after('<span class="text-danger error-message">Image size must be less than 2MB!</span>');
+                        isValid = false;
+                    }
+                }
+            }
+
+            return isValid;
+        }
 
 
 
@@ -316,46 +318,46 @@
 
 
 
-////////edit form validation
+        ////////edit form validation
 
-function validateCategoryEditForm() {
-    // Clear any previous error messages
-    $(".error-message").remove();
-    $("input, select").removeClass("is-invalid");
+        function validateCategoryEditForm() {
+            // Clear any previous error messages
+            $(".error-message").remove();
+            $("input, select").removeClass("is-invalid");
 
-    let isValid = true;
+            let isValid = true;
 
-    // Get form values
-    let categoryName = document.getElementById("category_name").value;
-    let imageInput = $("input[name='image']")[0].files[0];
-
-
-    if (categoryName === "") {
-        $("input[name='categoryName']").addClass("is-invalid")
-            .after('<span class="text-danger error-message">Category name is required</span>');
-        isValid = false;
-    }
+            // Get form values
+            let categoryName = document.getElementById("category_name").value;
+            let imageInput = $("input[name='image']")[0].files[0];
 
 
-     if (imageInput) {
-        let fileSize = imageInput.size / 1024; // Convert size to KB
-        let fileType = imageInput.type;
-        let allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+            if (categoryName === "") {
+                $("input[name='categoryName']").addClass("is-invalid")
+                    .after('<span class="text-danger error-message">Category name is required</span>');
+                isValid = false;
+            }
 
-        // Check for allowed file types
-        if (!allowedTypes.includes(fileType)) {
-            $("#image").addClass("is-invalid")
-                .after('<span class="text-danger error-message">Only JPG, JPEG, and PNG files are allowed!</span>');
-            isValid = false;
-        } else if (fileSize > 2048) {  // Check for file size (2MB)
-            $("#image").addClass("is-invalid")
-                .after('<span class="text-danger error-message">Image size must be less than 2MB!</span>');
-            isValid = false;
+
+            if (imageInput) {
+                let fileSize = imageInput.size / 1024; // Convert size to KB
+                let fileType = imageInput.type;
+                let allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+
+                // Check for allowed file types
+                if (!allowedTypes.includes(fileType)) {
+                    $("#image").addClass("is-invalid")
+                        .after('<span class="text-danger error-message">Only JPG, JPEG, and PNG files are allowed!</span>');
+                    isValid = false;
+                } else if (fileSize > 2048) { // Check for file size (2MB)
+                    $("#image").addClass("is-invalid")
+                        .after('<span class="text-danger error-message">Image size must be less than 2MB!</span>');
+                    isValid = false;
+                }
+            }
+
+            return isValid; // Return true if valid, false otherwise
         }
-    }
-
-    return isValid; // Return true if valid, false otherwise
-}
 
 
 
@@ -365,47 +367,47 @@ function validateCategoryEditForm() {
 
 
 
-if (!validateCategoryEditForm()) return;
+            if (!validateCategoryEditForm()) return;
 
-        let formData = new FormData($('#EditCategoryForm')[0]);
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-        $('.error-message').remove();
-        $.ajax({
-            url: '/category/update',
-            type: "POST",
-            data: formData,
-            contentType: false,
-            processData: false,
-            success: function(response) {
-                console.log(response);
-                $('#EditCategoryForm')[0].reset();
-                $('#categoryEditModal').modal('hide');
-                toastr.success('Category Updated Succesfully');
-
-                dataShow();
-            },
-
-            error: function(xhr) {
-                if (xhr.status === 422) {
-                    let errors = xhr.responseJSON.errors;
-
-                    $.each(errors, function(key, value) {
-                        let inputField = $('[name="' + key + '"]');
-                        inputField.after('<span class="text-danger error-message">' + value[
-                            0] + '</span>');
-                    });
-                } else {
-                    alert("Something went wrong!");
+            let formData = new FormData($('#EditCategoryForm')[0]);
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
-            }
+            });
+            $('.error-message').remove();
+            $.ajax({
+                url: '/category/update',
+                type: "POST",
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    console.log(response);
+                    $('#EditCategoryForm')[0].reset();
+                    $('#categoryEditModal').modal('hide');
+                    toastr.success('Category Updated Succesfully');
+
+                    dataShow();
+                },
+
+                error: function(xhr) {
+                    if (xhr.status === 422) {
+                        let errors = xhr.responseJSON.errors;
+
+                        $.each(errors, function(key, value) {
+                            let inputField = $('[name="' + key + '"]');
+                            inputField.after('<span class="text-danger error-message">' + value[
+                                0] + '</span>');
+                        });
+                    } else {
+                        alert("Something went wrong!");
+                    }
+                }
+
+            });
 
         });
-
-    });
 
 
 
@@ -478,7 +480,7 @@ if (!validateCategoryEditForm()) return;
                                         <td>${category?.categoryName ?? "N/A" }</td>
                                         <td>${category?.parent_category?.categoryName ?? "N/A"}</td>
                                         <td>
-                                            <img src="${category?.image}" alt="Combo Image" class="img-thumbnail" style="max-width: 100px; max-height: 100px;">
+                                            <img src="${category?.image ?? 'uploads/productempty.jpg'}" alt="Category Image" class="img-thumbnail" style="max-width: 100px; max-height: 100px;">
 
                                             </td>
 

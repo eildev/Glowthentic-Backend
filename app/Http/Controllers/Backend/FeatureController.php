@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Models\Features;
 use App\Services\ImageOptimizerService;
+use App\Services\SlugService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -28,7 +29,8 @@ class FeatureController extends Controller
             $image = 'uploads/feature/' . $imageName;
             $feature = new Features;
             $feature->feature_name = $request->feature_name;
-            $feature->slug = Str::slug($request->feature_name);
+            // $feature->slug = Str::slug($request->feature_name);
+            $feature->slug = SlugService::generateUniqueSlug($request->feature_name, Features::class);
             $feature->image = $image;
             $feature->save();
             return back()->with('success', 'Feature Successfully Added');
@@ -44,7 +46,7 @@ class FeatureController extends Controller
     public function edit($id)
     {
         $feature = Features::findOrFail($id);
-        return view('backend.features.edit', compact('brand'));
+        return view('backend.features.edit', compact('feature'));
     }
 
     public function update(Request $request, $id, ImageOptimizerService $imageService)

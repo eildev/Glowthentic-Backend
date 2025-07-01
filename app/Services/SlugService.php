@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class SlugService
@@ -17,20 +18,22 @@ class SlugService
      */
     public static function generateUniqueSlug(string $value, string $model, string $field = 'slug', ?int $exceptId = null): string
     {
+        $value = trim($value);
         $slug = Str::slug($value);
         $originalSlug = $slug;
         $counter = 1;
 
-        // Check for existing slugs
-        while ($model::where($field, $slug)
+        while ($model::withTrashed()->where($field, $slug)
             ->when($exceptId, function ($query) use ($exceptId) {
                 return $query->where('id', '!=', $exceptId);
             })
             ->exists()
         ) {
+            // Log::info("Slug $slug exists, trying next: $originalSlug-$counter");
             $slug = $originalSlug . '-' . $counter++;
         }
 
+        // Log::info("Final slug: $slug");
         return $slug;
     }
 }

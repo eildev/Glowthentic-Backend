@@ -7,8 +7,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Services\ImageOptimizerService;
+use App\Services\SlugService;
 use Exception;
-use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
@@ -42,7 +42,8 @@ class CategoryController extends Controller
 
                 $category = new Category;
                 $category->categoryName = $request->categoryName;
-                $category->slug = Str::slug($request->categoryName);
+                // $category->slug = Str::slug($request->categoryName);
+                $category->slug = SlugService::generateUniqueSlug($request->categoryName, Category::class);
                 if ($request->image) {
                     $destinationPath = public_path('uploads/category/');
                     $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
@@ -105,49 +106,6 @@ class CategoryController extends Controller
             ], 500);
         }
     }
-    // public function show($id)
-    // {
-    //     try {
-    //         $category = Category::find($id);;
-
-    //         if (!$category) {
-    //             return response()->json([
-    //                 'success' => false,
-    //                 'message' => 'tag not found.'
-    //             ], 404);
-    //         }
-
-    //         return response()->json([
-    //             'success' => true,
-    //             'data' => $category
-    //         ]);
-    //     } catch (Exception $e) {
-    //         return response()->json([
-    //             'success' => false,
-    //             'message' => 'Failed to fetch tag details.',
-    //             'error' => $e->getMessage()
-    //         ], 500);
-    //     }
-    //     // try {
-    //     //     $category = TagName::findOrFail($id);
-
-    //     //     return response()->json([
-    //     //         'success' => true,
-    //     //         'data' => $category
-    //     //     ]);
-    //     // } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-    //     //     return response()->json([
-    //     //         'success' => false,
-    //     //         'message' => 'Tag not found.'
-    //     //     ], 404);
-    //     // } catch (Exception $e) {
-    //     //     return response()->json([
-    //     //         'success' => false,
-    //     //         'message' => 'Failed to fetch tag details.',
-    //     //         'error' => $e->getMessage()
-    //     //     ], 500);
-    //     // }
-    // }
 
     // category Edit function
     public function edit($id)
@@ -198,7 +156,8 @@ class CategoryController extends Controller
                 unlink($imagePath);
             }
             $category->categoryName = $request->categoryName;
-            $category->slug = Str::slug($request->categoryName);
+            // $category->slug = Str::slug($request->categoryName);
+            $category->slug = SlugService::generateUniqueSlug($request->categoryName, Category::class);
             $category->image = $image;
             if ($request->parent_id) {
                 $category->parent_id = $request->parent_id;
@@ -213,7 +172,8 @@ class CategoryController extends Controller
             ]);
             $category = Category::findOrFail($request->cat_id);
             $category->categoryName = $request->categoryName;
-            $category->slug = Str::slug($request->categoryName);
+            // $category->slug = Str::slug($request->categoryName);
+            $category->slug = SlugService::generateUniqueSlug($request->categoryName, Category::class);
             if ($request->parent_id) {
                 $category->parent_id = $request->parent_id;
             }

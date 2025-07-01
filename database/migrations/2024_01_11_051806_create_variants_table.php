@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('variants', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('product_id')->unsigned();
-            $table->string('variant_name', 191);
+            $table->string('variant_name', 191)->nullable();
             $table->string('color')->nullable();
             $table->string('size')->nullable();
             $table->float('regular_price')->nullable();

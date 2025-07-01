@@ -7,6 +7,7 @@ use App\Models\Brand;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Services\ImageOptimizerService;
+use App\Services\SlugService;
 use Exception;
 
 class BrandController extends Controller
@@ -43,7 +44,7 @@ class BrandController extends Controller
             $image = 'uploads/brands/' . $imageName;
             $Brand = new Brand;
             $Brand->BrandName = $request->BrandName;
-            $Brand->slug = Str::slug($request->BrandName);
+            $Brand->slug = SlugService::generateUniqueSlug($request->BrandName, Brand::class);
             $Brand->image = $image;
             $Brand->save();
             return back()->with('success', 'Brand Successfully Added');
@@ -88,7 +89,7 @@ class BrandController extends Controller
                 unlink($brand->image);
             }
             $brand->BrandName = $request->BrandName;
-            $brand->slug = Str::slug($request->BrandName);
+            $brand->slug = SlugService::generateUniqueSlug($request->BrandName, Brand::class);
             $brand->image = $image;
             $brand->update();
             return redirect()->route('brand.view')->with('success', 'Brand Successfully updated');
@@ -98,7 +99,7 @@ class BrandController extends Controller
             ]);
             $brand = Brand::findOrFail($id);
             $brand->BrandName = $request->BrandName;
-            $brand->slug = Str::slug($request->BrandName);
+            $brand->slug = SlugService::generateUniqueSlug($request->BrandName, Brand::class);
             $brand->update();
             return redirect()->route('brand.view')->with('success', 'Brand Successfully updated without image');
         }
@@ -110,6 +111,9 @@ class BrandController extends Controller
     public function destroy(string $id)
     {
         $Brands = Brand::findOrFail($id);
+        if (file_exists($Brands->image)) {
+            unlink(public_path($Brands->image));
+        }
         $Brands->delete();
         return back()->with('success', 'Brands Successfully deleted');
     }

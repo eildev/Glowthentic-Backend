@@ -985,6 +985,7 @@
         //////////////////////////////////// show validation error //////////////////////////////////////
         const isMultipleCategory = '{{ $setting->isMultipleCategory }}'
 
+
         function validationError() {
             $(".error-message").remove();
             $("input, select, textarea").removeClass("is-invalid");
