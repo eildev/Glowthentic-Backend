@@ -22,7 +22,6 @@ use Exception;
 use App\Models\ProductFeature;
 use App\Models\SizeModel;
 use App\Models\ColorModel;
-use File;
 use App\Models\Category;
 use App\Models\Concern;
 use App\Models\Coupon;
@@ -396,7 +395,7 @@ class ProductController extends Controller
     public function update(Request $request)
     {
 
-        dd($request->category_id);
+        // dd($request->category_id);
         $setting = Setting::latest()->first();
 
         $product = Product::findOrFail($request->product_id);
