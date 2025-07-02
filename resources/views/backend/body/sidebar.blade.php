@@ -584,6 +584,22 @@
             </ul>
         </li>
 
+        <li class="menu-label">Report and Issue</li>
+        <li>
+            <a href="javascript:;" class="has-arrow">
+                <div class="parent-icon">
+                    <i class='bx bx-cog'></i>
+                </div>
+                <div class="menu-title">Report</div>
+            </a>
+            <ul>
+                <li> <a href="{{ route('report') }}"><i class="bx bx-right-arrow-alt"></i>Manage Report and Issue</a>
+                </li>
+                <li> <a href="{{ route('report.insert') }}"><i class="bx bx-right-arrow-alt"></i>Add Report and
+                        Issue</a>
+                </li>
+            </ul>
+        </li>
         <li class="menu-label">Seetings</li>
         <li>
             <a href="javascript:;" class="has-arrow">
@@ -596,6 +612,20 @@
                 <li> <a href="{{ route('settings') }}"><i class="bx bx-right-arrow-alt"></i>Category Settings</a>
                 </li>
 
+            </ul>
+        </li>
+
+        <li class="menu-label">Backup and Restore</li>
+        <li>
+            <a href="javascript:;" class="has-arrow">
+                <div class="parent-icon">
+                    <i class='bx bx-cog'></i>
+                </div>
+                <div class="menu-title">Backup and Restore</div>
+            </a>
+            <ul>
+                <li> <a href="{{ route('trash.index') }}"><i class="bx bx-right-arrow-alt"></i>Trash Bin</a>
+                </li>
             </ul>
         </li>
 

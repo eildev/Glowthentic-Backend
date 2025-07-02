@@ -7,6 +7,7 @@ use App\Http\Controllers\API\ApiBlogPostController;
 use App\Http\Controllers\API\ApiBrandController;
 use App\Http\Controllers\API\ApiCategoryController;
 use App\Http\Controllers\API\ApiComboProductController;
+use App\Http\Controllers\API\ApiConcernController;
 use App\Http\Controllers\API\ApiContactUsController;
 use App\Http\Controllers\API\ApiReviewController;
 use App\Http\Controllers\API\ApiCouponController;
@@ -22,6 +23,7 @@ use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\ApiWishListController;
 use App\Http\Controllers\API\ApiUserManageController;
 use App\Http\Controllers\API\ApiPostReactController;
+use App\Http\Controllers\API\ApiReportController;
 use App\Http\Controllers\API\ForgotPasswordController;
 use App\Http\Controllers\API\SocialAuthController;
 use App\Http\Controllers\API\UserTrackerController;
@@ -94,6 +96,10 @@ Route::controller(ApiCategoryController::class)->group(function () {
 Route::controller(ApiTagNameController::class)->group(function () {
     Route::get('/tagname', 'viewAll');
     Route::get('/tagname/{id}', 'show')->name('tagname.show');
+});
+Route::controller(ApiConcernController::class)->group(function () {
+    Route::get('/concern', 'viewAll');
+    Route::get('/concern/{id}', 'show');
 });
 Route::controller(ApiFeatureController::class)->group(function () {
     Route::get('/features', 'viewAll');
@@ -195,6 +201,10 @@ Route::controller(ApiReviewController::class)->group(function () {
 });
 Route::controller(UserTrackerController::class)->group(function () {
     Route::post('/user-tracker', 'store');
+});
+
+Route::controller(ApiReportController::class)->group(function () {
+    Route::post('/report-store', 'store');
 });
 
 

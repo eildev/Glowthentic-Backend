@@ -3,29 +3,30 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\TagName;
+use App\Models\Concern;
 use Exception;
+use Illuminate\Http\Request;
 
-class ApiTagNameController extends Controller
+class ApiConcernController extends Controller
 {
     public function viewAll()
     {
-        $tagnames = TagName::all();
+        $concerns = Concern::where('status', 'active')->get();
 
         return response()->json([
             'status' => 200,
-            'categories' => $tagnames
+            'concerns' => $concerns
         ]);
     }
+
     public function show($id)
     {
         try {
-            $category = TagName::findOrFail($id);
+            $concern = Concern::findOrFail($id);
 
             return response()->json([
                 'success' => true,
-                'data' => $category
+                'concern' => $concern
             ]);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([

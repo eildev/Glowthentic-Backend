@@ -38,7 +38,9 @@ use App\Http\Controllers\Backend\FeatureController;
 use App\Http\Controllers\Backend\CourierController;
 use App\Http\Controllers\Backend\ColorController;
 use App\Http\Controllers\Backend\ConcernController;
+use App\Http\Controllers\Backend\ReportController;
 use App\Http\Controllers\Backend\SettingsController;
+use App\Http\Controllers\Backend\TrashBinController;
 use App\Http\Controllers\Backend\userProfileController;
 use App\Http\Controllers\Backend\VariantController;
 
@@ -523,6 +525,17 @@ Route::controller(UserTrackerController::class)->group(function () {
 });
 
 
+Route::controller(ReportController::class)->group(function () {
+    Route::get('/report', 'index')->name('report');
+    Route::get('/report/insert', 'insert')->name('report.insert');
+    Route::post('/report/store', 'store')->name('report.store');
+    Route::get('/report/edit/{id}', 'edit')->name('report.edit');
+    Route::post('/report/update/{id}', 'update')->name('report.update');
+    Route::patch('/report/status/{id}', 'status')->name('report.status');
+    Route::get('/report/view-details/{id}', 'viewDetails')->name('report.view.details');
+    Route::get('/report/delete/{id}', 'delete')->name('report.delete');
+});
+
 // Route::controller(VariantController::class)->group(function () {
 //     Route::get('/check-mail-template/{id}', 'checkMail');
 // });
@@ -531,6 +544,12 @@ Route::controller(SettingsController::class)->group(function () {
     Route::post('/settings/store', 'store')->name('settings.store');
 });
 //User Tracker All Route End
+
+Route::controller(TrashBinController::class)->group(function () {
+    Route::get('/trash', 'index')->name('trash.index');
+    Route::post('/trash/restore/{model}/{id}', 'restore')->name('trash.restore');
+    Route::delete('/trash/force-delete/{model}/{id}', 'forceDelete')->name('trash.force-delete');
+});
 
 // require __DIR__ . '/auth.php';
 // require __DIR__ . '/frontend.php';

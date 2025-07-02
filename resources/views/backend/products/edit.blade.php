@@ -30,8 +30,8 @@
                             </div>
                         </div>
                     </div>
-
                     <hr />
+                    {{-- @dd(count($selectedCategoryIds) > 1) --}}
                     <div class="form-body mt-4">
                         <form action="" enctype="multipart/form-data" id="productForm">
                             @csrf
@@ -46,16 +46,30 @@
                                                             class="text-danger fw-bold">*</span></label>
                                                     <div class="col-12">
                                                         @if ($setting->isMultipleCategory === 0)
-                                                            <select
-                                                                class="form-select category_select @error('category_id') is-invalid  @enderror"
-                                                                name="category_id">
-                                                                <option value="">Select Category</option>
-                                                                @foreach ($categories as $category)
-                                                                    <option value="{{ $category->id }}">
-                                                                        {{ $category->categoryName ?? '' }}
-                                                                    </option>
-                                                                @endforeach
-                                                            </select>
+                                                            @if (count($selectedCategoryIds) > 1)
+                                                                <select
+                                                                    class="form-select category_select @error('category_id') is-invalid  @enderror"
+                                                                    name="category_id">
+                                                                    <option value="">Select Category</option>
+                                                                    @foreach ($categories as $category)
+                                                                        <option value="{{ $category->id }}">
+                                                                            {{ $category->categoryName ?? '' }}
+                                                                        </option>
+                                                                    @endforeach
+                                                                </select>
+                                                            @else
+                                                                <select
+                                                                    class="form-select category_select @error('category_id') is-invalid  @enderror"
+                                                                    name="category_id">
+                                                                    <option value="">Select Category</option>
+                                                                    @foreach ($categories as $category)
+                                                                        <option value="{{ $category->id }}"
+                                                                            {{ $category->id == $selectedCategoryIds[0] ? 'selected' : '' }}>
+                                                                            {{ $category->categoryName ?? '' }}
+                                                                        </option>
+                                                                    @endforeach
+                                                                </select>
+                                                            @endif
                                                         @else
                                                             <select
                                                                 class="multiple-select category_select @error('category_id') is-invalid  @enderror"
@@ -80,11 +94,25 @@
                                                     <label class="form-label col-12">Select Subcategory</label>
                                                     <div class="col-12">
                                                         @if ($setting->isMultipleCategory === 0)
-                                                            <select
-                                                                class="form-select subcategory_select @error('subcategory_id') is-invalid  @enderror"
-                                                                name="subcategory_id">
-                                                                <option value="">Select Subcategory</option>
-                                                            </select>
+                                                            @if (count($selectedSubcategoryIds) > 1)
+                                                                <select
+                                                                    class="form-select subcategory_select @error('subcategory_id') is-invalid  @enderror"
+                                                                    name="subcategory_id">
+                                                                    <option value="">Select Subcategory</option>
+                                                                </select>
+                                                            @else
+                                                                <select
+                                                                    class="form-select subcategory_select @error('subcategory_id') is-invalid  @enderror"
+                                                                    name="subcategory_id">
+                                                                    <option value="">Select Subcategory</option>
+                                                                    @foreach ($subcategories as $subcategory)
+                                                                        <option value="{{ $subcategory->id }}"
+                                                                            {{ $subcategory->id == $selectedSubcategoryIds[0] ? 'selected' : '' }}>
+                                                                            {{ $subcategory->categoryName ?? '' }}
+                                                                        </option>
+                                                                    @endforeach
+                                                                </select>
+                                                            @endif
                                                         @else
                                                             <select
                                                                 class="multiple-select subcategory_select @error('subcategory_id') is-invalid  @enderror"
@@ -397,7 +425,7 @@
                                             <div class="col-md-12">
                                                 <label class="form-label">Select Product Concern</label>
                                                 <select class="multiple-select" data-placeholder="Choose anything"
-                                                    multiple="multiple" name="product_feature[]">
+                                                    multiple="multiple" name="concerns[]">
                                                     @foreach ($concerns as $concern)
                                                         <option value="{{ $concern->id }}"
                                                             {{ in_array($concern->id, $selectedConcernId) ? 'selected' : '' }}>
@@ -805,7 +833,6 @@
         ////////////////////////////////////////////validation error///////////////////////////////
         const isMultipleCategory = '{{ $setting->isMultipleCategory }}'
         const categories = @json($selectedCategoryIds);
-        console.log(categories);
 
         function validationError() {
             $(".error-message").remove();
@@ -837,9 +864,7 @@
             }
 
             if (isMultipleCategory == 0) {
-                if (categories.length > 1) {
-                    // console.log('Categories', categories);
-                    // console.log(categories.length > 1);
+                if (categories.length <= 1) {
                     if (!category_id || (Array.isArray(category_id) && category_id.length === 0)) {
                         errors.category_id = "Category id is Required";
                         isValid = false;
@@ -866,7 +891,7 @@
 
 
             // Log errors for debugging
-            console.log("Validation Errors:", errors);
+            // console.log("Validation Errors:", errors);
             if (!$.isEmptyObject(errors)) {
                 isValid = false;
 
@@ -895,7 +920,7 @@
         ///////////////////variant image delete///////////////////
         $(document).on('click', '.remove-image', function() {
             let image_id = $(this).data('id');
-            console.log(image_id);
+            // console.log(image_id);
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -1068,7 +1093,7 @@
                 url: "{{ route('admin.products.getSize') }}",
                 type: "GET",
                 success: function(response) {
-                    console.log(response);
+                    // console.log(response);
                     if (response.status == 200) {
                         let size = response.size;
                         let options = '<option value="">Select Size</option>';
@@ -1120,7 +1145,7 @@
         $(document).on("click", ".update_product", function() {
 
             if (!validationError()) {
-                console.log("Validation failed");
+                // console.log("Validation failed");
                 return;
             }
 
@@ -1152,7 +1177,7 @@
                     if (xhr.status === 422) {
                         let errors = xhr.responseJSON.errors;
                         $('.error-message').remove(); // Remove previous errors
-                        console.log(errors);
+                        // console.log(errors);
                         $.each(errors, function(key, value) {
                             let inputField = $('[name="' + key + '"]');
                             inputField.after('<div class="text-danger error-message">' + value[
@@ -1164,7 +1189,6 @@
         });
 
         /////////////////////////////////extra field show in product page///////////////////////
-
         function showExtraField() {
             $.ajax({
                 url: "{{ url('get-extra-field/info/product/page/show') }}",
@@ -1176,7 +1200,7 @@
                     if (data.status === 200) {
                         $('.extra_field').empty();
                         let extraField = data.extraField;
-                        console.log(extraField);
+                        // console.log(extraField);
                         let option = `<option value="" selected disabled>Select Extra Field</option>`;
 
                         extraField.forEach(function(field) {
@@ -1192,8 +1216,6 @@
                 }
             });
         }
-
-
 
         showExtraField(); // Ensure the function runs after the DOM is fully loaded
 
@@ -1276,17 +1298,14 @@
                 }
             });
         });
-
-
         /////////////////////////////////extra field insert modal end///////////////////////////
 
 
 
         ///////////////////////////Extra field show in product insert page//////////////////////////
-
         $(document).on('change', '.extra_field', function() {
             let selectedOption = $(this).find(':selected');
-            console.log(selectedOption);
+            // console.log(selectedOption);
             let id = selectedOption.data('id');
 
             if (id) {
@@ -1374,14 +1393,6 @@
                             </div>
                         `);
                             }
-
-
-
-
-
-
-
-
                         }
                     },
 
@@ -1395,10 +1406,6 @@
 
 
         /////////////////extra field show end////////////////////
-
-
-
-
         document.getElementById('image').addEventListener('change', function() {
             let count = this.files.length;
             let message = count > 0 ? count + " image(s) selected" : "No images selected";
@@ -1429,16 +1436,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
         $(document).on("click", ".add_variant", function() {
 
             $('#variant_form').fadeIn(1000);
@@ -1458,177 +1455,5 @@
 
             });
         });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        // !.. add product ajax Crud
-        // const add_product = document.querySelector('.add_product');
-        // add_product.addEventListener('click', function(e) {
-        //     e.preventDefault();
-        //     document
-        //         .querySelector(".pageLoader")
-        //         .style.setProperty("display", "flex", "important");
-
-        //     let allData = new FormData(jQuery("#productForm")[0]);
-        //     $.ajax({
-        //         url: "/product/store",
-        //         type: "POST",
-        //         data: allData,
-        //         contentType: false,
-        //         processData: false,
-        //         success: function(res) {
-        //             if (res.status == 200) {
-        //                 $('.variant_section').show();
-        //                 $('.add_product').addClass('disabled');
-        //                 $('.product_id').val(res.productId);
-        //                 toastr.success(res.message);
-        //                 document
-        //                     .querySelector(".pageLoader")
-        //                     .style.setProperty("display", "none", "important");
-        //             } else {
-        //                 $('.category_error').text(res.error.category_id);
-        //                 $('.subcategory_error').text(res.error.subcategory_id);
-        //                 $('.brand_error').text(res.error.brand_id);
-        //                 $('.feature_error').text(res.error.product_feature);
-        //                 $('.product_name_error').text(res.error.product_name);
-        //                 $('.short_desc').text(res.error.short_desc);
-        //                 $('.long_desc').text(res.error.long_desc);
-        //                 $('.product_image').text(res.error.product_image);
-        //                 $('.sku_error').text(res.error.sku);
-        //                 $('.shipping_error').text(res.error.shipping);
-        //                 // $('.tag_error').text(res.error.tags);
-        //                 toastr.warning(res.error);
-        //                 document
-        //                     .querySelector(".pageLoader")
-        //                     .style.setProperty("display", "none", "important");
-        //             }
-        //         },
-        //     });
-        // });
-
-
-
-        // // !.. add variant ajax Crud
-        // const add_varient = document.querySelector('.add_varient');
-        // add_varient.addEventListener('click', function(e) {
-        //     e.preventDefault();
-        //     document
-        //         .querySelector(".pageLoader")
-        //         .style.setProperty("display", "flex", "important");
-        //     let regular_price = parseFloat(document.querySelector('.regular_price').value);
-        //     let discount = parseFloat(document.querySelector('.discount').value);
-        //     let discount_amount = parseFloat(document.querySelector('.discount_amount')
-        //         .value);
-        //     let stock = parseFloat(document.querySelector('#stock').value);
-
-        //     let varientData = new FormData(jQuery("#productVariant")[0]);
-        //     if (regular_price > 0 && discount >= 0 && discount_amount > 0 && stock > 0) {
-        //         $.ajax({
-        //             url: '/product/variant/store',
-        //             type: "POST",
-        //             data: varientData,
-        //             contentType: false,
-        //             processData: false,
-        //             success: function(response) {
-        //                 if (response.status == 200) {
-        //                     toastr.success(response.message);
-        //                     document.querySelector('.discount_amount')
-        //                         .value = '';
-        //                     document.querySelector('.regular_price').value = '';
-        //                     document.querySelector('.discount').value = '';
-        //                     document.querySelector('#stock').value = '';
-        //                     document.querySelector('.unit').value = '';
-        //                     document.querySelector('.weight').value = '';
-        //                     document.querySelector('.color').value = '';
-        //                     document.querySelector('.size').value = '';
-        //                     show();
-        //                     document
-        //                         .querySelector(".pageLoader")
-        //                         .style.setProperty("display", "none", "important");
-        //                 } else {
-        //                     toastr.error('Something went wrong');
-        //                     document
-        //                         .querySelector(".pageLoader")
-        //                         .style.setProperty("display", "none", "important");
-        //                 }
-        //             }
-        //         })
-
-        //         document
-        //             .querySelector(".pageLoader")
-        //             .style.setProperty("display", "none", "important");
-        //     } else {
-        //         toastr.error('please provide valid input');
-        //         document
-        //             .querySelector(".pageLoader")
-        //             .style.setProperty("display", "none", "important");
-        //     }
-
-        // })
-
-
-        // // show variantData on Table
-        // function show() {
-        //     const productId = document.querySelector('.product_id').value;
-        //     $.ajax({
-        //         url: '/product/variant/show/' + productId,
-        //         type: "GET",
-        //         dataType: 'JSON',
-        //         success: function(res) {
-        //             if (res.status == 200) {
-        //                 // console.log(res);
-        //                 let varient_container = document.querySelector('.varient_container');
-        //                 varient_container.innerHTML = "";
-        //                 const allData = res.variantData;
-        //                 allData.forEach(function(data) {
-        //                     const tr = document.createElement('tr');
-        //                     tr.innerHTML += `
-    //                         <td>${data.regular_price}</td>
-    //                         <td>${data.discount}</td>
-    //                         <td>${data.discount_amount}</td>
-    //                         <td>${data.stock_quantity}</td>
-    //                         <td>${data.unit}</td>
-    //                         <td>${data.weight}</td>
-    //                         <td>${data.color}</td>
-    //                         <td>${data.size}</td>
-    //                         <td>${data.manufacture_date}</td>
-    //                         <td>${data.expire_date}</td>
-    //                         <td>
-    //                         <button class="btn btn-sm btn-info edit_variant me-2" value="${data.id}">
-    //                             Edit
-    //                         </button>
-    //                         <button value="${data.id}" class="btn-sm btn-danger btn delete_variant">Delete</button>
-    //                                     </td>
-    //                             `;
-        //                     varient_container.appendChild(tr);
-        //                 })
-        //             } else {
-        //                 toastr.warning(res.error);
-        //             }
-        //         }
-        //     })
-        // }
     </script>
 @endsection

@@ -377,6 +377,7 @@ class ProductController extends Controller
     // product status changed
     public function productStatus($id)
     {
+
         // dd($request);
         $product = Product::findOrFail($id);
         if ($product->status == 0) {
@@ -394,8 +395,6 @@ class ProductController extends Controller
     // product update function
     public function update(Request $request)
     {
-
-        // dd($request->category_id);
         $setting = Setting::latest()->first();
 
         $product = Product::findOrFail($request->product_id);
@@ -425,39 +424,6 @@ class ProductController extends Controller
             $productDetails->created_by = Auth::user()->id;
             $productDetails->save();
 
-            // if ($setting->isMultipleCategory === 0) {
-            //     $oldCat = $product->productCategory;
-
-            //     if ($request->category_id !== null) {
-            //         $productCategory = new ProductCategory;
-            //         $productCategory->product_id = $product->id;
-            //         $productCategory->category_id = $request->category_id;
-            //         $productCategory->save();
-            //     }
-            //     if ($request->subcategory_id !== null) {
-            //         $productCategory = new ProductCategory;
-            //         $productCategory->product_id = $product->id;
-            //         $productCategory->category_id = $request->category_id;
-            //         $productCategory->type = 'subcategory';
-            //         $productCategory->save();
-            //     }
-            // } else {
-            //     foreach ($request->category_id as $id) {
-            //         $productCategory = new ProductCategory;
-            //         $productCategory->product_id = $product->id;
-            //         $productCategory->category_id = $id;
-            //         $productCategory->save();
-            //     }
-
-            //     foreach ($request->subcategory_id as $id) {
-            //         $productCategory = new ProductCategory;
-            //         $productCategory->product_id = $product->id;
-            //         $productCategory->category_id = $id;
-            //         $productCategory->type = 'subcategory';
-            //         $productCategory->save();
-            //     }
-            // }
-
             if ($setting->isMultipleCategory === 0) {
 
                 $oldCategories = ProductCategory::where('product_id', $product->id)->get()->pluck('category_id')->toArray();
@@ -479,10 +445,11 @@ class ProductController extends Controller
                             ->whereIn('category_id', $categoriesToDelete)
                             ->delete();
                     }
-                } else {
-
-                    ProductCategory::where('product_id', $product->id)->delete();
                 }
+                // else {
+
+                //     ProductCategory::where('product_id', $product->id)->delete();
+                // }
 
 
                 if ($request->category_id !== null) {
@@ -517,10 +484,11 @@ class ProductController extends Controller
                             ->whereIn('category_id', $categoriesToDelete)
                             ->delete();
                     }
-                } else {
-
-                    ProductCategory::where('product_id', $product->id)->delete();
                 }
+                // else {
+
+                //     ProductCategory::where('product_id', $product->id)->delete();
+                // }
 
 
                 if (is_array($request->category_id)) {

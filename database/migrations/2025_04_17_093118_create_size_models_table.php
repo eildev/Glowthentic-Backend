@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('size_models', function (Blueprint $table) {
             $table->id();
             $table->string('size_name');
-            $table->timestamps();
+            $table->timestamps(0);
+            $table->softDeletes();
         });
     }
 

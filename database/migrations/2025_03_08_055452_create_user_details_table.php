@@ -26,7 +26,8 @@ return new class extends Migration
             $table->string('image')->nullable();
             $table->string('country')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->timestamps();
+            $table->timestamps(0);
+            $table->softDeletes();
         });
     }
 
