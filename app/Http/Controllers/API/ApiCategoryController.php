@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Product_Tags;
 use App\Models\Brand;
-use App\Models\Product;
 use App\Models\ProductFeature;
 use Exception;
 
