@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\BillingInformation;
 use Auth;
 use App\Services\BillingInformationService;
+use App\Services\ImageOptimizerService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 
@@ -109,9 +110,14 @@ class ApiUserManageController extends Controller
         }
     }
 
-    public function update($id, Request $request)
+    public function update($id, Request $request, ImageOptimizerService $imageService)
     {
-
+        Log::info("Kishor User Info", [
+            'input' => $request->all(),
+            'files' => $request->file(),
+            'method' => $request->method(),
+            'headers' => $request->headers->all(),
+        ]);
         try {
             $validator = Validator::make($request->all(), [
                 'full_name' => 'required|string|max:255',
@@ -121,6 +127,7 @@ class ApiUserManageController extends Controller
                 'address' => 'nullable|string|max:500',
                 'city' => 'nullable|string|max:100',
                 'postal_code' => 'nullable|string|max:20',
+                'police_station' => 'nullable|string|max:100',
                 'country' => 'nullable|string|max:100',
                 'image' => 'nullable|image|mimes:jpeg,png,jpg,webp,svg|max:5120', // Updated to 5MB
             ]);
@@ -154,18 +161,16 @@ class ApiUserManageController extends Controller
                 $userDetails->address = $request->address;
                 $userDetails->city = $request->city;
                 $userDetails->postal_code = $request->postal_code;
+                $userDetails->police_station = $request->police_station;
                 $userDetails->country = $request->country;
-
                 if ($request->hasFile('image')) {
+                    $destinationPath = public_path('uploads/userImage/');
+                    $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
+                    $image = 'uploads/userImage/' . $imageName;
                     if ($userDetails->image && file_exists(public_path($userDetails->image))) {
                         unlink(public_path($userDetails->image));
                     }
-                    $file = $request->file('image');
-                    $extension = $file->getClientOriginalExtension();
-                    $filename = time() . '.' . $extension;
-                    $path = 'uploads/userImage/';
-                    $file->move(public_path($path), $filename);
-                    $userDetails->image = $path . $filename;
+                    $userDetails->image = $image;
                 }
                 $userDetails->save();
             } else {
@@ -177,15 +182,16 @@ class ApiUserManageController extends Controller
                 $userDetails->address = $request->address;
                 $userDetails->city = $request->city;
                 $userDetails->postal_code = $request->postal_code;
+                $userDetails->police_station = $request->police_station;
                 $userDetails->country = $request->country;
-
                 if ($request->hasFile('image')) {
-                    $file = $request->file('image');
-                    $extension = $file->getClientOriginalExtension();
-                    $filename = time() . '.' . $extension;
-                    $path = 'uploads/userImage/';
-                    $file->move(public_path($path), $filename);
-                    $userDetails->image = $path . $filename;
+                    $destinationPath = public_path('uploads/userImage/');
+                    $imageName = $imageService->resizeAndOptimize($request->file('image'), $destinationPath);
+                    $image = 'uploads/userImage/' . $imageName;
+                    if ($userDetails->image && file_exists(public_path($userDetails->image))) {
+                        unlink(public_path($userDetails->image));
+                    }
+                    $userDetails->image = $image;
                 }
                 $userDetails->save();
             }
@@ -202,6 +208,7 @@ class ApiUserManageController extends Controller
                     'address' => $userDetails->address,
                     'city' => $userDetails->city,
                     'postal_code' => $userDetails->postal_code,
+                    'police_station' => $userDetails->police_station,
                     'country' => $userDetails->country,
                 ],
                 'message' => 'User Details Updated Successfully',
@@ -243,6 +250,7 @@ class ApiUserManageController extends Controller
                     'address' => $userDetails->address,
                     'city' => $userDetails->city,
                     'postal_code' => $userDetails->postal_code,
+                    'police_station' => $userDetails->police_station,
                     'country' => $userDetails->country,
                     'image' => $userDetails->image ? asset($userDetails->image) : null,
                 ] : null,
