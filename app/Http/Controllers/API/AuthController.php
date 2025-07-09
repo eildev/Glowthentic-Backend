@@ -66,72 +66,6 @@ class AuthController extends Controller
             ]);
         }
     }
-    // POST [email, password]
-    // public function login(Request $request){
-    //     $validator = Validator::make($request->all(), [
-    //         // 'username' => 'required|string|unique:users,username',
-    //         // 'name' => 'required|string|max:255',
-    //         'email' => 'required|email|string',
-    //         'password' => 'required|min:6',
-    //         // 'confirm_password' => 'required|confirmed|same:password',
-    //     ]);
-
-    //     if ($validator->fails()) {
-    //         return response()->json([
-    //             "status" => 400,
-    //             "message" => "Validation errors",
-    //             "errors" => $validator->errors(),
-    //         ]);
-    //     }
-    //     $user = User::where("email", $request->email)->first();
-    //     if (!empty($user)) {
-    //         //User exists
-    //         if(Hash::check($request->password, $user->password)){
-    //             // Password Matched
-    //             $token = $user->createToken("mytoken")->plainTextToken;
-    //             return response()->json([
-    //                 "status" => 200,
-    //                 "message" => "User Loged in successfully",
-    //                 "token" => $token,
-    //                 "data" => $user,
-    //             ]);
-    //         }else{
-    //             return response()->json([
-    //                 "status" => 400,
-    //                 "message" => "Password does not match",
-    //                 "data" => [],
-    //             ]);
-    //         }
-    //     }else{
-
-    //         return response()->json([
-    //             "status" => 400,
-    //             "message" => "Email does not match with our records",
-    //             "data" => [],
-    //         ]);
-    //     }
-
-    //     // if (Auth::attempt(["email" => $request->email, "password" => $request->password])) {
-    //     //     $user = Auth::user();
-
-    //     //     $response = [];
-    //     //     // $response["token"] = $user->createToken("MyApp")->plainTextToken;
-    //     //     $response["name"] = $user->name;
-    //     //     $response["email"] = $user->email;
-    //     //     $response["id"] = $user->id;
-
-    //     //     return response()->json([
-    //     //         "status" => 200,
-    //     //         "message" => "User loged in successfully",
-    //     //         "data" => $response,
-    //     //     ]);
-    //     // }
-    //     // return response()->json([
-    //     //     "status" => 400,
-    //     //     "message" => "Authentication Error",
-    //     //     "data" => null,
-    //     // ]);
-    // }
 
     public function login(Request $request)
     {
@@ -152,47 +86,6 @@ class AuthController extends Controller
             ]);
         }
 
-        // Sanctum-সহ লগিন চেক করুন
-        // if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-        //     $user = Auth::user();
-        //     $token = $user->createToken("mytoken")->plainTextToken;
-        //     // dd($user);
-        //     return response()->json([
-        //         "status" => 200,
-        //         "message" => "User Logged in successfully",
-        //         "token" => $token,
-        //         "data" => $user,
-        //     ]);
-        // }
-
-
-        // $user = User::where("email", $request->email)->first();
-        // if (!empty($user)) {
-        //     //User exists
-        //     if(Hash::check($request->password, $user->password)){
-        //         // Password Matched
-        //         $token = $user->createToken("mytoken")->plainTextToken;
-        //         return response()->json([
-        //             "status" => 200,
-        //             "message" => "User Loged in successfully",
-        //             "token" => $token,
-        //             "data" => [],
-        //         ]);
-        //     }else{
-        //         return response()->json([
-        //             "status" => 400,
-        //             "message" => "Password does not match",
-        //             "data" => [],
-        //         ]);
-        //     }
-        // }else{
-
-        //     return response()->json([
-        //         "status" => 400,
-        //         "message" => "Email does not match with our records",
-        //         "data" => [],
-        //     ]);
-        // }
 
         try {
             if (Auth::attempt(["email" => $request->email, "password" => $request->password])) {
@@ -267,30 +160,6 @@ class AuthController extends Controller
         return view('backend.dashboard');
     }
 
-    // public function adminLogin(Request $request)
-    // {
-
-    //     $credentials = $request->validate([
-    //         'email' => 'required|email',
-    //         'password' => 'required',
-    //     ]);
-
-    //     if (Auth::guard('web')->attempt($credentials)) {
-    //         $user = Auth::user();
-    //         if (in_array($user->role, ['admin', 'superadmin'])) {
-    //             $request->session()->regenerate(); // Keep this for security
-    //             return redirect()->intended('/');
-    //         }
-    //         Auth::logout();
-    //         return back()->withErrors(['email' => 'You do not have admin access.']);
-    //     }
-
-    //     return back()->withErrors(['email' => 'Invalid credentials.']);
-    // }
-
-
-
-
 
     public function adminLogin(Request $request)
     {
@@ -335,7 +204,6 @@ class AuthController extends Controller
                 "message" => "Invalid credentials.",
                 "data" => null,
             ], 401);
-
         } catch (\Exception $e) {
             return response()->json([
                 "status" => 500,
@@ -353,56 +221,4 @@ class AuthController extends Controller
         $request->session()->regenerateToken(); // New CSRF token
         return redirect('/admin/login');
     }
-    // public function adminLogin(Request $request)
-    // {
-    //     // $credentials = $request->validate([
-    //     //     'email' => 'required|email',
-    //     //     'password' => 'required',
-    //     // ]);
-
-    //     // if (Auth::attempt($credentials)) {
-    //     //     return redirect()->route('admin.dashboard');
-    //     // }
-
-    //     // return back()->withErrors(['email' => 'Invalid credentials']);
-
-    //     // Validate the request
-    //     // dd($request->all());
-    //     $credentials = $request->validate([
-    //         'email' => 'required|email',
-    //         'password' => 'required',
-    //     ]);
-
-    //     // Attempt to log in using the 'web' guard
-    //     if (Auth::guard('web')->attempt($credentials)) {
-    //         $user = Auth::user();
-
-    //         // Check if the user has admin or superadmin role
-    //         if (in_array($user->role, ['admin', 'superadmin'])) {
-    //             $request->session()->regenerate(); // Regenerate session for security
-    //             return redirect()->route('admin.dashboard');
-    //         } else {
-    //             Auth::logout(); // Log out if not admin
-    //             return back()->withErrors(['email' => 'You do not have admin access.']);
-    //         }
-    //     }
-
-    //     return back()->withErrors(['email' => 'Invalid credentials.']);
-    // }
-
-    // public function adminLogout(Request $request)
-    // {
-    //     // Auth::logout();
-    //     // return redirect()->route('admin.login');
-
-    //     Auth::guard('web')->logout();
-    //     $request->session()->invalidate();
-    //     $request->session()->regenerateToken();
-    //     return redirect('/admin/login');
-    // }
-
-
-    // public function user(){
-
-    // }
 }

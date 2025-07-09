@@ -109,112 +109,23 @@ class ApiUserManageController extends Controller
         }
     }
 
-
-
-
-    // public function update($id, Request $request)
-    // {
-    //     dd($id, $request->all());
-    //     try {
-    //         $validator = Validator::make($request->all(), [
-    //             'full_name' => 'required|string',
-    //             'phone_number' => 'required|string',
-    //             'address' => 'required|string',
-    //             'city' => 'required|string',
-    //             'postal_code' => 'required|string',
-    //             'country' => 'required|string',
-    //             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp,svg|max:10240',
-    //         ]);
-    //         if ($validator->fails()) {
-    //             return response()->json([
-    //                 'status' => 422,
-    //                 'errors' => $validator->errors(),
-    //                 'message' => 'Validation Failed',
-    //             ]);
-    //         }
-    //         $userDetails = UserDetails::where('user_id', $id)->first();
-    //         if ($userDetails) {
-    //             $user = User::find($id);
-    //             $user->email = $request->email;
-    //             $user->name = $request->full_name;
-    //             $user->save();
-    //             $userDetails->full_name = $request->full_name;
-    //             $userDetails->phone_number = $request->phone_number;
-    //             if ($request->hasFile('image')) {
-    //                 if ($userDetails->image && file_exists($userDetails->image)) {
-    //                     unlink($userDetails->image);
-    //                 }
-    //                 $file = $request->file('image');
-    //                 $extension = $file->Extension();
-    //                 $filename = time() . '.' . $extension;
-    //                 $path = 'uploads/user_image/';
-    //                 $file->move($path, $filename);
-    //                 $userDetails->image = $path . $filename;
-    //             }
-    //             $userDetails->police_station = $request->police_station;
-    //             $userDetails->address = $request->address;
-    //             $userDetails->city = $request->city;
-    //             $userDetails->postal_code = $request->postal_code;
-    //             $userDetails->country = $request->country;
-    //             $userDetails->save();
-    //         } else {
-    //             $user = User::find($id);
-    //             $user->email = $request->email;
-    //             $user->name = $request->full_name;
-    //             $user->save();
-
-    //             $userDetails = new UserDetails();
-    //             $userDetails->user_id = $id;
-    //             $userDetails->full_name = $request->full_name;
-    //             $userDetails->phone_number = $request->phone_number;
-    //             if ($request->hasFile('image')) {
-    //                 if ($userDetails->image && file_exists($userDetails->image)) {
-    //                     unlink($userDetails->image);
-    //                 }
-    //                 $file = $request->file('image');
-    //                 $extension = $file->Extension();
-    //                 $filename = time() . '.' . $extension;
-    //                 $path = 'uploads/user_image/';
-    //                 $file->move($path, $filename);
-    //                 $userDetails->image = $path . $filename;
-    //             }
-    //             $userDetails->police_station = $request->police_station;
-    //             $userDetails->address = $request->address;
-    //             $userDetails->city = $request->city;
-    //             $userDetails->postal_code = $request->postal_code;
-    //             $userDetails->country = $request->country;
-    //             $userDetails->save();
-    //         }
-    //         return response()->json([
-    //             'status' => 200,
-    //             'user' => $userDetails,
-    //             'message' => 'User Details Updated Successfully'
-    //         ]);
-    //     } catch (\Exception $e) {
-    //         return response()->json([
-    //             'status' => false,
-    //             'message' => $e->getMessage()
-    //         ], 500);
-    //     }
-    // }
-
     public function update($id, Request $request)
     {
-        // dd($request->all());
-        // dd($request->hasFile('image'));
+
         try {
             $validator = Validator::make($request->all(), [
-                'full_name' => 'nullable|string',
-                'phone_number' => 'nullable|string',
-                'address' => 'nullable|string',
-                'city' => 'nullable|string',
-                'postal_code' => 'nullable|string',
-                'country' => 'nullable|string',
-                'image' => 'nullable|image|mimes:jpeg,png,jpg,webp,svg|max:10240',
+                'full_name' => 'required|string|max:255',
+                'email' => ['required', 'email', 'max:255', 'unique:users,email,' . $id],
+                'secondary_email' => 'nullable|email|max:255',
+                'phone_number' => 'nullable|string|max:20',
+                'address' => 'nullable|string|max:500',
+                'city' => 'nullable|string|max:100',
+                'postal_code' => 'nullable|string|max:20',
+                'country' => 'nullable|string|max:100',
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,webp,svg|max:5120', // Updated to 5MB
             ]);
 
             if ($validator->fails()) {
-                // Log::error('Validation Errors:', $validator->errors()->toArray());
                 return response()->json([
                     'status' => 422,
                     'errors' => $validator->errors(),
@@ -222,51 +133,49 @@ class ApiUserManageController extends Controller
                 ], 422);
             }
 
-            $userDetails = UserDetails::where('user_id', $id)->first();
             $user = User::find($id);
-
             if (!$user) {
                 return response()->json([
                     'status' => 404,
                     'message' => 'User not found',
-                ]);
+                ], 404);
             }
 
-            $user->email = $request->email;
             $user->name = $request->full_name;
+            $user->email = $request->email;
             $user->save();
+
+            $userDetails = UserDetails::where('user_id', $id)->first();
 
             if ($userDetails) {
                 $userDetails->full_name = $request->full_name;
+                $userDetails->secondary_email = $request->secondary_email;
                 $userDetails->phone_number = $request->phone_number;
                 $userDetails->address = $request->address;
                 $userDetails->city = $request->city;
-                $userDetails->police_station = $request->police_station;
                 $userDetails->postal_code = $request->postal_code;
                 $userDetails->country = $request->country;
 
-
                 if ($request->hasFile('image')) {
-                    if ($userDetails->image && file_exists($userDetails->image)) {
-                        unlink($userDetails->image);
+                    if ($userDetails->image && file_exists(public_path($userDetails->image))) {
+                        unlink(public_path($userDetails->image));
                     }
                     $file = $request->file('image');
                     $extension = $file->getClientOriginalExtension();
                     $filename = time() . '.' . $extension;
-                    $path = 'uploads/user_image/';
+                    $path = 'uploads/userImage/';
                     $file->move(public_path($path), $filename);
                     $userDetails->image = $path . $filename;
                 }
-
                 $userDetails->save();
             } else {
                 $userDetails = new UserDetails();
                 $userDetails->user_id = $id;
                 $userDetails->full_name = $request->full_name;
+                $userDetails->secondary_email = $request->secondary_email;
                 $userDetails->phone_number = $request->phone_number;
                 $userDetails->address = $request->address;
                 $userDetails->city = $request->city;
-                $userDetails->police_station = $request->police_station;
                 $userDetails->postal_code = $request->postal_code;
                 $userDetails->country = $request->country;
 
@@ -274,11 +183,10 @@ class ApiUserManageController extends Controller
                     $file = $request->file('image');
                     $extension = $file->getClientOriginalExtension();
                     $filename = time() . '.' . $extension;
-                    $path = 'uploads/user_image/';
+                    $path = 'uploads/userImage/';
                     $file->move(public_path($path), $filename);
                     $userDetails->image = $path . $filename;
                 }
-
                 $userDetails->save();
             }
 
@@ -289,6 +197,12 @@ class ApiUserManageController extends Controller
                     'name' => $user->name,
                     'email' => $user->email,
                     'image' => $userDetails->image ? asset($userDetails->image) : null,
+                    'secondary_email' => $userDetails->secondary_email,
+                    'phone_number' => $userDetails->phone_number,
+                    'address' => $userDetails->address,
+                    'city' => $userDetails->city,
+                    'postal_code' => $userDetails->postal_code,
+                    'country' => $userDetails->country,
                 ],
                 'message' => 'User Details Updated Successfully',
             ], 200);
@@ -296,114 +210,48 @@ class ApiUserManageController extends Controller
             Log::error('Update Error:', ['message' => $e->getMessage()]);
             return response()->json([
                 'status' => 500,
-                'message' => $e->getMessage()
-            ]);
+                'message' => 'An error occurred while updating user details',
+            ], 500);
         }
     }
-    // public function update($id, Request $request)
-    // {
-    //     // dd($id, $request);
-    //     try {
-    //         $validator = Validator::make($request->all(), [
-    //             'full_name' => 'required|string',
-    //             'phone_number' => 'required|string',
-    //             'address' => 'required|string',
-    //             'city' => 'required|string',
-    //             'postal_code' => 'required|string',
-    //             'country' => 'required|string',
-    //             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp,svg|max:10240',
-    //         ]);
-    //         if ($validator->fails()) {
-    //             return response()->json([
-    //                 'status' => 422,
-    //                 'errors' => $validator->errors(),
-    //                 'message' => 'Validation Failed',
-    //             ]);
-    //         }
-    //         $userDetails = UserDetails::where('user_id', $id)->first();
-    //         if ($userDetails) {
-    //             $user = User::find($id);
-    //             $user->email = $request->email;
-    //             $user->name = $request->full_name;
-    //             $user->save();
-    //             $userDetails->full_name = $request->full_name;
-    //             $userDetails->phone_number = $request->phone_number;
-    //             if ($request->hasFile('image')) {
-    //                 if ($userDetails->image && file_exists($userDetails->image)) {
-    //                     unlink($userDetails->image);
-    //                 }
-    //                 $file = $request->file('image');
-    //                 $extension = $file->Extension();
-    //                 $filename = time() . '.' . $extension;
-    //                 $path = 'uploads/user_image/';
-    //                 $file->move($path, $filename);
-    //                 $userDetails->image = $path . $filename;
-    //             }
-    //             $userDetails->police_station = $request->police_station;
-    //             $userDetails->address = $request->address;
-    //             $userDetails->city = $request->city;
-    //             $userDetails->postal_code = $request->postal_code;
-    //             $userDetails->country = $request->country;
-    //             $userDetails->save();
-    //         } else {
-    //             $user = User::find($id);
-    //             $user->email = $request->email;
-    //             $user->name = $request->full_name;
-    //             $user->save();
 
-    //             $userDetails = new UserDetails();
-    //             $userDetails->user_id = $id;
-    //             $userDetails->full_name = $request->full_name;
-    //             $userDetails->phone_number = $request->phone_number;
-    //             if ($request->hasFile('image')) {
-    //                 if ($userDetails->image && file_exists($userDetails->image)) {
-    //                     unlink($userDetails->image);
-    //                 }
-    //                 $file = $request->file('image');
-    //                 $extension = $file->Extension();
-    //                 $filename = time() . '.' . $extension;
-    //                 $path = 'uploads/user_image/';
-    //                 $file->move($path, $filename);
-    //                 $userDetails->image = $path . $filename;
-    //             }
-    //             $userDetails->police_station = $request->police_station;
-    //             $userDetails->address = $request->address;
-    //             $userDetails->city = $request->city;
-    //             $userDetails->postal_code = $request->postal_code;
-    //             $userDetails->country = $request->country;
-    //             $userDetails->save();
-    //         }
-    //         return response()->json([
-    //             'status' => 200,
-    //             'user' => $userDetails,
-    //             'message' => 'User Details Updated Successfully'
-    //         ]);
-    //     } catch (\Exception $e) {
-    //         return response()->json([
-    //             'status' => false,
-    //             'message' => $e->getMessage()
-    //         ], 500);
-    //     }
-    // }
 
     public function userDetailsShow($id)
     {
-        // dd($id);
         try {
-            $user = User::where('id', $id)->first();
-            $userDetails = UserDetails::Where('session_id', $id)->orWhere('user_id', $user->id)->with('user')
-                ->first();
+            $user = User::find($id);
+            if (!$user) {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'User not found',
+                ], 404);
+            }
+
+            $userDetails = UserDetails::where('user_id', $id)->first();
 
             return response()->json([
                 'status' => 200,
-                'user' => $user,
-                'userDetails' => $userDetails,
-                'message' => 'User Details'
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                ],
+                'userDetails' => $userDetails ? [
+                    'full_name' => $userDetails->full_name,
+                    'secondary_email' => $userDetails->secondary_email,
+                    'phone_number' => $userDetails->phone_number,
+                    'address' => $userDetails->address,
+                    'city' => $userDetails->city,
+                    'postal_code' => $userDetails->postal_code,
+                    'country' => $userDetails->country,
+                    'image' => $userDetails->image ? asset($userDetails->image) : null,
+                ] : null,
+                'message' => 'User Details',
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
-                'status' => false,
-                'message' => $e->getMessage()
+                'status' => 500,
+                'message' => 'An error occurred while fetching user details',
             ], 500);
         }
     }
