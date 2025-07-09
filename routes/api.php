@@ -165,7 +165,7 @@ Route::controller(ApiOrderController::class)->group(function () {
     Route::get('/order/{id}', 'show')->name('order.show');
     Route::post('/order/tracking', 'trackingOrder');
     Route::get('/get-order/tracking/{id}', 'getTrackingOrder');
-    Route::get('/order/get/{user_idOrSesssion_id}', 'getOrder');
+    Route::get('/order/get/{id}', 'getOrder');
     Route::get('/order/processing/{user_idOrSesssion_id}', 'getProcessingOrder');
 });
 

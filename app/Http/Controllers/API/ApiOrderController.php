@@ -15,14 +15,13 @@ use App\Models\Product;
 use App\Models\ProductPromotion;
 use App\Models\DeliveryOrder;
 use App\Models\BillingInformation;
-use Auth;
-use App\Models\User;
 use App\Services\BillingInformationService;
 use App\Services\UserDetailsService;
 use Illuminate\Http\JsonResponse;
 use App\Models\Category;
 use App\Models\VariantPromotion;
 use App\Models\UserDetails;
+use Illuminate\Support\Facades\Auth;
 
 class ApiOrderController extends Controller
 {
@@ -486,15 +485,6 @@ class ApiOrderController extends Controller
     }
 
 
-
-
-
-
-
-
-
-
-
     public function trackingOrder(Request $request)
     {
         try {
@@ -625,15 +615,15 @@ class ApiOrderController extends Controller
 
 
 
-
-
-
-
-    public function getOrder($user_idOrSesssion_id)
+    public function getOrder($id)
     {
         try {
-            // dd("hello");
-            $order = Order::where('user_id', $user_idOrSesssion_id)->orWhere('session_id', $user_idOrSesssion_id)->with('orderDetails.variant.variantImage', 'orderDetails.product', 'orderDetails.product.category')->get();
+            // $user = Auth::user();
+            $statuses = ['pending', 'completed', 'approve', 'processing', 'Delivering', 'shipping', 'In Transit'];
+            $order = Order::where('user_id', $id)
+                ->whereIn('status', $statuses)
+                ->with('orderDetails.variant.variantImage', 'orderDetails.product', 'orderDetails.product.category')
+                ->get();
 
 
             return response()->json([
@@ -656,7 +646,7 @@ class ApiOrderController extends Controller
                 $query->where('user_id', $user_idOrSesssion_id)
                     ->orWhere('session_id', $user_idOrSesssion_id);
             })
-                ->whereIn('status', ['pending', 'approve', 'processing'])
+                ->whereIn('status', ['pending', 'approve', 'processing', 'Delivering', 'shipping', 'In Transit'])
                 ->with('orderDetails.variant.variantImage', 'orderDetails.product', 'orderDetails.product.category')
                 ->get();
 
