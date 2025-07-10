@@ -67,37 +67,4 @@ class ImageOptimizerService
 
         return $imageNameWithExtension;
     }
-
-    // public function resizeAndOptimize($imageFile, $destinationPath, $quality = 85)
-    // {
-
-
-    //     if (!File::exists($destinationPath)) {
-    //         File::makeDirectory($destinationPath, 0755, true, true);
-    //     }
-
-
-    //     $imageName = rand(000000, 999999) . '.' . $imageFile->extension();
-    //     $imagePath = $destinationPath . '/' . $imageName;
-
-
-    //     $this->imageManager->read($imageFile)
-    //         ->toJpeg($quality, true)
-    //         ->save($imagePath);
-
-
-    //     $optimizer = (new OptimizerChain())
-    //         ->addOptimizer(new Jpegoptim([
-    //             '--max=90',
-    //             '--strip-all',
-    //             '--all-progressive',
-    //         ]))
-    //         ->addOptimizer(new Pngquant([
-    //             '--quality=90',
-    //             '--force',
-    //         ]))
-    //         ->optimize($imagePath);
-
-    //     return $imageName;
-    // }
 }

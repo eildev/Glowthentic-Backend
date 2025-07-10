@@ -238,51 +238,52 @@ class OrderManageController extends Controller
         }
 
 
-        $first_digit = substr($newOrders->userDetails->phone_number, 0, 1);
+        // $first_digit = substr($newOrders->userDetails->phone_number, 0, 1);
 
-        if ($first_digit === '0') {
-            $phone_number = '+88' . $newOrders->userDetails->phone_number;
-        } elseif ($first_digit === '1') {
-            $phone_number = '+880' . $newOrders->userDetails->phone_number;
-        } else {
-            $phone_number = '+880' . $newOrders->userDetails->phone_number;
-        }
+        // if ($first_digit === '0') {
+        //     $phone_number = '+88' . $newOrders->userDetails->phone_number;
+        // } elseif ($first_digit === '1') {
+        //     $phone_number = '+880' . $newOrders->userDetails->phone_number;
+        // } else {
+        //     $phone_number = '+880' . $newOrders->userDetails->phone_number;
+        // }
 
-        // sms to phone 
-        $trackingUrl = 'https://glowthentic.store/order-progress?orderId=' . ($newOrders ? $newOrders->invoice_number : '');
-        // $number = $newOrders->userDetails->phone_number;
-        $number = $phone_number;
-        $api_key = "0yRu5BkB8tK927YQBA8u";
-        $senderid = "8809617615171";
-        $message = "Your order has been confirmed. your invoice number is : " . $newOrders->invoice_number . " you find your product using this invoice Number in here: " . $trackingUrl;
-        $url = "http://bulksmsbd.net/api/smsapi";
-        $data = [
-            "api_key" => $api_key,
-            'number' => $number,
-            'senderid' => $senderid,
-            'message' => $message
-        ];
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        $response = curl_exec($ch);
-        curl_close($ch);
-        $email = OrderBillingDetails::where('order_id', $newOrders->id)->first();
-        $data = [
-            'name' => $newOrders->first_name,
-            'invoiceNumber' => $newOrders->invoice_number,
-            'trackingURL' => $trackingUrl
-        ];
+        // // sms to phone 
+        // $trackingUrl = 'https://glowthentic.store/order-progress?orderId=' . ($newOrders ? $newOrders->invoice_number : '');
+        // // $number = $newOrders->userDetails->phone_number;
+        // $number = $phone_number;
+        // $api_key = "0yRu5BkB8tK927YQBA8u";
+        // $senderid = "8809617615171";
+        // $message = "Your order has been confirmed. your invoice number is : " . $newOrders->invoice_number . " you find your product using this invoice Number in here: " . $trackingUrl;
+        // $url = "http://bulksmsbd.net/api/smsapi";
+        // $data = [
+        //     "api_key" => $api_key,
+        //     'number' => $number,
+        //     'senderid' => $senderid,
+        //     'message' => $message
+        // ];
+        // $ch = curl_init();
+        // curl_setopt($ch, CURLOPT_URL, $url);
+        // curl_setopt($ch, CURLOPT_POST, 1);
+        // curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        // curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        // curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        // $response = curl_exec($ch);
+        // curl_close($ch);
+        // $email = OrderBillingDetails::where('order_id', $newOrders->id)->first();
+        // $data = [
+        //     'name' => $newOrders->first_name,
+        //     'invoiceNumber' => $newOrders->invoice_number,
+        //     'trackingURL' => $trackingUrl
+        // ];
 
-        $response = json_decode($response, true);
-        if ($response['response_code'] == 202) {
-            return back()->with('success', 'Order Successfully Approved');
-        } else {
-            return back()->with('warring', 'Something went wrong Order Not Approved');
-        }
+        // $response = json_decode($response, true);
+        // if ($response['response_code'] == 202) {
+        //     return back()->with('success', 'Order Successfully Approved');
+        // } else {
+        //     return back()->with('warring', 'Something went wrong Order Not Approved');
+        // }
+        return back()->with('success', 'Order Successfully Approved');
     }
     public function orderTracking()
     {

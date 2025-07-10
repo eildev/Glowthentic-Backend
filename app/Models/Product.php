@@ -106,4 +106,9 @@ class Product extends Model
         return $this->hasMany(ProductCategory::class, 'product_id', 'id')
             ->where('type', 'subcategory');
     }
+
+    public function reviews()
+    {
+        return $this->hasMany(ReviewRating::class, 'product_id', 'id');
+    }
 }

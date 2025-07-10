@@ -622,7 +622,7 @@ class ApiOrderController extends Controller
             $statuses = ['pending', 'completed', 'approve', 'processing', 'Delivering', 'shipping', 'In Transit'];
             $order = Order::where('user_id', $id)
                 ->whereIn('status', $statuses)
-                ->with('orderDetails.variant.variantImage', 'orderDetails.product', 'orderDetails.product.category')
+                ->with('orderDetails.variant.variantImage', 'orderDetails.product', 'orderDetails.product.category', 'reviews')
                 ->get();
 
 
@@ -652,7 +652,7 @@ class ApiOrderController extends Controller
 
             // Add order_status = "Processing" for each order
             $ordersWithStatus = $orders->map(function ($order) {
-                $order->order_status = "Processing";
+                $order->order_status = "processing";
                 return $order;
             });
 

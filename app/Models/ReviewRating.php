@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ReviewRating extends Model
 {
+
     use HasFactory, SoftDeletes;
+    protected $guarded = [];
 
     function gallary()
     {
@@ -16,6 +18,6 @@ class ReviewRating extends Model
     }
     function user()
     {
-        return $this->belongsTo(User::class,'user_id','id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 }

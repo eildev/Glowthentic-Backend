@@ -76,6 +76,32 @@ Route::group([
     // Route::controller(ApiUserManageController::class)->group(function () {
     //     Route::put('/user/billing/info/update/{id}', [ApiUserManageController::class, 'userBillingInfoUpdate']);
     // });
+
+
+    Route::controller(ApiReviewController::class)->group(function () {
+        Route::post('/review/add', 'addReview');
+        Route::get('/review/{product_id}', 'getReview');
+        Route::delete('/review/delete/{id}', 'deleteReview');
+    });
+
+    Route::controller(ApiBlogCommentController::class)->group(function () {
+        Route::get('/blogComment', 'viewAll')->name('blogComment.view');
+        Route::get('/blogComment/{id}', 'show')->name('blogComment.show');
+        Route::post('/blogComments/create', 'store')->name('blogComment.store');
+        Route::get('/blogComments/get/{id}', 'userBlogGet')->name('blogComment.user.get');
+    });
+
+    Route::controller(ApiOrderController::class)->group(function () {
+        Route::get('/order/get/{id}', 'getOrder');
+        Route::get('/order/processing/{user_idOrSesssion_id}', 'getProcessingOrder');
+    });
+
+    Route::controller(ApiWishListController::class)->group(function () {
+        Route::post('/wishlist/add', 'addWishList');
+        Route::get('/wishlist/{user_id}', 'getWishList');
+        Route::get('/wishlist/{user_id_or_session_id}', 'getWishList');
+        Route::delete('/wishlist/delete/{id}', 'deleteWishList');
+    });
 });
 
 
@@ -153,20 +179,13 @@ Route::controller(ApiBlogPostController::class)->group(function () {
     Route::get('/blogPost/{id}', 'show')->name('blogPost.show');
 });
 
-Route::controller(ApiBlogCommentController::class)->group(function () {
-    Route::get('/blogComment', 'viewAll')->name('blogComment.view');
-    Route::get('/blogComment/{id}', 'show')->name('blogComment.show');
-    Route::post('/blogComments/create', 'store')->name('blogComment.store');
-    Route::get('/blogComments/get/{id}', 'userBlogGet')->name('blogComment.user.get');
-});
+
 
 Route::controller(ApiOrderController::class)->group(function () {
     Route::post('/order/create', 'store')->name('order.store');
     Route::get('/order/{id}', 'show')->name('order.show');
     Route::post('/order/tracking', 'trackingOrder');
     Route::get('/get-order/tracking/{id}', 'getTrackingOrder');
-    Route::get('/order/get/{id}', 'getOrder');
-    Route::get('/order/processing/{user_idOrSesssion_id}', 'getProcessingOrder');
 });
 
 
@@ -184,23 +203,10 @@ Route::controller(ApiContactUsController::class)->group(function () {
 });
 
 Route::controller(ApiCouponController::class)->group(function () {
-
     Route::post('/coupon/check', 'checkCoupon');
 });
 
 
-Route::controller(ApiWishListController::class)->group(function () {
-    Route::post('/wishlist/add', 'addWishList');
-    Route::get('/wishlist/{user_id}', 'getWishList');
-    Route::get('/wishlist/{user_id_or_session_id}', 'getWishList');
-    Route::delete('/wishlist/delete/{id}', 'deleteWishList');
-});
-
-Route::controller(ApiReviewController::class)->group(function () {
-    Route::post('/review/add', 'addReview');
-    Route::get('/review/{product_id}', 'getReview');
-    Route::delete('/review/delete/{id}', 'deleteReview');
-});
 Route::controller(UserTrackerController::class)->group(function () {
     Route::post('/user-tracker', 'store');
 });
