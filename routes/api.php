@@ -24,6 +24,7 @@ use App\Http\Controllers\API\ApiWishListController;
 use App\Http\Controllers\API\ApiUserManageController;
 use App\Http\Controllers\API\ApiPostReactController;
 use App\Http\Controllers\API\ApiReportController;
+use App\Http\Controllers\API\ChangePasswordController;
 use App\Http\Controllers\API\ForgotPasswordController;
 use App\Http\Controllers\API\SocialAuthController;
 use App\Http\Controllers\API\UserTrackerController;
@@ -55,6 +56,7 @@ Route::group([
 ], function () {
     Route::get("/profile", [AuthController::class, "profile"]);
     Route::get("/logout", [AuthController::class, "logout"]);
+    Route::post("/password-change", [ChangePasswordController::class, "chnagePassword"]);
 
     Route::controller(ApiOrderController::class)->group(function () {
         Route::post('/order/create', 'store')->name('order.store');
@@ -163,7 +165,7 @@ Route::controller(ApiOrderController::class)->group(function () {
     Route::get('/order/{id}', 'show')->name('order.show');
     Route::post('/order/tracking', 'trackingOrder');
     Route::get('/get-order/tracking/{id}', 'getTrackingOrder');
-    Route::get('/order/get/{user_idOrSesssion_id}', 'getOrder');
+    Route::get('/order/get/{id}', 'getOrder');
     Route::get('/order/processing/{user_idOrSesssion_id}', 'getProcessingOrder');
 });
 
