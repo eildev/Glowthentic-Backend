@@ -43,7 +43,7 @@ class ApiWishListController extends Controller
         try {
             $wishlist = WishList::where('user_id', $user_id_or_session_id)
                 ->OrWhere('session_id', $user_id_or_session_id)
-                ->with('wishlistProduct.productCategory.category', 'wishlistProduct.reviews', 'variant', 'variant.variantImage')
+                ->with('wishlistProduct.productCategory.category', 'wishlistProduct.reviews', 'variant', 'variant.variantImage', 'variant.comboProduct', 'variant.product', 'variant.productStock',)
                 ->get();
             return response()->json([
                 'status' => 200,
