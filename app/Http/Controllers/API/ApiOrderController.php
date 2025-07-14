@@ -21,7 +21,6 @@ use Illuminate\Http\JsonResponse;
 use App\Models\Category;
 use App\Models\VariantPromotion;
 use App\Models\UserDetails;
-use Illuminate\Support\Facades\Auth;
 
 class ApiOrderController extends Controller
 {
@@ -131,7 +130,6 @@ class ApiOrderController extends Controller
                 $variant_total_price += $single_product_total;
 
                 if (round($single_product_total, 2) != round($product['discount_cut_total_price'], 2)) {
-
                     $error_messages[] = 'Variant price is not matching with total price for variant ID: ' . $product['variant_id'];
                 }
             }
