@@ -80,7 +80,6 @@ Route::group([
 
     Route::controller(ApiReviewController::class)->group(function () {
         Route::post('/review/add', 'addReview');
-        Route::get('/review/{product_id}', 'getReview');
         Route::delete('/review/delete/{id}', 'deleteReview');
     });
 
@@ -179,6 +178,9 @@ Route::controller(ApiBlogPostController::class)->group(function () {
     Route::get('/blogPost/{id}', 'show')->name('blogPost.show');
 });
 
+Route::controller(ApiReviewController::class)->group(function () {
+    Route::get('/review/{id}', 'getReview');
+});
 
 
 Route::controller(ApiOrderController::class)->group(function () {

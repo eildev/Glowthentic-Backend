@@ -50,7 +50,7 @@ class Product extends Model
 
     public function comboproduct()
     {
-        return $this->hasMany(ComboProduct::class, 'combo_id', 'id');
+        return $this->hasMany(ComboProduct::class, 'product_id', 'id');
     }
 
     public function promotionproduct()

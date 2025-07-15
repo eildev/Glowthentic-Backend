@@ -17,12 +17,12 @@ class ApiReviewController extends Controller
     public function addReview(Request $request, ImageOptimizerService $imageService)
     {
         try {
-            Log::info("Kishor Review Info", [
-                'input' => $request->all(),
-                'files' => $request->file(),
-                'method' => $request->method(),
-                'headers' => $request->headers->all(),
-            ]);
+            // Log::info("Kishor Review Info", [
+            //     'input' => $request->all(),
+            //     'files' => $request->file(),
+            //     'method' => $request->method(),
+            //     'headers' => $request->headers->all(),
+            // ]);
             $request->validate([
                 // 'product_id' => 'required',
                 'user_id' => 'required',
@@ -52,7 +52,7 @@ class ApiReviewController extends Controller
 
                         // Use $image instead of $images
                         $imageName = $imageService->resizeAndOptimize($image, $destinationPath);
-                        $imagePath = 'uploads/review' . $imageName;
+                        $imagePath = 'uploads/review/' . $imageName;
 
                         $ImageGallery = new ReviewImages();
                         $ImageGallery->review_id = $review->id;
@@ -84,7 +84,7 @@ class ApiReviewController extends Controller
 
                             // Use $image instead of $images
                             $imageName = $imageService->resizeAndOptimize($image, $destinationPath);
-                            $imagePath = 'uploads/review' . $imageName;
+                            $imagePath = 'uploads/review/' . $imageName;
 
                             $ImageGallery = new ReviewImages();
                             $ImageGallery->review_id = $review->id;
@@ -112,26 +112,13 @@ class ApiReviewController extends Controller
     public function getReview($product_id)
     {
         try {
-            $reviews = ReviewRating::with('gallary', 'user.userDetails')
+            $reviews = ReviewRating::with('gallery', 'user.userDetails')
                 ->where('product_id', $product_id)
                 ->get();
 
-            $transformed = $reviews->map(function ($review) {
-                return [
-                    'id' => $review->id,
-                    'review' => $review->review,
-                    'rating' => $review->rating,
-                    'gallary' => $review->gallary,
-                    'user' => [
-                        'name' => optional($review->user)->name,
-                        'email' => optional($review->user)->email,
-                    ],
-                ];
-            });
-
             return response()->json([
                 'status' => 200,
-                'reviews' => $transformed,
+                'reviews' => $reviews,
             ]);
         } catch (Exception $e) {
             return response()->json([

@@ -12,7 +12,7 @@ class ReviewRating extends Model
     use HasFactory, SoftDeletes;
     protected $guarded = [];
 
-    function gallary()
+    function gallery()
     {
         return $this->hasMany(ReviewImages::class, 'review_id', 'id');
     }

@@ -165,7 +165,6 @@ class ApiProductController extends Controller
                 'variants.variantImage',
                 'variants.product',
                 'variants.productStock',
-
                 // 'variants.promotionproduct.coupon',
                 'variants.productVariantPromotion.coupon',
                 'promotionproduct.coupon',
@@ -177,6 +176,7 @@ class ApiProductController extends Controller
                 'category.productPromotions.coupon',
                 'subcategory',
                 'brand',
+                'comboproduct',
             )->where('status', 1)->get();
 
             // dd($products);
@@ -274,6 +274,10 @@ class ApiProductController extends Controller
                 'category.productPromotions.coupon',
                 'subcategory',
                 'brand',
+                'reviews',
+                'comboproduct',
+                'comboproduct.variant',
+                'comboproduct.combo',
             )->where('slug', $slug)->first();
             // Debug to check variants and their promotions
 
