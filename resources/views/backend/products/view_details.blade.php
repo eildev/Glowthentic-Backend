@@ -192,7 +192,7 @@
                                         <td>
                                             <span class="badge bg-primary">{{ $variant->color ?? '' }}</span>
                                         </td>
-                                        <td>{{ $variant->weight ?? '' }} kg</td>
+                                        <td>{{ $variant->weight ?? '' }} gm</td>
                                         <td>{{ $variant->flavor ?? '' }}</td>
                                         <td>
                                             @foreach ($variant->variantImage as $image)
