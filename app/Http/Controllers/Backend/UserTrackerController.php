@@ -11,7 +11,7 @@ class UserTrackerController extends Controller
 {
     public function index()
     {
-        $visitors = UserTracker::all();
+        $visitors = UserTracker::latest()->get();
         return view('backend.tracker.view', compact('visitors'));
     }
 
@@ -46,7 +46,7 @@ class UserTrackerController extends Controller
             'user_ip' => $user_ip,
             'url' => $request->url,
             'browser_name' => $browser_name,
-            'system_user_name' => $system_user_name,
+            'system_user_name' => $request->system_user_name ?? 'Guest',
         ]);
 
         return response()->json([

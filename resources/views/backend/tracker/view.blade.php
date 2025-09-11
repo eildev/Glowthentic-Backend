@@ -10,7 +10,7 @@
                     </div>
                     <hr>
                     <div class="table-responsive">
-                        <table id="example" class="table table-striped table-bordered" style="width:100%">
+                        <table id="order_table" class="table table-striped table-bordered" style="width:100%">
                             <thead>
                                 <tr>
                                     <th>SI</th>
@@ -28,16 +28,16 @@
                                 @endphp
                                 @if ($visitors->count() > 0)
                                     @foreach ($visitors as $visitor)
-                                    {{-- @dd($visitor); --}}
+                                        {{-- @dd($visitor); --}}
                                         <tr>
                                             <td>{{ $serialNumber++ }}</td>
                                             <td>{{ $visitor->country }}</td>
-                                            <td>{{ $visitor->user_ip }}</td>
-                                            <td>{{ $visitor->url }}</td>
+                                            <td class="url-column">{{ $visitor->user_ip }}</td>
+                                            <td class="url-column">{{ $visitor->url }}</td>
                                             <td>{{ $visitor->browser_name }}</td>
                                             <td>{{ $visitor->system_user_name }}</td>
-                                            <td>{{ $visitor->created_at }}</td>
-
+                                            <td>{{ \Carbon\Carbon::parse($visitor->created_at)->format('F j, Y h:i A') }}
+                                            </td>
                                         </tr>
                                     @endforeach
                                 @else
@@ -54,4 +54,15 @@
         </div>
         <!--end row-->
     </div>
+
+    <style>
+        .url-column {
+            word-wrap: break-word;
+            /* Ensures long words break to the next line */
+            max-width: 200px;
+            /* Adjust this value based on your layout */
+            white-space: normal;
+            /* Allows text to wrap */
+        }
+    </style>
 @endsection
