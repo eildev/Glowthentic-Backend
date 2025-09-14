@@ -11,6 +11,7 @@ use App\Models\Brand;
 use App\Models\Combo;
 use App\Models\TagName;
 use App\Models\Product;
+use App\Models\Variant;
 
 class ApiProductController extends Controller
 {
@@ -51,7 +52,9 @@ class ApiProductController extends Controller
             // Fetch up to 10 products with dynamic sorting
             $products = Product::with([
                 'variants.variantImage',
-                'variants.product',
+                'variants.product.promotionproduct.coupon',
+                'variants.product.category.categoryProductPromotions.coupon',
+                'variants.product.brand.brandProductPromotion.coupon',
                 'variants.productStock',
                 'promotionproduct.coupon',
                 'variants.productVariantPromotion.coupon',
@@ -163,7 +166,9 @@ class ApiProductController extends Controller
         try {
             $products = Product::orderByDesc('id')->with(
                 'variants.variantImage',
-                'variants.product',
+                'variants.product.promotionproduct.coupon',
+                'variants.product.category.categoryProductPromotions.coupon',
+                'variants.product.brand.brandProductPromotion.coupon',
                 'variants.productStock',
                 // 'variants.promotionproduct.coupon',
                 'variants.productVariantPromotion.coupon',
@@ -178,6 +183,29 @@ class ApiProductController extends Controller
                 'brand',
                 'comboproduct',
             )->where('status', 1)->get();
+            // $products = Variant::orderByDesc('id')
+            //     ->with(
+            //         'variantImage',
+            //         'product.promotionproduct.coupon',
+            //         'product.category.categoryProductPromotions.coupon',
+            //         'product.brand.brandProductPromotion.coupon',
+            //         'product.productStock',
+            //         'product.productVarinatPromotion.coupon',
+            //         'product.promotionproduct.coupon',
+            //         'comboProduct',
+            //         'product.product_tags',
+            //         'product.productStock',
+            //         'product.productdetails',
+            //         'product.variantImage',
+            //         'product.category.productPromotions.coupon',
+            //         'product.subcategory',
+            //         'product.brand',
+            //         'product.comboproduct',
+            //     )
+            //     ->whereHas('product', function ($q) {
+            //         $q->where('status', 1);
+            //     })
+            //     ->get();
 
             // dd($products);
             return response()->json([
@@ -262,7 +290,9 @@ class ApiProductController extends Controller
         try {
             $products = Product::with(
                 'variants.variantImage',
-                'variants.product',
+                'variants.product.promotionproduct.coupon',
+                'variants.product.category.categoryProductPromotions.coupon',
+                'variants.product.brand.brandProductPromotion.coupon',
                 'variants.productStock',
                 'promotionproduct.coupon',
                 'variants.productVariantPromotion.coupon',
